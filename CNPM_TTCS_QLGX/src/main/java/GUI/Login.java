@@ -1,23 +1,24 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package GUI;
 
-import Global.DataGlobal;
-import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
- * @author manhh
+ * @author eramisme
  */
-public class Login extends javax.swing.JPanel {
+public class Login extends javax.swing.JFrame {
 
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
+        setLocationRelativeTo(null);
+        Label_Error.setVisible(false);
     }
 
     /**
@@ -29,28 +30,261 @@ public class Login extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
+        jPanel1 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jtxtDN = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jtxtMK = new javax.swing.JPasswordField();
+        Button_Login = new javax.swing.JButton();
+        Button_Reset = new javax.swing.JButton();
+        Button_Exit = new javax.swing.JButton();
+        Label_Error = new javax.swing.JLabel();
+        Box_ShowPass = new javax.swing.JCheckBox();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 51, 0));
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("QUẢN LÝ GỬI XE VINHOMES");
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel2.setText("Số tài khoản");
+
+        jtxtDN.setPreferredSize(new java.awt.Dimension(187, 35));
+        jtxtDN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtxtDNActionPerformed(evt);
+            }
+        });
+        jtxtDN.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jtxtDNKeyPressed(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel3.setText("Mật khẩu");
+
+        jtxtMK.setMinimumSize(new java.awt.Dimension(64, 35));
+        jtxtMK.setPreferredSize(new java.awt.Dimension(187, 22));
+        jtxtMK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtxtMKActionPerformed(evt);
+            }
+        });
+        jtxtMK.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jtxtMKKeyPressed(evt);
+            }
+        });
+
+        Button_Login.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        Button_Login.setText("Đăng nhập");
+        Button_Login.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Button_LoginActionPerformed(evt);
+            }
+        });
+
+        Button_Reset.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        Button_Reset.setText("Tạo lại");
+        Button_Reset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Button_ResetActionPerformed(evt);
+            }
+        });
+
+        Button_Exit.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        Button_Exit.setText("Thoát");
+        Button_Exit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Button_ExitActionPerformed(evt);
+            }
+        });
+
+        Label_Error.setBackground(new java.awt.Color(255, 0, 0));
+        Label_Error.setForeground(new java.awt.Color(255, 0, 0));
+        Label_Error.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        Label_Error.setText("* Vui lòng điền đầy đủ tên đăng nhập hoặc mật khẩu");
+
+        Box_ShowPass.setText("Hiện mật khẩu");
+        Box_ShowPass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Box_ShowPassActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(48, 48, 48)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(Box_ShowPass)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(Button_Login)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(Button_Reset, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                                    .addComponent(Button_Exit))
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel2)
+                                .addComponent(jtxtDN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jtxtMK, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(0, 51, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(Label_Error, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(26, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(45, 45, 45)
+                .addComponent(jLabel4)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jtxtDN, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jtxtMK, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Box_ShowPass)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Button_Login)
+                    .addComponent(Button_Reset)
+                    .addComponent(Button_Exit))
+                .addGap(28, 28, 28)
+                .addComponent(Label_Error)
+                .addContainerGap(28, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
+
+        pack();
     }// </editor-fold>//GEN-END:initComponents
-    public static void main(String[] args) {
-        Global.DataGlobal dataGlobal = new DataGlobal();
-        dataGlobal.updateAllData();
-        
-        ViewMain a = new  ViewMain(dataGlobal);
-        
-        a.setLocationRelativeTo(null);
-        a.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        a.setVisible(true);
+
+    private void jtxtDNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtxtDNActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jtxtDNActionPerformed
+
+    private void jtxtDNKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtxtDNKeyPressed
+        //        if (evt.getKeyCode() == evt.VK_ENTER) {
+            //            jtxtPass.requestFocus();
+            //        }
+    }//GEN-LAST:event_jtxtDNKeyPressed
+
+    private void jtxtMKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtxtMKActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jtxtMKActionPerformed
+
+    private void jtxtMKKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtxtMKKeyPressed
+
+    }//GEN-LAST:event_jtxtMKKeyPressed
+
+    private void Button_LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_LoginActionPerformed
+    String account_name = jtxtDN.getText().trim();
+    String password = new String(jtxtMK.getPassword()).trim();
+
+    if (account_name.isEmpty() || password.isEmpty()) {
+        Label_Error.setVisible(true);
+    } else {
+        Label_Error.setVisible(false);
+        JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
+    }
+    }//GEN-LAST:event_Button_LoginActionPerformed
+
+    private void Button_ResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ResetActionPerformed
+                Label_Error.setVisible(false);
+                jtxtDN.setText("");
+                jtxtDN.requestFocus();
+                jtxtMK.setText("");
+    }//GEN-LAST:event_Button_ResetActionPerformed
+
+    private void Button_ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ExitActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_Button_ExitActionPerformed
+
+    private void Box_ShowPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Box_ShowPassActionPerformed
+        // TODO add your handling code here:
+        if (Box_ShowPass.isSelected()) {
+            jtxtMK.setEchoChar((char) 0); 
+        } else {
+            jtxtMK.setEchoChar('*'); 
+    }
+    }//GEN-LAST:event_Box_ShowPassActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Login().setVisible(true);
+            }
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox Box_ShowPass;
+    private javax.swing.JButton Button_Exit;
+    private javax.swing.JButton Button_Login;
+    private javax.swing.JButton Button_Reset;
+    private javax.swing.JLabel Label_Error;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JTextField jtxtDN;
+    private javax.swing.JPasswordField jtxtMK;
     // End of variables declaration//GEN-END:variables
 }

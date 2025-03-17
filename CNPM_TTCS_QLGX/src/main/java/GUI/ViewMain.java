@@ -19,6 +19,12 @@ public class ViewMain extends javax.swing.JFrame {
     /**
      * Creates new form ViewMain
      */
+    
+    public ViewMain() {
+        initComponents();
+        GUI_DICHVU();
+    }
+
     public ViewMain(DataGlobal dataGlobal) {
         this.dataGlobal = dataGlobal;
         
@@ -35,14 +41,11 @@ public class ViewMain extends javax.swing.JFrame {
     }
     public void GUI_DICHVU() {
         // init component
-        gui_registration registration = new gui_registration(this.dataGlobal, this);
+//        gui_registration registration = new gui_registration(this.dataGlobal, this);
         // add component
-        if (Global.Global_variable.role_name == "staff") {
-            addComponent(panel_dangki, registration);
-        }
-        else {
-            
-        }
+//        if (Global.Global_variable.role_name == "staff") {
+//        addComponent(panel_dangki, registration);
+//        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -61,8 +64,39 @@ public class ViewMain extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         NhanSu = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
+        jTabbedPane3 = new javax.swing.JTabbedPane();
+        panel_nhanvien = new javax.swing.JPanel();
+        panel_taikhoan = new javax.swing.JPanel();
+        panel_vaitro = new javax.swing.JPanel();
+        panel_quyen = new javax.swing.JPanel();
+        panel_quanli = new javax.swing.JPanel();
+        panel_ = new javax.swing.JPanel();
+        jPanel18 = new javax.swing.JPanel();
+        jPanel19 = new javax.swing.JPanel();
+        jPanel20 = new javax.swing.JPanel();
         CaTruc = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
+        jPanel8 = new javax.swing.JPanel();
+        jTabbedPane4 = new javax.swing.JTabbedPane();
+        panel_loaicatruc = new javax.swing.JPanel();
+        panel_catruc = new javax.swing.JPanel();
+        panel_nhiemvu = new javax.swing.JPanel();
+        panel_toanha = new javax.swing.JPanel();
+        jPanel17 = new javax.swing.JPanel();
+        jPanel21 = new javax.swing.JPanel();
         GuiXe = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jTabbedPane2 = new javax.swing.JTabbedPane();
+        panel_guixe = new javax.swing.JPanel();
+        panel_the_cu_dan = new javax.swing.JPanel();
+        panel_mat_the_cd = new javax.swing.JPanel();
+        panel_ptien = new javax.swing.JPanel();
+        panel_khachhang = new javax.swing.JPanel();
+        jPanel11 = new javax.swing.JPanel();
+        jPanel12 = new javax.swing.JPanel();
+        jPanel13 = new javax.swing.JPanel();
+        jPanel14 = new javax.swing.JPanel();
         DichVu = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         panelDichVu = new javax.swing.JTabbedPane();
@@ -123,41 +157,397 @@ public class ViewMain extends javax.swing.JFrame {
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
+        javax.swing.GroupLayout panel_nhanvienLayout = new javax.swing.GroupLayout(panel_nhanvien);
+        panel_nhanvien.setLayout(panel_nhanvienLayout);
+        panel_nhanvienLayout.setHorizontalGroup(
+            panel_nhanvienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panel_nhanvienLayout.setVerticalGroup(
+            panel_nhanvienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane3.addTab("Nhân viên", panel_nhanvien);
+
+        javax.swing.GroupLayout panel_taikhoanLayout = new javax.swing.GroupLayout(panel_taikhoan);
+        panel_taikhoan.setLayout(panel_taikhoanLayout);
+        panel_taikhoanLayout.setHorizontalGroup(
+            panel_taikhoanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panel_taikhoanLayout.setVerticalGroup(
+            panel_taikhoanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane3.addTab("Tài khoản", panel_taikhoan);
+
+        javax.swing.GroupLayout panel_vaitroLayout = new javax.swing.GroupLayout(panel_vaitro);
+        panel_vaitro.setLayout(panel_vaitroLayout);
+        panel_vaitroLayout.setHorizontalGroup(
+            panel_vaitroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panel_vaitroLayout.setVerticalGroup(
+            panel_vaitroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane3.addTab("Vai trò", panel_vaitro);
+
+        javax.swing.GroupLayout panel_quyenLayout = new javax.swing.GroupLayout(panel_quyen);
+        panel_quyen.setLayout(panel_quyenLayout);
+        panel_quyenLayout.setHorizontalGroup(
+            panel_quyenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panel_quyenLayout.setVerticalGroup(
+            panel_quyenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane3.addTab("Quyền", panel_quyen);
+
+        javax.swing.GroupLayout panel_quanliLayout = new javax.swing.GroupLayout(panel_quanli);
+        panel_quanli.setLayout(panel_quanliLayout);
+        panel_quanliLayout.setHorizontalGroup(
+            panel_quanliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panel_quanliLayout.setVerticalGroup(
+            panel_quanliLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane3.addTab("Quản lí", panel_quanli);
+
+        javax.swing.GroupLayout panel_Layout = new javax.swing.GroupLayout(panel_);
+        panel_.setLayout(panel_Layout);
+        panel_Layout.setHorizontalGroup(
+            panel_Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panel_Layout.setVerticalGroup(
+            panel_Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane3.addTab("tab6", panel_);
+
+        javax.swing.GroupLayout jPanel18Layout = new javax.swing.GroupLayout(jPanel18);
+        jPanel18.setLayout(jPanel18Layout);
+        jPanel18Layout.setHorizontalGroup(
+            jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel18Layout.setVerticalGroup(
+            jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane3.addTab("tab7", jPanel18);
+
+        javax.swing.GroupLayout jPanel19Layout = new javax.swing.GroupLayout(jPanel19);
+        jPanel19.setLayout(jPanel19Layout);
+        jPanel19Layout.setHorizontalGroup(
+            jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel19Layout.setVerticalGroup(
+            jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane3.addTab("tab8", jPanel19);
+
+        javax.swing.GroupLayout jPanel20Layout = new javax.swing.GroupLayout(jPanel20);
+        jPanel20.setLayout(jPanel20Layout);
+        jPanel20Layout.setHorizontalGroup(
+            jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel20Layout.setVerticalGroup(
+            jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane3.addTab("tab9", jPanel20);
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1203, Short.MAX_VALUE)
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout NhanSuLayout = new javax.swing.GroupLayout(NhanSu);
         NhanSu.setLayout(NhanSuLayout);
         NhanSuLayout.setHorizontalGroup(
             NhanSuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1203, Short.MAX_VALUE)
+            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         NhanSuLayout.setVerticalGroup(
             NhanSuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 488, Short.MAX_VALUE)
+            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Nhân Sự", NhanSu);
+
+        javax.swing.GroupLayout panel_loaicatrucLayout = new javax.swing.GroupLayout(panel_loaicatruc);
+        panel_loaicatruc.setLayout(panel_loaicatrucLayout);
+        panel_loaicatrucLayout.setHorizontalGroup(
+            panel_loaicatrucLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panel_loaicatrucLayout.setVerticalGroup(
+            panel_loaicatrucLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane4.addTab("Loại ca trực", panel_loaicatruc);
+
+        javax.swing.GroupLayout panel_catrucLayout = new javax.swing.GroupLayout(panel_catruc);
+        panel_catruc.setLayout(panel_catrucLayout);
+        panel_catrucLayout.setHorizontalGroup(
+            panel_catrucLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panel_catrucLayout.setVerticalGroup(
+            panel_catrucLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane4.addTab("Ca trực", panel_catruc);
+
+        javax.swing.GroupLayout panel_nhiemvuLayout = new javax.swing.GroupLayout(panel_nhiemvu);
+        panel_nhiemvu.setLayout(panel_nhiemvuLayout);
+        panel_nhiemvuLayout.setHorizontalGroup(
+            panel_nhiemvuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panel_nhiemvuLayout.setVerticalGroup(
+            panel_nhiemvuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane4.addTab("Nhiệm vụ", panel_nhiemvu);
+
+        javax.swing.GroupLayout panel_toanhaLayout = new javax.swing.GroupLayout(panel_toanha);
+        panel_toanha.setLayout(panel_toanhaLayout);
+        panel_toanhaLayout.setHorizontalGroup(
+            panel_toanhaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panel_toanhaLayout.setVerticalGroup(
+            panel_toanhaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane4.addTab("Tòa nhà", panel_toanha);
+
+        javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
+        jPanel17.setLayout(jPanel17Layout);
+        jPanel17Layout.setHorizontalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel17Layout.setVerticalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane4.addTab("tab5", jPanel17);
+
+        javax.swing.GroupLayout jPanel21Layout = new javax.swing.GroupLayout(jPanel21);
+        jPanel21.setLayout(jPanel21Layout);
+        jPanel21Layout.setHorizontalGroup(
+            jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel21Layout.setVerticalGroup(
+            jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jTabbedPane4.addTab("tab6", jPanel21);
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1203, Short.MAX_VALUE)
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout CaTrucLayout = new javax.swing.GroupLayout(CaTruc);
         CaTruc.setLayout(CaTrucLayout);
         CaTrucLayout.setHorizontalGroup(
             CaTrucLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1203, Short.MAX_VALUE)
+            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         CaTrucLayout.setVerticalGroup(
             CaTrucLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 488, Short.MAX_VALUE)
+            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Ca Trực", CaTruc);
+
+        javax.swing.GroupLayout panel_guixeLayout = new javax.swing.GroupLayout(panel_guixe);
+        panel_guixe.setLayout(panel_guixeLayout);
+        panel_guixeLayout.setHorizontalGroup(
+            panel_guixeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1203, Short.MAX_VALUE)
+        );
+        panel_guixeLayout.setVerticalGroup(
+            panel_guixeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 453, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("Gửi xe", panel_guixe);
+
+        javax.swing.GroupLayout panel_the_cu_danLayout = new javax.swing.GroupLayout(panel_the_cu_dan);
+        panel_the_cu_dan.setLayout(panel_the_cu_danLayout);
+        panel_the_cu_danLayout.setHorizontalGroup(
+            panel_the_cu_danLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1203, Short.MAX_VALUE)
+        );
+        panel_the_cu_danLayout.setVerticalGroup(
+            panel_the_cu_danLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 453, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("Thẻ cư dân", panel_the_cu_dan);
+
+        javax.swing.GroupLayout panel_mat_the_cdLayout = new javax.swing.GroupLayout(panel_mat_the_cd);
+        panel_mat_the_cd.setLayout(panel_mat_the_cdLayout);
+        panel_mat_the_cdLayout.setHorizontalGroup(
+            panel_mat_the_cdLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1203, Short.MAX_VALUE)
+        );
+        panel_mat_the_cdLayout.setVerticalGroup(
+            panel_mat_the_cdLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 453, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("Mất thẻ cư dân", panel_mat_the_cd);
+
+        javax.swing.GroupLayout panel_ptienLayout = new javax.swing.GroupLayout(panel_ptien);
+        panel_ptien.setLayout(panel_ptienLayout);
+        panel_ptienLayout.setHorizontalGroup(
+            panel_ptienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1203, Short.MAX_VALUE)
+        );
+        panel_ptienLayout.setVerticalGroup(
+            panel_ptienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 453, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("Phương tiện", panel_ptien);
+
+        javax.swing.GroupLayout panel_khachhangLayout = new javax.swing.GroupLayout(panel_khachhang);
+        panel_khachhang.setLayout(panel_khachhangLayout);
+        panel_khachhangLayout.setHorizontalGroup(
+            panel_khachhangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1203, Short.MAX_VALUE)
+        );
+        panel_khachhangLayout.setVerticalGroup(
+            panel_khachhangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 453, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("Khách hàng", panel_khachhang);
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1203, Short.MAX_VALUE)
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 453, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("tab6", jPanel11);
+
+        javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
+        jPanel12.setLayout(jPanel12Layout);
+        jPanel12Layout.setHorizontalGroup(
+            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1203, Short.MAX_VALUE)
+        );
+        jPanel12Layout.setVerticalGroup(
+            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 453, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("tab7", jPanel12);
+
+        javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
+        jPanel13.setLayout(jPanel13Layout);
+        jPanel13Layout.setHorizontalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1203, Short.MAX_VALUE)
+        );
+        jPanel13Layout.setVerticalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 453, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("tab8", jPanel13);
+
+        javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
+        jPanel14.setLayout(jPanel14Layout);
+        jPanel14Layout.setHorizontalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1203, Short.MAX_VALUE)
+        );
+        jPanel14Layout.setVerticalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 453, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("tab9", jPanel14);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane2)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane2)
+        );
 
         javax.swing.GroupLayout GuiXeLayout = new javax.swing.GroupLayout(GuiXe);
         GuiXe.setLayout(GuiXeLayout);
         GuiXeLayout.setHorizontalGroup(
             GuiXeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1203, Short.MAX_VALUE)
+            .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         GuiXeLayout.setVerticalGroup(
             GuiXeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 488, Short.MAX_VALUE)
+            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Gửi Xe", GuiXe);
@@ -364,18 +754,49 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel11;
+    private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
+    private javax.swing.JPanel jPanel17;
+    private javax.swing.JPanel jPanel18;
+    private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel20;
+    private javax.swing.JPanel jPanel21;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JTabbedPane jTabbedPane3;
+    private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JTabbedPane panelDichVu;
+    private javax.swing.JPanel panel_;
+    private javax.swing.JPanel panel_catruc;
     private javax.swing.JPanel panel_dangki;
     private javax.swing.JPanel panel_giadichvuThang;
     private javax.swing.JPanel panel_gialuot;
+    private javax.swing.JPanel panel_guixe;
+    private javax.swing.JPanel panel_khachhang;
     private javax.swing.JPanel panel_khungthoigian;
+    private javax.swing.JPanel panel_loaicatruc;
     private javax.swing.JPanel panel_loaidichvu;
     private javax.swing.JPanel panel_loaiphuongtien;
+    private javax.swing.JPanel panel_mat_the_cd;
+    private javax.swing.JPanel panel_nhanvien;
+    private javax.swing.JPanel panel_nhiemvu;
+    private javax.swing.JPanel panel_ptien;
+    private javax.swing.JPanel panel_quanli;
+    private javax.swing.JPanel panel_quyen;
+    private javax.swing.JPanel panel_taikhoan;
     private javax.swing.JPanel panel_thanhtoan;
+    private javax.swing.JPanel panel_the_cu_dan;
     private javax.swing.JPanel panel_thongkedoanhthu;
+    private javax.swing.JPanel panel_toanha;
+    private javax.swing.JPanel panel_vaitro;
     // End of variables declaration//GEN-END:variables
 }
