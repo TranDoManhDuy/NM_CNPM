@@ -4,7 +4,14 @@
  */
 package GUI;
 
+import GUI.DICHVU.gui_payment;
 import GUI.DICHVU.gui_registration;
+import GUI.DICHVU.gui_serviceType;
+import GUI.DICHVU.gui_service_free;
+import GUI.DICHVU.gui_session_free;
+import GUI.DICHVU.gui_statictical;
+import GUI.DICHVU.gui_timeframe;
+import GUI.DICHVU.gui_vehicle_type;
 import Global.DataGlobal;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -41,11 +48,25 @@ public class ViewMain extends javax.swing.JFrame {
     }
     public void GUI_DICHVU() {
         // init component
-//        gui_registration registration = new gui_registration(this.dataGlobal, this);
+        gui_registration registration_gui = new gui_registration(this);
+        gui_payment payment_gui = new gui_payment(this);
+        gui_serviceType service_type_gui = new gui_serviceType();
+        gui_service_free service_free_gui = new gui_service_free();
+        gui_vehicle_type vehicle_type_gui = new gui_vehicle_type();
+        gui_timeframe time_frame_gui = new gui_timeframe();
+        gui_session_free session_fee_gui = new gui_session_free();
+        gui_statictical statictical_gui = new gui_statictical();
         // add component
-//        if (Global.Global_variable.role_name == "staff") {
-//        addComponent(panel_dangki, registration);
-//        }
+        if (Global.Global_variable.role_name == "staff") {
+            addComponent(panel_dangki, registration_gui);
+            addComponent(panel_thanhtoan, payment_gui);
+            addComponent(panel_loaidichvu, service_type_gui);
+            addComponent(panel_giadichvuThang, service_free_gui);
+            addComponent(panel_khungthoigian, time_frame_gui);
+            addComponent(panel_loaiphuongtien, vehicle_type_gui);
+            addComponent(panel_gialuot, session_fee_gui);
+            addComponent(panel_thongkedoanhthu, statictical_gui);
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.

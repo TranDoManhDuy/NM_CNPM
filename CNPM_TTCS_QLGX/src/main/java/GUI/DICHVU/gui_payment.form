@@ -22,15 +22,20 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="jPanel1" max="32767" attributes="0"/>
-                      <Component id="jPanel4" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jPanel1" max="32767" attributes="0"/>
+                          <Component id="jPanel4" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jTextField1" min="-2" pref="392" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="jTextField2" min="-2" pref="387" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace pref="32" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="jPanel2" max="32767" attributes="0"/>
                   <Component id="jPanel3" max="32767" attributes="0"/>
@@ -41,20 +46,20 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jPanel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
                       <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jTextField1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="jTextField2" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="jPanel1" max="32767" attributes="0"/>
-                  <Component id="jPanel2" min="-2" pref="354" max="-2" attributes="0"/>
+                  <Component id="jPanel2" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
           </Group>
@@ -67,7 +72,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane1" alignment="0" pref="705" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -105,74 +110,64 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace pref="8" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jButton2" alignment="1" min="-2" pref="110" max="-2" attributes="0"/>
+                              <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="label_trangthai" min="-2" pref="74" max="-2" attributes="0"/>
+                                      <EmptySpace pref="38" max="32767" attributes="0"/>
+                                      <Component id="comboTrangthai" min="-2" pref="189" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                                      <Component id="label_khachhang" min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="103" alignment="0" groupAlignment="1" attributes="0">
+                                                  <Component id="label_ngaydangki" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="label_id_pt" min="-2" pref="97" max="-2" attributes="0"/>
+                                                  <Component id="label_id_khachhang" min="-2" pref="97" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="txt_id_khachhang" max="32767" attributes="0"/>
+                                              <Component id="txt_ngaydangki" alignment="0" max="32767" attributes="0"/>
+                                              <Group type="102" alignment="1" attributes="0">
+                                                  <Component id="txt_ten_Khachhang" pref="108" max="32767" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Component id="txt_phuongtien" alignment="0" max="32767" attributes="0"/>
+                                              <Component id="jTextField1" max="32767" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                  </Group>
+                              </Group>
+                          </Group>
+                          <EmptySpace pref="18" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="btn_add" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="btn_update" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="btn_delete" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="btnResetForm" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="23" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+              </Group>
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="32767" attributes="0"/>
                   <Component id="inforDetail" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="128" max="-2" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Component id="label_ngaydangki" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="txt_ngaydangki" min="-2" pref="193" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="btn_add" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="btn_update" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="label_id_pt" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="txt_phuongtien" min="-2" pref="116" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="btn_xem_pt" min="-2" pref="75" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" attributes="0">
-                                      <Component id="label_trangthai" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                                      <Component id="comboTrangthai" min="-2" pref="197" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                          </Group>
-                          <EmptySpace max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="label_id_dangki" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="txt_idDangki" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="label_id_khachhang" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="txt_id_khachhang" min="-2" pref="116" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="btnXem_khachhang" pref="76" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="label_khachhang" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="txt_ten_Khachhang" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" attributes="0">
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                  <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="btn_delete" min="-2" max="-2" attributes="0"/>
-                                      <Component id="btnResetForm" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                          </Group>
-                          <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -181,77 +176,65 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="inforDetail" min="-2" pref="28" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="label_id_dangki" min="-2" max="-2" attributes="0"/>
-                              <Component id="txt_idDangki" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="label_id_khachhang" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txt_id_khachhang" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnXem_khachhang" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="label_khachhang" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txt_ten_Khachhang" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="label_ngaydangki" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txt_ngaydangki" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="label_id_pt" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txt_phuongtien" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btn_xem_pt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="comboTrangthai" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="label_trangthai" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
-                  <Component id="btnResetForm" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="label_id_khachhang" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txt_id_khachhang" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="label_khachhang" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txt_ten_Khachhang" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="label_ngaydangki" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txt_ngaydangki" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="label_id_pt" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txt_phuongtien" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace pref="10" max="32767" attributes="0"/>
+                  <Component id="jButton2" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="comboTrangthai" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="label_trangthai" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btn_add" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btn_update" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btn_delete" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnResetForm" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JTextField" name="txt_idDangki">
-          <Properties>
-            <Property name="enabled" type="boolean" value="false"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="label_id_dangki">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Id &#x111;&#x103;ng k&#xed;"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="label_khachhang">
           <Properties>
-            <Property name="text" type="java.lang.String" value="T&#xea;n Kh&#xe1;ch h&#xe0;ng"/>
+            <Property name="text" type="java.lang.String" value="ID &#x111;&#x103;ng k&#xed;"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="label_ngaydangki">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Ng&#xe0;y &#x111;&#x103;ng k&#xed;"/>
+            <Property name="text" type="java.lang.String" value="Ng&#xe0;y l&#xea;n &#x111;&#x1a1;n"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="label_id_pt">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Ph&#x1b0;&#x1a1;ng ti&#x1ec7;n"/>
+            <Property name="text" type="java.lang.String" value="T&#xea;n lo&#x1ea1;i d&#x1ecb;ch v&#x1ee5;"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="label_trangthai">
@@ -270,13 +253,11 @@
         <Component class="javax.swing.JButton" name="btn_update">
           <Properties>
             <Property name="text" type="java.lang.String" value="C&#x1ead;p nh&#x1ead;t"/>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btn_delete">
           <Properties>
             <Property name="text" type="java.lang.String" value="X&#xf3;a"/>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_deleteActionPerformed"/>
@@ -303,14 +284,6 @@
             <Property name="text" type="java.lang.String" value="Th&#xf4;ng tin chi ti&#x1ebf;t"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="btn_xem_pt">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Ch&#x1ecd;n"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_xem_ptActionPerformed"/>
-          </Events>
-        </Component>
         <Component class="javax.swing.JTextField" name="txt_ngaydangki">
           <Properties>
             <Property name="enabled" type="boolean" value="false"/>
@@ -326,7 +299,6 @@
                 <StringItem index="3" value="Item 4"/>
               </StringArray>
             </Property>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="comboTrangthaiActionPerformed"/>
@@ -345,7 +317,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="label_id_khachhang">
           <Properties>
-            <Property name="text" type="java.lang.String" value="ID Kh&#xe1;ch h&#xe0;ng"/>
+            <Property name="text" type="java.lang.String" value="T&#xea;n kh&#xe1;ch h&#xe0;ng"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txt_id_khachhang">
@@ -353,13 +325,25 @@
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="btnXem_khachhang">
+        <Component class="javax.swing.JButton" name="jButton1">
           <Properties>
             <Property name="text" type="java.lang.String" value="Ch&#x1ecd;n"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnXem_khachhangActionPerformed"/>
-          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton2">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Ch&#x1ecd;n d&#x1ecb;ch v&#x1ee5;"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel10">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="ID thanh to&#xe1;n"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="jTextField1">
+          <Properties>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
@@ -371,7 +355,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_conhan" min="-2" max="-2" attributes="0"/>
@@ -380,19 +364,19 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_tatca" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <Component id="btn_find" min="-2" pref="116" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="txtFind" min="-2" pref="168" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="17" max="32767" attributes="0"/>
+                  <EmptySpace pref="11" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="txtFind" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -418,12 +402,12 @@
         </Component>
         <Component class="javax.swing.JButton" name="btn_find">
           <Properties>
-            <Property name="text" type="java.lang.String" value="T&#xec;m ki&#x1ebf;m t&#xea;n"/>
+            <Property name="text" type="java.lang.String" value="T&#xec;m ki&#x1ebf;m"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btn_conhan">
           <Properties>
-            <Property name="text" type="java.lang.String" value="C&#xf2;n h&#x1ea1;n"/>
+            <Property name="text" type="java.lang.String" value="&#x110;&#xe3; TT"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_conhanActionPerformed"/>
@@ -431,7 +415,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="btn_hethan">
           <Properties>
-            <Property name="text" type="java.lang.String" value="H&#x1ebf;t h&#x1ea1;n"/>
+            <Property name="text" type="java.lang.String" value="Ch&#x1b0;a TT"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_hethanActionPerformed"/>
@@ -488,14 +472,14 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                           <Component id="btn_bo_loc" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <Component id="comboYearEnd" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="54" max="32767" attributes="0"/>
                           <Component id="btn_loc" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -507,7 +491,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -690,14 +674,11 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JTextField" name="jTextField1">
+    <Component class="javax.swing.JTextField" name="jTextField2">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&#x110;ang hi&#x1ec3;n th&#x1ecb; danh s&#xe1;ch c&#xe1;c &#x111;&#x103;ng k&#xed; c&#xf2;n h&#x1ea1;n"/>
+        <Property name="text" type="java.lang.String" value="&#x110;ang hi&#x1ec3;n th&#x1ecb; danh s&#xe1;ch thanh to&#xe1;n &#x111;&#xe3; ho&#xe0;n th&#xe0;nh"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField1ActionPerformed"/>
-      </Events>
     </Component>
   </SubComponents>
 </Form>

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <Properties>
+    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+      <Color blue="ff" green="ff" red="cc" type="rgb"/>
+    </Property>
+  </Properties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jPanel4" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="jTextField1" min="-2" pref="428" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+          </Group>
+          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                  <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="401" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jTextField1" min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace pref="265" max="32767" attributes="0"/>
+          </Group>
+          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="134" max="-2" attributes="0"/>
+                  <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="23" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JPanel" name="jPanel1">
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Component id="jScrollPane1" alignment="0" pref="700" max="32767" attributes="0"/>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Component id="jScrollPane1" alignment="1" pref="328" max="32767" attributes="0"/>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTable" name="Table_dangki">
+              <Properties>
+                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                  <Table columnCount="4" rowCount="4">
+                    <Column editable="true" title="Title 1" type="java.lang.Object"/>
+                    <Column editable="true" title="Title 2" type="java.lang.Object"/>
+                    <Column editable="true" title="Title 3" type="java.lang.Object"/>
+                    <Column editable="true" title="Title 4" type="java.lang.Object"/>
+                  </Table>
+                </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="jPanel2">
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="inforDetail" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="128" max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="1" attributes="0">
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="btnResetForm" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="label_id_dangki" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="label_id_khachhang" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="txt_idDangki" pref="167" max="32767" attributes="0"/>
+                                      <Component id="txt_id_khachhang" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Group type="102" attributes="0">
+                                  <EmptySpace pref="25" max="32767" attributes="0"/>
+                                  <Component id="btn_add" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="btn_update" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="btn_delete" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                  </Group>
+                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="inforDetail" min="-2" pref="28" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="label_id_dangki" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="txt_idDangki" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="label_id_khachhang" min="-2" max="-2" attributes="0"/>
+                      <Component id="txt_id_khachhang" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace pref="25" max="32767" attributes="0"/>
+                  <Component id="btnResetForm" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="btn_add" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btn_update" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btn_delete" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JTextField" name="txt_idDangki">
+          <Properties>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="label_id_dangki">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="ID lo&#x1ea1;i ph&#x1b0;&#x1a1;ng ti&#x1ec7;n"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_add">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Th&#xea;m"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_addActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_update">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="C&#x1ead;p nh&#x1ead;t"/>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_delete">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="X&#xf3;a"/>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_deleteActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="inforDetail">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Th&#xf4;ng tin chi ti&#x1ebf;t"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnResetForm">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Reset"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnResetFormActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="label_id_khachhang">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="T&#xea;n lo&#x1ea1;i ph&#x1b0;&#x1a1;ng ti&#x1ec7;n"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="txt_id_khachhang">
+          <Properties>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="jPanel4">
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="jLabel21" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="btn_conhan1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="btn_hethan1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="btn_tatca1" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="btn_find1" min="-2" pref="116" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="txtFind1" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace pref="265" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace pref="12" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="txtFind1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btn_find1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="btn_conhan1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btn_hethan1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel21" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btn_tatca1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace pref="12" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JTextField" name="txtFind1">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtFind1ActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_find1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="T&#xec;m ki&#x1ebf;m t&#xea;n"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_conhan1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="C&#xf2;n cho ph&#xe9;p"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_conhan1ActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_hethan1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Kh&#xf4;ng c&#xf2;n cho ph&#xe9;p"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_hethan1ActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel21">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Danh s&#xe1;ch:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_tatca1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="T&#x1ea5;t c&#x1ea3;"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JTextField" name="jTextField1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&#x110;ang hi&#x1ec3;n th&#x1ecb; danh s&#xe1;ch c&#xe1;c lo&#x1ea1;i ph&#x1b0;&#x1a1;ng ti&#x1ec7;n &#x111;&#x1b0;&#x1ee3;c cho ph&#xe9;p g&#x1eed;i &#x1edf; nh&#xe0; xe"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+  </SubComponents>
+</Form>
