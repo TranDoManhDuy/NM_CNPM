@@ -37,9 +37,11 @@ public class gui_registration extends javax.swing.JPanel {
     public gui_registration(ViewMain viewmain) {
         this.viewmain = viewmain;
         initComponents();
-        comboTrangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Còn thời hạn", "Hết thời hạn", ""}));
-        comboTrangthai.setSelectedIndex(2);
+        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Còn thời hạn", "Hết thời hạn", ""}));
+        combo_trangthai.setSelectedIndex(2);
         txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
+        
+        // 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
         tableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -48,56 +50,58 @@ public class gui_registration extends javax.swing.JPanel {
         };
         initTable();
         fillTable();
-        comboDayStart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        // 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+        
+        combo_ngaybatdau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
         , "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
         }));
-        comboDayEnd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        combo_ngayketthuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
         , "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
         }));
-        comboMonthStart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        combo_thangbatdau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
         , "11", "12"}));
-        comboMonthEnd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        combo_thangketthuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
         , "11", "12"}));
         
-        comboYearStart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", 
+        combo_nambatdau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", 
         "2027", "2028"}));
-        comboYearEnd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", 
+        combo_namketthuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", 
         "2027", "2028"}));
         
-        comboDayStart.setSelectedIndex(0);
-        comboDayEnd.setSelectedIndex(0);
-        comboMonthStart.setSelectedIndex(0);
-        comboMonthEnd.setSelectedIndex(0);
-        comboYearStart.setSelectedIndex(0);
-        comboYearEnd.setSelectedIndex(0);
+        combo_ngaybatdau.setSelectedIndex(0);
+        combo_ngayketthuc.setSelectedIndex(0);
+        combo_thangbatdau.setSelectedIndex(0);
+        combo_thangketthuc.setSelectedIndex(0);
+        combo_nambatdau.setSelectedIndex(0);
+        combo_namketthuc.setSelectedIndex(0);
         
-        Table_dangki.addMouseListener(new MouseAdapter()
+        table_dangki.addMouseListener(new MouseAdapter()
         {
             @Override
             public void mouseClicked(MouseEvent e) {
-                btn_add.setEnabled(false);
-                btn_update.setEnabled(true);
-                btn_delete.setEnabled(true);
+                btn_them.setEnabled(false);
+                btn_capnhat.setEnabled(true);
+                btn_xoa.setEnabled(true);
                 
-                comboTrangthai.setEnabled(true);
+                combo_trangthai.setEnabled(true);
                 Customer customer = new Customer();
                 Vehicle vehicle = new Vehicle();
-                int row = Table_dangki.rowAtPoint(e.getPoint());
+                int row = table_dangki.rowAtPoint(e.getPoint());
                 ArrayList <Regisatration> arr = RegisatrationDAO.getInstance().getList();
                 Regisatration dk = arr.get(row);
                 customer = CustomerDAO.getInstance().findbyID(dk.getCustomer_id());
                 vehicle = VehicleDAO.getInstance().findbyID(dk.getVehicle_id());
-                txt_idDangki.setText(String.valueOf(dk.getRegistration_id()));
+                txt_iddangki.setText(String.valueOf(dk.getRegistration_id()));
                 txt_id_khachhang.setText(String.valueOf(customer.getCustomer_id()));
                 txt_ten_Khachhang.setText(customer.getFull_name());
                 txt_ngaydangki.setText(String.valueOf(dk.getRegistration_date()));
                 txt_phuongtien.setText(vehicle.getIdentification_code());
                 String trangthai = "";
                 if (dk.getState() == 'A') {
-                    comboTrangthai.setSelectedIndex(0);
+                    combo_trangthai.setSelectedIndex(0);
                 }
                 else {
-                    comboTrangthai.setSelectedIndex(1);
+                    combo_trangthai.setSelectedIndex(1);
                 }
                 
                 arr = null;
@@ -108,16 +112,16 @@ public class gui_registration extends javax.swing.JPanel {
         });
     }
     public void initTable() {
-        String[] header = new String[] {"ID đăng kí", "id Khách hàng",  "Khách hàng", "Ngày đăng kí", "Định danh phương tiện", "Trạng thái"};
+        String[] header = new String[] {"ID đăng kí", "Khách hàng", "Ngày đăng kí", "Định danh phương tiện", "Trạng thái"};
         tableModel.setColumnIdentifiers(header);
-        Table_dangki.setModel(tableModel);
+        table_dangki.setModel(tableModel);
     }
     
     public void fillTable() {
         ArrayList <Regisatration> listDK = RegisatrationDAO.getInstance().getList();
         Customer customer = new Customer();
         Vehicle vehicle = new Vehicle();
-        
+        // 1
         tableModel.setRowCount(0);
         for (Regisatration dk : listDK) {
             try {
@@ -133,7 +137,7 @@ public class gui_registration extends javax.swing.JPanel {
             else {
                 trangthai = "Hết thời hạn";
             }
-            tableModel.addRow(new String[] {String.valueOf(dk.getRegistration_id()), String.valueOf(customer.getCustomer_id()),customer.getFull_name(), String.valueOf(dk.getRegistration_date()), vehicle.getIdentification_code(), trangthai});
+            tableModel.addRow(new String[] {String.valueOf(dk.getRegistration_id()),customer.getFull_name(), String.valueOf(dk.getRegistration_date()), vehicle.getIdentification_code(), trangthai});
         }
         tableModel.fireTableDataChanged();
         listDK = null;
@@ -151,56 +155,56 @@ public class gui_registration extends javax.swing.JPanel {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        Table_dangki = new javax.swing.JTable();
+        table_dangki = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
-        txt_idDangki = new javax.swing.JTextField();
-        label_id_dangki = new javax.swing.JLabel();
+        txt_iddangki = new javax.swing.JTextField();
+        label_iddangki = new javax.swing.JLabel();
         label_khachhang = new javax.swing.JLabel();
         label_ngaydangki = new javax.swing.JLabel();
         label_id_pt = new javax.swing.JLabel();
         label_trangthai = new javax.swing.JLabel();
-        btn_add = new javax.swing.JButton();
-        btn_update = new javax.swing.JButton();
-        btn_delete = new javax.swing.JButton();
+        btn_them = new javax.swing.JButton();
+        btn_capnhat = new javax.swing.JButton();
+        btn_xoa = new javax.swing.JButton();
         txt_ten_Khachhang = new javax.swing.JTextField();
         txt_phuongtien = new javax.swing.JTextField();
         inforDetail = new javax.swing.JLabel();
-        btn_xem_pt = new javax.swing.JButton();
+        btn_chonphuongtien = new javax.swing.JButton();
         txt_ngaydangki = new javax.swing.JTextField();
-        comboTrangthai = new javax.swing.JComboBox<>();
-        btnResetForm = new javax.swing.JButton();
+        combo_trangthai = new javax.swing.JComboBox<>();
+        btn_datlai = new javax.swing.JButton();
         label_id_khachhang = new javax.swing.JLabel();
         txt_id_khachhang = new javax.swing.JTextField();
-        btnXem_khachhang = new javax.swing.JButton();
+        btn_chonkhachhang = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        txtFind = new javax.swing.JTextField();
-        btn_find = new javax.swing.JButton();
+        txt_timkiem = new javax.swing.JTextField();
+        btn_timkiem = new javax.swing.JButton();
         btn_conhan = new javax.swing.JButton();
         btn_hethan = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         btn_tatca = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        comboDayStart = new javax.swing.JComboBox<>();
-        comboMonthStart = new javax.swing.JComboBox<>();
-        comboYearStart = new javax.swing.JComboBox<>();
+        combo_ngaybatdau = new javax.swing.JComboBox<>();
+        combo_thangbatdau = new javax.swing.JComboBox<>();
+        combo_nambatdau = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        comboDayEnd = new javax.swing.JComboBox<>();
-        comboMonthEnd = new javax.swing.JComboBox<>();
-        comboYearEnd = new javax.swing.JComboBox<>();
+        combo_ngayketthuc = new javax.swing.JComboBox<>();
+        combo_thangketthuc = new javax.swing.JComboBox<>();
+        combo_namketthuc = new javax.swing.JComboBox<>();
         btn_loc = new javax.swing.JButton();
         btn_bo_loc = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txt_tinnhan = new javax.swing.JTextField();
 
         setBackground(new java.awt.Color(204, 255, 255));
 
-        Table_dangki.setModel(new javax.swing.table.DefaultTableModel(
+        table_dangki.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -211,7 +215,7 @@ public class gui_registration extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(Table_dangki);
+        jScrollPane1.setViewportView(table_dangki);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -224,9 +228,9 @@ public class gui_registration extends javax.swing.JPanel {
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
-        txt_idDangki.setEnabled(false);
+        txt_iddangki.setEnabled(false);
 
-        label_id_dangki.setText("Id đăng kí");
+        label_iddangki.setText("Id đăng kí");
 
         label_khachhang.setText("Tên Khách hàng");
 
@@ -236,21 +240,21 @@ public class gui_registration extends javax.swing.JPanel {
 
         label_trangthai.setText("Trạng thái");
 
-        btn_add.setText("Thêm");
-        btn_add.addActionListener(new java.awt.event.ActionListener() {
+        btn_them.setText("Thêm");
+        btn_them.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_addActionPerformed(evt);
+                btn_themActionPerformed(evt);
             }
         });
 
-        btn_update.setText("Cập nhật");
-        btn_update.setEnabled(false);
+        btn_capnhat.setText("Cập nhật");
+        btn_capnhat.setEnabled(false);
 
-        btn_delete.setText("Xóa");
-        btn_delete.setEnabled(false);
-        btn_delete.addActionListener(new java.awt.event.ActionListener() {
+        btn_xoa.setText("Xóa");
+        btn_xoa.setEnabled(false);
+        btn_xoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_deleteActionPerformed(evt);
+                btn_xoaActionPerformed(evt);
             }
         });
 
@@ -270,27 +274,27 @@ public class gui_registration extends javax.swing.JPanel {
 
         inforDetail.setText("Thông tin chi tiết");
 
-        btn_xem_pt.setText("Chọn");
-        btn_xem_pt.addActionListener(new java.awt.event.ActionListener() {
+        btn_chonphuongtien.setText("Chọn");
+        btn_chonphuongtien.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_xem_ptActionPerformed(evt);
+                btn_chonphuongtienActionPerformed(evt);
             }
         });
 
         txt_ngaydangki.setEnabled(false);
 
-        comboTrangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        comboTrangthai.setEnabled(false);
-        comboTrangthai.addActionListener(new java.awt.event.ActionListener() {
+        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_trangthai.setEnabled(false);
+        combo_trangthai.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboTrangthaiActionPerformed(evt);
+                combo_trangthaiActionPerformed(evt);
             }
         });
 
-        btnResetForm.setText("Reset");
-        btnResetForm.addActionListener(new java.awt.event.ActionListener() {
+        btn_datlai.setText("Đặt lại");
+        btn_datlai.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnResetFormActionPerformed(evt);
+                btn_datlaiActionPerformed(evt);
             }
         });
 
@@ -298,10 +302,10 @@ public class gui_registration extends javax.swing.JPanel {
 
         txt_id_khachhang.setEnabled(false);
 
-        btnXem_khachhang.setText("Chọn");
-        btnXem_khachhang.addActionListener(new java.awt.event.ActionListener() {
+        btn_chonkhachhang.setText("Chọn");
+        btn_chonkhachhang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnXem_khachhangActionPerformed(evt);
+                btn_chonkhachhangActionPerformed(evt);
             }
         });
 
@@ -324,33 +328,33 @@ public class gui_registration extends javax.swing.JPanel {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(btn_add)
+                                .addComponent(btn_them)
                                 .addGap(28, 28, 28)
-                                .addComponent(btn_update))
+                                .addComponent(btn_capnhat))
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(jPanel2Layout.createSequentialGroup()
                                     .addComponent(label_id_pt)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addComponent(txt_phuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(btn_xem_pt, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(btn_chonphuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(jPanel2Layout.createSequentialGroup()
                                     .addComponent(label_trangthai)
                                     .addGap(36, 36, 36)
-                                    .addComponent(comboTrangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(combo_trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(label_id_dangki)
+                                .addComponent(label_iddangki)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txt_idDangki))
+                                .addComponent(txt_iddangki))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                                 .addComponent(label_id_khachhang)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txt_id_khachhang, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnXem_khachhang, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
+                                .addComponent(btn_chonkhachhang, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                                 .addComponent(label_khachhang)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -358,8 +362,8 @@ public class gui_registration extends javax.swing.JPanel {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(btn_delete)
-                                    .addComponent(btnResetForm))))
+                                    .addComponent(btn_xoa)
+                                    .addComponent(btn_datlai))))
                         .addGap(32, 32, 32))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -371,13 +375,13 @@ public class gui_registration extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(label_id_dangki)
-                            .addComponent(txt_idDangki, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(label_iddangki)
+                            .addComponent(txt_iddangki, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(label_id_khachhang)
                             .addComponent(txt_id_khachhang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnXem_khachhang))
+                            .addComponent(btn_chonkhachhang))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(label_khachhang)
@@ -390,27 +394,27 @@ public class gui_registration extends javax.swing.JPanel {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(label_id_pt)
                             .addComponent(txt_phuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_xem_pt))
+                            .addComponent(btn_chonphuongtien))
                         .addGap(18, 18, 18)
-                        .addComponent(comboTrangthai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(combo_trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(label_trangthai))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnResetForm)
+                .addComponent(btn_datlai)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_add)
-                    .addComponent(btn_update)
-                    .addComponent(btn_delete))
+                    .addComponent(btn_them)
+                    .addComponent(btn_capnhat)
+                    .addComponent(btn_xoa))
                 .addGap(52, 52, 52))
         );
 
-        txtFind.addActionListener(new java.awt.event.ActionListener() {
+        txt_timkiem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtFindActionPerformed(evt);
+                txt_timkiemActionPerformed(evt);
             }
         });
 
-        btn_find.setText("Tìm kiếm tên");
+        btn_timkiem.setText("Tìm kiếm tên");
 
         btn_conhan.setText("Còn hạn");
         btn_conhan.addActionListener(new java.awt.event.ActionListener() {
@@ -446,9 +450,9 @@ public class gui_registration extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_tatca))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(btn_find, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_timkiem, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtFind, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txt_timkiem, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -456,8 +460,8 @@ public class gui_registration extends javax.swing.JPanel {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtFind, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_find))
+                    .addComponent(txt_timkiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_timkiem))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_conhan)
@@ -469,17 +473,17 @@ public class gui_registration extends javax.swing.JPanel {
 
         jLabel2.setText("Thời gian: Từ");
 
-        comboDayStart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        comboDayStart.setMinimumSize(new java.awt.Dimension(100, 22));
-        comboDayStart.addActionListener(new java.awt.event.ActionListener() {
+        combo_ngaybatdau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_ngaybatdau.setMinimumSize(new java.awt.Dimension(100, 22));
+        combo_ngaybatdau.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboDayStartActionPerformed(evt);
+                combo_ngaybatdauActionPerformed(evt);
             }
         });
 
-        comboMonthStart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_thangbatdau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        comboYearStart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_nambatdau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel3.setText("Ngày");
 
@@ -489,11 +493,11 @@ public class gui_registration extends javax.swing.JPanel {
 
         jLabel6.setText("Đến");
 
-        comboDayEnd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_ngayketthuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        comboMonthEnd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_thangketthuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        comboYearEnd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_namketthuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btn_loc.setText("Lọc");
 
@@ -514,26 +518,26 @@ public class gui_registration extends javax.swing.JPanel {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(comboDayStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combo_ngaybatdau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(comboMonthStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combo_thangbatdau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(comboYearStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(combo_nambatdau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel6))
                     .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(comboDayEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combo_ngayketthuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(comboMonthEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combo_thangketthuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -542,7 +546,7 @@ public class gui_registration extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_bo_loc))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(comboYearEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(combo_namketthuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_loc)))
                 .addContainerGap())
@@ -566,23 +570,23 @@ public class gui_registration extends javax.swing.JPanel {
                         .addComponent(btn_bo_loc)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)))
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(comboDayStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combo_ngaybatdau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
-                    .addComponent(comboMonthStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboYearStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combo_thangbatdau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combo_nambatdau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
-                    .addComponent(comboDayEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboMonthEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboYearEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combo_ngayketthuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combo_thangketthuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combo_namketthuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_loc))
                 .addGap(14, 14, 14))
         );
 
-        jTextField1.setText("Đang hiển thị danh sách các đăng kí còn hạn");
-        jTextField1.setEnabled(false);
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
+        txt_tinnhan.setEnabled(false);
+        txt_tinnhan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txt_tinnhanActionPerformed(evt);
             }
         });
 
@@ -596,7 +600,7 @@ public class gui_registration extends javax.swing.JPanel {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 392, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, 392, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -612,7 +616,7 @@ public class gui_registration extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -629,33 +633,33 @@ public class gui_registration extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_phuongtienActionPerformed
 
-    private void comboTrangthaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboTrangthaiActionPerformed
+    private void combo_trangthaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_trangthaiActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_comboTrangthaiActionPerformed
+    }//GEN-LAST:event_combo_trangthaiActionPerformed
 
-    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+    private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
         // TODO add your handling code here:
         
-    }//GEN-LAST:event_btn_deleteActionPerformed
+    }//GEN-LAST:event_btn_xoaActionPerformed
 
-    private void btnResetFormActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetFormActionPerformed
+    private void btn_datlaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_datlaiActionPerformed
         // TODO add your handling code here:
-        txt_idDangki.setText("");
+        txt_iddangki.setText("");
         txt_ten_Khachhang.setText("");
         txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
         txt_phuongtien.setText("");
         txt_id_khachhang.setText("");
-        comboTrangthai.setSelectedIndex(2);
-        comboTrangthai.setEnabled(false);
+        combo_trangthai.setSelectedIndex(2);
+        combo_trangthai.setEnabled(false);
         
-        btn_add.setEnabled(true);
-        btn_update.setEnabled(false);
-        btn_delete.setEnabled(false);
-    }//GEN-LAST:event_btnResetFormActionPerformed
+        btn_them.setEnabled(true);
+        btn_capnhat.setEnabled(false);
+        btn_xoa.setEnabled(false);
+    }//GEN-LAST:event_btn_datlaiActionPerformed
 
-    private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
+    private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
         // TODO add your handling code here:
-        if (txt_idDangki.getText().trim().length() > 0) {
+        if (txt_iddangki.getText().trim().length() > 0) {
             System.out.println("Phai tao dki moi");
             return;
         }
@@ -667,9 +671,9 @@ public class gui_registration extends javax.swing.JPanel {
             System.out.println("phuong tien dau");
             return;
         }
-    }//GEN-LAST:event_btn_addActionPerformed
+    }//GEN-LAST:event_btn_themActionPerformed
 
-    private void btnXem_khachhangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXem_khachhangActionPerformed
+    private void btn_chonkhachhangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonkhachhangActionPerformed
         // TODO add your handling code here:
         
         // vo hieu hoa 
@@ -696,9 +700,9 @@ public class gui_registration extends javax.swing.JPanel {
         // hien cua so thong bao
         logmessage.setLocationRelativeTo(null);
         logmessage.setVisible(true);
-    }//GEN-LAST:event_btnXem_khachhangActionPerformed
+    }//GEN-LAST:event_btn_chonkhachhangActionPerformed
 
-    private void btn_xem_ptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xem_ptActionPerformed
+    private void btn_chonphuongtienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonphuongtienActionPerformed
         // TODO add your handling code here:
         // init log confirm
         
@@ -713,6 +717,8 @@ public class gui_registration extends javax.swing.JPanel {
                 this.setVisible(false);
                 viewmain.setEnabled(true);
                 viewmain.requestFocus();
+                
+                System.out.println("hkjdawhkjđnaokwdnkjàcbnưaeoilfjằdưeanlk");
             }
             @Override
             public void reject() {
@@ -734,11 +740,11 @@ public class gui_registration extends javax.swing.JPanel {
         // hiện log xác nhận
         logconfirm.setLocationRelativeTo(null);
         logconfirm.setVisible(true);
-    }//GEN-LAST:event_btn_xem_ptActionPerformed
+    }//GEN-LAST:event_btn_chonphuongtienActionPerformed
 
-    private void txtFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFindActionPerformed
+    private void txt_timkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_timkiemActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtFindActionPerformed
+    }//GEN-LAST:event_txt_timkiemActionPerformed
 
     private void btn_conhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_conhanActionPerformed
         // TODO add your handling code here:
@@ -748,36 +754,35 @@ public class gui_registration extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_hethanActionPerformed
 
-    private void comboDayStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboDayStartActionPerformed
+    private void combo_ngaybatdauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_ngaybatdauActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_comboDayStartActionPerformed
+    }//GEN-LAST:event_combo_ngaybatdauActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txt_tinnhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tinnhanActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txt_tinnhanActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable Table_dangki;
-    private javax.swing.JButton btnResetForm;
-    private javax.swing.JButton btnXem_khachhang;
-    private javax.swing.JButton btn_add;
     private javax.swing.JButton btn_bo_loc;
+    private javax.swing.JButton btn_capnhat;
+    private javax.swing.JButton btn_chonkhachhang;
+    private javax.swing.JButton btn_chonphuongtien;
     private javax.swing.JButton btn_conhan;
-    private javax.swing.JButton btn_delete;
-    private javax.swing.JButton btn_find;
+    private javax.swing.JButton btn_datlai;
     private javax.swing.JButton btn_hethan;
     private javax.swing.JButton btn_loc;
     private javax.swing.JButton btn_tatca;
-    private javax.swing.JButton btn_update;
-    private javax.swing.JButton btn_xem_pt;
-    private javax.swing.JComboBox<String> comboDayEnd;
-    private javax.swing.JComboBox<String> comboDayStart;
-    private javax.swing.JComboBox<String> comboMonthEnd;
-    private javax.swing.JComboBox<String> comboMonthStart;
-    private javax.swing.JComboBox<String> comboTrangthai;
-    private javax.swing.JComboBox<String> comboYearEnd;
-    private javax.swing.JComboBox<String> comboYearStart;
+    private javax.swing.JButton btn_them;
+    private javax.swing.JButton btn_timkiem;
+    private javax.swing.JButton btn_xoa;
+    private javax.swing.JComboBox<String> combo_nambatdau;
+    private javax.swing.JComboBox<String> combo_namketthuc;
+    private javax.swing.JComboBox<String> combo_ngaybatdau;
+    private javax.swing.JComboBox<String> combo_ngayketthuc;
+    private javax.swing.JComboBox<String> combo_thangbatdau;
+    private javax.swing.JComboBox<String> combo_thangketthuc;
+    private javax.swing.JComboBox<String> combo_trangthai;
     private javax.swing.JLabel inforDetail;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -793,18 +798,19 @@ public class gui_registration extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JLabel label_id_dangki;
     private javax.swing.JLabel label_id_khachhang;
     private javax.swing.JLabel label_id_pt;
+    private javax.swing.JLabel label_iddangki;
     private javax.swing.JLabel label_khachhang;
     private javax.swing.JLabel label_ngaydangki;
     private javax.swing.JLabel label_trangthai;
-    private javax.swing.JTextField txtFind;
-    private javax.swing.JTextField txt_idDangki;
+    private javax.swing.JTable table_dangki;
     private javax.swing.JTextField txt_id_khachhang;
+    private javax.swing.JTextField txt_iddangki;
     private javax.swing.JTextField txt_ngaydangki;
     private javax.swing.JTextField txt_phuongtien;
     private javax.swing.JTextField txt_ten_Khachhang;
+    private javax.swing.JTextField txt_timkiem;
+    private javax.swing.JTextField txt_tinnhan;
     // End of variables declaration//GEN-END:variables
 }

@@ -26,31 +26,34 @@ public class gui_vehicle_type extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jComboBox1 = new javax.swing.JComboBox<>();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        Table_dangki = new javax.swing.JTable();
+        table_loaiphuongtien = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
-        txt_idDangki = new javax.swing.JTextField();
+        txt_idloaiphuongtien = new javax.swing.JTextField();
         label_id_dangki = new javax.swing.JLabel();
-        btn_add = new javax.swing.JButton();
-        btn_update = new javax.swing.JButton();
-        btn_delete = new javax.swing.JButton();
+        btn_them = new javax.swing.JButton();
+        btn_capnhat = new javax.swing.JButton();
+        btn_xoa = new javax.swing.JButton();
         inforDetail = new javax.swing.JLabel();
-        btnResetForm = new javax.swing.JButton();
+        btn_datlai = new javax.swing.JButton();
         label_id_khachhang = new javax.swing.JLabel();
-        txt_id_khachhang = new javax.swing.JTextField();
+        txt_tenloaiphuongtien = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
-        txtFind1 = new javax.swing.JTextField();
-        btn_find1 = new javax.swing.JButton();
-        btn_conhan1 = new javax.swing.JButton();
-        btn_hethan1 = new javax.swing.JButton();
+        txt_timkiem = new javax.swing.JTextField();
+        btn_timkiem = new javax.swing.JButton();
+        btn_conchophep = new javax.swing.JButton();
+        btn_khongconchophep = new javax.swing.JButton();
         jLabel21 = new javax.swing.JLabel();
-        btn_tatca1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        btn_tatca = new javax.swing.JButton();
+        txt_tinnhan = new javax.swing.JTextField();
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         setBackground(new java.awt.Color(204, 255, 255));
 
-        Table_dangki.setModel(new javax.swing.table.DefaultTableModel(
+        table_loaiphuongtien.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -61,7 +64,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(Table_dangki);
+        jScrollPane1.setViewportView(table_loaiphuongtien);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -74,40 +77,40 @@ public class gui_vehicle_type extends javax.swing.JPanel {
             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
         );
 
-        txt_idDangki.setEnabled(false);
+        txt_idloaiphuongtien.setEnabled(false);
 
         label_id_dangki.setText("ID loại phương tiện");
 
-        btn_add.setText("Thêm");
-        btn_add.addActionListener(new java.awt.event.ActionListener() {
+        btn_them.setText("Thêm");
+        btn_them.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_addActionPerformed(evt);
+                btn_themActionPerformed(evt);
             }
         });
 
-        btn_update.setText("Cập nhật");
-        btn_update.setEnabled(false);
+        btn_capnhat.setText("Cập nhật");
+        btn_capnhat.setEnabled(false);
 
-        btn_delete.setText("Xóa");
-        btn_delete.setEnabled(false);
-        btn_delete.addActionListener(new java.awt.event.ActionListener() {
+        btn_xoa.setText("Xóa");
+        btn_xoa.setEnabled(false);
+        btn_xoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_deleteActionPerformed(evt);
+                btn_xoaActionPerformed(evt);
             }
         });
 
         inforDetail.setText("Thông tin chi tiết");
 
-        btnResetForm.setText("Reset");
-        btnResetForm.addActionListener(new java.awt.event.ActionListener() {
+        btn_datlai.setText("Đặt lại");
+        btn_datlai.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnResetFormActionPerformed(evt);
+                btn_datlaiActionPerformed(evt);
             }
         });
 
         label_id_khachhang.setText("Tên loại phương tiện");
 
-        txt_id_khachhang.setEnabled(false);
+        txt_tenloaiphuongtien.setEnabled(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -121,7 +124,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnResetForm))
+                        .addComponent(btn_datlai))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(36, 36, 36)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -131,15 +134,15 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                                     .addComponent(label_id_khachhang))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txt_idDangki, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                                    .addComponent(txt_id_khachhang)))
+                                    .addComponent(txt_idloaiphuongtien, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                                    .addComponent(txt_tenloaiphuongtien)))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
-                                .addComponent(btn_add)
+                                .addComponent(btn_them)
                                 .addGap(18, 18, 18)
-                                .addComponent(btn_update)
+                                .addComponent(btn_capnhat)
                                 .addGap(18, 18, 18)
-                                .addComponent(btn_delete)))))
+                                .addComponent(btn_xoa)))))
                 .addGap(32, 32, 32))
         );
         jPanel2Layout.setVerticalGroup(
@@ -150,46 +153,51 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(label_id_dangki)
-                    .addComponent(txt_idDangki, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_idloaiphuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(label_id_khachhang)
-                    .addComponent(txt_id_khachhang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_tenloaiphuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
-                .addComponent(btnResetForm)
+                .addComponent(btn_datlai)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_add)
-                    .addComponent(btn_update)
-                    .addComponent(btn_delete))
+                    .addComponent(btn_them)
+                    .addComponent(btn_capnhat)
+                    .addComponent(btn_xoa))
                 .addGap(18, 18, 18))
         );
 
-        txtFind1.addActionListener(new java.awt.event.ActionListener() {
+        txt_timkiem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtFind1ActionPerformed(evt);
+                txt_timkiemActionPerformed(evt);
             }
         });
 
-        btn_find1.setText("Tìm kiếm tên");
-
-        btn_conhan1.setText("Còn cho phép");
-        btn_conhan1.addActionListener(new java.awt.event.ActionListener() {
+        btn_timkiem.setText("Tìm kiếm tên");
+        btn_timkiem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_conhan1ActionPerformed(evt);
+                btn_timkiemActionPerformed(evt);
             }
         });
 
-        btn_hethan1.setText("Không còn cho phép");
-        btn_hethan1.addActionListener(new java.awt.event.ActionListener() {
+        btn_conchophep.setText("Còn cho phép");
+        btn_conchophep.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_hethan1ActionPerformed(evt);
+                btn_conchophepActionPerformed(evt);
+            }
+        });
+
+        btn_khongconchophep.setText("Không còn cho phép");
+        btn_khongconchophep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_khongconchophepActionPerformed(evt);
             }
         });
 
         jLabel21.setText("Danh sách:");
 
-        btn_tatca1.setText("Tất cả");
+        btn_tatca.setText("Tất cả");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -201,15 +209,15 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel21)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_conhan1)
+                        .addComponent(btn_conchophep)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_hethan1)
+                        .addComponent(btn_khongconchophep)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_tatca1))
+                        .addComponent(btn_tatca))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(btn_find1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_timkiem, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtFind1)))
+                        .addComponent(txt_timkiem)))
                 .addContainerGap(265, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -217,19 +225,19 @@ public class gui_vehicle_type extends javax.swing.JPanel {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap(12, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtFind1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_find1))
+                    .addComponent(txt_timkiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_timkiem))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_conhan1)
-                    .addComponent(btn_hethan1)
+                    .addComponent(btn_conchophep)
+                    .addComponent(btn_khongconchophep)
                     .addComponent(jLabel21)
-                    .addComponent(btn_tatca1))
+                    .addComponent(btn_tatca))
                 .addContainerGap(12, Short.MAX_VALUE))
         );
 
-        jTextField1.setText("Đang hiển thị danh sách các loại phương tiện được cho phép gửi ở nhà xe");
-        jTextField1.setEnabled(false);
+        txt_tinnhan.setText("Đang hiển thị danh sách các loại phương tiện được cho phép gửi ở nhà xe");
+        txt_tinnhan.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -240,7 +248,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -260,7 +268,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(265, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -270,61 +278,59 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnResetFormActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetFormActionPerformed
+    private void btn_datlaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_datlaiActionPerformed
         // TODO add your handling code here:
         
-    }//GEN-LAST:event_btnResetFormActionPerformed
+    }//GEN-LAST:event_btn_datlaiActionPerformed
 
-    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+    private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_deleteActionPerformed
+    }//GEN-LAST:event_btn_xoaActionPerformed
 
-    private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
+    private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
         // TODO add your handling code here:
         
-    }//GEN-LAST:event_btn_addActionPerformed
+    }//GEN-LAST:event_btn_themActionPerformed
 
-    private void txtFind1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFind1ActionPerformed
+    private void txt_timkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_timkiemActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtFind1ActionPerformed
+    }//GEN-LAST:event_txt_timkiemActionPerformed
 
-    private void btn_conhan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_conhan1ActionPerformed
+    private void btn_conchophepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_conchophepActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_conhan1ActionPerformed
+    }//GEN-LAST:event_btn_conchophepActionPerformed
 
-    private void btn_hethan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hethan1ActionPerformed
+    private void btn_khongconchophepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_khongconchophepActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_hethan1ActionPerformed
+    }//GEN-LAST:event_btn_khongconchophepActionPerformed
+
+    private void btn_timkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_timkiemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_timkiemActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable Table_dangki;
-    private javax.swing.JButton btnResetForm;
-    private javax.swing.JButton btn_add;
-    private javax.swing.JButton btn_conhan;
-    private javax.swing.JButton btn_conhan1;
-    private javax.swing.JButton btn_delete;
-    private javax.swing.JButton btn_find;
-    private javax.swing.JButton btn_find1;
-    private javax.swing.JButton btn_hethan;
-    private javax.swing.JButton btn_hethan1;
+    private javax.swing.JButton btn_capnhat;
+    private javax.swing.JButton btn_conchophep;
+    private javax.swing.JButton btn_datlai;
+    private javax.swing.JButton btn_khongconchophep;
     private javax.swing.JButton btn_tatca;
-    private javax.swing.JButton btn_tatca1;
-    private javax.swing.JButton btn_update;
+    private javax.swing.JButton btn_them;
+    private javax.swing.JButton btn_timkiem;
+    private javax.swing.JButton btn_xoa;
     private javax.swing.JLabel inforDetail;
-    private javax.swing.JLabel jLabel20;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel label_id_dangki;
     private javax.swing.JLabel label_id_khachhang;
-    private javax.swing.JTextField txtFind;
-    private javax.swing.JTextField txtFind1;
-    private javax.swing.JTextField txt_idDangki;
-    private javax.swing.JTextField txt_id_khachhang;
+    private javax.swing.JTable table_loaiphuongtien;
+    private javax.swing.JTextField txt_idloaiphuongtien;
+    private javax.swing.JTextField txt_tenloaiphuongtien;
+    private javax.swing.JTextField txt_timkiem;
+    private javax.swing.JTextField txt_tinnhan;
     // End of variables declaration//GEN-END:variables
 }
