@@ -34,7 +34,7 @@ public class ShiftTypesDAO {
                     rs.getInt("shift_type_id"),
                     rs.getString("shift_type_name"),
                     rs.getTime("start_time").toLocalTime(),
-                    rs.getTime("start_end").toLocalTime()
+                    rs.getTime("end_time").toLocalTime()
                 );
                 list.add(shiftType);
             }
@@ -45,7 +45,7 @@ public class ShiftTypesDAO {
     }
 
     public boolean insert(ShiftTypes shiftType) {
-        String sql = "INSERT INTO shift_types ( shift_type_name, start_time, start_end) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO shift_types ( shift_type_name, start_time, end_time) VALUES (?, ?, ?)";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -53,7 +53,7 @@ public class ShiftTypesDAO {
         ) {
             ptmt.setString(1, shiftType.getShift_type_name());
             ptmt.setTime(2, Time.valueOf(shiftType.getStart_time()));
-            ptmt.setTime(3, Time.valueOf(shiftType.getStart_end()));
+            ptmt.setTime(3, Time.valueOf(shiftType.getEnd_time()));
 
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -63,7 +63,7 @@ public class ShiftTypesDAO {
     }
 
     public boolean update(ShiftTypes shiftType) {
-        String sql = "UPDATE shift_types SET shift_type_name = ?, start_time = ?, start_end = ? WHERE shift_type_id = ?";
+        String sql = "UPDATE shift_types SET shift_type_name = ?, start_time = ?, end_time = ? WHERE shift_type_id = ?";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -71,7 +71,7 @@ public class ShiftTypesDAO {
         ) {
             ptmt.setString(1, shiftType.getShift_type_name());
             ptmt.setTime(2, Time.valueOf(shiftType.getStart_time()));
-            ptmt.setTime(3, Time.valueOf(shiftType.getStart_end()));
+            ptmt.setTime(3, Time.valueOf(shiftType.getEnd_time()));
             ptmt.setInt(4, shiftType.getShift_type_id());
 
             return ptmt.executeUpdate() > 0;
@@ -110,7 +110,7 @@ public class ShiftTypesDAO {
                         rs.getInt("shift_type_id"),
                         rs.getString("shift_type_name"),
                         rs.getTime("start_time").toLocalTime(),
-                        rs.getTime("start_end").toLocalTime()
+                        rs.getTime("end_time").toLocalTime()
                     );
                 }
             }
