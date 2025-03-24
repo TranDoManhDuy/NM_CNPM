@@ -5,12 +5,12 @@ public class Accounts {
     private int account_number;
     private String password;
     private boolean is_active;
-    private String staff_id;
+    private int staff_id;
 
     public Accounts() {
     }
 
-    public Accounts(int account_number, String password, boolean is_active, String staff_id) {
+    public Accounts(int account_number, String password, boolean is_active, int staff_id) {
         this.account_number = account_number;
         this.password = password;
         this.is_active = is_active;
@@ -41,11 +41,11 @@ public class Accounts {
         this.is_active = is_active;
     }
 
-    public String getStaffId() {
+    public int getStaffId() {
         return staff_id;
     }
 
-    public void setStaffId(String staff_id) {
+    public void setStaffId(int staff_id) {
         this.staff_id = staff_id;
     }
 

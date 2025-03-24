@@ -12,6 +12,8 @@ import GUI.DICHVU.gui_session_free;
 import GUI.DICHVU.gui_statictical;
 import GUI.DICHVU.gui_timeframe;
 import GUI.DICHVU.gui_vehicle_type;
+import GUI.NHANSU.gui_account;
+import GUI.NHANSU.gui_staff;
 import Global.DataGlobal;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -30,6 +32,7 @@ public class ViewMain extends javax.swing.JFrame {
     public ViewMain() {
         initComponents();
         GUI_DICHVU();
+        GUI_NHANSU();
     }
 
     public ViewMain(DataGlobal dataGlobal) {
@@ -37,6 +40,7 @@ public class ViewMain extends javax.swing.JFrame {
         
         initComponents();
         GUI_DICHVU();
+        GUI_NHANSU();
     }
     public void addComponent(JPanel father, JPanel child) {
         father.setLayout(new GridBagLayout());
@@ -68,6 +72,19 @@ public class ViewMain extends javax.swing.JFrame {
             addComponent(panel_thongkedoanhthu, statictical_gui);
         }
     }
+    
+    public void GUI_NHANSU() {
+        // init component
+        gui_staff staff_gui = new gui_staff(this);
+        gui_account account_gui = new gui_account(this);
+        // add component
+        if (Global.Global_variable.role_name == "staff") {
+            addComponent(panel_nhanvien, staff_gui);
+            addComponent(panel_taikhoan, account_gui);
+        }
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -4,19 +4,60 @@
  */
 package GUI.NHANSU;
 
+import DAO.AccountsDAO;
+import DAO.StaffDAO;
+import GUI.ViewMain;
+import Model.Accounts;
+import Model.Staff;
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author eramisme
  */
 public class gui_account extends javax.swing.JPanel {
-
+    private DefaultTableModel tableModel;
+    private ViewMain viewmain;
     /**
      * Creates new form gui_account
      */
-    public gui_account() {
-        initComponents();
+    public gui_account(ViewMain viewmain) {
+        this.viewmain = viewmain;
+        initComponents();       
+        tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+        }
+        };
+        initTable();
+        fillTable();
+    }    
+    public void initTable() {
+        String[] header = new String[] {"ID Nhân viên", "Họ tên", "Số tài khoản", "Trạng thái"};
+        tableModel.setColumnIdentifiers(header);
+        Table_Account.setModel(tableModel);
     }
-
+    
+        public void fillTable() {
+        ArrayList <Accounts> listAccounts = AccountsDAO.getInstance().getListAccounts();
+        Staff staff = new Staff();
+        // 1
+        tableModel.setRowCount(0);
+        for (Accounts ac : listAccounts) {
+            try {
+                staff = StaffDAO.getInstance().findById(ac.getStaffId());
+            } catch (Exception e) { 
+                e.printStackTrace();
+            }
+            String trangthai = ac.isActive() ? "Hoạt động" : "Không hoạt động";
+            tableModel.addRow(new String[] {String.valueOf(ac.getStaffId()), staff.getFullName(), String.valueOf(ac.getAccountNumber()), trangthai});
+        }
+        tableModel.fireTableDataChanged();
+        listAccounts = null;
+        staff = null;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -39,6 +80,8 @@ public class gui_account extends javax.swing.JPanel {
         jComboBox4 = new javax.swing.JComboBox<>();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField4 = new javax.swing.JTextField();
         Panel_TKCN = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jTextFieldSearch = new javax.swing.JTextField();
@@ -46,7 +89,7 @@ public class gui_account extends javax.swing.JPanel {
         Panel_DS = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        Table_Account = new javax.swing.JTable();
         Panel_TKCN1 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
         jButton9 = new javax.swing.JButton();
@@ -60,11 +103,11 @@ public class gui_account extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setText("THÔNG TIN TÀI KHOẢN");
 
-        jLabel2.setText("ID Nhân viên");
+        jLabel2.setText("Mật khẩu");
 
-        jLabel3.setText("Số tài khoản");
+        jLabel3.setText("Họ tên");
 
-        jLabel4.setText("Mật khẩu");
+        jLabel4.setText("Số tài khoản");
 
         jTextField1.setEditable(false);
         jTextField1.setBackground(new java.awt.Color(255, 255, 255));
@@ -113,44 +156,52 @@ public class gui_account extends javax.swing.JPanel {
             }
         });
 
+        jLabel5.setText("ID Nhân viên");
+
         javax.swing.GroupLayout Panel_TTLayout = new javax.swing.GroupLayout(Panel_TT);
         Panel_TT.setLayout(Panel_TTLayout);
         Panel_TTLayout.setHorizontalGroup(
             Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel_TTLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_TTLayout.createSequentialGroup()
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, Panel_TTLayout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel15))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
-                        .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField2)
-                            .addComponent(jTextField3)
-                            .addComponent(jTextField1)
-                            .addComponent(jComboBox4, 0, 238, Short.MAX_VALUE)))
                     .addGroup(Panel_TTLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1)))
+                        .addComponent(jButton1))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, Panel_TTLayout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel15)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextField4)
+                            .addComponent(jTextField2)
+                            .addComponent(jTextField3)
+                            .addComponent(jTextField1)
+                            .addComponent(jComboBox4, 0, 238, Short.MAX_VALUE))))
                 .addGap(20, 20, 20))
-            .addGroup(Panel_TTLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         Panel_TTLayout.setVerticalGroup(
             Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Panel_TTLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addGap(18, 18, 18)
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
@@ -166,12 +217,14 @@ public class gui_account extends javax.swing.JPanel {
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel15))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(51, 51, 51))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_TTLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14))
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         Panel_TKCN.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -211,18 +264,18 @@ public class gui_account extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2))
                     .addComponent(jLabel10))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         Panel_TKCNLayout.setVerticalGroup(
             Panel_TKCNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_TKCNLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(5, 5, 5)
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(Panel_TKCNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(17, 17, 17))
+                .addGroup(Panel_TKCNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(jTextFieldSearch))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         Panel_DS.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -230,22 +283,22 @@ public class gui_account extends javax.swing.JPanel {
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel11.setText("DANH SÁCH TÀI KHOẢN");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        Table_Account.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Mã nhân viên", "Số tài khoản", "Trạng thái"
+                "ID Nhân viên", "Họ tên", "Số tài khoản", "Trạng thái"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, true
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -256,7 +309,7 @@ public class gui_account extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(Table_Account);
 
         javax.swing.GroupLayout Panel_DSLayout = new javax.swing.GroupLayout(Panel_DS);
         Panel_DS.setLayout(Panel_DSLayout);
@@ -268,7 +321,7 @@ public class gui_account extends javax.swing.JPanel {
                     .addGroup(Panel_DSLayout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 649, Short.MAX_VALUE))
                 .addContainerGap())
         );
         Panel_DSLayout.setVerticalGroup(
@@ -276,7 +329,7 @@ public class gui_account extends javax.swing.JPanel {
             .addGroup(Panel_DSLayout.createSequentialGroup()
                 .addComponent(jLabel11)
                 .addGap(3, 3, 3)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+                .addComponent(jScrollPane2)
                 .addContainerGap())
         );
 
@@ -331,7 +384,7 @@ public class gui_account extends javax.swing.JPanel {
             .addGroup(Panel_TKCN1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel17)
-                .addContainerGap(365, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_TKCN1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -339,14 +392,14 @@ public class gui_account extends javax.swing.JPanel {
                 .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton11)
-                .addGap(49, 49, 49))
+                .addGap(48, 48, 48))
         );
         Panel_TKCN1Layout.setVerticalGroup(
             Panel_TKCN1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Panel_TKCN1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel17)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(Panel_TKCN1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton11)
@@ -359,28 +412,22 @@ public class gui_account extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(Panel_DS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(Panel_TKCN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(Panel_TT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(Panel_TKCN1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(Panel_TKCN1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(Panel_TKCN, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Panel_TT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Panel_TKCN1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(Panel_DS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addComponent(Panel_TKCN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Panel_TT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Panel_TKCN1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(Panel_DS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -457,6 +504,7 @@ public class gui_account extends javax.swing.JPanel {
     private javax.swing.JPanel Panel_TKCN;
     private javax.swing.JPanel Panel_TKCN1;
     private javax.swing.JPanel Panel_TT;
+    private javax.swing.JTable Table_Account;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
@@ -473,11 +521,12 @@ public class gui_account extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextFieldSearch;
     // End of variables declaration//GEN-END:variables
 }

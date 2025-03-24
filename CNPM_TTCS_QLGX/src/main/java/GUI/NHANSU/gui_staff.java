@@ -4,17 +4,61 @@
  */
 package GUI.NHANSU;
 
+import DAO.RolesDAO;
+import DAO.StaffDAO;
+import GUI.ViewMain;
+import Model.Roles;
+import Model.Staff;
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author eramisme
  */
 public class gui_staff extends javax.swing.JPanel {
+    private DefaultTableModel tableModel;
+    private ViewMain viewmain;
 
     /**
      * Creates new form gui_staff
      */
-    public gui_staff() {
-        initComponents();
+    public gui_staff(ViewMain viewmain) {
+        this.viewmain = viewmain;
+        initComponents();       
+        tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+        }
+        };
+        initTable();
+        fillTable();
+    }    
+    public void initTable() {
+        String[] header = new String[] {"ID Nhân viên", "Họ tên", "CCCD", "Ngày sinh", "Giới tính", "SĐT", "Địa chỉ", "Email", "Vai trò", "Trạng thái"};
+        tableModel.setColumnIdentifiers(header);
+        Table_Staff.setModel(tableModel);
+    }
+    
+        public void fillTable() {
+        ArrayList <Staff> listStaff = StaffDAO.getInstance().getListStaff();
+        Roles role = new Roles();
+        // 1
+        tableModel.setRowCount(0);
+        for (Staff st : listStaff) {
+            try {
+                role = RolesDAO.getInstance().findById(st.getRoleId());
+            } catch (Exception e) { 
+                e.printStackTrace();
+            }
+            String gioitinh = st.getGender().equalsIgnoreCase("M") ? "Nam" : "Nữ";
+            String trangthai = st.isActive() ? "Hoạt động" : "Không hoạt động";
+            tableModel.addRow(new String[] {String.valueOf(st.getStaffId()), String.valueOf(st.getFullName()), String.valueOf(st.getSsn()), gioitinh, String.valueOf(st.getDateOfBirth()), String.valueOf(st.getPhoneNumber()), String.valueOf(st.getAddress()), String.valueOf(st.getEmail()), role.getRoleName(), trangthai});
+        }
+        tableModel.fireTableDataChanged();
+        listStaff = null;
+        role = null;
     }
 
     /**
@@ -37,7 +81,7 @@ public class gui_staff extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txt_ID = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jTextField4 = new javax.swing.JTextField();
         jTextField5 = new javax.swing.JTextField();
@@ -56,7 +100,7 @@ public class gui_staff extends javax.swing.JPanel {
         Panel_DS = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        Table_Staff = new javax.swing.JTable();
         Panel_TKCN = new javax.swing.JPanel();
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
@@ -90,8 +134,8 @@ public class gui_staff extends javax.swing.JPanel {
 
         jLabel8.setText("Ngày sinh");
 
-        jTextField1.setEditable(false);
-        jTextField1.setBackground(new java.awt.Color(255, 255, 255));
+        txt_ID.setEditable(false);
+        txt_ID.setBackground(new java.awt.Color(255, 255, 255));
 
         jComboBox1.setEditable(true);
 
@@ -152,7 +196,7 @@ public class gui_staff extends javax.swing.JPanel {
                             .addGroup(Panel_TTLayout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addGap(22, 22, 22)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txt_ID, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(Panel_TTLayout.createSequentialGroup()
                                 .addComponent(jLabel8)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -172,7 +216,7 @@ public class gui_staff extends javax.swing.JPanel {
                                     .addComponent(jLabel5)
                                     .addComponent(jLabel3)
                                     .addComponent(jLabel13))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jTextField7)
                                     .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -189,7 +233,7 @@ public class gui_staff extends javax.swing.JPanel {
                             .addComponent(jLabel12)
                             .addComponent(jLabel4)
                             .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextField9)
                             .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -210,7 +254,7 @@ public class gui_staff extends javax.swing.JPanel {
                         .addGap(9, 9, 9)
                         .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_ID, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4)
                             .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
@@ -236,13 +280,14 @@ public class gui_staff extends javax.swing.JPanel {
                     .addComponent(jLabel6)
                     .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jButton15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel15)
+                        .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(12, Short.MAX_VALUE))
         );
 
@@ -251,8 +296,10 @@ public class gui_staff extends javax.swing.JPanel {
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel11.setText("DANH SÁCH NHÂN VIÊN");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        Table_Staff.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
@@ -263,7 +310,7 @@ public class gui_staff extends javax.swing.JPanel {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 true, false, false, false, false, false, false, true, false, true
@@ -277,7 +324,7 @@ public class gui_staff extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(Table_Staff);
 
         javax.swing.GroupLayout Panel_DSLayout = new javax.swing.GroupLayout(Panel_DS);
         Panel_DS.setLayout(Panel_DSLayout);
@@ -289,7 +336,7 @@ public class gui_staff extends javax.swing.JPanel {
                     .addGroup(Panel_DSLayout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1097, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2))
                 .addContainerGap())
         );
         Panel_DSLayout.setVerticalGroup(
@@ -297,7 +344,7 @@ public class gui_staff extends javax.swing.JPanel {
             .addGroup(Panel_DSLayout.createSequentialGroup()
                 .addComponent(jLabel11)
                 .addGap(3, 3, 3)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -355,7 +402,7 @@ public class gui_staff extends javax.swing.JPanel {
             }
         });
 
-        jComboBox5.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox5.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tất cả" }));
 
         jTextField3.setEditable(false);
         jTextField3.setBackground(new java.awt.Color(255, 255, 255));
@@ -372,7 +419,7 @@ public class gui_staff extends javax.swing.JPanel {
                 .addComponent(jLabel9)
                 .addGap(18, 18, 18)
                 .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -404,13 +451,9 @@ public class gui_staff extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Panel_DS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(Panel_TT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(Panel_TKCN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+            .addComponent(Panel_TT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Panel_TKCN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Panel_DS, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -484,6 +527,7 @@ public class gui_staff extends javax.swing.JPanel {
     private javax.swing.JPanel Panel_DS;
     private javax.swing.JPanel Panel_TKCN;
     private javax.swing.JPanel Panel_TT;
+    private javax.swing.JTable Table_Staff;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
@@ -510,8 +554,6 @@ public class gui_staff extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField10;
     private javax.swing.JTextField jTextField11;
     private javax.swing.JTextField jTextField2;
@@ -520,5 +562,6 @@ public class gui_staff extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField9;
+    private javax.swing.JTextField txt_ID;
     // End of variables declaration//GEN-END:variables
 }

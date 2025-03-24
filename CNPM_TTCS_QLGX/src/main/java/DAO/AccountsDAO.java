@@ -25,7 +25,7 @@ public class AccountsDAO {
                 int account_number = result.getInt("account_number");
                 String password = result.getString("password");
                 boolean is_active = result.getBoolean("is_active");
-                String staff_id = result.getString("staff_id");
+                int staff_id = result.getInt("staff_id");
                 
                 list_accounts.add(new Accounts(account_number, password, is_active, staff_id));
             }
@@ -44,7 +44,7 @@ public class AccountsDAO {
             ptmt.setInt(1, acc.getAccountNumber());
             ptmt.setString(2, acc.getPassword());
             ptmt.setBoolean(3, acc.isActive());
-            ptmt.setString(4, acc.getStaffId());
+            ptmt.setInt(4, acc.getStaffId());
             
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -61,7 +61,7 @@ public class AccountsDAO {
         ) {
             ptmt.setString(1, acc.getPassword());
             ptmt.setBoolean(2, acc.isActive());
-            ptmt.setString(3, acc.getStaffId());
+            ptmt.setInt(3, acc.getStaffId());
             ptmt.setInt(4, acc.getAccountNumber());
             
             return ptmt.executeUpdate() > 0;
@@ -85,7 +85,7 @@ public class AccountsDAO {
                 acc.setAccountNumber(rs.getInt("account_number"));
                 acc.setPassword(rs.getString("password"));
                 acc.setActive(rs.getBoolean("is_active"));
-                acc.setStaffId(rs.getString("staff_id"));
+                acc.setStaffId(rs.getInt("staff_id"));
                 
                 return acc;
             }
