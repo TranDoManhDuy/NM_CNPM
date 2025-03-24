@@ -8,7 +8,6 @@ import Model.ShiftWorks;
 import java.util.ArrayList;
 import DatabaseHelper.OpenConnection;
 import java.sql.*;
-import java.time.LocalTime;
 import java.util.List;
 /**
  *
@@ -38,7 +37,7 @@ public class ShiftWorksDAO {
                     rs.getInt("building_id"),
                     rs.getInt("staff_id"),
                     rs.getInt("task_id"),
-                    rs.getTime("shift_date").toLocalTime()
+                    rs.getDate("shift_date").toLocalDate()
                 );
                 list.add(shift);
             }
@@ -59,7 +58,7 @@ public class ShiftWorksDAO {
             ptmt.setInt(2, shift.getBuilding_id());
             ptmt.setInt(3, shift.getStaff_id());
             ptmt.setInt(4, shift.getTask_id());
-            ptmt.setTime(5, Time.valueOf(shift.getShift_date()));
+            ptmt.setDate(5, Date.valueOf(shift.getShift_date()));
 
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -79,7 +78,7 @@ public class ShiftWorksDAO {
             ptmt.setInt(2, shift.getBuilding_id());
             ptmt.setInt(3, shift.getStaff_id());
             ptmt.setInt(4, shift.getTask_id());
-            ptmt.setTime(5, Time.valueOf(shift.getShift_date()));
+            ptmt.setDate(5, Date.valueOf(shift.getShift_date()));
             ptmt.setInt(6, shift.getShift_work_id());
 
             return ptmt.executeUpdate() > 0;
@@ -120,7 +119,7 @@ public class ShiftWorksDAO {
                         rs.getInt("building_id"),
                         rs.getInt("staff_id"),
                         rs.getInt("task_id"),
-                        rs.getTime("shift_date").toLocalTime()
+                        rs.getDate("shift_date").toLocalDate()
                     );
                 }
             }
