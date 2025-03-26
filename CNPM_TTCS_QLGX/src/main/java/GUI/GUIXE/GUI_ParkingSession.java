@@ -27,38 +27,70 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        scrollPaneParikingSession = new javax.swing.JScrollPane();
-        tblParkingSession = new javax.swing.JTable();
+        sc_pariking_session = new javax.swing.JScrollPane();
+        tbl_parking_session = new javax.swing.JTable();
+        jPanel8 = new javax.swing.JPanel();
+        btn_loc = new javax.swing.JButton();
+        btn_bo_loc = new javax.swing.JButton();
+        cob_ngay_bat_dau = new javax.swing.JComboBox<>();
+        cob_thang_bat_dau = new javax.swing.JComboBox<>();
+        cob_nam_bat_dau = new javax.swing.JComboBox<>();
+        cob_ngay_ket_thuc = new javax.swing.JComboBox<>();
+        cob_thang_ket_thuc = new javax.swing.JComboBox<>();
+        cob_nam_ket_thuc = new javax.swing.JComboBox<>();
+        jLabel34 = new javax.swing.JLabel();
+        jLabel35 = new javax.swing.JLabel();
+        jLabel36 = new javax.swing.JLabel();
+        jLabel37 = new javax.swing.JLabel();
+        jLabel38 = new javax.swing.JLabel();
+        jLabel39 = new javax.swing.JLabel();
+        jLabel40 = new javax.swing.JLabel();
+        jLabel41 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        txt_tim_kiem = new javax.swing.JTextField();
+        btn_tim_kiem = new javax.swing.JButton();
+        btn_tang = new javax.swing.JButton();
+        btn_giam = new javax.swing.JButton();
+        btn_tat_ca = new javax.swing.JButton();
+        btn_tang_the = new javax.swing.JButton();
+        btn_giam_the = new javax.swing.JButton();
+        btn_tat_ca_the = new javax.swing.JButton();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        txt_tin_nhan = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
-        jL_title = new javax.swing.JLabel();
-        jL_parkingSessionId = new javax.swing.JLabel();
-        jL_cardId = new javax.swing.JLabel();
-        jL_isService = new javax.swing.JLabel();
-        jL_checkInTime = new javax.swing.JLabel();
-        jL_checkOutTime = new javax.swing.JLabel();
-        jL_checkInShiftId = new javax.swing.JLabel();
-        jL_checkOutShiftId = new javax.swing.JLabel();
-        jL_vehicleId = new javax.swing.JLabel();
-        jL_amount = new javax.swing.JLabel();
-        txt_parkingSessionId = new javax.swing.JTextField();
-        txt_cardId = new javax.swing.JTextField();
-        txt_isService = new javax.swing.JTextField();
-        txt_checkInTime = new javax.swing.JTextField();
-        txt_checkOutTime = new javax.swing.JTextField();
-        txt_checkInShiftId = new javax.swing.JTextField();
-        txt_checkOutShiftId = new javax.swing.JTextField();
+        btn_insert = new javax.swing.JButton();
+        btn_update = new javax.swing.JButton();
+        btn_delete = new javax.swing.JButton();
+        btn_reset = new javax.swing.JButton();
+        btn_chon_building = new javax.swing.JButton();
+        btn_chon_ca_truc_vao = new javax.swing.JButton();
+        btn_chon_ca_truc_ra = new javax.swing.JButton();
+        txt_parking_session_id = new javax.swing.JTextField();
+        txt_is_service = new javax.swing.JTextField();
+        txt_check_in_time = new javax.swing.JTextField();
+        txt_check_out_time = new javax.swing.JTextField();
+        txt_vehicle = new javax.swing.JTextField();
         txt_amount = new javax.swing.JTextField();
-        btnInsert = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        btnReset = new javax.swing.JButton();
-        txtPhone_number1 = new javax.swing.JTextField();
+        txt_building_id = new javax.swing.JTextField();
+        txt_check_in_shift_id = new javax.swing.JTextField();
+        txt_check_out_shift_id = new javax.swing.JTextField();
+        jL_title = new javax.swing.JLabel();
+        jL_parking_session_id = new javax.swing.JLabel();
+        jL_card_id = new javax.swing.JLabel();
+        jL_is_service = new javax.swing.JLabel();
+        jL_check_in_time = new javax.swing.JLabel();
+        jL_check_out_time = new javax.swing.JLabel();
+        jL_check_in_shift_id = new javax.swing.JLabel();
+        jL_check_out_shift_d = new javax.swing.JLabel();
+        jL_vehicle_id = new javax.swing.JLabel();
+        jL_amount = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(153, 255, 255));
 
-        tblParkingSession.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        tblParkingSession.setModel(new javax.swing.table.DefaultTableModel(
+        tbl_parking_session.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        tbl_parking_session.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null},
@@ -66,114 +98,370 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã Gửi Xe", "Mã Thẻ", "Mã Dịch Vụ", "Giờ Vào", "Giờ Ra", "Ca Trực Vào", "Ca Trực Ra", "Mã Xe", "Giá Tiền"
+                "Mã Gửi Xe", "Mã Thẻ", "Dịch Vụ", "Giờ Vào", "Giờ Ra", "Ca Trực Vào", "Ca Trực Ra", "Xe", "Giá Tiền"
             }
         ));
-        tblParkingSession.addMouseListener(new java.awt.event.MouseAdapter() {
+        tbl_parking_session.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tblParkingSessionMouseClicked(evt);
+                tbl_parking_sessionMouseClicked(evt);
             }
         });
-        scrollPaneParikingSession.setViewportView(tblParkingSession);
+        sc_pariking_session.setViewportView(tbl_parking_session);
+
+        btn_loc.setText("Lọc");
+        btn_loc.setRequestFocusEnabled(false);
+        btn_loc.setRolloverEnabled(false);
+        btn_loc.setVerifyInputWhenFocusTarget(false);
+
+        btn_bo_loc.setText("Bỏ lọc");
+
+        cob_ngay_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cob_ngay_bat_dau.setMinimumSize(new java.awt.Dimension(100, 22));
+        cob_ngay_bat_dau.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cob_ngay_bat_dauActionPerformed(evt);
+            }
+        });
+
+        cob_thang_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        cob_nam_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        cob_ngay_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        cob_thang_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        cob_nam_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel34.setText("Thời Gian: Từ");
+
+        jLabel35.setText("Ngày");
+
+        jLabel36.setText("Tháng");
+
+        jLabel37.setText("Năm");
+
+        jLabel38.setText("Đến");
+
+        jLabel39.setText("Ngày");
+
+        jLabel40.setText("Tháng");
+
+        jLabel41.setText("Năm");
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel34)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cob_ngay_bat_dau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel35))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cob_thang_bat_dau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel36))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(cob_nam_bat_dau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel38))
+                    .addComponent(jLabel37))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cob_ngay_ket_thuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel39))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cob_thang_ket_thuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel40))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cob_nam_ket_thuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel41))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btn_bo_loc, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                    .addComponent(btn_loc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                .addContainerGap(20, Short.MAX_VALUE)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel35)
+                    .addComponent(jLabel36)
+                    .addComponent(jLabel37)
+                    .addComponent(jLabel39)
+                    .addComponent(jLabel40)
+                    .addComponent(jLabel41)
+                    .addComponent(btn_bo_loc))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cob_ngay_bat_dau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel34)
+                    .addComponent(cob_thang_bat_dau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cob_nam_bat_dau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel38)
+                    .addComponent(cob_ngay_ket_thuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cob_thang_ket_thuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cob_nam_ket_thuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_loc))
+                .addGap(14, 14, 14))
+        );
+
+        txt_tim_kiem.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_tim_kiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_tim_kiemActionPerformed(evt);
+            }
+        });
+
+        btn_tim_kiem.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_tim_kiem.setText("Tìm");
+
+        btn_tang.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_tang.setText("Tăng");
+        btn_tang.setToolTipText("");
+        btn_tang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tangActionPerformed(evt);
+            }
+        });
+
+        btn_giam.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_giam.setText("Giảm");
+        btn_giam.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_giamActionPerformed(evt);
+            }
+        });
+
+        btn_tat_ca.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_tat_ca.setText("Tất cả");
+
+        btn_tang_the.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_tang_the.setText("Tăng");
+        btn_tang_the.setToolTipText("");
+        btn_tang_the.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tang_theActionPerformed(evt);
+            }
+        });
+
+        btn_giam_the.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_giam_the.setText("Giảm");
+        btn_giam_the.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_giam_theActionPerformed(evt);
+            }
+        });
+
+        btn_tat_ca_the.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_tat_ca_the.setText("Tất cả");
+
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel12.setText("Thời Gian");
+
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel13.setText("Tìm Mã Gửi:");
+
+        jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel14.setText("Mã Thẻ");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(btn_tang)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_giam)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_tat_ca))
+                    .addComponent(txt_tim_kiem))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btn_tim_kiem)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_tang_the)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_giam_the)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_tat_ca_the)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_tim_kiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13)
+                    .addComponent(btn_tim_kiem))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_tang)
+                    .addComponent(jLabel12)
+                    .addComponent(btn_giam)
+                    .addComponent(btn_tat_ca)
+                    .addComponent(btn_tang_the)
+                    .addComponent(jLabel14)
+                    .addComponent(btn_giam_the)
+                    .addComponent(btn_tat_ca_the))
+                .addContainerGap(12, Short.MAX_VALUE))
+        );
+
+        txt_tin_nhan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_tin_nhan.setText("Đang hiển thị danh sách tất cả các lượt gửi xe");
+        txt_tin_nhan.setEnabled(false);
+        txt_tin_nhan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_tin_nhanActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPaneParikingSession, javax.swing.GroupLayout.DEFAULT_SIZE, 708, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(sc_pariking_session)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(txt_tin_nhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPaneParikingSession, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(txt_tin_nhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(sc_pariking_session, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jPanel2.setRequestFocusEnabled(false);
         jPanel2.setVerifyInputWhenFocusTarget(false);
 
+        btn_insert.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_insert.setText("Thêm");
+        btn_insert.setEnabled(false);
+        btn_insert.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_insertMouseClicked(evt);
+            }
+        });
+        btn_insert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_insertActionPerformed(evt);
+            }
+        });
+
+        btn_update.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_update.setText("Cập Nhật");
+
+        btn_delete.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_delete.setText("Xóa");
+
+        btn_reset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_reset.setText("Reset");
+        btn_reset.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_resetMouseClicked(evt);
+            }
+        });
+        btn_reset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_resetActionPerformed(evt);
+            }
+        });
+
+        btn_chon_building.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_chon_building.setText("Chọn");
+
+        btn_chon_ca_truc_vao.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_chon_ca_truc_vao.setText("Chọn");
+
+        btn_chon_ca_truc_ra.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_chon_ca_truc_ra.setText("Chọn");
+
+        txt_parking_session_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_parking_session_id.setEnabled(false);
+
+        txt_is_service.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_is_service.setEnabled(false);
+
+        txt_check_in_time.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+
+        txt_check_out_time.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+
+        txt_vehicle.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+
+        txt_amount.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_amount.setEnabled(false);
+
+        txt_building_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_building_id.setEnabled(false);
+
+        txt_check_in_shift_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_check_in_shift_id.setEnabled(false);
+
+        txt_check_out_shift_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_check_out_shift_id.setEnabled(false);
+
         jL_title.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jL_title.setText("Thông Tin Gửi Xe");
 
-        jL_parkingSessionId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jL_parkingSessionId.setText("Mã Gửi Xe:");
+        jL_parking_session_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jL_parking_session_id.setText("Mã Gửi Xe:");
 
-        jL_cardId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jL_cardId.setText("Mã Thẻ:");
+        jL_card_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jL_card_id.setText("Mã Thẻ:");
 
-        jL_isService.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jL_isService.setText("Mã Dịch Vụ");
+        jL_is_service.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jL_is_service.setText("Dịch Vụ");
 
-        jL_checkInTime.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jL_checkInTime.setText("Giờ Vào:");
+        jL_check_in_time.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jL_check_in_time.setText("Giờ Vào:");
 
-        jL_checkOutTime.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jL_checkOutTime.setText("Giờ Ra:");
+        jL_check_out_time.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jL_check_out_time.setText("Giờ Ra:");
 
-        jL_checkInShiftId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jL_checkInShiftId.setText("Ca Trực Vào");
+        jL_check_in_shift_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jL_check_in_shift_id.setText("Ca Trực Vào");
 
-        jL_checkOutShiftId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jL_checkOutShiftId.setText("Ca Trực Ra");
+        jL_check_out_shift_d.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jL_check_out_shift_d.setText("Ca Trực Ra");
 
-        jL_vehicleId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jL_vehicleId.setText("Mã Xe");
+        jL_vehicle_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jL_vehicle_id.setText("Mã Xe");
 
         jL_amount.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jL_amount.setText("Giá Tiền");
-
-        txt_parkingSessionId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txt_parkingSessionId.setEnabled(false);
-
-        txt_cardId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-
-        txt_isService.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-
-        txt_checkInTime.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-
-        txt_checkOutTime.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-
-        txt_checkInShiftId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-
-        txt_checkOutShiftId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-
-        txt_amount.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-
-        btnInsert.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnInsert.setText("Thêm");
-        btnInsert.setEnabled(false);
-        btnInsert.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnInsertMouseClicked(evt);
-            }
-        });
-        btnInsert.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnInsertActionPerformed(evt);
-            }
-        });
-
-        jButton2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jButton2.setText("Cập Nhật");
-
-        jButton4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jButton4.setText("Sửa");
-
-        jButton5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jButton5.setText("Xóa");
-
-        btnReset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnReset.setText("Reset");
-        btnReset.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnResetMouseClicked(evt);
-            }
-        });
-        btnReset.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnResetActionPerformed(evt);
-            }
-        });
-
-        txtPhone_number1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -183,42 +471,49 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnInsert, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jL_amount, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_amount, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jL_title, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(64, 64, 64)
-                            .addComponent(btnReset))
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jL_parkingSessionId, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jL_cardId, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jL_isService, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jL_checkInTime, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jL_checkOutTime, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jL_vehicleId, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jL_checkOutShiftId, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jL_checkInShiftId, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(txt_checkInShiftId, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txt_checkOutTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txt_checkInTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txt_isService, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txt_cardId, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txt_parkingSessionId, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txt_checkOutShiftId, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtPhone_number1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jL_title, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(64, 64, 64)
+                        .addComponent(btn_reset))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jL_parking_session_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jL_card_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jL_is_service, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jL_check_in_time, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jL_check_out_time, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jL_vehicle_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jL_check_out_shift_d, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jL_check_in_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txt_check_out_time, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_check_in_time, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_is_service, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_parking_session_id, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_vehicle, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(txt_building_id, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_chon_building, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(txt_check_in_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_chon_ca_truc_vao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(txt_check_out_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_chon_ca_truc_ra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addComponent(btn_insert, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_update, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_delete)))
                 .addGap(0, 21, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -227,49 +522,54 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jL_title)
-                    .addComponent(btnReset))
+                    .addComponent(btn_reset))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jL_parkingSessionId)
-                    .addComponent(txt_parkingSessionId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jL_parking_session_id)
+                    .addComponent(txt_parking_session_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txt_building_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_chon_building))
+                    .addComponent(jL_card_id))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jL_cardId)
-                    .addComponent(txt_cardId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jL_is_service)
+                    .addComponent(txt_is_service, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jL_isService)
-                    .addComponent(txt_isService, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jL_check_in_time)
+                    .addComponent(txt_check_in_time, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jL_checkInTime)
-                    .addComponent(txt_checkInTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jL_check_out_time)
+                    .addComponent(txt_check_out_time, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txt_check_in_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_chon_ca_truc_vao))
+                    .addComponent(jL_check_in_shift_id))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txt_check_out_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_chon_ca_truc_ra))
+                    .addComponent(jL_check_out_shift_d))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jL_checkOutTime)
-                    .addComponent(txt_checkOutTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jL_checkInShiftId)
-                    .addComponent(txtPhone_number1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jL_checkOutShiftId)
-                    .addComponent(txt_checkInShiftId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jL_vehicleId)
-                    .addComponent(txt_checkOutShiftId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jL_vehicle_id)
+                    .addComponent(txt_vehicle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jL_amount)
                     .addComponent(txt_amount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnInsert)
-                    .addComponent(jButton2)
-                    .addComponent(jButton4)
-                    .addComponent(jButton5))
+                    .addComponent(btn_insert)
+                    .addComponent(btn_update)
+                    .addComponent(btn_delete))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -287,7 +587,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(14, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -295,56 +595,116 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tblParkingSessionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblParkingSessionMouseClicked
+    private void tbl_parking_sessionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_parking_sessionMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_tblParkingSessionMouseClicked
+    }//GEN-LAST:event_tbl_parking_sessionMouseClicked
 
-    private void btnInsertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInsertMouseClicked
+    private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnInsertMouseClicked
+    }//GEN-LAST:event_btn_insertMouseClicked
 
-    private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
+    private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
         // TODO add your handling code here:
 
-    }//GEN-LAST:event_btnInsertActionPerformed
+    }//GEN-LAST:event_btn_insertActionPerformed
 
-    private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
+    private void btn_resetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_resetMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnResetMouseClicked
+    }//GEN-LAST:event_btn_resetMouseClicked
 
-    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+    private void btn_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_resetActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnResetActionPerformed
+    }//GEN-LAST:event_btn_resetActionPerformed
+
+    private void cob_ngay_bat_dauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_ngay_bat_dauActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cob_ngay_bat_dauActionPerformed
+
+    private void txt_tim_kiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tim_kiemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_tim_kiemActionPerformed
+
+    private void btn_tangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tangActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_tangActionPerformed
+
+    private void btn_giamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_giamActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_giamActionPerformed
+
+    private void btn_tang_theActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tang_theActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_tang_theActionPerformed
+
+    private void btn_giam_theActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_giam_theActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_giam_theActionPerformed
+
+    private void txt_tin_nhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tin_nhanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_tin_nhanActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnInsert;
-    private javax.swing.JButton btnReset;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton btn_bo_loc;
+    private javax.swing.JButton btn_chon_building;
+    private javax.swing.JButton btn_chon_ca_truc_ra;
+    private javax.swing.JButton btn_chon_ca_truc_vao;
+    private javax.swing.JButton btn_delete;
+    private javax.swing.JButton btn_giam;
+    private javax.swing.JButton btn_giam_the;
+    private javax.swing.JButton btn_insert;
+    private javax.swing.JButton btn_loc;
+    private javax.swing.JButton btn_reset;
+    private javax.swing.JButton btn_tang;
+    private javax.swing.JButton btn_tang_the;
+    private javax.swing.JButton btn_tat_ca;
+    private javax.swing.JButton btn_tat_ca_the;
+    private javax.swing.JButton btn_tim_kiem;
+    private javax.swing.JButton btn_update;
+    private javax.swing.JComboBox<String> cob_nam_bat_dau;
+    private javax.swing.JComboBox<String> cob_nam_ket_thuc;
+    private javax.swing.JComboBox<String> cob_ngay_bat_dau;
+    private javax.swing.JComboBox<String> cob_ngay_ket_thuc;
+    private javax.swing.JComboBox<String> cob_thang_bat_dau;
+    private javax.swing.JComboBox<String> cob_thang_ket_thuc;
     private javax.swing.JLabel jL_amount;
-    private javax.swing.JLabel jL_cardId;
-    private javax.swing.JLabel jL_checkInShiftId;
-    private javax.swing.JLabel jL_checkInTime;
-    private javax.swing.JLabel jL_checkOutShiftId;
-    private javax.swing.JLabel jL_checkOutTime;
-    private javax.swing.JLabel jL_isService;
-    private javax.swing.JLabel jL_parkingSessionId;
+    private javax.swing.JLabel jL_card_id;
+    private javax.swing.JLabel jL_check_in_shift_id;
+    private javax.swing.JLabel jL_check_in_time;
+    private javax.swing.JLabel jL_check_out_shift_d;
+    private javax.swing.JLabel jL_check_out_time;
+    private javax.swing.JLabel jL_is_service;
+    private javax.swing.JLabel jL_parking_session_id;
     private javax.swing.JLabel jL_title;
-    private javax.swing.JLabel jL_vehicleId;
+    private javax.swing.JLabel jL_vehicle_id;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel34;
+    private javax.swing.JLabel jLabel35;
+    private javax.swing.JLabel jLabel36;
+    private javax.swing.JLabel jLabel37;
+    private javax.swing.JLabel jLabel38;
+    private javax.swing.JLabel jLabel39;
+    private javax.swing.JLabel jLabel40;
+    private javax.swing.JLabel jLabel41;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane scrollPaneParikingSession;
-    private javax.swing.JTable tblParkingSession;
-    private javax.swing.JTextField txtPhone_number1;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JScrollPane sc_pariking_session;
+    private javax.swing.JTable tbl_parking_session;
     private javax.swing.JTextField txt_amount;
-    private javax.swing.JTextField txt_cardId;
-    private javax.swing.JTextField txt_checkInShiftId;
-    private javax.swing.JTextField txt_checkInTime;
-    private javax.swing.JTextField txt_checkOutShiftId;
-    private javax.swing.JTextField txt_checkOutTime;
-    private javax.swing.JTextField txt_isService;
-    private javax.swing.JTextField txt_parkingSessionId;
+    private javax.swing.JTextField txt_building_id;
+    private javax.swing.JTextField txt_check_in_shift_id;
+    private javax.swing.JTextField txt_check_in_time;
+    private javax.swing.JTextField txt_check_out_shift_id;
+    private javax.swing.JTextField txt_check_out_time;
+    private javax.swing.JTextField txt_is_service;
+    private javax.swing.JTextField txt_parking_session_id;
+    private javax.swing.JTextField txt_tim_kiem;
+    private javax.swing.JTextField txt_tin_nhan;
+    private javax.swing.JTextField txt_vehicle;
     // End of variables declaration//GEN-END:variables
 }
