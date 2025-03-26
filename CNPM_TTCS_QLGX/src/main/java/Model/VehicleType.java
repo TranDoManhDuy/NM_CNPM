@@ -11,13 +11,22 @@ package Model;
 public class VehicleType {
     private int vehicle_type_id;
     private String vehicle_type_name;
-
+    private boolean isPermission;
     public VehicleType() {
     }
 
-    public VehicleType(int vehicle_type_id, String vehicle_type_name) {
+    public boolean isIsPermission() {
+        return isPermission;
+    }
+
+    public void setIsPermission(boolean isPermission) {
+        this.isPermission = isPermission;
+    }
+
+    public VehicleType(int vehicle_type_id, String vehicle_type_name, boolean isPermission) {
         this.vehicle_type_id = vehicle_type_id;
         this.vehicle_type_name = vehicle_type_name;
+        this.isPermission = isPermission;
     }
 
     public int getVehicle_type_id() {

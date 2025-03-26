@@ -217,6 +217,7 @@
     <Component class="javax.swing.JCheckBox" name="checkbox_conhieuluc">
       <Properties>
         <Property name="text" type="java.lang.String" value="C&#xf2;n hi&#x1ec7;u l&#x1ef1;c"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="checkbox_conhieulucActionPerformed"/>

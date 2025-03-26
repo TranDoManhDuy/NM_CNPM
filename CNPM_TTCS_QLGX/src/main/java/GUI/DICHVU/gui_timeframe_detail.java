@@ -4,6 +4,8 @@
  */
 package GUI.DICHVU;
 
+import Model.TimeFrame;
+
 /**
  *
  * @author manhh
@@ -76,6 +78,7 @@ public class gui_timeframe_detail extends javax.swing.JPanel {
         jLabel10.setText("Ngày ban hành");
 
         checkbox_conhieuluc.setText("Còn hiệu lực");
+        checkbox_conhieuluc.setEnabled(false);
         checkbox_conhieuluc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 checkbox_conhieulucActionPerformed(evt);

@@ -228,6 +228,8 @@ public class gui_registration extends javax.swing.JPanel {
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
+        txt_iddangki.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txt_iddangki.setDisabledTextColor(new java.awt.Color(153, 153, 153));
         txt_iddangki.setEnabled(false);
 
         label_iddangki.setText("Id đăng kí");
@@ -258,6 +260,8 @@ public class gui_registration extends javax.swing.JPanel {
             }
         });
 
+        txt_ten_Khachhang.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txt_ten_Khachhang.setDisabledTextColor(new java.awt.Color(153, 153, 153));
         txt_ten_Khachhang.setEnabled(false);
         txt_ten_Khachhang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -265,6 +269,8 @@ public class gui_registration extends javax.swing.JPanel {
             }
         });
 
+        txt_phuongtien.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txt_phuongtien.setDisabledTextColor(new java.awt.Color(153, 153, 153));
         txt_phuongtien.setEnabled(false);
         txt_phuongtien.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -281,6 +287,8 @@ public class gui_registration extends javax.swing.JPanel {
             }
         });
 
+        txt_ngaydangki.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txt_ngaydangki.setDisabledTextColor(new java.awt.Color(153, 153, 153));
         txt_ngaydangki.setEnabled(false);
 
         combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -300,6 +308,8 @@ public class gui_registration extends javax.swing.JPanel {
 
         label_id_khachhang.setText("ID Khách hàng");
 
+        txt_id_khachhang.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txt_id_khachhang.setDisabledTextColor(new java.awt.Color(153, 153, 153));
         txt_id_khachhang.setEnabled(false);
 
         btn_chonkhachhang.setText("Chọn");
@@ -544,10 +554,10 @@ public class gui_registration extends javax.swing.JPanel {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btn_bo_loc))
+                        .addComponent(btn_bo_loc, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(combo_namketthuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                         .addComponent(btn_loc)))
                 .addContainerGap())
         );
@@ -583,6 +593,7 @@ public class gui_registration extends javax.swing.JPanel {
         );
 
         txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
+        txt_tinnhan.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txt_tinnhan.setEnabled(false);
         txt_tinnhan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

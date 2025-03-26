@@ -34,8 +34,8 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
             while (result.next()) {
                 int id = result.getInt("vehicle_type_id");
                 String name = result.getString("vehicle_type_name");
-                
-                list.add(new VehicleType(id, name));
+                boolean isPermission = result.getBoolean("is_availabel");
+                list.add(new VehicleType(id, name, isPermission));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,14 +44,14 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
     }
      @Override
      public boolean insert(VehicleType vehicleType) {
-        String sql = "INSERT INTO vehicle_types (vehicle_type_name) VALUES (?)";
+        String sql = "INSERT INTO vehicle_types (vehicle_type_name, is_availabel) VALUES (?, ?)";
         
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
             ptmt.setString(1, vehicleType.getVehicle_type_name());
-            
+            ptmt.setBoolean(2, vehicleType.isIsPermission());
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,14 +60,15 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
     }
      @Override
      public boolean update(VehicleType vehicleType) {
-        String sql = "UPDATE vehicle_types SET vehicle_type_name = ? WHERE vehicle_type_id = ?";
+        String sql = "UPDATE vehicle_types SET vehicle_type_name = ?, is_availabel = ? WHERE vehicle_type_id = ?";
         
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
             ptmt.setString(1, vehicleType.getVehicle_type_name());
-            ptmt.setInt(2, vehicleType.getVehicle_type_id());
+            ptmt.setBoolean(2, vehicleType.isIsPermission());
+            ptmt.setInt(3, vehicleType.getVehicle_type_id());
             
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -89,7 +90,8 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
             if (rs.next()) {
                 return new VehicleType(
                     rs.getInt("vehicle_type_id"),
-                    rs.getString("vehicle_type_name")
+                    rs.getString("vehicle_type_name"),
+                    rs.getBoolean("is_availabel")
                 );
             }
         } catch (Exception e) {

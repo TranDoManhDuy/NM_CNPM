@@ -24,7 +24,7 @@ public class RegisatrationDAO implements InterfaceDAO.InterfaceDAO<Regisatration
     @Override
     public ArrayList<Regisatration> getList() {
         ArrayList<Regisatration> listRegistration = new ArrayList<>();
-        String sql = "SELECT * FROM registration";
+        String sql = "EXEC getlist_registration";
         try (
             Connection conn = OpenConnection.getConnection();
             Statement stmt = conn.createStatement();
@@ -47,7 +47,7 @@ public class RegisatrationDAO implements InterfaceDAO.InterfaceDAO<Regisatration
     }
     @Override
     public boolean insert(Regisatration regisatration) {
-        String sql = "INSERT INTO Registration (customer_id, registration_date, vehicle_id, state) VALUES (?,?,?,?)";
+        String sql = "EXEC insert_registration @customer_id = ?, @registration_date = ?, @vehicle_id = ?, @state = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt =  conn.prepareStatement(sql);
@@ -65,16 +65,16 @@ public class RegisatrationDAO implements InterfaceDAO.InterfaceDAO<Regisatration
     }
     @Override
     public boolean update(Regisatration registration) {
-        String sql = "UPDATE registration SET customer_id = ?, registration_date = ?, vehicle_id = ?, state = ? WHERE registration_id = ?";
+        String sql = "EXEC update_registraion @customer_id = ?, @registration_date = ?, @vehicle_id = ?, @state = ?, @registration_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt =  conn.prepareStatement(sql);
         ) {
             ptmt.setInt(1, registration.getCustomer_id());
-            ptmt.setInt(5, registration.getRegistration_id());
             ptmt.setDate(2, Date.valueOf(registration.getRegistration_date()));
             ptmt.setInt(3, registration.getVehicle_id());
             ptmt.setString(4, String.valueOf(registration.getState()));
+            ptmt.setInt(5, registration.getRegistration_id());
             
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -84,7 +84,7 @@ public class RegisatrationDAO implements InterfaceDAO.InterfaceDAO<Regisatration
     }
    @Override
     public Regisatration findbyID(int id) {
-       String sql = "SELECT * FROM registration WHERE registration_id = ?";
+       String sql = "EXEC findbyID_registration @registration_id = ?";
        try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -109,7 +109,7 @@ public class RegisatrationDAO implements InterfaceDAO.InterfaceDAO<Regisatration
     }
     @Override
     public boolean delete(int id) {
-        String sql = "DELETE FROM Registration WHERE registration_id = ?";
+        String sql = "EXEC delete_registration @registration_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);

@@ -24,7 +24,7 @@ public class ServiceFeeDAO implements InterfaceDAO.InterfaceDAO <ServiceFee>{
     @Override
     public ArrayList<ServiceFee> getList() {
         ArrayList<ServiceFee> list = new ArrayList<>();
-        String sql = "SELECT * FROM service_fee";
+        String sql = "SELECT * FROM service_fees";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -83,7 +83,7 @@ public class ServiceFeeDAO implements InterfaceDAO.InterfaceDAO <ServiceFee>{
         return false;
     }
     public ServiceFee findbyID(int id) {
-        String sql = "SELECT * FROM service_fee WHERE service_fee_id = ?";
+        String sql = "SELECT * FROM service_fees WHERE service_fee_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);

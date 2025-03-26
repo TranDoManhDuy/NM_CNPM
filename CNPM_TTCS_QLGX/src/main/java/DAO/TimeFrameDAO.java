@@ -15,15 +15,16 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+
 /**
  *
  * @author manhh
  */
+
 public class TimeFrameDAO  implements InterfaceDAO.InterfaceDAO<TimeFrame>{
     public static TimeFrameDAO getInstance() {
         return new TimeFrameDAO();
     }
-    
     @Override
     public ArrayList<TimeFrame> getList() {
         ArrayList<TimeFrame> listTimeFrames = new ArrayList<>();

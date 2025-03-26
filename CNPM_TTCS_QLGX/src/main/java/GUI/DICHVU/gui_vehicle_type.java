@@ -4,19 +4,58 @@
  */
 package GUI.DICHVU;
 
+import DAO.VehicleTypeDAO;
+import Model.VehicleType;
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author manhh
  */
 public class gui_vehicle_type extends javax.swing.JPanel {
-
+    private DefaultTableModel tableModel;
     /**
      * Creates new form gui_vehicle_type
      */
     public gui_vehicle_type() {
         initComponents();
+        tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        initTable();
+        fillTable();
     }
+    public void initTable() {
+        String[] header = new String[] {"ID Loại Phương Tiện", "Tên Loại Phương Tiện", "Còn cho phép"};
+        tableModel.setColumnIdentifiers(header);
+        table_loaiphuongtien.setModel(tableModel);
+    }
+    public void fillTable() {
+        ArrayList <VehicleType> listVT = VehicleTypeDAO.getInstance().getList();
 
+        tableModel.setRowCount(0);
+        for (VehicleType dk : listVT) {
+            try {
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            String trangthai = "";
+            if (dk.isIsPermission() == true) {
+                trangthai = "Được phép";
+            }
+            else {
+                trangthai = "Không cho phép";
+            }
+            tableModel.addRow(new String[] {String.valueOf(dk.getVehicle_type_id()), dk.getVehicle_type_name(), trangthai});
+        }
+        tableModel.fireTableDataChanged();
+        listVT = null;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
