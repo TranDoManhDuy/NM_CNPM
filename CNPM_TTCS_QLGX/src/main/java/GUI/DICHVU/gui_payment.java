@@ -8,6 +8,7 @@ import DAO.CustomerDAO;
 import DAO.PaymentDAO;
 import DAO.RegisatrationDAO;
 import DAO.TypeServiceDAO;
+import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Model.Customer;
 import Model.Payment;
@@ -15,6 +16,9 @@ import Model.Regisatration;
 import Model.TypeService;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
@@ -73,17 +77,17 @@ public class gui_payment extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 
                 int row = table_thanhtoan.rowAtPoint(e.getPoint());
-                ArrayList <Payment> arr = PaymentDAO.getInstance().getList();
-                Payment pm = arr.get(row);
-                txt_idthanhtoan.setText(String.valueOf(pm.getPayment_id()));
-                
-                
-                if (pm.isPayment_state()== true) {
-                    combo_trangthai.setSelectedIndex(0);
-                }
-                else {
-                    combo_trangthai.setSelectedIndex(1);
-                }
+//                ArrayList <Payment> arr = PaymentDAO.getInstance().getList();
+//                Payment pm = arr.get(row);
+//                txt_idthanhtoan.setText(String.valueOf(pm.getPayment_id()));
+//                
+//                
+//                if (pm.isPayment_state()== true) {
+//                    combo_trangthai.setSelectedIndex(0);
+//                }
+//                else {
+//                    combo_trangthai.setSelectedIndex(1);
+//                }
             }
         });
     }
@@ -95,31 +99,32 @@ public class gui_payment extends javax.swing.JPanel {
     }
     
     public void fillTable() {
-        ArrayList <Payment> listPm = PaymentDAO.getInstance().getList();
-        TypeService typeService = new TypeService();
-        Customer customer = new Customer();
-        tableModel.setRowCount(0);
-        for (Payment pm : listPm) {
-            try {
-                typeService = TypeServiceDAO.getInstance().findbyID(pm.getService_type_id());
-                Regisatration registration = RegisatrationDAO.getInstance().findbyID(pm.getRegistration_id());
-                customer = CustomerDAO.getInstance().findbyID(registration.getCustomer_id());
-            } catch (Exception e) {
-                e.printStackTrace();
+        String sql = "EXEC Payment_render";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+        ) {
+            while (rs.next()) {
+                int payment_id = rs.getInt("payment_id");
+                int registration_id = rs.getInt("registration_id");
+                String full_name = rs.getString("full_name");
+                LocalDate extension_time = rs.getDate("extension_time").toLocalDate();
+                String service_name = rs.getString("service_name");
+                boolean payment_state = rs.getBoolean("payment_state");
+                String trangthai = "";
+                if (payment_state == true) {
+                    trangthai = "Đã thanh toán";
+                }
+                else {
+                    trangthai = "Chưa thanh toán";
+                }
+                tableModel.addRow(new String[] {String.valueOf(payment_id), String.valueOf(registration_id), full_name, String.valueOf(extension_time), service_name, trangthai});
             }
-            String trangthai = "";
-            if (pm.isPayment_state() == true) {
-                trangthai = "Đã thanh toán";
-            }
-            else {
-                trangthai = "Chưa thanh toán";
-            }
-            tableModel.addRow(new String[] {String.valueOf(pm.getPayment_id()), String.valueOf(pm.getRegistration_id()), customer.getFull_name(),String.valueOf(pm.getExtension_time()), typeService.getService_name(),trangthai});
+            tableModel.fireTableDataChanged();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        tableModel.fireTableDataChanged();
-        listPm = null;
-        typeService = null;
-        customer = null;
     }
     /**
      * This method is called from within the constructor to initialize the form.

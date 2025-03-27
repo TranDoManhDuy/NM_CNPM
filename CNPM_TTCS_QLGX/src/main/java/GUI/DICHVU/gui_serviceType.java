@@ -8,10 +8,14 @@ import DAO.ServiceFeeDAO;
 import DAO.TypeServiceDAO;
 import DAO.VehicleDAO;
 import DAO.VehicleTypeDAO;
+import DatabaseHelper.OpenConnection;
 import Model.ServiceFee;
 import Model.TypeService;
 import Model.Vehicle;
 import Model.VehicleType;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -46,34 +50,36 @@ public class gui_serviceType extends javax.swing.JPanel {
         table_loaidichvu.setModel(tableModel);
     }
     public void fillTable() {
-        ArrayList <TypeService> listTS = TypeServiceDAO.getInstance().getList();
-        ServiceFee svfree = new ServiceFee();
-        VehicleType vehicletype = new VehicleType();
-        
-        tableModel.setRowCount(0);
-        for (TypeService ts : listTS) {
-            try {
-                System.out.println(ts.getService_fee_id());
-                svfree = ServiceFeeDAO.getInstance().findbyID(ts.getService_fee_id());
-                vehicletype = VehicleTypeDAO.getInstance().findbyID(svfree.getVehicle_type_id());
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            String trangthai = "";
-            if (ts.isIs_active()== true) {
-                trangthai = "Còn hạn";
-            }
-            else {
-                trangthai = "Hết hạn";
-            }
-            tableModel.addRow(new String[] {String.valueOf(ts.getType_service_id()) ,ts.getService_name(), String.valueOf(svfree.getAmount()), vehicletype.getVehicle_type_name(),String.valueOf(ts.getMonth_unit()), String.valueOf(ts.getPayment_coefficient()),trangthai});
+    String sql = "EXEC ServiceType_render";
+    try (
+        Connection conn = OpenConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+    ) {
+        while (rs.next()) {
+            int type_service_id = rs.getInt("type_service_id");
+            String service_name = rs.getString("service_name");
+            double amount = rs.getDouble("amount");
+            String vehicle_type_name = rs.getString("vehicle_type_name");
+            int month_unit = rs.getInt("month_unit");
+            double payment_coefficient = rs.getDouble("payment_coefficient");
+            boolean is_active = rs.getBoolean("is_active");
+            tableModel.addRow(new String[] {
+                String.valueOf(type_service_id),
+                service_name,
+                String.valueOf(amount),
+                vehicle_type_name,
+                String.valueOf(month_unit),
+                String.valueOf(payment_coefficient),
+                is_active ? "Còn hạn" : "Hết hạn"
+            });
         }
         tableModel.fireTableDataChanged();
-        listTS = null;
-        svfree = null;
-        vehicletype = null;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

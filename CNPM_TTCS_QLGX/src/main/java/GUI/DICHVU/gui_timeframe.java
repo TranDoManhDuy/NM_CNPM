@@ -4,7 +4,13 @@
  */
 package GUI.DICHVU;
 
+import DatabaseHelper.OpenConnection;
 import java.awt.Frame;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
@@ -13,22 +19,42 @@ import javax.swing.JPanel;
  * @author manhh
  */
 public class gui_timeframe extends javax.swing.JPanel {
-
+    private JPanel containerPanel;
     /**
      * Creates new form gui_timeframe
      */
     public gui_timeframe() {
         initComponents();
         
-        JPanel containerPanel = new JPanel();
+        containerPanel = new JPanel();
         containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
-        for (int i = 1; i <= 10; ++i) {
-            containerPanel.add(new gui_timeframe_detail());
-        }
-        
+        fillTable();
         scroll_table.setViewportView(containerPanel);
     }
-
+    public void fillTable() {
+        String sql = "EXEC timeframe_render";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+        ) {
+            while (rs.next()) {
+                LocalDate decision_date = rs.getDate("decision_date").toLocalDate();
+                LocalTime TS1 = rs.getTime("TS1").toLocalTime();
+                LocalTime TS2 = rs.getTime("TS2").toLocalTime();
+                LocalTime TS3 = rs.getTime("TS3").toLocalTime();
+                LocalTime TE1 = rs.getTime("TE1").toLocalTime();
+                LocalTime TE2 = rs.getTime("TE2").toLocalTime();
+                LocalTime TE3 = rs.getTime("TE3").toLocalTime();
+                boolean isActive = rs.getBoolean("is_active");
+                
+                gui_timeframe_detail timeframeDetail_gui = new gui_timeframe_detail(decision_date, TS1, TS2, TS3, TE1, TE2, TE3, isActive);
+                containerPanel.add(timeframeDetail_gui);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

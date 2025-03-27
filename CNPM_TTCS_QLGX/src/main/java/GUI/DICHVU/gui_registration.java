@@ -4,6 +4,7 @@ import Annotation.LogMessage;
 import DAO.CustomerDAO;
 import DAO.RegisatrationDAO;
 import DAO.VehicleDAO;
+import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
 import Model.Customer;
@@ -13,6 +14,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import javax.swing.JFrame;
@@ -118,32 +122,26 @@ public class gui_registration extends javax.swing.JPanel {
     }
     
     public void fillTable() {
-        ArrayList <Regisatration> listDK = RegisatrationDAO.getInstance().getList();
-        Customer customer = new Customer();
-        Vehicle vehicle = new Vehicle();
-        // 1
-        tableModel.setRowCount(0);
-        for (Regisatration dk : listDK) {
-            try {
-                customer = CustomerDAO.getInstance().findbyID(dk.getCustomer_id());
-                vehicle = VehicleDAO.getInstance().findbyID(dk.getVehicle_id());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            String trangthai = "";
-            if (dk.getState() == 'A') {
-                trangthai = "Còn thời hạn";
-            }
-            else {
-                trangthai = "Hết thời hạn";
-            }
-            tableModel.addRow(new String[] {String.valueOf(dk.getRegistration_id()),customer.getFull_name(), String.valueOf(dk.getRegistration_date()), vehicle.getIdentification_code(), trangthai});
+    String sql = "EXEC Registration_render";
+    try (
+        Connection conn = OpenConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+    ) {
+        while (rs.next()) {
+            int registration_id = rs.getInt("registration_id");
+            String full_name = rs.getString("full_name");
+            LocalDate registration_date = rs.getDate("registration_date").toLocalDate();
+            String identification_code = rs.getString("identification_code");
+            String state = rs.getString("state");
+            tableModel.addRow(new String[] {String.valueOf(registration_id), full_name, String.valueOf(registration_date), identification_code, state});
         }
         tableModel.fireTableDataChanged();
-        listDK = null;
-        customer = null;
-        vehicle = null;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -7,9 +7,15 @@ package GUI.DICHVU;
 import DAO.SessionFeeDAO;
 import DAO.TimeFrameDAO;
 import DAO.VehicleTypeDAO;
+import DatabaseHelper.OpenConnection;
 import Model.SessionFee;
 import Model.TimeFrame;
 import Model.VehicleType;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -42,31 +48,36 @@ public class gui_session_free extends javax.swing.JPanel {
     }
     
     public void fillTable() {
-        ArrayList <SessionFee> listssf = SessionFeeDAO.getInstance().getList();
-        TimeFrame timeframe = new TimeFrame();
-        VehicleType vehicletype = new VehicleType();
-        
-        tableModel.setRowCount(0);
-        for (SessionFee ssf : listssf) {
-            try {
-                timeframe = TimeFrameDAO.getInstance().findbyID(ssf.getTime_frame_id());
-                vehicletype = VehicleTypeDAO.getInstance().findbyID(ssf.getVehicle_type_id());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            String trangthai = "";
-            if (ssf.isIs_active() == true) {
-                trangthai = "Còn hiệu lưc";
-            }
-            else {
-                trangthai = "Hết hiệu lực";
-            }
-            tableModel.addRow(new String[] {String.valueOf(ssf.getSession_fee_id()), vehicletype.getVehicle_type_name(), 
-                String.valueOf(timeframe.getTime_start()),String.valueOf(timeframe.getTime_end()), 
-                Library.Library.formatCurrency(ssf.getAmount()),String.valueOf(ssf.getDecision_date()),trangthai});
+    String sql = "EXEC SessionFee_render";
+    try (
+        Connection conn = OpenConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+    ) {
+        while (rs.next()) {
+            int session_fee_id = rs.getInt("session_fee_id");
+            String vehicle_type_name = rs.getString("vehicle_type_name");
+            LocalTime time_start = rs.getTime("time_start").toLocalTime();
+            LocalTime time_end = rs.getTime("time_end").toLocalTime();
+            double amount = rs.getDouble("amount");
+            LocalDate decision_date = rs.getDate("decision_date").toLocalDate();
+            boolean is_active = rs.getBoolean("is_active");
+            tableModel.addRow(new String[] {
+                String.valueOf(session_fee_id),
+                vehicle_type_name,
+                time_start.toString(),
+                time_end.toString(),
+                String.valueOf(amount),
+                decision_date.toString(),
+                is_active ? "Còn hạn" : "Hết hạn"
+            });
         }
         tableModel.fireTableDataChanged();
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
