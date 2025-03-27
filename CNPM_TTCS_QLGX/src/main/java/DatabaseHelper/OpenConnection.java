@@ -13,10 +13,15 @@ import java.sql.DriverManager;
 public class OpenConnection {
     public static Connection getConnection() throws Exception {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        String connectionURL =  "jdbc:sqlserver://localhost;database=VINHOMES;encrypt=true;trustServerCertificate=true;";
-        String username = "sa";
-        String password = "123";
-        Connection conn = DriverManager.getConnection(connectionURL, username, password);
+        String serverName = "tranmanhduy.database.windows.net";
+        String databaseName = "VINHOMES";
+        String url = "jdbc:sqlserver://" + serverName + ":1433;" +
+                     "database=" + databaseName + ";" +
+                     "encrypt=true;" +
+                     "trustServerCertificate=true;";
+        String username = "tranmanhduy";
+        String password = "Trandomanhduy2874@";
+        Connection conn = DriverManager.getConnection(url, username, password);
         return conn;
     }
     public static void main(String[] args) {

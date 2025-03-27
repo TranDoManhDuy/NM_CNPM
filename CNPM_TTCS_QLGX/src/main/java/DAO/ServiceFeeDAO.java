@@ -24,7 +24,7 @@ public class ServiceFeeDAO implements InterfaceDAO.InterfaceDAO <ServiceFee>{
     @Override
     public ArrayList<ServiceFee> getList() {
         ArrayList<ServiceFee> list = new ArrayList<>();
-        String sql = "SELECT * FROM service_fees";
+        String sql = "EXEC getlist_service_fees";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -46,8 +46,7 @@ public class ServiceFeeDAO implements InterfaceDAO.InterfaceDAO <ServiceFee>{
         return list;
     }
     public boolean insert(ServiceFee serviceFee) {
-        String sql = "INSERT INTO service_fees (decision_date, vehicle_type_id, amount, is_active) VALUES (?, ?, ?, ?)";
-        
+        String sql = "EXEC insert_service_fee @decision_date = ?, @vehicle_type_id = ?, @amount = ?, @is_active = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -64,7 +63,7 @@ public class ServiceFeeDAO implements InterfaceDAO.InterfaceDAO <ServiceFee>{
         return false;
     }
     public boolean update(ServiceFee serviceFee) {
-        String sql = "UPDATE service_fees SET decision_date = ?, vehicle_type_id = ?, amount = ?, is_active = ? WHERE service_fee_id = ?";
+        String sql = "EXEC update_service_fee @decision_date = ?, @vehicle_type_id = ?, @amount = ?, @is_active = ?, @service_fee_id = ?";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -83,7 +82,7 @@ public class ServiceFeeDAO implements InterfaceDAO.InterfaceDAO <ServiceFee>{
         return false;
     }
     public ServiceFee findbyID(int id) {
-        String sql = "SELECT * FROM service_fees WHERE service_fee_id = ?";
+        String sql = "EXEC findbyID_service_fee @service_fee_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -106,7 +105,7 @@ public class ServiceFeeDAO implements InterfaceDAO.InterfaceDAO <ServiceFee>{
         return null;
     }
     public boolean delete(int id) {
-        String sql = "DELETE FROM service_fees WHERE service_fee_id = ?";
+        String sql = " EXEC delete_service_fee @service_fee_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);

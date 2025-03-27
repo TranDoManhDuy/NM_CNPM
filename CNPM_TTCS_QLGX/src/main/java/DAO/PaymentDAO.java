@@ -25,7 +25,7 @@ public class PaymentDAO implements InterfaceDAO.InterfaceDAO<Payment>{
      @Override
     public ArrayList<Payment> getList() {
         ArrayList<Payment> listPayments = new ArrayList<>();
-        String sql = "SELECT * FROM payments";
+        String sql = "EXEC getlist_payments";
         try (
             Connection conn = OpenConnection.getConnection();
             Statement stmt = conn.createStatement();
@@ -48,7 +48,7 @@ public class PaymentDAO implements InterfaceDAO.InterfaceDAO<Payment>{
     }
     @Override
     public boolean insert(Payment payment) {
-        String sql = "INSERT INTO payments (registration_id, extension_time, payment_state, service_type_id) VALUES (?, ?, ?, ?)";
+        String sql = "EXEC insert_payment @registration_id = ?, @extension_time = ?, @payment_state = ?, @service_type_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -66,7 +66,7 @@ public class PaymentDAO implements InterfaceDAO.InterfaceDAO<Payment>{
     }
     @Override
     public boolean update(Payment payment) {
-        String sql = "UPDATE payments SET registration_id = ?, extension_time = ?, payment_state = ?, service_type_id = ? WHERE payment_id = ?";
+        String sql = "EXEC update_payment @registration_id = ?, @extension_time = ?, @payment_state = ?, @service_type_id = ?, @payment_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -86,7 +86,7 @@ public class PaymentDAO implements InterfaceDAO.InterfaceDAO<Payment>{
     
     @Override
     public Payment findbyID(int id) {
-        String sql = "SELECT * FROM payments WHERE payment_id = ?";
+        String sql = "EXEC findbyID_payment @payment_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -110,7 +110,7 @@ public class PaymentDAO implements InterfaceDAO.InterfaceDAO<Payment>{
     }
     @Override
     public boolean delete(int id) {
-        String sql = "DELETE FROM payments WHERE payment_id = ?";
+        String sql = "EXEC delete_payment @payment_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -124,7 +124,7 @@ public class PaymentDAO implements InterfaceDAO.InterfaceDAO<Payment>{
     }
     public static void main(String[] args) {
         ArrayList<Payment> list = PaymentDAO.getInstance().getList();
-        PaymentDAO.getInstance().delete(0);
+        PaymentDAO.getInstance().delete(5);
         list.forEach(x -> {
             System.out.println(x.getRegistration_id());
         });

@@ -3,6 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Model;
+
+import java.sql.Date;
+import java.time.LocalDate;
+
 /**
  *
  * @author manhh
@@ -12,16 +16,26 @@ public class TypeService {
     private int service_fee_id;
     private int month_unit;
     private String service_name;
+    private LocalDate decision_date;
     private int payment_coefficient;
     private boolean is_active;
 
-    public TypeService(int type_service_id, int service_fee_id, int month_unit, String service_name, int payment_coefficient, boolean is_active) {
+    public LocalDate getDecision_date() {
+        return decision_date;
+    }
+
+    public void setDecision_date(LocalDate decision_date) {
+        this.decision_date = decision_date;
+    }
+
+    public TypeService(int type_service_id, int service_fee_id, int month_unit, String service_name, LocalDate decision_date,int payment_coefficient, boolean is_active) {
         this.type_service_id = type_service_id;
         this.service_fee_id = service_fee_id;
         this.month_unit = month_unit;
         this.service_name = service_name;
         this.payment_coefficient = payment_coefficient;
         this.is_active = is_active;
+        this.decision_date = decision_date;
     }
 
     public TypeService() {

@@ -24,7 +24,7 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
      @Override
      public ArrayList<VehicleType> getList() {
         ArrayList<VehicleType> list = new ArrayList<>();
-        String sql = "SELECT * FROM vehicle_types";
+        String sql = "EXEC getlist_vehicle_types";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -44,7 +44,7 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
     }
      @Override
      public boolean insert(VehicleType vehicleType) {
-        String sql = "INSERT INTO vehicle_types (vehicle_type_name, is_availabel) VALUES (?, ?)";
+        String sql = "EXEC insert_vehicle_type @vehicle_type_name = ?, @is_availabel = ?";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -60,7 +60,7 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
     }
      @Override
      public boolean update(VehicleType vehicleType) {
-        String sql = "UPDATE vehicle_types SET vehicle_type_name = ?, is_availabel = ? WHERE vehicle_type_id = ?";
+        String sql = "EXEC update_vehicle_type @vehicle_type_name = ?, @is_availabel = ?, @vehicle_type_id = 1";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -78,7 +78,7 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
     }
      @Override
      public VehicleType findbyID(int id) {
-        String sql = "SELECT * FROM vehicle_types WHERE vehicle_type_id = ?";
+        String sql = "EXEC findbyID_vehicle_type @vehicle_type_id = ?";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -102,7 +102,7 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
      
      @Override
      public boolean delete(int id) {
-        String sql = "DELETE FROM vehicle_types WHERE vehicle_type_id = ?";
+        String sql = "EXEC delete_vehicle_type @vehicle_type_id = ?";
         
         try (
             Connection conn = OpenConnection.getConnection();

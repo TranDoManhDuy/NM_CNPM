@@ -25,7 +25,7 @@ public class SessionFeeDAO implements InterfaceDAO.InterfaceDAO<SessionFee> {
     @Override
     public ArrayList<SessionFee> getList() {
         ArrayList<SessionFee> listSessionFees = new ArrayList<>();
-        String sql = "SELECT * FROM session_fees";
+        String sql = "EXEC getlist_session_fees";
         try (
             Connection conn = OpenConnection.getConnection();
             Statement stmt = conn.createStatement();
@@ -49,7 +49,7 @@ public class SessionFeeDAO implements InterfaceDAO.InterfaceDAO<SessionFee> {
     }
     @Override
     public boolean insert(SessionFee sessionFee) {
-        String sql = "INSERT INTO session_fees (time_frame_id, vehicle_type_id, decision_date, amount, is_active) VALUES (?, ?, ?, ?, ?)";
+        String sql = "EXEC insert_session_fee @time_frame_id = ?, @vehicle_type_id = ?, @decision_date = ?, @amount = ?, @is_active = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -69,7 +69,7 @@ public class SessionFeeDAO implements InterfaceDAO.InterfaceDAO<SessionFee> {
     
     @Override
     public boolean update(SessionFee sessionFee) {
-        String sql = "UPDATE session_fees SET time_frame_id = ?, vehicle_type_id = ?, decision_date = ?, amount = ?, is_active = ? WHERE session_fee_id = ?";
+        String sql = "EXEC update_session_fee @time_frame_id = ?, @vehicle_type_id = ?, @decision_date = ?, @amount = ?, @is_active = ?, @session_fee_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -90,7 +90,7 @@ public class SessionFeeDAO implements InterfaceDAO.InterfaceDAO<SessionFee> {
     
     @Override
     public SessionFee findbyID(int id) {
-        String sql = "SELECT * FROM session_fees WHERE session_fee_id = ?";
+        String sql = "EXEC findbyID_session_fee @session_fee_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -116,7 +116,7 @@ public class SessionFeeDAO implements InterfaceDAO.InterfaceDAO<SessionFee> {
     
     @Override
     public boolean delete(int id) {
-        String sql = "DELETE FROM session_fees WHERE session_fee_id = ?";
+        String sql = " EXEC delete_session_fee @session_fee_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);

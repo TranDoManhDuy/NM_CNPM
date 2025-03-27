@@ -28,7 +28,7 @@ public class TimeFrameDAO  implements InterfaceDAO.InterfaceDAO<TimeFrame>{
     @Override
     public ArrayList<TimeFrame> getList() {
         ArrayList<TimeFrame> listTimeFrames = new ArrayList<>();
-        String sql = "SELECT * FROM time_frames";
+        String sql = " EXEC getlist_time_frames";
         try (
             Connection conn = OpenConnection.getConnection();
             Statement stmt = conn.createStatement();
@@ -52,7 +52,7 @@ public class TimeFrameDAO  implements InterfaceDAO.InterfaceDAO<TimeFrame>{
     
     @Override
     public boolean insert(TimeFrame timeFrame) {
-        String sql = "INSERT INTO time_frames (decision_date, time_start, time_end, is_active) VALUES (?, ?, ?, ?)";
+        String sql = "EXEC insert_time_frame @decision_date = ?, @time_start = ?, @time_end = ?, @is_active = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -70,7 +70,7 @@ public class TimeFrameDAO  implements InterfaceDAO.InterfaceDAO<TimeFrame>{
     }
     @Override
     public boolean update(TimeFrame timeFrame) {
-        String sql = "UPDATE time_frames SET decision_date = ?, time_start = ?, time_end = ?, is_active = ? WHERE time_frame_id = ?";
+        String sql = "EXEC update_time_frame @decision_date = ?, @time_start = ?, @time_end = ?, @is_active = ?,  @time_frame_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -90,7 +90,7 @@ public class TimeFrameDAO  implements InterfaceDAO.InterfaceDAO<TimeFrame>{
     
     @Override
     public TimeFrame findbyID(int id) {
-        String sql = "SELECT * FROM time_frames WHERE time_frame_id = ?";
+        String sql = "EXEC findbyID_time_frame @time_frame_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -115,7 +115,7 @@ public class TimeFrameDAO  implements InterfaceDAO.InterfaceDAO<TimeFrame>{
     
     @Override
     public boolean delete(int id) {
-        String sql = "DELETE FROM time_frames WHERE time_frame_id = ?";
+        String sql = "EXEC delete_time_frame @time_frame_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
