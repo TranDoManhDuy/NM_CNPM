@@ -25,16 +25,19 @@ import javax.swing.table.DefaultTableModel;
  * @author Admin
  */
 public class GUI_Customer extends javax.swing.JPanel {
-    private DataGlobal dataGlobal;
     private ViewMain viewmain;
-    private DefaultTableModel tblModel = new DefaultTableModel();
+    private DefaultTableModel tblModel = new DefaultTableModel(){
+        @Override 
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
     /**
      * Creates new form GUI_Customer
      */
     public GUI_Customer(ViewMain viewmain) {
         this.viewmain = viewmain;
         initComponents(); 
-        this.dataGlobal = dataGlobal;
         initTable();
         fillTable();
         addDocumentListeners();
@@ -654,7 +657,6 @@ public class GUI_Customer extends javax.swing.JPanel {
     private void tblCustomerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCustomerMouseClicked
         // TODO add your handling code here:
         int selectedRow = tblCustomer.getSelectedRow();
-    
         // Kiểm tra xem có hàng nào được chọn không
         if (selectedRow != -1) {
             // Lấy dữ liệu từ bảng và gán vào các biến

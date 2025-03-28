@@ -34,7 +34,7 @@ public class ViewMain extends javax.swing.JFrame {
     
     public ViewMain() {
         initComponents();
-        GUI_DICHVU();
+//        GUI_DICHVU();
         GUI_GUIXE();
     }
 
@@ -78,10 +78,10 @@ public class ViewMain extends javax.swing.JFrame {
     public void GUI_GUIXE() 
     {
         GUI_Customer gui_customer = new GUI_Customer(this);
-        GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard();
-        GUI_ParkingSession gui_parking_session = new GUI_ParkingSession();
-        GUI_ResidentCard gui_resident_card = new GUI_ResidentCard();
-        GUI_Vehicle gui_vehicle = new GUI_Vehicle();
+        GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(this);
+        GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(this);
+        GUI_ResidentCard gui_resident_card = new GUI_ResidentCard(this);
+        GUI_Vehicle gui_vehicle = new GUI_Vehicle(this);
         addComponent(panel_khachhang, gui_customer);
         addComponent(panel_mat_the_cd, gui_lost_resident_card);
         addComponent(panel_guixe, gui_parking_session);

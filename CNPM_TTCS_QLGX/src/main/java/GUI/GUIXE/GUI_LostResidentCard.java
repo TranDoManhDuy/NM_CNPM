@@ -4,17 +4,38 @@
  */
 package GUI.GUIXE;
 
+import GUI.ViewMain;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Admin
  */
 public class GUI_LostResidentCard extends javax.swing.JPanel {
-
+    private ViewMain viewmain;
+    private DefaultTableModel tblModel = new DefaultTableModel(){
+        @Override 
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
     /**
-     * Creates new form GUI_LostResidentCard
+     * Creates new form GUI_Customer
      */
-    public GUI_LostResidentCard() {
-        initComponents();
+    public GUI_LostResidentCard(ViewMain viewmain) {
+        this.viewmain = viewmain;
+        initComponents(); 
+        initTable();
+//        fillTable();
+//        addDocumentListeners();
+    }
+    
+    public void initTable() { 
+        String[] header = new String[] {"Mã Mất Thẻ", "Mã Thẻ",  "Tên Khách Hàng", "Thời Gian Vào", "Thời Gian Ra"};
+        tblModel.setColumnIdentifiers(header);
+        tblModel.setRowCount(2);
+        tbl_lost_resident_card.setModel(tblModel);
+        btn_insert.setEnabled(false);
     }
 
     /**
