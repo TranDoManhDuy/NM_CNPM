@@ -89,3 +89,6 @@
     - Done Query, Insert Data.
     - Store Procedures (customer, resident_cards, lost_resident_cards, parking_sessions, vehicles).
     - Trigger (Create resident_cards_registration).
+# 28-03-2025
+- > Login Server.
+- > Combine: Store Procedure + View.
