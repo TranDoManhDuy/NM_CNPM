@@ -83,35 +83,35 @@ public class gui_registration extends javax.swing.JPanel {
         {
             @Override
             public void mouseClicked(MouseEvent e) {
-                btn_them.setEnabled(false);
-                btn_capnhat.setEnabled(true);
-                btn_xoa.setEnabled(true);
-                
-                combo_trangthai.setEnabled(true);
-                Customer customer = new Customer();
-                Vehicle vehicle = new Vehicle();
-                int row = table_dangki.rowAtPoint(e.getPoint());
-                ArrayList <Regisatration> arr = RegisatrationDAO.getInstance().getList();
-                Regisatration dk = arr.get(row);
-                customer = CustomerDAO.getInstance().findbyID(dk.getCustomer_id());
-                vehicle = VehicleDAO.getInstance().findbyID(dk.getVehicle_id());
-                txt_iddangki.setText(String.valueOf(dk.getRegistration_id()));
-                txt_id_khachhang.setText(String.valueOf(customer.getCustomer_id()));
-                txt_ten_Khachhang.setText(customer.getFull_name());
-                txt_ngaydangki.setText(String.valueOf(dk.getRegistration_date()));
-                txt_phuongtien.setText(vehicle.getIdentification_code());
-                String trangthai = "";
-                if (dk.getState() == 'A') {
-                    combo_trangthai.setSelectedIndex(0);
-                }
-                else {
-                    combo_trangthai.setSelectedIndex(1);
-                }
-                
-                arr = null;
-                dk = null;
-                customer = null;
-                vehicle = null;
+//                btn_them.setEnabled(false);
+//                btn_capnhat.setEnabled(true);
+//                btn_xoa.setEnabled(true);
+//                
+//                combo_trangthai.setEnabled(true);
+//                Customer customer = new Customer();
+//                Vehicle vehicle = new Vehicle();
+//                int row = table_dangki.rowAtPoint(e.getPoint());
+//                ArrayList <Regisatration> arr = RegisatrationDAO.getInstance().getList();
+//                Regisatration dk = arr.get(row);
+//                customer = CustomerDAO.getInstance().findbyID(dk.getCustomer_id());
+//                vehicle = VehicleDAO.getInstance().findbyID(dk.getVehicle_id());
+//                txt_iddangki.setText(String.valueOf(dk.getRegistration_id()));
+//                txt_id_khachhang.setText(String.valueOf(customer.getCustomer_id()));
+//                txt_ten_Khachhang.setText(customer.getFull_name());
+//                txt_ngaydangki.setText(String.valueOf(dk.getRegistration_date()));
+//                txt_phuongtien.setText(vehicle.getIdentification_code());
+//                String trangthai = "";
+//                if (dk.getState() == 'A') {
+//                    combo_trangthai.setSelectedIndex(0);
+//                }
+//                else {
+//                    combo_trangthai.setSelectedIndex(1);
+//                }
+//                
+//                arr = null;
+//                dk = null;
+//                customer = null;
+//                vehicle = null;
             }
         });
     }
