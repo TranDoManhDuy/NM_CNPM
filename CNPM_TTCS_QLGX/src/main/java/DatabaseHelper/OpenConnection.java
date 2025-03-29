@@ -4,32 +4,37 @@
  */
 package DatabaseHelper;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 /**
  *
  * @author manhh
  */
 public class OpenConnection {
-    public static Connection getConnection() throws Exception {
-        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        String serverName = "tranmanhduy.database.windows.net";
-        String databaseName = "VINHOMES";
-        String url = "jdbc:sqlserver://" + serverName + ":1433;" +
-                     "database=" + databaseName + ";" +
-                     "encrypt=true;" +
-                     "trustServerCertificate=true;";
-        String username = "tranmanhduy";
-        String password = "Trandomanhduy2874@";
-        Connection conn = DriverManager.getConnection(url, username, password);
-        return conn;
+    private static final HikariConfig config = new HikariConfig();
+    private static HikariDataSource dataSourse;
+    
+    public static void initializaConnection(String username, String password) {
+        config.setJdbcUrl("jdbc:sqlserver://tranmanhduy.database.windows.net:1433;database=VINHOMES; encrypt=true;trustServerCertificate=true;");
+        config.setUsername(username);
+        config.setPassword(password);
+        config.addDataSourceProperty("encrypt", "true");
+        config.addDataSourceProperty("trustServerCertificate", "true");
+        
+        config.setMaximumPoolSize(10);
+        config.setMinimumIdle(2);
+        config.setIdleTimeout(30000);
+        config.setMaxLifetime(600000);
+        config.setConnectionTimeout(10000);
+        
+        dataSourse = new HikariDataSource(config);
     }
-    public static void main(String[] args) {
-        try {
-            Connection con = getConnection();
-            System.out.println("Connect successful");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static Connection getConnection() throws SQLException {
+        return dataSourse.getConnection();
     }
 }

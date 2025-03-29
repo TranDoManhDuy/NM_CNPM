@@ -6,7 +6,6 @@ import DAO.RegisatrationDAO;
 import DAO.VehicleDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
-import Global.DataGlobal;
 import Model.Customer;
 import Model.Regisatration;
 import Model.Vehicle;
@@ -83,35 +82,40 @@ public class gui_registration extends javax.swing.JPanel {
         {
             @Override
             public void mouseClicked(MouseEvent e) {
-//                btn_them.setEnabled(false);
-//                btn_capnhat.setEnabled(true);
-//                btn_xoa.setEnabled(true);
-//                
-//                combo_trangthai.setEnabled(true);
-//                Customer customer = new Customer();
-//                Vehicle vehicle = new Vehicle();
-//                int row = table_dangki.rowAtPoint(e.getPoint());
-//                ArrayList <Regisatration> arr = RegisatrationDAO.getInstance().getList();
-//                Regisatration dk = arr.get(row);
-//                customer = CustomerDAO.getInstance().findbyID(dk.getCustomer_id());
-//                vehicle = VehicleDAO.getInstance().findbyID(dk.getVehicle_id());
-//                txt_iddangki.setText(String.valueOf(dk.getRegistration_id()));
-//                txt_id_khachhang.setText(String.valueOf(customer.getCustomer_id()));
-//                txt_ten_Khachhang.setText(customer.getFull_name());
-//                txt_ngaydangki.setText(String.valueOf(dk.getRegistration_date()));
-//                txt_phuongtien.setText(vehicle.getIdentification_code());
-//                String trangthai = "";
-//                if (dk.getState() == 'A') {
-//                    combo_trangthai.setSelectedIndex(0);
-//                }
-//                else {
-//                    combo_trangthai.setSelectedIndex(1);
-//                }
-//                
-//                arr = null;
-//                dk = null;
-//                customer = null;
-//                vehicle = null;
+                btn_them.setEnabled(false);
+                btn_capnhat.setEnabled(true);
+                btn_xoa.setEnabled(true);
+                
+                combo_trangthai.setEnabled(true);
+                Customer customer = new Customer();
+                Vehicle vehicle = new Vehicle();
+                int row = table_dangki.rowAtPoint(e.getPoint());
+                
+                ArrayList <Regisatration> arr = RegisatrationDAO.getInstance().getList();
+                Regisatration dk = arr.get(row);
+                customer = CustomerDAO.getInstance().findbyID(dk.getCustomer_id());
+                vehicle = VehicleDAO.getInstance().findbyID(dk.getVehicle_id());
+                
+                txt_iddangki.setText(String.valueOf(dk.getRegistration_id()));
+                txt_id_khachhang.setText(String.valueOf(dk.getCustomer_id()));
+                txt_ten_Khachhang.setText(customer.getFull_name());
+                txt_ngaydangki.setText(String.valueOf(dk.getRegistration_date()));
+                txt_phuongtien.setText(vehicle.getIdentification_code());
+                String state = String.valueOf(dk.getState());
+                String trangthai = "";
+                if (state == "A") {
+                    trangthai = "San sang gia han";
+                }
+                else {
+                    if (state == "B") {
+                        trangthai = "Gia han thanh cong";
+                    }
+                    else {trangthai = "Bi huy";}
+                }
+                arr = null;
+                dk = null;
+                customer = null;
+                vehicle = null;
             }
         });
     }
@@ -134,7 +138,17 @@ public class gui_registration extends javax.swing.JPanel {
             LocalDate registration_date = rs.getDate("registration_date").toLocalDate();
             String identification_code = rs.getString("identification_code");
             String state = rs.getString("state");
-            tableModel.addRow(new String[] {String.valueOf(registration_id), full_name, String.valueOf(registration_date), identification_code, state});
+            String trangthai = "";
+            if (state == "A") {
+                trangthai = "San sang gia han";
+            }
+            else {
+                if (state == "B") {
+                    trangthai = "Gia han thanh cong";
+                }
+                else {trangthai = "Bi huy";}
+            }
+            tableModel.addRow(new String[] {String.valueOf(registration_id), full_name, String.valueOf(registration_date), identification_code, trangthai});
         }
         tableModel.fireTableDataChanged();
     } catch (Exception e) {

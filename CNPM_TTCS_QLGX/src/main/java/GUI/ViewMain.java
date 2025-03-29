@@ -17,7 +17,6 @@ import GUI.GUIXE.GUI_LostResidentCard;
 import GUI.GUIXE.GUI_ParkingSession;
 import GUI.GUIXE.GUI_ResidentCard;
 import GUI.GUIXE.GUI_Vehicle;
-import Global.DataGlobal;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
@@ -27,7 +26,6 @@ import javax.swing.JPanel;
  * @author manhh
  */
 public class ViewMain extends javax.swing.JFrame {
-    private DataGlobal dataGlobal;
     /**
      * Creates new form ViewMain
      */
@@ -36,13 +34,6 @@ public class ViewMain extends javax.swing.JFrame {
         initComponents();
         GUI_DICHVU();
         GUI_GUIXE();
-    }
-
-    public ViewMain(DataGlobal dataGlobal) {
-        this.dataGlobal = dataGlobal;
-        
-        initComponents();
-        GUI_DICHVU();
     }
     public void addComponent(JPanel father, JPanel child) {
         father.setLayout(new GridBagLayout());
