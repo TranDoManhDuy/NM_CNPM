@@ -18,9 +18,13 @@ import Model.ShiftTypes;
 import Model.ShiftWorks;
 import Model.Staff;
 import Model.Tasks;
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Types;
+import static java.sql.Types.INTEGER;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +88,7 @@ public class gui_shift_work extends javax.swing.JPanel {
     }
     
     private void fillTable(){
+        tableModel.setRowCount(0);
         String sql = "SELECT * FROM SHIFTWORKS";
         
         try (
@@ -131,6 +136,9 @@ public class gui_shift_work extends javax.swing.JPanel {
                     this.dispose();
                 }
             };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         }else{
             viewMain.setEnabled(true);
             viewMain.requestFocus();
@@ -139,7 +147,7 @@ public class gui_shift_work extends javax.swing.JPanel {
         }
     }
     public void updateShiftWork(){
-        LocalDate shiftDate = LocalDate.of(jComboBox4.getSelectedIndex()+1,jComboBox5.getSelectedIndex()+1 ,jComboBox6.getSelectedIndex()+2000); 
+        LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1); 
         int shID = Integer.parseInt(jTextField1.getText());
         int stID = Integer.parseInt(jTextField2.getText());
         int bID = Integer.parseInt(jTextField3.getText());
@@ -157,6 +165,9 @@ public class gui_shift_work extends javax.swing.JPanel {
                     this.dispose();
                 }
             };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         }else{
             viewMain.setEnabled(true);
             viewMain.requestFocus();
@@ -177,6 +188,9 @@ public class gui_shift_work extends javax.swing.JPanel {
                     this.dispose();
                 }
             };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         }
         else{
             viewMain.setEnabled(true);
@@ -224,6 +238,7 @@ public class gui_shift_work extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jButton7 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jTextField7 = new javax.swing.JTextField();
@@ -239,6 +254,8 @@ public class gui_shift_work extends javax.swing.JPanel {
         jLabel13 = new javax.swing.JLabel();
         jButton6 = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(204, 255, 255));
+        setForeground(new java.awt.Color(102, 255, 255));
         setPreferredSize(new java.awt.Dimension(1120, 485));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -336,9 +353,10 @@ public class gui_shift_work extends javax.swing.JPanel {
             }
         });
 
-        String day[] = new String[31];
+        String day[] = new String[32];
+        day[0]= "";
         for(int i = 1; i<=31; i++){
-            day[i - 1] = String.valueOf(i);
+            day[i] = String.valueOf(i);
         }
         jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(day));
         jComboBox4.addActionListener(new java.awt.event.ActionListener() {
@@ -347,15 +365,17 @@ public class gui_shift_work extends javax.swing.JPanel {
             }
         });
 
-        String month[] = new String[12];
+        String month[] = new String[13];
+        month[0] = "";
         for(int i = 1; i<=12; i++){
-            month[i - 1] = String.valueOf(i);
+            month[i] = String.valueOf(i);
         }
         jComboBox5.setModel(new javax.swing.DefaultComboBoxModel<>(month));
 
         int a = LocalDate.now().getYear();
         String year[] = new String[a-2000 + 1];
-        for(int i = 2000; i<= a; i++){
+        year[0] = "";
+        for(int i = 2001; i<= a; i++){
             year[i - 2000] = String.valueOf(i);
         }
         jComboBox6.setModel(new javax.swing.DefaultComboBoxModel<>(year));
@@ -402,6 +422,11 @@ public class gui_shift_work extends javax.swing.JPanel {
                 jComboBox8MouseClicked(evt);
             }
         });
+        jComboBox8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox8ActionPerformed(evt);
+            }
+        });
 
         loadListBuildings();
         String strB[] = new String[listBuildings.size()];
@@ -414,12 +439,19 @@ public class gui_shift_work extends javax.swing.JPanel {
                 jComboBox9MouseClicked(evt);
             }
         });
+        jComboBox9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox9ActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Mã loại ca trực");
 
         jLabel4.setText("Mã tòa nhà");
 
         jLabel6.setText("Mã nhiệm vụ");
+
+        jButton7.setText("Chọn");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -473,7 +505,9 @@ public class gui_shift_work extends javax.swing.JPanel {
                                 .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(13, 13, 13)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton7))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jComboBox9, 0, 105, Short.MAX_VALUE)
@@ -499,7 +533,7 @@ public class gui_shift_work extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -519,8 +553,9 @@ public class gui_shift_work extends javax.swing.JPanel {
                 .addGap(21, 21, 21)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21)
+                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton7))
+                .addGap(20, 20, 20)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -541,16 +576,21 @@ public class gui_shift_work extends javax.swing.JPanel {
                     .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
-                .addGap(18, 18, 18))
+                .addGap(24, 24, 24))
         );
 
-        jLabel8.setText("Mã ca trực");
+        jLabel8.setText("Mã Loại ca trực");
 
         jLabel9.setText("Mã Nhân viên");
 
         jLabel10.setText("Ngày trực");
 
         jButton4.setText("Lọc");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(day));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -609,16 +649,16 @@ public class gui_shift_work extends javax.swing.JPanel {
                                 .addComponent(jButton6))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                                 .addComponent(jLabel9)
                                 .addGap(18, 18, 18)
                                 .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(51, 51, 51))))
+                        .addGap(18, 18, 18))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -645,26 +685,28 @@ public class gui_shift_work extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(13, 13, 13))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(14, 14, 14)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(17, Short.MAX_VALUE))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -677,11 +719,16 @@ public class gui_shift_work extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        LocalDate shiftDate = LocalDate.of(jComboBox4.getSelectedIndex()+1,jComboBox5.getSelectedIndex()+1 ,jComboBox6.getSelectedIndex()+2000); 
-        if(shiftDate == null || jTextField2.getText() == null
-                             || jTextField3.getText() == null
-                             || jTextField4.getText() == null
-                             || jTextField5.getText() == null){
+        LocalDate shiftDate ;
+        if(jComboBox6.getSelectedIndex() == 0 || jComboBox5.getSelectedIndex() == 0 || jComboBox4.getSelectedIndex() == 0){
+            shiftDate = null;
+        }else{
+            shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex());
+        }
+        if( shiftDate == null || jTextField2.getText().trim().isEmpty()
+                            || jTextField3.getText().trim().isEmpty()
+                            || jTextField4.getText().trim().isEmpty()
+                            || jTextField5.getText().trim().isEmpty()){
             viewMain.setEnabled(false);
             LogMessage message = new LogMessage("Không để trống thông tin"){
                 @Override
@@ -691,9 +738,11 @@ public class gui_shift_work extends javax.swing.JPanel {
                     this.dispose();
                 }
             };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         }else{
-            LogConfirm confirm;
-            confirm = new LogConfirm("Xác nhận cập nhật"){
+            LogConfirm confirm = new LogConfirm("Xác nhận cập nhật"){
                 @Override
                 public void action() {
                     updateShiftWork();
@@ -754,7 +803,12 @@ public class gui_shift_work extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1); 
+        LocalDate shiftDate ;
+        if(jComboBox6.getSelectedIndex() == 0 || jComboBox5.getSelectedIndex() == 0 || jComboBox4.getSelectedIndex() == 0){
+            shiftDate = null;
+        }else{
+            shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex());
+        }
         if(shiftDate == null || jTextField2.getText() == null||jTextField2.getText().isEmpty()
                              || jTextField3.getText() == null||jTextField3.getText().isEmpty()
                              || jTextField4.getText() == null||jTextField4.getText().isEmpty()
@@ -768,6 +822,9 @@ public class gui_shift_work extends javax.swing.JPanel {
                     this.dispose();
                 }
             };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         }else{
             LogConfirm confirm;
             confirm = new LogConfirm("Xác nhận thêm"){
@@ -785,6 +842,10 @@ public class gui_shift_work extends javax.swing.JPanel {
 
             };
             viewMain.setEnabled(false);
+            confirm.setEnabled(true);
+            confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            confirm.setLocationRelativeTo(null);
+            confirm.setVisible(true);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -825,8 +886,8 @@ public class gui_shift_work extends javax.swing.JPanel {
         jTextField5.setText(String.valueOf( listTasks.get(jComboBox7.getSelectedIndex()).getTask_id()));
         int row = jTable1.rowAtPoint(evt.getPoint());
         LocalDate date = list.get(row).getShift_date();
-        jComboBox4.setSelectedIndex(date.getDayOfMonth() - 1);
-        jComboBox5.setSelectedIndex(date.getMonthValue() - 1);
+        jComboBox4.setSelectedIndex(date.getDayOfMonth());
+        jComboBox5.setSelectedIndex(date.getMonthValue());
         jComboBox6.setSelectedIndex(date.getYear() - 2000);
     }//GEN-LAST:event_jTable1MouseClicked
 
@@ -870,7 +931,7 @@ public class gui_shift_work extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField5ActionPerformed
 
     private void jComboBox7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox7ActionPerformed
-        // TODO add your handling code here:
+        jTextField5.setText(String.valueOf(listTasks.get(jComboBox7.getSelectedIndex()).getTask_id()));
     }//GEN-LAST:event_jComboBox7ActionPerformed
 
     private void jTextField4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyReleased
@@ -879,6 +940,71 @@ public class gui_shift_work extends javax.swing.JPanel {
         jTextField6.setText(a.getFullName());
     }//GEN-LAST:event_jTextField4KeyReleased
 
+    private void jComboBox8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox8ActionPerformed
+        jTextField2.setText(String.valueOf(listShiftTypes.get(jComboBox8.getSelectedIndex()).getShift_type_id()));
+    }//GEN-LAST:event_jComboBox8ActionPerformed
+
+    private void jComboBox9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox9ActionPerformed
+        jTextField3.setText(String.valueOf(listBuildings.get(jComboBox9.getSelectedIndex()).getBuilding_id()));
+    }//GEN-LAST:event_jComboBox9ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        LocalDate shiftDate ;
+        if(jComboBox1.getSelectedIndex() == 0 || jComboBox2.getSelectedIndex() == 0 || jComboBox3.getSelectedIndex() == 0){
+            shiftDate = null;
+        }else{
+            shiftDate = LocalDate.of(jComboBox3.getSelectedIndex()+2000,jComboBox2.getSelectedIndex() ,jComboBox1.getSelectedIndex());
+        }
+        Integer shiftTypeId = null;
+        Integer staffId = null;
+        String shiftTypeText = jTextField7.getText().trim();
+        if (!shiftTypeText.isEmpty()) {
+            shiftTypeId = Integer.valueOf(shiftTypeText);
+        }
+
+        String staffText = jTextField8.getText().trim();
+        if (!staffText.isEmpty()) {
+            staffId = Integer.valueOf(staffText);
+        }
+        tableModel.setRowCount(0);
+        String sql = "{CALL FillShiftWorks(?,?,?)}";
+        
+        try (
+            Connection conn = OpenConnection.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+        ) {
+            if (shiftTypeId != null) {
+                stmt.setInt(1, shiftTypeId);
+            } else {
+                stmt.setNull(1, INTEGER);
+            }
+
+            if (staffId != null) {
+                stmt.setInt(2, staffId);
+            } else {
+                stmt.setNull(2, INTEGER);
+            }
+
+            if (shiftDate != null) {
+                stmt.setDate(3, Date.valueOf(shiftDate));
+            } else {
+                stmt.setNull(3, Types.DATE);
+            }
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                tableModel.addRow(new String[] {String.valueOf(rs.getInt("shift_work_id")),
+                                                rs.getString("shift_type_name"),
+                                                rs.getString("building_name"),
+                                                String.valueOf(rs.getInt("staff_id")),
+                                                rs.getString("full_name"),
+                                                rs.getString("task_name"),
+                                                rs.getString("shift_date")});
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -887,6 +1013,7 @@ public class gui_shift_work extends javax.swing.JPanel {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JComboBox<String> jComboBox3;

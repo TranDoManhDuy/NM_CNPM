@@ -53,7 +53,7 @@ public class gui_serviceType extends javax.swing.JPanel {
         tableModel.setRowCount(0);
         for (TypeService ts : listTS) {
             try {
-                System.out.println(ts.getService_fee_id());
+//                System.out.println(ts.getService_fee_id());
                 svfree = ServiceFeeDAO.getInstance().findbyID(ts.getService_fee_id());
                 vehicletype = VehicleTypeDAO.getInstance().findbyID(svfree.getVehicle_type_id());
                 

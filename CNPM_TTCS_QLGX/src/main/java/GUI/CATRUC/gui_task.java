@@ -4,10 +4,17 @@
  */
 package GUI.CATRUC;
 
+import Annotation.LogConfirm;
+import Annotation.LogMessage;
+import DAO.ShiftTypesDAO;
 import DAO.TasksDAO;
+import GUI.ViewMain;
+import Model.ShiftTypes;
 import Model.Tasks;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -21,7 +28,9 @@ public class gui_task extends javax.swing.JPanel {
      */
     private DefaultTableModel tableModel;
     private List<Tasks> listTasks = new ArrayList<>();
-    public gui_task() {
+    private ViewMain viewMain;
+    public gui_task(ViewMain viewMain) {
+        this.viewMain = viewMain;
         tableModel = new DefaultTableModel(){
             @Override
                 public boolean isCellEditable(int row, int column) {
@@ -41,6 +50,7 @@ public class gui_task extends javax.swing.JPanel {
         String[] header = new String[] {"ID nhiệm vụ", "Tên nhiệm vụ",  "Mô tả"};
         tableModel.setColumnIdentifiers(header);
         jTable1.setModel(tableModel);
+        jTable1.setRowHeight(25);
         
     }
     
@@ -55,6 +65,77 @@ public class gui_task extends javax.swing.JPanel {
         }
         tableModel.fireTableDataChanged();
     }
+    
+    public void insertTask(){
+        Tasks t = new Tasks(jTextField2.getText(), jTextArea1.getText());
+        boolean r = TasksDAO.getInstance().insert(t);
+        if(r){
+            viewMain.setEnabled(true);
+            viewMain.requestFocus();
+            loadList();
+            fillTable(listTasks);
+        }
+        else{
+            viewMain.setEnabled(false);
+            LogMessage message = new LogMessage("Không thể thêm"){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.dispose();
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        }
+    }
+    
+    public void updateTask(){
+        Tasks a = new Tasks(Integer.parseInt(jTextField1.getText()),jTextField2.getText(), jTextArea1.getText());
+        boolean r = TasksDAO.getInstance().update(a);
+        if(r){
+            viewMain.setEnabled(true);
+            viewMain.requestFocus();
+            loadList();
+            fillTable(listTasks);
+        }else{
+            LogMessage message = new LogMessage("Không thể cập nhật"){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.dispose();
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        }
+    }
+    
+    public void deleteTask(){
+        int t = Integer.parseInt(jTextField1.getText());
+        boolean r = TasksDAO.getInstance().delete(t);
+        if(r){
+            viewMain.setEnabled(true);
+            viewMain.requestFocus();
+            loadList();
+            fillTable(listTasks);
+        }else{
+            LogMessage message = new LogMessage("Không thể xoá"){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.dispose();
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -66,10 +147,6 @@ public class gui_task extends javax.swing.JPanel {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jPanel2 = new javax.swing.JPanel();
-        jTextField3 = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -83,7 +160,13 @@ public class gui_task extends javax.swing.JPanel {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jTextField3 = new javax.swing.JTextField();
+        jButton4 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(204, 255, 255));
+        setForeground(new java.awt.Color(102, 255, 255));
         setPreferredSize(new java.awt.Dimension(1125, 485));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -111,15 +194,6 @@ public class gui_task extends javax.swing.JPanel {
             }
         });
         jScrollPane1.setViewportView(jTable1);
-
-        jButton4.setText("Tìm");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
-        jLabel5.setText("Mã Nhiệm vụ");
 
         jLabel1.setText("Thông tin chi tiết");
 
@@ -184,7 +258,7 @@ public class gui_task extends javax.swing.JPanel {
                                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton5)))
-                        .addContainerGap(47, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(25, 25, 25)
                         .addComponent(jButton2)
@@ -194,14 +268,14 @@ public class gui_task extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addGap(160, 160, 160))
+                .addGap(167, 167, 167))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(29, 29, 29)
+                .addGap(25, 25, 25)
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
+                .addGap(31, 31, 31)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -214,13 +288,22 @@ public class gui_task extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23)
+                .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
+
+        jButton4.setText("Tìm");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Mã Nhiệm vụ");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -231,10 +314,9 @@ public class gui_task extends javax.swing.JPanel {
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(52, 52, 52)
                 .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addComponent(jButton4)
                 .addGap(26, 26, 26))
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -244,9 +326,7 @@ public class gui_task extends javax.swing.JPanel {
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(jButton4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -254,19 +334,24 @@ public class gui_task extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 625, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(26, 26, 26)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(26, 26, 26))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(38, 38, 38)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -297,44 +382,97 @@ public class gui_task extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if(!jTextField2.getText().isEmpty()){
-            Tasks a = new Tasks(Integer.parseInt(jTextField1.getText()),jTextField2.getText(), jTextArea1.getText());
-            boolean r = TasksDAO.getInstance().update(a);
-            if(!r){
-                System.out.println("Errol update");
-            }
-            else{
-                loadList();
-                fillTable(listTasks);
-            }
+        if(jTextField2.getText().isEmpty()){
+           LogMessage message = new LogMessage("Không được để trống tên nhiệm vụ"){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.dispose();
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        }
+        else{
+            LogConfirm confirm = new LogConfirm("Xác nhận cập nhật"){
+                @Override
+                public void action() {
+                    updateTask();
+                    this.dispose();
+                }
+                @Override
+                public void reject() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.dispose();
+                }
+
+            };
+            viewMain.setEnabled(false);
+            confirm.setEnabled(true);
+            confirm.setVisible(true);
+            confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            confirm.setLocationRelativeTo(null);
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        int t = Integer.parseInt(jTextField1.getText());
-        boolean r = TasksDAO.getInstance().delete(t);
-        if(!r){
-            System.out.println("Errol delete");
-        }
-        else{
-            loadList();
-            fillTable(listTasks);
-        }
+        LogConfirm confirm = new LogConfirm("Xác nhận xóa"){
+            @Override
+            public void action() {
+                deleteTask();
+                this.dispose();
+                }
+            @Override
+            public void reject() {
+                viewMain.setEnabled(true);
+                viewMain.requestFocus();
+                this.dispose();
+            }
+        };
+        viewMain.setEnabled(false);
+        confirm.setEnabled(true);
+        confirm.setVisible(true);
+        confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        confirm.setLocationRelativeTo(null);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if(jTextField2.getText().isEmpty()){
-            System.out.println("Note");
+            LogMessage message = new LogMessage("Không được để trống tên nhiệm vụ"){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.dispose();
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         }
         else{
-            Tasks t = new Tasks(jTextField2.getText(), jTextArea1.getText());
-            boolean r = TasksDAO.getInstance().insert(t);
-            if(!r){
-                System.out.println("Errol insert");
-            }else{
-                loadList();
-                fillTable(listTasks);
-            }
+            LogConfirm confirm = new LogConfirm("Xác nhận thêm"){
+                @Override
+                public void action() {
+                    insertTask();
+                    this.dispose();
+                }
+                @Override
+                public void reject() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.dispose();
+                }
+
+            };
+            viewMain.setEnabled(false);
+            confirm.setEnabled(true);
+            confirm.setVisible(true);
+            confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            confirm.setLocationRelativeTo(null);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
