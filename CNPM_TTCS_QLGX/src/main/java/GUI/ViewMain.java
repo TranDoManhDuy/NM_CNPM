@@ -34,7 +34,7 @@ public class ViewMain extends javax.swing.JFrame {
     
     public ViewMain() {
         initComponents();
-//        GUI_DICHVU();
+        GUI_DICHVU();
         GUI_GUIXE();
     }
 
