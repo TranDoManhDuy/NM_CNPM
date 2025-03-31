@@ -2,16 +2,16 @@ package DAO;
 
 import DatabaseHelper.OpenConnection;
 import InterfaceDAO.InterfaceDAO;
-import Model.Customer;
 import Model.ParkingSession;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
     public static ParkingSessionDAO getInstance() {
@@ -43,6 +43,51 @@ public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
             e.printStackTrace();
         }
         return lstSessions;
+    }
+    
+    public Map<String, ArrayList<?>> getAllData() {
+        ArrayList<ParkingSession> lstParking_sessions = new ArrayList<>();
+        ArrayList<String> lstCheck_in_shift_type_name = new ArrayList<>();
+        ArrayList<String> lstCheck_out_shift_type_name = new ArrayList<>();
+        String sql = "EXEC GET_ALL_PARKING_SESSIONS;";
+        
+        try (
+                Connection con = OpenConnection.getConnection();
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                int parking_session_id = rs.getInt("parking_session_id");
+                int card_id = rs.getInt("card_id");
+                boolean is_service = rs.getBoolean("is_service");
+                LocalTime check_in_time = (rs.getTime("check_in_time") != null) ? rs.getTime("check_in_time").toLocalTime() : null;
+                LocalTime check_out_time = (rs.getTime("check_out_time") != null) ? rs.getTime("check_out_time").toLocalTime() : null;
+                int check_in_shift_id = rs.getInt("check_in_shift_id");
+                int check_out_shift_id = rs.getInt("check_out_shift_id");
+                int vehicle_id = rs.getInt("vehicle_id");
+                int amount = rs.getInt("amount");
+                String check_in_shift_type_name = rs.getString("in_shift_type_name");
+                String check_out_shift_type_name = rs.getString("out_shift_type_name");
+                ParkingSession session = new ParkingSession(parking_session_id, card_id, is_service, check_in_time, check_out_time, check_in_shift_id, check_out_shift_id, vehicle_id, amount);
+                
+                lstParking_sessions.add(session);
+                lstCheck_in_shift_type_name.add(check_in_shift_type_name);
+                if (check_out_shift_type_name != null) {
+                    lstCheck_out_shift_type_name.add(check_out_shift_type_name);
+                }
+                else {
+                    lstCheck_out_shift_type_name.add(null);
+                }
+                
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        Map<String, ArrayList<?>> result = new HashMap<>();
+        result.put("parking_sessions", lstParking_sessions);
+        result.put("check_in_shift_type_names", lstCheck_in_shift_type_name);
+        result.put("check_out_shift_type_names", lstCheck_out_shift_type_name);
+        return result;
     }
 
     @Override

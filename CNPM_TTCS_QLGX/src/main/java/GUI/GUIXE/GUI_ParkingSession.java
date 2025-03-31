@@ -4,8 +4,12 @@
  */
 package GUI.GUIXE;
 
+import DAO.ParkingSessionDAO;
 import GUI.ViewMain;
 import javax.swing.table.DefaultTableModel;
+import Model.ParkingSession;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *
@@ -26,17 +30,54 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         this.viewmain = viewmain;
         initComponents(); 
         initTable();
-//        fillTable();
+        fillTable();
 //        addDocumentListeners();
     }
     
     public void initTable() { 
         String[] header = new String[] {"Mã Gửi Xe", "Mã Thẻ",  "Dịch Vụ", "Giờ Vào", "Giờ Ra", "Ca Trực Vào", "Ca Trực Ra", "Xe", "Giá Tiền"};
         tblModel.setColumnIdentifiers(header);
-        tblModel.setRowCount(2);
+        tblModel.setRowCount(0);
         tbl_parking_session.setModel(tblModel);
         btn_insert.setEnabled(false);
     }
+    
+    public void fillTable() {
+        try {
+            Map<String, ArrayList<?>> data = ParkingSessionDAO.getInstance().getAllData();
+            ArrayList<ParkingSession> parking_sessions = (ArrayList<ParkingSession>) data.get("parking_sessions");
+            ArrayList<String> check_in_shift_type_names = (ArrayList<String>) data.get("check_in_shift_type_names");
+            ArrayList<String> check_out_shift_type_names = (ArrayList<String>) data.get("check_out_shift_type_names");
+            int count = -1;
+            String crCheck_in_shift_type_name = "";
+            String crCheck_out_shift_type_name = "";
+            for (ParkingSession par: parking_sessions) { 
+                try {
+                    count += 1;
+                    crCheck_in_shift_type_name = check_in_shift_type_names.get(count);
+                    crCheck_out_shift_type_name = check_out_shift_type_names.get(count);
+                    if (crCheck_out_shift_type_name == null) {
+                        crCheck_out_shift_type_name = "Trong Bai";
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                tblModel.addRow(new String[] {  String.valueOf(par.getParking_session_id()), String.valueOf(par.getCard_id()), String.valueOf(par.isIs_service()),
+                                                String.valueOf(par.getCheck_in_time()), String.valueOf(par.getCheck_out_time()),
+                                                crCheck_in_shift_type_name, 
+                                                crCheck_out_shift_type_name, 
+                                                String.valueOf(par.getVehicle_id()), String.valueOf(par.getAmount())
+                });
+            }
+        }
+        catch (Exception e) { 
+                e.printStackTrace();
+            }
+        tblModel.fireTableDataChanged();
+    }  
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
