@@ -7,10 +7,7 @@ package DatabaseHelper;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 /**
  *
  * @author manhh
@@ -27,7 +24,7 @@ public class OpenConnection {
         config.addDataSourceProperty("trustServerCertificate", "true");
         
         config.setMaximumPoolSize(10);
-        config.setMinimumIdle(2);
+        config.setMinimumIdle(5);
         config.setIdleTimeout(30000);
         config.setMaxLifetime(600000);
         config.setConnectionTimeout(10000);
