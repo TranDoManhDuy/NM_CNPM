@@ -4,18 +4,17 @@
  */
 package GUI.GUIXE;
 
-import DAO.BuildingsDAO;
 import DAO.CustomerDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
-import Global.DataGlobal;
-import Model.Buildings;
 import Model.Customer;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -53,17 +52,20 @@ public class GUI_Customer extends javax.swing.JPanel {
     public void fillTable() {
         try {
             Connection con = OpenConnection.getConnection();
-            ArrayList<Customer> lstCustomer = CustomerDAO.getInstance().getList();
-            tblModel.setRowCount(0);
-            Buildings building = new Buildings();
-            for (Customer cus : lstCustomer) { 
+            Map<String, ArrayList<?>> data = CustomerDAO.getInstance().getAllCustomer();
+            ArrayList<Customer> customers = (ArrayList<Customer>) data.get("customers");
+            ArrayList<String> buildingNames = (ArrayList<String>) data.get("building_names");
+            int count = -1;
+            String crBuildingName = "";
+            for (Customer cus : customers) { 
                 try {
-                    building = BuildingsDAO.getInstance().findByID(cus.getBuilding_id());
+                    count += 1;
+                    crBuildingName = buildingNames.get(count);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
                 }
-                tblModel.addRow(new String[] {  String.valueOf(cus.getCustomer_id()), String.valueOf(building.getBuilding_id()), cus.getFull_name(), cus.getSsn(), 
+                tblModel.addRow(new String[] {  String.valueOf(cus.getCustomer_id()), crBuildingName, cus.getFull_name(), cus.getSsn(), 
                                                 String.valueOf(cus.getDate_of_birth()), cus.getGender(),
                                                 cus.getPhone_number(), cus.getAddress(), cus.getNationality(), String.valueOf(cus.isIs_active())
                 });

@@ -4,7 +4,11 @@
  */
 package GUI.GUIXE;
 
+import DAO.VehicleDAO;
 import GUI.ViewMain;
+import Model.Vehicle;
+import java.util.ArrayList;
+import java.util.Map;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -27,17 +31,44 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         this.viewmain = viewmain;
         initComponents(); 
         initTable();
-//        fillTable();
+        fillTable();
 //        addDocumentListeners();
     }
     
     public void initTable() { 
         String[] header = new String[] {"Mã Phương Tiện", "Mã Nhận Dạng", "Loại Phương Tiện", "Tên Phương Tiện", "Màu Phương Tiện"};
         tblModel.setColumnIdentifiers(header);
-        tblModel.setRowCount(2);
+        tblModel.setRowCount(0);
         tbl_vehicle.setModel(tblModel);
 //        btn_insert.setEnabled(false);
     }
+    
+    
+    public void fillTable() {
+        try {
+            Map<String, ArrayList<?>> data = VehicleDAO.getInstance().getAllData();
+            ArrayList<Vehicle> vehicles = (ArrayList<Vehicle>) data.get("vehicles");
+            ArrayList<String> vehicle_type_names = (ArrayList<String>) data.get("vehicle_type_names");
+            int count = -1;
+            String crVehicle_type_name = "";
+            for (Vehicle vel : vehicles) { 
+                try {
+                    count += 1;
+                    crVehicle_type_name = vehicle_type_names.get(count);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                tblModel.addRow(new String[] { String.valueOf(vel.getVehicle_id()), vel.getIdentification_code(), crVehicle_type_name, vel.getVehicle_name(), vel.getVehicle_color()
+                });
+            }
+        }
+        catch (Exception e) { 
+                e.printStackTrace();
+            }
+        tblModel.fireTableDataChanged();
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

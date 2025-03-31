@@ -4,7 +4,12 @@
  */
 package GUI.GUIXE;
 
+import DAO.CustomerDAO;
+import DAO.ResidentCardDAO;
 import GUI.ViewMain;
+import Model.ResidentCard;
+import java.util.ArrayList;
+import java.util.Map;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -26,17 +31,45 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         this.viewmain = viewmain;
         initComponents(); 
         initTable();
-//        fillTable();
+        fillTable();
 //        addDocumentListeners();
     }
     
     public void initTable() { 
         String[] header = new String[] {"Mã Thẻ", "Khách Hàng", "Tòa Nhà", "Còn/Mất"};
         tblModel.setColumnIdentifiers(header);
-        tblModel.setRowCount(2);
+        tblModel.setRowCount(0);
         tbl_resident_card.setModel(tblModel);
 //        btn_insert.setEnabled(false);
     }
+    
+    public void fillTable() {
+        try {
+            Map<String, ArrayList<?>> data =  ResidentCardDAO.getInstance().getAllData();
+            ArrayList<ResidentCard> residents = (ArrayList<ResidentCard>) data.get("customers");
+            ArrayList<String> building_names = (ArrayList<String>) data.get("building_names");
+            ArrayList<String> full_names = (ArrayList<String>) data.get("full_names");
+            int count = -1;
+            String crBuilding_name = "";
+            String crFull_name = "";
+            for (ResidentCard res : residents) { 
+                try {
+                    count += 1;
+                    crBuilding_name = building_names.get(count);
+                    crFull_name = full_names.get(count);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, String.valueOf(res.isIs_active())} );
+            }
+        }
+        catch (Exception e) { 
+                e.printStackTrace();
+            }
+        tblModel.fireTableDataChanged();
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

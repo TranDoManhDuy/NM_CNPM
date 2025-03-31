@@ -7,7 +7,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LostResidentCardDAO implements InterfaceDAO<LostResidentCard> {
     public static LostResidentCardDAO getInstance() {
@@ -33,6 +36,47 @@ public class LostResidentCardDAO implements InterfaceDAO<LostResidentCard> {
             e.printStackTrace();
         }
         return lstCards;
+    }
+    
+    
+     public Map<String, ArrayList<?>> getAllData() {
+        ArrayList<LostResidentCard> lstLost_resident_cards = new ArrayList<>();
+        ArrayList<String> lstName = new ArrayList<>();
+        ArrayList<LocalDateTime> check_in_times = new ArrayList<>();
+        ArrayList<LocalDateTime> check_out_times = new ArrayList<>();
+        String sql = "EXEC GET_ALL_LOST_RESIDENT_CARDS";
+        try (
+                Connection con = OpenConnection.getConnection();
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                int lost_resident_card_id = rs.getInt("lost_resident_card_id");
+                int pk_resident_card = rs.getInt("pk_resident_card");
+                int parking_session_id = rs.getInt("parking_session_id");
+                LocalDateTime check_in_time = rs.getTimestamp("check_in_time").toLocalDateTime();
+                LocalDateTime check_out_time = (rs.getTimestamp("check_out_time") != null) ? rs.getTimestamp("check_out_time").toLocalDateTime() : null;
+                String ful_name = rs.getString("full_name");
+                
+                LostResidentCard lost_resident_card = new LostResidentCard(lost_resident_card_id, pk_resident_card, parking_session_id);
+                lstLost_resident_cards.add(lost_resident_card);
+                lstName.add(ful_name);
+                check_in_times.add(check_in_time);
+                if (check_out_time != null) {
+                    check_out_times.add(check_out_time);
+                }
+                else {
+                    check_out_times.add(null);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Map<String, ArrayList<?>> result = new HashMap<>();
+        result.put("lost_resident_cards", lstLost_resident_cards);
+        result.put("check_in_times", check_in_times);
+        result.put("check_out_times", check_out_times);
+        result.put("full_names", lstName);
+        return result;
     }
 
     @Override

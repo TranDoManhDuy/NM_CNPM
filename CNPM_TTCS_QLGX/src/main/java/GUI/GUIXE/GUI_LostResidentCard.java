@@ -4,7 +4,12 @@
  */
 package GUI.GUIXE;
 
+import DAO.LostResidentCardDAO;
 import GUI.ViewMain;
+import Model.LostResidentCard;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Map;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -26,16 +31,48 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
         this.viewmain = viewmain;
         initComponents(); 
         initTable();
-//        fillTable();
+        fillTable();
 //        addDocumentListeners();
     }
     
     public void initTable() { 
         String[] header = new String[] {"Mã Mất Thẻ", "Mã Thẻ",  "Tên Khách Hàng", "Thời Gian Vào", "Thời Gian Ra"};
         tblModel.setColumnIdentifiers(header);
-        tblModel.setRowCount(2);
+        tblModel.setRowCount(0);
         tbl_lost_resident_card.setModel(tblModel);
         btn_insert.setEnabled(false);
+    }
+    
+    public void fillTable() {
+        try {
+            Map<String, ArrayList<?>> data = LostResidentCardDAO.getInstance().getAllData();
+            ArrayList<LostResidentCard> lost_resident_cards = (ArrayList<LostResidentCard>) data.get("lost_resident_cards");
+            ArrayList<String> full_names = (ArrayList<String>) data.get("full_names");
+            ArrayList<LocalDateTime> check_in_times = (ArrayList<LocalDateTime>) data.get("check_in_times");
+            ArrayList<LocalDateTime> check_out_times = (ArrayList<LocalDateTime>) data.get("check_out_times");
+            int count = -1;
+            String crfull_name = "";
+            String crCheck_in_time = "";
+            String crCheck_out_time = "";
+            for (LostResidentCard lres : lost_resident_cards) { 
+                try {
+                    count += 1;
+                    crfull_name = full_names.get(count);
+                    crCheck_in_time = String.valueOf(check_in_times.get(count));
+                    crCheck_out_time = String.valueOf(check_out_times.get(count));
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                tblModel.addRow(new String[] {  String.valueOf(lres.getLost_resident_card_id()), String.valueOf(lres.getPk_resident_card()), 
+                                                crfull_name, crCheck_in_time, crCheck_out_time
+                });
+            }
+        }
+        catch (Exception e) { 
+                e.printStackTrace();
+            }
+        tblModel.fireTableDataChanged();
     }
 
     /**
