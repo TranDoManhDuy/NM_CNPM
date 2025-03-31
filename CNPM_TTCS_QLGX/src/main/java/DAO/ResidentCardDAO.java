@@ -2,12 +2,13 @@ package DAO;
 
 import DatabaseHelper.OpenConnection;
 import InterfaceDAO.InterfaceDAO;
-import Model.Customer;
 import Model.ResidentCard;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * DAO cho bảng resident_cards
@@ -39,6 +40,38 @@ public class ResidentCardDAO implements InterfaceDAO<ResidentCard> {
             e.printStackTrace();
         }
         return lstCards;
+    }
+    
+    public Map<String, ArrayList<?>> getAllData() {
+        ArrayList<ResidentCard> lstCards = new ArrayList<>();
+        ArrayList<String> lstName = new ArrayList<>();
+        ArrayList<String> lstBuilding_name = new ArrayList<>();
+        String sql = "GET_ALL_RESIDENT_CARDS";
+        try (
+                Connection con = OpenConnection.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+            while (rs.next()) {
+                int pk_resident_card = rs.getInt("pk_resident_card");
+                int customer_id = rs.getInt("customer_id");
+                boolean is_active = rs.getBoolean("is_active");
+                String full_name = rs.getString("full_name");
+                String building_name = rs.getString("building_name");
+
+                ResidentCard card = new ResidentCard(pk_resident_card, customer_id, is_active);
+                lstCards.add(card);
+                lstName.add(full_name);
+                lstBuilding_name.add(building_name);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Map<String, ArrayList<?>> result = new HashMap<>();
+        result.put("customers", lstCards);
+        result.put("building_names", lstBuilding_name);
+        result.put("full_names", lstName);
+        return result;
     }
 
     @Override

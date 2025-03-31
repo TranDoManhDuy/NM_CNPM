@@ -14,6 +14,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /**
  *
  * @author Admin
@@ -23,11 +26,12 @@ public class CustomerDAO implements InterfaceDAO<Customer> {
         return new CustomerDAO();
     }
 
-    @Override
-    public ArrayList<Customer> getList() {
+    
+    public Map<String, ArrayList<?>> getAllCustomer() {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         ArrayList<Customer> lstCus = new ArrayList<>();
-        String sql = "SELECT * FROM customers";
+        ArrayList<String> lstName = new ArrayList<>();
+        String sql = "EXEC GET_ALL_CUSTOMERS";
         try (
                 Connection con = OpenConnection.getConnection();
                 Statement  st  = con.createStatement();
@@ -35,6 +39,7 @@ public class CustomerDAO implements InterfaceDAO<Customer> {
             while (rs.next()) {
                 int customer_id = rs.getInt("customer_id");
                 int building_id = rs.getInt("building_id");
+                String building_name = rs.getString("building_name");
                 String full_name = rs.getString("full_name");
                 String ssn = rs.getString("ssn");
                 LocalDate date_of_birth = rs.getDate("date_of_birth").toLocalDate();
@@ -45,14 +50,19 @@ public class CustomerDAO implements InterfaceDAO<Customer> {
                 boolean is_active = rs.getBoolean("is_active");
                 Customer newCus = new Customer(customer_id, full_name, ssn, date_of_birth, gender, phone_number, address, building_id, nationality, is_active);
                 lstCus.add(newCus);
+                lstName.add(building_name);
             }
         }
         catch (Exception e) { 
             e.printStackTrace();
         }
-        return lstCus;
+        Map<String, ArrayList<?>> result = new HashMap<>();
+        result.put("customers", lstCus);
+        result.put("building_names", lstName);
+        return result;
     }
-
+    
+    
     @Override
     public boolean insert(Customer customer) {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -171,5 +181,36 @@ public class CustomerDAO implements InterfaceDAO<Customer> {
 //            }
 //        }
 //        cusDao.delete(2);
+    }
+
+    @Override
+    public ArrayList<Customer> getList() {
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        ArrayList<Customer> lstCus = new ArrayList<>();
+        String sql = "EXEC GET_ALL_CUSTOMERS";
+        try (
+                Connection con = OpenConnection.getConnection();
+                Statement  st  = con.createStatement();
+                ResultSet  rs  = st.executeQuery(sql);) {
+            while (rs.next()) {
+                int customer_id = rs.getInt("customer_id");
+                int building_id = rs.getInt("building_id");
+                String building_name = rs.getString("building_name");
+                String full_name = rs.getString("full_name");
+                String ssn = rs.getString("ssn");
+                LocalDate date_of_birth = rs.getDate("date_of_birth").toLocalDate();
+                String gender = rs.getString("gender");
+                String phone_number = rs.getString("phone_number");
+                String address = rs.getString("address");
+                String nationality = rs.getString("nationality");
+                boolean is_active = rs.getBoolean("is_active");
+                Customer newCus = new Customer(customer_id, full_name, ssn, date_of_birth, gender, phone_number, address, building_id, nationality, is_active);
+                lstCus.add(newCus);
+            }
+        }
+        catch (Exception e) { 
+            e.printStackTrace();
+        }
+        return lstCus;
     }
 }

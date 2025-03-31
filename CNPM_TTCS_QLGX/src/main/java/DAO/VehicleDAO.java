@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class VehicleDAO implements InterfaceDAO<Vehicle> {
     public static VehicleDAO getInstance() {
@@ -36,6 +38,37 @@ public class VehicleDAO implements InterfaceDAO<Vehicle> {
             e.printStackTrace();
         }
         return lstVehicle;
+    }
+    
+    public Map<String, ArrayList<?>> getAllData() {
+        ArrayList<Vehicle> lstVehicle = new ArrayList<>();
+        ArrayList<String> lstVehicle_type_name = new ArrayList<>();
+        
+        String sql = "EXEC GET_ALL_VEHICLES";
+        try (
+                Connection con = OpenConnection.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery();
+        ) {
+            while (rs.next()) {
+                int vehicle_id = rs.getInt("vehicle_id");
+                String identification_code = rs.getString("identification_code");
+                int vehicle_type_id = rs.getInt("vehicle_type_id");
+                String vehicle_name = rs.getString("vehicle_name");
+                String vehicle_color = rs.getString("vehicle_color");
+                String vehicle_type_name = rs.getString("vehicle_type_name");
+                
+                Vehicle vehicle = new Vehicle(vehicle_id, identification_code, vehicle_type_id, vehicle_name, vehicle_color);
+                lstVehicle.add(vehicle);
+                lstVehicle_type_name.add(vehicle_type_name);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Map<String, ArrayList<?>> result = new HashMap<>();
+        result.put("vehicles", lstVehicle);
+        result.put("vehicle_type_names", lstVehicle_type_name);
+        return result;
     }
 
     @Override

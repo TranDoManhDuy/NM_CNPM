@@ -4,19 +4,39 @@
  */
 package GUI.GUIXE;
 
+import GUI.ViewMain;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Admin
  */
 public class GUI_ParkingSession extends javax.swing.JPanel {
-
+    private ViewMain viewmain;
+    private DefaultTableModel tblModel = new DefaultTableModel(){
+        @Override 
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
     /**
-     * Creates new form GUI_ParkingSession
+     * Creates new form GUI_Customer
      */
-    public GUI_ParkingSession() {
-        initComponents();
+    public GUI_ParkingSession(ViewMain viewmain) {
+        this.viewmain = viewmain;
+        initComponents(); 
+        initTable();
+//        fillTable();
+//        addDocumentListeners();
     }
-
+    
+    public void initTable() { 
+        String[] header = new String[] {"Mã Gửi Xe", "Mã Thẻ",  "Dịch Vụ", "Giờ Vào", "Giờ Ra", "Ca Trực Vào", "Ca Trực Ra", "Xe", "Giá Tiền"};
+        tblModel.setColumnIdentifiers(header);
+        tblModel.setRowCount(2);
+        tbl_parking_session.setModel(tblModel);
+        btn_insert.setEnabled(false);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

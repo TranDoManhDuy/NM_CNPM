@@ -359,20 +359,20 @@
                       <Component id="txt_pk_resident_card" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="JL_MaKhachHang" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" alignment="3" groupAlignment="3" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                           <Component id="txt_customer_id" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btn_chon_customer" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="JL_MaKhachHang" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="JL_building" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" alignment="3" groupAlignment="3" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                           <Component id="txt_building_id" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btn_chon_building" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="JL_building" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
