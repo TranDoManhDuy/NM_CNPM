@@ -22,19 +22,19 @@ public class ShiftTypesDAO {
 
     public List<ShiftTypes> getAllShiftTypes() {
         List<ShiftTypes> list = new ArrayList<>();
-        String sql = "SELECT * FROM shift_types";
+        String sql = "{CALL GetAllShiftTypes()}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            CallableStatement stmt = conn.prepareCall(sql);
+            ResultSet rs = stmt.executeQuery();
         ) {
             while (rs.next()) {
                 ShiftTypes shiftType = new ShiftTypes(
                     rs.getInt("shift_type_id"),
                     rs.getString("shift_type_name"),
                     rs.getTime("start_time").toLocalTime(),
-                    rs.getTime("start_end").toLocalTime()
+                    rs.getTime("end_time").toLocalTime()
                 );
                 list.add(shiftType);
             }
@@ -45,15 +45,15 @@ public class ShiftTypesDAO {
     }
 
     public boolean insert(ShiftTypes shiftType) {
-        String sql = "INSERT INTO shift_types ( shift_type_name, start_time, start_end) VALUES (?, ?, ?)";
+        String sql = "{CALL InsertShiftTypes(?, ?, ?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setString(1, shiftType.getShift_type_name());
             ptmt.setTime(2, Time.valueOf(shiftType.getStart_time()));
-            ptmt.setTime(3, Time.valueOf(shiftType.getStart_end()));
+            ptmt.setTime(3, Time.valueOf(shiftType.getEnd_time()));
 
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -63,17 +63,16 @@ public class ShiftTypesDAO {
     }
 
     public boolean update(ShiftTypes shiftType) {
-        String sql = "UPDATE shift_types SET shift_type_name = ?, start_time = ?, start_end = ? WHERE shift_type_id = ?";
+        String sql = "{CALL UpdateShiftTypes(?, ?, ?, ?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
-            ptmt.setString(1, shiftType.getShift_type_name());
-            ptmt.setTime(2, Time.valueOf(shiftType.getStart_time()));
-            ptmt.setTime(3, Time.valueOf(shiftType.getStart_end()));
-            ptmt.setInt(4, shiftType.getShift_type_id());
-
+            ptmt.setInt(1, shiftType.getShift_type_id());
+            ptmt.setString(2, shiftType.getShift_type_name());
+            ptmt.setTime(3, Time.valueOf(shiftType.getStart_time()));
+            ptmt.setTime(4, Time.valueOf(shiftType.getEnd_time()));
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,11 +81,11 @@ public class ShiftTypesDAO {
     }
 
     public boolean delete(int shift_type_id) {
-        String sql = "DELETE FROM shift_types WHERE shift_type_id = ?";
+        String sql = "{CALL DeleteShiftTypes(?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, shift_type_id);
             return ptmt.executeUpdate() > 0;
@@ -97,11 +96,11 @@ public class ShiftTypesDAO {
     }
 
     public ShiftTypes findByID(int shift_type_id) {
-        String sql = "SELECT * FROM shift_types WHERE shift_type_id = ?";
+        String sql = "{CALL FindByID(?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, shift_type_id);
             try (ResultSet rs = ptmt.executeQuery()) {
@@ -110,7 +109,7 @@ public class ShiftTypesDAO {
                         rs.getInt("shift_type_id"),
                         rs.getString("shift_type_name"),
                         rs.getTime("start_time").toLocalTime(),
-                        rs.getTime("start_end").toLocalTime()
+                        rs.getTime("end_time").toLocalTime()
                     );
                 }
             }

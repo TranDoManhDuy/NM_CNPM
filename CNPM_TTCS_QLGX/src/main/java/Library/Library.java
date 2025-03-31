@@ -92,7 +92,7 @@ public class Library {
                 ShiftTypes prev = lstShiftType.get(i - 1);
                 ShiftTypes current = lstShiftType.get(i);
                 
-                if (current.getStart_time().isBefore(prev.getStart_end())) {
+                if (current.getStart_time().isBefore(prev.getEnd_time())) {
                     return false;
                 }
             }    

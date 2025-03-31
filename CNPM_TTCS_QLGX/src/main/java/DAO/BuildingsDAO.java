@@ -19,12 +19,12 @@ public class BuildingsDAO {
     }
     public List<Buildings> getAllBuildings(){
         List<Buildings> listBuildings = new ArrayList<>();
-        String sql = "SELECT * FROM buildings";
+        String sql = "{CALL GetAllBuildings()}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            CallableStatement stmt = conn.prepareCall(sql);
+            ResultSet rs = stmt.executeQuery();
         ){
             while(rs.next()){
                 Buildings bd = new Buildings(rs.getInt("building_id"),
@@ -39,10 +39,10 @@ public class BuildingsDAO {
     }
     
     public boolean insert(Buildings bd){
-        String sql = "INSERT INTO buildings (building_name, address) VALUES (?, ?)";
+        String sql = "{CALL InsertBulding(?, ?)}";
         try(
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ){
             ptmt.setString(1, bd.getBuilding_name());
             ptmt.setString(2, bd.getAddress());
@@ -55,14 +55,14 @@ public class BuildingsDAO {
     }
     
     public boolean update(Buildings bd){
-        String sql = " UPDATE buildings SET building_name = ?, address = ? WHERE building_id = ?";
+        String sql = "{CALL UpdateBuilding(?, ?, ?)}";
         try(
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ){
-            ptmt.setInt(3, bd.getBuilding_id());
-            ptmt.setString(1, bd.getBuilding_name());
-            ptmt.setString(2, bd.getAddress());
+            ptmt.setInt(1, bd.getBuilding_id());
+            ptmt.setString(2, bd.getBuilding_name());
+            ptmt.setString(3, bd.getAddress());
             
             return ptmt.executeUpdate() > 0;
         }catch (Exception e) {
@@ -72,10 +72,10 @@ public class BuildingsDAO {
     }
     
     public boolean delete(int building_id){
-        String sql = "DELETE FROM buildings WHERE building_id = ?";
+        String sql = "{CALL DeleteBuilding(?)}";
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, building_id);
             return ptmt.executeUpdate() > 0;
@@ -85,10 +85,10 @@ public class BuildingsDAO {
         return false;
     }
     public Buildings findByID( int building_id){
-        String sql = "SELECT * FROM buildings WHERE building_id = ?";
+        String sql = "{CALL FindBuildingByID(?)}";
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, building_id);
             try (ResultSet rs = ptmt.executeQuery()) {

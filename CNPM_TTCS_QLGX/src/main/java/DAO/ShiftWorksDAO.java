@@ -8,7 +8,6 @@ import Model.ShiftWorks;
 import java.util.ArrayList;
 import DatabaseHelper.OpenConnection;
 import java.sql.*;
-import java.time.LocalTime;
 import java.util.List;
 /**
  *
@@ -24,12 +23,12 @@ public class ShiftWorksDAO {
 
     public List<ShiftWorks> getAllShiftWorks() {
         List<ShiftWorks> list = new ArrayList<>();
-        String sql = "SELECT * FROM shift_works";
+        String sql = "{CALL GetAllShiftWorks()}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            CallableStatement stmt = conn.prepareCall(sql);
+            ResultSet rs = stmt.executeQuery();
         ) {
             while (rs.next()) {
                 ShiftWorks shift = new ShiftWorks(
@@ -38,7 +37,7 @@ public class ShiftWorksDAO {
                     rs.getInt("building_id"),
                     rs.getInt("staff_id"),
                     rs.getInt("task_id"),
-                    rs.getTime("shift_date").toLocalTime()
+                    rs.getDate("shift_date").toLocalDate()
                 );
                 list.add(shift);
             }
@@ -49,17 +48,17 @@ public class ShiftWorksDAO {
     }
 
     public boolean insert(ShiftWorks shift) {
-        String sql = "INSERT INTO shift_works (shift_type_id, building_id, staff_id, task_id, shift_date) VALUES (?, ?, ?, ?, ?)";
+        String sql = "{CALL InsertShiftWorks(?, ?, ?, ?, ?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, shift.getShift_type_id());
             ptmt.setInt(2, shift.getBuilding_id());
             ptmt.setInt(3, shift.getStaff_id());
             ptmt.setInt(4, shift.getTask_id());
-            ptmt.setTime(5, Time.valueOf(shift.getShift_date()));
+            ptmt.setDate(5, Date.valueOf(shift.getShift_date()));
 
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -69,17 +68,17 @@ public class ShiftWorksDAO {
     }
 
     public boolean update(ShiftWorks shift) {
-        String sql = "UPDATE shift_works SET shift_type_id = ?, building_id = ?, staff_id = ?, task_id = ?, shift_date = ? WHERE shift_work_id = ?";
+        String sql = "{CALL UpdateShiftWorks(?, ?, ?, ?, ?, ?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, shift.getShift_type_id());
             ptmt.setInt(2, shift.getBuilding_id());
             ptmt.setInt(3, shift.getStaff_id());
             ptmt.setInt(4, shift.getTask_id());
-            ptmt.setTime(5, Time.valueOf(shift.getShift_date()));
+            ptmt.setDate(5, Date.valueOf(shift.getShift_date()));
             ptmt.setInt(6, shift.getShift_work_id());
 
             return ptmt.executeUpdate() > 0;
@@ -90,11 +89,11 @@ public class ShiftWorksDAO {
     }
 
     public boolean delete(int shift_work_id) {
-        String sql = "DELETE FROM shift_works WHERE shift_work_id = ?";
+        String sql = "{CALL DeleteShiftWorks(?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, shift_work_id);
             return ptmt.executeUpdate() > 0;
@@ -105,11 +104,11 @@ public class ShiftWorksDAO {
     }
 
     public ShiftWorks findByID(int shift_work_id) {
-        String sql = "SELECT * FROM shift_works WHERE shift_work_id = ?";
+        String sql = "{CALL FindShiftWorkByID(?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, shift_work_id);
             try (ResultSet rs = ptmt.executeQuery()) {
@@ -120,7 +119,7 @@ public class ShiftWorksDAO {
                         rs.getInt("building_id"),
                         rs.getInt("staff_id"),
                         rs.getInt("task_id"),
-                        rs.getTime("shift_date").toLocalTime()
+                        rs.getDate("shift_date").toLocalDate()
                     );
                 }
             }

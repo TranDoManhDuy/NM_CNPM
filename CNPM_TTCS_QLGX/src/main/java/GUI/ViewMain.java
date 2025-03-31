@@ -4,6 +4,10 @@
  */
 package GUI;
 
+import GUI.CATRUC.gui_building;
+import GUI.CATRUC.gui_shift_type;
+import GUI.CATRUC.gui_shift_work;
+import GUI.CATRUC.gui_task;
 import GUI.DICHVU.gui_payment;
 import GUI.DICHVU.gui_registration;
 import GUI.DICHVU.gui_serviceType;
@@ -34,6 +38,7 @@ public class ViewMain extends javax.swing.JFrame {
         initComponents();
 //        GUI_DICHVU();
         GUI_GUIXE();
+        GUI_CATRUC();
     }
     public void addComponent(JPanel father, JPanel child) {
         father.setLayout(new GridBagLayout());
@@ -80,6 +85,16 @@ public class ViewMain extends javax.swing.JFrame {
         addComponent(panel_ptien, gui_vehicle);
     }
     
+    public void GUI_CATRUC(){
+        gui_shift_type st = new gui_shift_type(this);
+        gui_building b = new gui_building(this);
+        gui_shift_work sw = new gui_shift_work(this);
+        gui_task t = new gui_task(this);
+        addComponent(panel_loaicatruc, st);
+        addComponent(panel_catruc, sw);
+        addComponent(panel_toanha, b);
+        addComponent(panel_nhiemvu, t);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

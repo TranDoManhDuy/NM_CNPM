@@ -17,6 +17,7 @@ public class CNPM_TTCS_QLGX {
     public static void main(String[] args) {
         initializaConnection("tranmanhduy", "Trandomanhduy2874@");
         ViewMain app = new ViewMain();
+//        LogSelection app = new LogSelection();
         app.setLocationRelativeTo(null);
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setVisible(true);

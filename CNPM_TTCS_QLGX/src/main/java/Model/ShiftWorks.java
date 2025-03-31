@@ -4,7 +4,7 @@
  */
 package Model;
 
-import java.time.LocalTime;
+import java.time.LocalDate;
 
 /**
  *
@@ -16,12 +16,12 @@ public class ShiftWorks {
     int building_id;
     int staff_id;
     int task_id;
-    LocalTime shift_date;
+    LocalDate shift_date;
 
     public ShiftWorks() {
     }
 
-    public ShiftWorks(int shift_type_id, int building_id, int staff_id, int task_id, LocalTime shift_date) {
+    public ShiftWorks(int shift_type_id, int building_id, int staff_id, int task_id, LocalDate shift_date) {
         this.shift_type_id = shift_type_id;
         this.building_id = building_id;
         this.staff_id = staff_id;
@@ -29,7 +29,7 @@ public class ShiftWorks {
         this.shift_date = shift_date;
     }
 
-    public ShiftWorks(int shift_work_id, int shift_type_id, int building_id, int staff_id, int task_id, LocalTime shift_date) {
+    public ShiftWorks(int shift_work_id, int shift_type_id, int building_id, int staff_id, int task_id, LocalDate shift_date) {
         this.shift_work_id = shift_work_id;
         this.shift_type_id = shift_type_id;
         this.building_id = building_id;
@@ -47,7 +47,7 @@ public class ShiftWorks {
         return shift_type_id;
     }
 
-    public LocalTime getShift_date() {
+    public LocalDate getShift_date() {
         return shift_date;
     }
 
@@ -67,7 +67,7 @@ public class ShiftWorks {
         this.building_id = building_id;
     }
 
-    public void setShift_date(LocalTime shift_date) {
+    public void setShift_date(LocalDate shift_date) {
         this.shift_date = shift_date;
     }
 

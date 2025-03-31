@@ -21,12 +21,12 @@ public class TasksDAO {
 
     public List<Tasks> getAllTasks() {
         List<Tasks> list = new ArrayList<>();
-        String sql = "SELECT * FROM tasks";
+        String sql = "{CALL GetAllTasks()}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            CallableStatement stmt = conn.prepareCall(sql);
+            ResultSet rs = stmt.executeQuery();
         ) {
             while (rs.next()) {
                 Tasks task = new Tasks(
@@ -43,11 +43,11 @@ public class TasksDAO {
     }
 
     public boolean insert(Tasks task) {
-        String sql = "INSERT INTO tasks (task_name, task_desc) VALUES (?, ?)";
+        String sql = "{CALL InsertTask(?, ?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setString(1, task.getTask_name());
             ptmt.setString(2, task.getTask_desc());
@@ -60,16 +60,15 @@ public class TasksDAO {
     }
 
     public boolean update(Tasks task) {
-        String sql = "UPDATE tasks SET task_name = ?, task_desc = ? WHERE task_id = ?";
+        String sql = "{CALL UpdateTask(?, ?, ?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
-        ) {
-            ptmt.setString(1, task.getTask_name());
-            ptmt.setString(2, task.getTask_desc());
-            ptmt.setInt(3, task.getTask_id());
-
+            CallableStatement ptmt = conn.prepareCall(sql);
+        ) { ptmt.setInt(1, task.getTask_id());
+            ptmt.setString(2, task.getTask_name());
+            ptmt.setString(3, task.getTask_desc());
+            
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,11 +77,11 @@ public class TasksDAO {
     }
 
     public boolean delete(int task_id) {
-        String sql = "DELETE FROM tasks WHERE task_id = ?";
+        String sql = "{CALL DeleteTask(?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, task_id);
             return ptmt.executeUpdate() > 0;
@@ -93,11 +92,11 @@ public class TasksDAO {
     }
 
     public Tasks findById(int task_id) {
-        String sql = "SELECT * FROM tasks WHERE task_id = ?";
+        String sql = "{CALL FindTaskByID(?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, task_id);
             try (ResultSet rs = ptmt.executeQuery()) {

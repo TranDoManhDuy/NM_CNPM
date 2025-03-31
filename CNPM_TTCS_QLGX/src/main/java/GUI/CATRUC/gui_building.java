@@ -6,14 +6,14 @@ package GUI.CATRUC;
 
 import Annotation.LogConfirm;
 import Annotation.LogMessage;
-import DAO.ShiftTypesDAO;
-import DAO.TasksDAO;
+import DAO.BuildingsDAO;
 import GUI.ViewMain;
-import Model.ShiftTypes;
-import Model.Tasks;
-import java.time.LocalTime;
+import Model.Buildings;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.LogManager;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
@@ -21,109 +21,109 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author HP
  */
-public class gui_task extends javax.swing.JPanel {
+public class gui_building extends javax.swing.JPanel {
 
     /**
-     * Creates new form gui_task
+     * Creates new form gui_building
      */
+    private List<Buildings> list = new ArrayList<>();
     private DefaultTableModel tableModel;
-    private List<Tasks> listTasks = new ArrayList<>();
     private ViewMain viewMain;
-    public gui_task(ViewMain viewMain) {
-        this.viewMain = viewMain;
+    
+    public gui_building(ViewMain viewMain) {
         tableModel = new DefaultTableModel(){
             @Override
                 public boolean isCellEditable(int row, int column) {
                     return false;
                 }
             };
+        this.viewMain = viewMain;
         initComponents();
         loadList();
         initTable();
-        fillTable(listTasks);
-        jTextField1.setEnabled(false);
+        fillTable(list);
+        jTextField2.setEnabled(false);
+//        jButton1.setEnabled(false);
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);
     }
     
     public void initTable() {
-        String[] header = new String[] {"ID nhiệm vụ", "Tên nhiệm vụ",  "Mô tả"};
+        String[] header = new String[] {"ID tòa nhà", "Tên tòa nhà",  "Địa chỉ"};
         tableModel.setColumnIdentifiers(header);
         jTable1.setModel(tableModel);
         jTable1.setRowHeight(25);
-        
     }
     
     public void loadList(){
-        listTasks = TasksDAO.getInstance().getAllTasks();
+        list = BuildingsDAO.getInstance().getAllBuildings();
     }
     
-    public void fillTable(List<Tasks> ListTasks){
+    public void fillTable(List<Buildings> list){
         tableModel.setRowCount(0);
-        for (Tasks lt : ListTasks) {
-            tableModel.addRow(new String[] {String.valueOf(lt.getTask_id()), lt.getTask_name(), lt.getTask_desc()});
+        for (Buildings b : list) {
+            tableModel.addRow(new String[] {String.valueOf(b.getBuilding_id()), b.getBuilding_name(), b.getAddress()});
         }
         tableModel.fireTableDataChanged();
+        
     }
     
-    public void insertTask(){
-        Tasks t = new Tasks(jTextField2.getText(), jTextArea1.getText());
-        boolean r = TasksDAO.getInstance().insert(t);
-        if(r){
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            loadList();
-            fillTable(listTasks);
+    public void deleteBuilding(){
+        int t = Integer.parseInt(jTextField2.getText());
+        boolean r = BuildingsDAO.getInstance().delete(t);
+        if(r == false){
+            viewMain.setEnabled(false);
+            LogMessage message = new LogMessage("Không thể xóa"){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.dispose();
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ
         }
         else{
+            viewMain.setEnabled(true);
+            viewMain.requestFocus();
+            loadList();
+            fillTable(list);
+        }
+    }
+    
+    public void updateBuilding(){
+        Buildings a = new Buildings(Integer.parseInt(jTextField2.getText()),jTextField3.getText(), jTextArea1.getText());
+        boolean r = BuildingsDAO.getInstance().update(a);
+        if(!r){
             viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Không thể thêm"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        LogMessage message = new LogMessage("Lỗi cập nhật"){
+            @Override
+            public void action() {
+                viewMain.setEnabled(true);
+                viewMain.requestFocus();
+                this.dispose();
+            }
+        };
+        message.setLocationRelativeTo(null);
+        message.setVisible(true);
+        message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ
         }
-    }
-    
-    public void updateTask(){
-        Tasks a = new Tasks(Integer.parseInt(jTextField1.getText()),jTextField2.getText(), jTextArea1.getText());
-        boolean r = TasksDAO.getInstance().update(a);
-        if(r){
+        else{
             viewMain.setEnabled(true);
             viewMain.requestFocus();
             loadList();
-            fillTable(listTasks);
-        }else{
-            LogMessage message = new LogMessage("Không thể cập nhật"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            fillTable(list);
         }
     }
     
-    public void deleteTask(){
-        int t = Integer.parseInt(jTextField1.getText());
-        boolean r = TasksDAO.getInstance().delete(t);
-        if(r){
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            loadList();
-            fillTable(listTasks);
-        }else{
-            LogMessage message = new LogMessage("Không thể xoá"){
+    public void insertBuilding(){
+        Buildings b = new Buildings(jTextField3.getText(), jTextArea1.getText());
+        boolean r = BuildingsDAO.getInstance().insert(b);
+        if(!r){
+            viewMain.setEnabled(false);
+            LogMessage message = new LogMessage("Thêm thất bại"){
                 @Override
                 public void action() {
                     viewMain.setEnabled(true);
@@ -133,7 +133,12 @@ public class gui_task extends javax.swing.JPanel {
             };
             message.setLocationRelativeTo(null);
             message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ
+        }else{
+            viewMain.setEnabled(true);
+            viewMain.requestFocus();
+            loadList();
+            fillTable(list);
         }
     }
     /**
@@ -148,12 +153,12 @@ public class gui_task extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
+        jTextField3 = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
@@ -161,13 +166,14 @@ public class gui_task extends javax.swing.JPanel {
         jButton3 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jTextField3 = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(204, 255, 255));
-        setForeground(new java.awt.Color(102, 255, 255));
-        setPreferredSize(new java.awt.Dimension(1125, 485));
+        setForeground(new java.awt.Color(51, 255, 255));
+        setPreferredSize(new java.awt.Dimension(1120, 485));
+        setRequestFocusEnabled(false);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -177,17 +183,9 @@ public class gui_task extends javax.swing.JPanel {
                 {null, null, null}
             },
             new String [] {
-                "Mã nhiệm vụ", "Tên nhiệm vụ", "Mô tả"
+                "Title 1", "Title 2", "Title 3"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
+        ));
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable1MouseClicked(evt);
@@ -195,13 +193,19 @@ public class gui_task extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(jTable1);
 
-        jLabel1.setText("Thông tin chi tiết");
+        jLabel2.setText("Thông tin chi tiết");
 
-        jLabel2.setText("Mã nhiệm vụ");
+        jLabel3.setText("Mã tòa nhà");
 
-        jLabel3.setText("Tên nhiệm vụ");
+        jLabel4.setText("Tên tòa nhà");
 
-        jLabel4.setText("Mô tả");
+        jLabel5.setText("Địa chỉ");
+
+        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField2ActionPerformed(evt);
+            }
+        });
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -240,93 +244,87 @@ public class gui_task extends javax.swing.JPanel {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jLabel3)
-                        .addComponent(jLabel2)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING))
-                    .addComponent(jButton1))
-                .addGap(73, 73, 73)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(213, 213, 213)
+                .addComponent(jLabel2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(67, 67, 67)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton2)
+                        .addGap(78, 78, 78)
+                        .addComponent(jButton3))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jScrollPane2)
-                                .addComponent(jTextField2))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton5)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3)
-                        .addGap(27, 27, 27))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(167, 167, 167))
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel4))
+                        .addGap(63, 63, 63)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton5)))
+                .addGap(28, 28, 28))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(jLabel1)
-                .addGap(31, 31, 31)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5))
-                .addGap(30, 30, 30)
+                .addGap(22, 22, 22)
+                .addComponent(jLabel2)
+                .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(36, 36, 36)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton5))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
+                .addGap(41, 41, 41)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addContainerGap(39, Short.MAX_VALUE))
+                    .addComponent(jButton3)
+                    .addComponent(jButton2))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
-        jButton4.setText("Tìm");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
+        jLabel1.setText("Thông tin tìm kiếm");
 
-        jLabel5.setText("Mã Nhiệm vụ");
+        jButton4.setText("Tìm");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(52, 52, 52)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addGap(25, 25, 25)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addComponent(jButton4)
                 .addGap(26, 26, 26))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
+                    .addComponent(jLabel1)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton4))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -334,31 +332,27 @@ public class gui_task extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addGap(17, 17, 17)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 584, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(26, 26, 26))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 16, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38)
+                        .addGap(18, 18, 18)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         jButton1.setEnabled(false);
@@ -366,63 +360,26 @@ public class gui_task extends javax.swing.JPanel {
         jButton3.setEnabled(true);
         jButton5.setEnabled(true);
         int row = jTable1.rowAtPoint(evt.getPoint());
-        Tasks arr = listTasks.get(row);
-        jTextField1.setText(String.valueOf(arr.getTask_id()));
-        jTextField2.setText(arr.getTask_name());
-        jTextArea1.setText(arr.getTask_desc());
+        Buildings arr = list.get(row);
+        jTextField2.setText(String.valueOf(arr.getBuilding_id()));
+        jTextField3.setText(arr.getBuilding_name());
+        jTextArea1.setText(arr.getAddress());
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         jButton1.setEnabled(true);
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);
-        jTextField1.setText(null);
         jTextField2.setText(null);
+        jTextField3.setText(null);
         jTextArea1.setText(null);
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if(jTextField2.getText().isEmpty()){
-           LogMessage message = new LogMessage("Không được để trống tên nhiệm vụ"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }
-        else{
-            LogConfirm confirm = new LogConfirm("Xác nhận cập nhật"){
-                @Override
-                public void action() {
-                    updateTask();
-                    this.dispose();
-                }
-                @Override
-                public void reject() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-
-            };
-            viewMain.setEnabled(false);
-            confirm.setEnabled(true);
-            confirm.setVisible(true);
-            confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-            confirm.setLocationRelativeTo(null);
-        }
-    }//GEN-LAST:event_jButton2ActionPerformed
-
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        LogConfirm confirm = new LogConfirm("Xác nhận xóa"){
+         LogConfirm confirm = new LogConfirm("Xác nhận xóa"){
             @Override
             public void action() {
-                deleteTask();
+                deleteBuilding();
                 this.dispose();
                 }
             @Override
@@ -439,25 +396,12 @@ public class gui_task extends javax.swing.JPanel {
         confirm.setLocationRelativeTo(null);
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(jTextField2.getText().isEmpty()){
-            LogMessage message = new LogMessage("Không được để trống tên nhiệm vụ"){
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if(!jTextField3.getText().isEmpty()){
+            LogConfirm confirm = new LogConfirm("Xác nhận cập nhật"){
                 @Override
                 public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }
-        else{
-            LogConfirm confirm = new LogConfirm("Xác nhận thêm"){
-                @Override
-                public void action() {
-                    insertTask();
+                    updateBuilding();
                     this.dispose();
                 }
                 @Override
@@ -473,8 +417,63 @@ public class gui_task extends javax.swing.JPanel {
             confirm.setVisible(true);
             confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             confirm.setLocationRelativeTo(null);
+        }else{
+           viewMain.setEnabled(false);
+            LogMessage message = new LogMessage("Không được để trống tên tòa nhà"){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.dispose();
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ 
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if(!jTextField3.getText().isEmpty()){
+            LogConfirm confirm;
+            confirm = new LogConfirm("Xác nhận thêm"){
+                @Override
+                public void action() {
+                    insertBuilding();
+                    this.dispose();
+                }
+                @Override
+                public void reject() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.dispose();
+                }
+
+            };
+            viewMain.setEnabled(false);
+            confirm.setEnabled(true);
+            confirm.setVisible(true);
+            confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            confirm.setLocationRelativeTo(null);
+        }else{
+           viewMain.setEnabled(false);
+            LogMessage message = new LogMessage("Không được để trống tên tòa nhà"){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.dispose();
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ 
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
