@@ -21,6 +21,8 @@ import GUI.GUIXE.GUI_LostResidentCard;
 import GUI.GUIXE.GUI_ParkingSession;
 import GUI.GUIXE.GUI_ResidentCard;
 import GUI.GUIXE.GUI_Vehicle;
+import GUI.NHANSU.gui_account;
+import GUI.NHANSU.gui_staff;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
@@ -36,9 +38,10 @@ public class ViewMain extends javax.swing.JFrame {
     
     public ViewMain() {
         initComponents();
-//        GUI_DICHVU();
+        GUI_DICHVU();
         GUI_GUIXE();
         GUI_CATRUC();
+        GUI_NHANSU();
     }
     public void addComponent(JPanel father, JPanel child) {
         father.setLayout(new GridBagLayout());
@@ -94,6 +97,15 @@ public class ViewMain extends javax.swing.JFrame {
         addComponent(panel_catruc, sw);
         addComponent(panel_toanha, b);
         addComponent(panel_nhiemvu, t);
+    }
+    
+    public void GUI_NHANSU() {
+        // init component
+        gui_staff staff_gui = new gui_staff(this);
+        gui_account account_gui = new gui_account(this);
+        // add component
+        addComponent(panel_nhanvien, staff_gui);
+        addComponent(panel_taikhoan, account_gui);
     }
     /**
      * This method is called from within the constructor to initialize the form.

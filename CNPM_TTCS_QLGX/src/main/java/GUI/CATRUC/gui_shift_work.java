@@ -936,7 +936,7 @@ public class gui_shift_work extends javax.swing.JPanel {
 
     private void jTextField4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyReleased
         int id = Integer.parseInt(jTextField4.getText());
-        Staff a = StaffDAO.getInstance().findById(id);
+        Staff a = StaffDAO.getInstance().findbyID(id);
         jTextField6.setText(a.getFullName());
     }//GEN-LAST:event_jTextField4KeyReleased
 

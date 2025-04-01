@@ -16,9 +16,9 @@ import java.util.ArrayList;
  *
  * @author eramisme
  */
-public class PositionsDAO implements InterfaceDAO.InterfaceDAO<Position> {
-public static PositionsDAO getInstance() {
-        return new PositionsDAO();
+public class PositionDAO implements InterfaceDAO.InterfaceDAO<Position> {
+public static PositionDAO getInstance() {
+        return new PositionDAO();
     }
     @Override 
     public ArrayList<Position> getList() {

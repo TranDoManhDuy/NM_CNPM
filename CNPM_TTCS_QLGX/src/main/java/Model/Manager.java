@@ -1,13 +1,13 @@
 package Model;
 
-public class Managers {
+public class Manager {
 
     private int staff_id;
 
-    public Managers() {
+    public Manager() {
     }
 
-    public Managers(int staff_id) {
+    public Manager(int staff_id) {
         this.staff_id = staff_id;
     }
 

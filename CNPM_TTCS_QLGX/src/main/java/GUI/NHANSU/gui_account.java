@@ -4,19 +4,67 @@
  */
 package GUI.NHANSU;
 
+import DatabaseHelper.OpenConnection;
+import GUI.ViewMain;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author eramisme
  */
 public class gui_account extends javax.swing.JPanel {
 
-    /**
-     * Creates new form gui_account
-     */
-    public gui_account() {
-        initComponents();
-    }
+    private DefaultTableModel tableModel;
+    private ViewMain viewmain;
 
+    /**
+     * Creates new form gui_staff
+     */
+    public gui_account(ViewMain viewmain) {
+        this.viewmain = viewmain;
+        initComponents();       
+        tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+        }
+        };
+        initTable();
+        fillTable();
+    }    
+    public void initTable() {
+        String[] header = new String[] {"Số tài khoản", "Vai trò", "Trạng thái"};
+        tableModel.setColumnIdentifiers(header);
+        jTable2.setModel(tableModel);
+    }
+    
+    public void fillTable() {
+    String sql = "EXEC Account_render";
+    try (
+        Connection conn = OpenConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery(sql);
+    ) {
+        tableModel.setRowCount(0); 
+        while (result.next()) {
+            int account_number = result.getInt("account_number");
+            String role_name = result.getString("role_name");
+            boolean is_active = result.getBoolean("is_active");           
+
+            tableModel.addRow(new Object[]{
+                account_number,
+                role_name,
+                is_active ? "Hoạt động" : "Ngưng hoạt động",                
+            });
+        }
+        tableModel.fireTableDataChanged();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -60,7 +108,7 @@ public class gui_account extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setText("THÔNG TIN TÀI KHOẢN");
 
-        jLabel2.setText("ID Nhân viên");
+        jLabel2.setText("Vai trò");
 
         jLabel3.setText("Số tài khoản");
 
@@ -126,7 +174,7 @@ public class gui_account extends javax.swing.JPanel {
                             .addComponent(jLabel4)
                             .addComponent(jLabel2)
                             .addComponent(jLabel15))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
                         .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextField2)
                             .addComponent(jTextField3)
@@ -148,9 +196,8 @@ public class gui_account extends javax.swing.JPanel {
         Panel_TTLayout.setVerticalGroup(
             Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Panel_TTLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(24, 24, 24)
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
@@ -166,12 +213,14 @@ public class gui_account extends javax.swing.JPanel {
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel15))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(14, 71, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_TTLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14))
+                .addContainerGap())
         );
 
         Panel_TKCN.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -238,14 +287,14 @@ public class gui_account extends javax.swing.JPanel {
                 {null, null, null}
             },
             new String [] {
-                "Mã nhân viên", "Số tài khoản", "Trạng thái"
+                "Số tài khoản", "Vai trò", "Trạng thái"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, true
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
