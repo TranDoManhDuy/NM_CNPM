@@ -4,6 +4,9 @@
  */
 package GUI;
 
+import Annotation.LogConfirm;
+import Annotation.LogMessage;
+import Annotation.LogSelection;
 import GUI.CATRUC.gui_building;
 import GUI.CATRUC.gui_shift_type;
 import GUI.CATRUC.gui_shift_work;
@@ -30,13 +33,16 @@ import javax.swing.JPanel;
  * @author manhh
  */
 public class ViewMain extends javax.swing.JFrame {
+    LogConfirm logComfirm = new LogConfirm("nothing");
+    LogMessage logMessage = new LogMessage("Nothing");
+    LogSelection logSelection = new LogSelection();
     /**
      * Creates new form ViewMain
      */
     
     public ViewMain() {
         initComponents();
-//        GUI_DICHVU();
+        GUI_DICHVU();
         GUI_GUIXE();
         GUI_CATRUC();
     }
@@ -50,7 +56,7 @@ public class ViewMain extends javax.swing.JFrame {
     }
     public void GUI_DICHVU() {
         // init component
-        gui_registration registration_gui = new gui_registration(this);
+        gui_registration registration_gui = new gui_registration(this, logComfirm, logMessage, logSelection);
         gui_payment payment_gui = new gui_payment(this);
         gui_serviceType service_type_gui = new gui_serviceType();
         gui_service_free service_free_gui = new gui_service_free();

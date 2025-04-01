@@ -1,6 +1,7 @@
 package GUI.DICHVU;
 import Annotation.LogConfirm;
 import Annotation.LogMessage;
+import Annotation.LogSelection;
 import DAO.CustomerDAO;
 import DAO.RegisatrationDAO;
 import DAO.VehicleDAO;
@@ -9,6 +10,8 @@ import GUI.ViewMain;
 import Model.Customer;
 import Model.Regisatration;
 import Model.Vehicle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -34,11 +38,17 @@ import javax.swing.table.DefaultTableModel;
 public class gui_registration extends javax.swing.JPanel {
     private DefaultTableModel tableModel;
     private ViewMain viewmain;
+    private LogConfirm logConfirm;
+    private LogMessage logMessage;
+    private LogSelection logSelection;
     /**
      * Creates new form registration
      */
-    public gui_registration(ViewMain viewmain) {
+    public gui_registration(ViewMain viewmain, LogConfirm logConfirm, LogMessage logMessage, LogSelection logSelection) {
         this.viewmain = viewmain;
+        this.logConfirm = logConfirm;
+        this.logMessage = logMessage;
+        this.logSelection = logSelection;
         initComponents();
         combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Còn thời hạn", "Hết thời hạn", ""}));
         combo_trangthai.setSelectedIndex(2);
@@ -667,17 +677,66 @@ public class gui_registration extends javax.swing.JPanel {
 
     private void btn_datlaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_datlaiActionPerformed
         // TODO add your handling code here:
-        txt_iddangki.setText("");
-        txt_ten_Khachhang.setText("");
-        txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
-        txt_phuongtien.setText("");
-        txt_id_khachhang.setText("");
-        combo_trangthai.setSelectedIndex(2);
-        combo_trangthai.setEnabled(false);
-        
-        btn_them.setEnabled(true);
-        btn_capnhat.setEnabled(false);
-        btn_xoa.setEnabled(false);
+//        txt_iddangki.setText("");
+//        txt_ten_Khachhang.setText("");
+//        txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
+//        txt_phuongtien.setText("");
+//        txt_id_khachhang.setText("");
+//        combo_trangthai.setSelectedIndex(2);
+//        combo_trangthai.setEnabled(false);
+//        
+//        btn_them.setEnabled(true);
+//        btn_capnhat.setEnabled(false);
+//        btn_xoa.setEnabled(false);
+        this.viewmain.setEnabled(false);
+        this.logSelection = new LogSelection() {
+            @Override
+            public void initContent() {
+                this.label_property.setText("Tên khách hàng");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                // khoi tao cac thanh phan bang o day
+                String[] header = new String[] {"ID khách hàng", "Tên khách hàng", "Số CCCD", "Số điện thoại"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table_dangki.rowAtPoint(e.getPoint());
+                        txt_id_khachhang.setText((String) table.getValueAt(row, 0));
+                        txt_ten_Khachhang.setText((String) table.getValueAt(row, 1));
+                        logSelection.setVisible(false);
+                        viewmain.setEnabled(true);
+                        viewmain.requestFocus();
+                    }
+                });
+                ArrayList<Customer> arrCustomer = CustomerDAO.getInstance().getList();
+                for (Customer customer : arrCustomer) {
+                    this.tableModel.addRow(new String[] {String.valueOf(customer.getCustomer_id()), customer.getFull_name(), customer.getSsn(), customer.getPhone_number()});
+                }
+                this.tableModel.fireTableDataChanged();
+                
+                this.btn_loc.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.out.println("CLICK");
+                    }
+                });
+            }
+            @Override
+            public void back() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
     }//GEN-LAST:event_btn_datlaiActionPerformed
 
     private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
@@ -698,12 +757,8 @@ public class gui_registration extends javax.swing.JPanel {
 
     private void btn_chonkhachhangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonkhachhangActionPerformed
         // TODO add your handling code here:
-        
-        // vo hieu hoa 
         this.viewmain.setEnabled(false);
-        
-        // ghi đè cho các phím xác nhận
-        LogMessage logmessage = new LogMessage("Không thể xóa") {
+        this.logMessage = new LogMessage("Không thể xóa") {
             @Override
             public void action() {
                 System.out.println("Tat thong bao");
@@ -712,17 +767,7 @@ public class gui_registration extends javax.swing.JPanel {
                 viewmain.requestFocus();
             }
         };
-        logmessage.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        // chặn đóng cửa sổ
-        logmessage.addWindowListener(new WindowAdapter() {
-        @Override
-        public void windowClosing(WindowEvent e) {
-//            JOptionPane.showMessageDialog(null, "Bạn không thể đóng cửa sổ này!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-        }
-        });
-        // hien cua so thong bao
-        logmessage.setLocationRelativeTo(null);
-        logmessage.setVisible(true);
+        this.logMessage.setVisible(true);
     }//GEN-LAST:event_btn_chonkhachhangActionPerformed
 
     private void btn_chonphuongtienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonphuongtienActionPerformed
@@ -731,9 +776,8 @@ public class gui_registration extends javax.swing.JPanel {
         
         // Khống chế viewmain
         this.viewmain.setEnabled(false);
-        
         // ghi đè cho các phím xác nhận
-        LogConfirm logconfirm = new LogConfirm( "Cảnh báo cảnh báo") {
+        this.logConfirm = new LogConfirm( "Cảnh báo cảnh báo") {
             @Override
             public void action() {
                 System.out.println("DO SOMETHING");
@@ -751,18 +795,7 @@ public class gui_registration extends javax.swing.JPanel {
                 viewmain.requestFocus();
             }
         };
-        logconfirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        // chặn đóng cửa sổ
-        logconfirm.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-    //            JOptionPane.showMessageDialog(null, "Bạn không thể đóng cửa sổ này!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-            }
-        });
-        
-        // hiện log xác nhận
-        logconfirm.setLocationRelativeTo(null);
-        logconfirm.setVisible(true);
+        this.logConfirm.setVisible(true);
     }//GEN-LAST:event_btn_chonphuongtienActionPerformed
 
     private void txt_timkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_timkiemActionPerformed

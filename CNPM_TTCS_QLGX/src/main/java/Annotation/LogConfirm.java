@@ -20,11 +20,18 @@ public class LogConfirm extends javax.swing.JFrame implements doAction {
      */
     public void action() {}
     public void reject() {}
+    public void back() {}
     public LogConfirm(String message) {
         initComponents();
         txtConfirm.setText(message);
+        this.setLocationRelativeTo(null);
+        this.setVisible(false);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {}
+        });
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

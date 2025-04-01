@@ -8,8 +8,6 @@ package Annotation;
  *
  * @author manhh
  */
-public interface doAction {
-    public void back();
-    public void action();
-    public void reject();
+public interface InitContent {
+    public void initContent();
 }

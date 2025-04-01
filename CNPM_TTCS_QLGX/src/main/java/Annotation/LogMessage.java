@@ -24,9 +24,19 @@ public class LogMessage extends javax.swing.JFrame implements doAction {
     public LogMessage( String message) {
         initComponents();
         this.txt_area.setText(message);
+        this.setLocationRelativeTo(null);
+        this.setVisible(false);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        // chặn đóng cửa sổ
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {}
+        });
     }
+    
     public void action() {}
     public void reject() {}
+    public void back() {}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
