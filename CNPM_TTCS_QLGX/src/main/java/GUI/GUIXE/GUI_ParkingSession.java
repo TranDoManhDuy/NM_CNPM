@@ -8,6 +8,8 @@ import DAO.ParkingSessionDAO;
 import GUI.ViewMain;
 import javax.swing.table.DefaultTableModel;
 import Model.ParkingSession;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -76,6 +78,13 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                 e.printStackTrace();
             }
         tblModel.fireTableDataChanged();
+//        LocalDateTime s1 = LocalDateTime.of(2025, 3, 7, 8, 0);
+//        LocalTime s2 = LocalTime.of(13, 40);
+//        ParkingSession par = new ParkingSession(106, 2, false, s1, null, 2, -1, 5, -1);
+//        ParkingSessionDAO.getInstance().insert(par);
+//        ParkingSessionDAO.getInstance().update(par);
+//        System.out.println(ParkingSessionDAO.getInstance().findbyID(106).getCheck_in_shift_id());
+//        ParkingSessionDAO.getInstance().delete(106);
     }  
     
     /**

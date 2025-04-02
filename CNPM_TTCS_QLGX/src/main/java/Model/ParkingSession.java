@@ -4,6 +4,7 @@
  */
 package Model;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -14,8 +15,8 @@ public class ParkingSession {
     private int parking_session_id;
     private int card_id;
     private boolean is_service;
-    private LocalTime check_in_time;
-    private LocalTime check_out_time; 
+    private LocalDateTime check_in_time;
+    private LocalDateTime check_out_time; 
     private int check_in_shift_id;
     private int check_out_shift_id;
     private int vehicle_id;
@@ -24,7 +25,7 @@ public class ParkingSession {
     public ParkingSession() {
     }
 
-    public ParkingSession(int card_id, boolean is_service, LocalTime check_in_time, LocalTime check_out_time, int check_in_shift_id, int check_out_shift_id, int vehicle_id, int amount) {
+    public ParkingSession(int card_id, boolean is_service, LocalDateTime check_in_time, LocalDateTime check_out_time, int check_in_shift_id, int check_out_shift_id, int vehicle_id, int amount) {
         this.card_id = card_id;
         this.is_service = is_service;
         this.check_in_time = check_in_time;
@@ -35,7 +36,7 @@ public class ParkingSession {
         this.amount = amount;
     }
     
-    public ParkingSession(int parking_session_id, int card_id, boolean is_service, LocalTime check_in_time, LocalTime check_out_time, int check_in_shift_id, int check_out_shift_id, int vehicle_id, int amount) {
+    public ParkingSession(int parking_session_id, int card_id, boolean is_service, LocalDateTime check_in_time, LocalDateTime check_out_time, int check_in_shift_id, int check_out_shift_id, int vehicle_id, int amount) {
         this.parking_session_id = parking_session_id;
         this.card_id = card_id;
         this.is_service = is_service;
@@ -71,19 +72,19 @@ public class ParkingSession {
         this.is_service = is_service;
     }
 
-    public LocalTime getCheck_in_time() {
+    public LocalDateTime getCheck_in_time() {
         return check_in_time;
     }
 
-    public void setCheck_in_time(LocalTime check_in_time) {
+    public void setCheck_in_time(LocalDateTime check_in_time) {
         this.check_in_time = check_in_time;
     }
 
-    public LocalTime getCheck_out_time() {
+    public LocalDateTime getCheck_out_time() {
         return check_out_time;
     }
 
-    public void setCheck_out_time(LocalTime check_out_time) {
+    public void setCheck_out_time(LocalDateTime check_out_time) {
         this.check_out_time = check_out_time;
     }
 

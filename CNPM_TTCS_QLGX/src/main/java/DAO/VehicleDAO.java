@@ -18,7 +18,7 @@ public class VehicleDAO implements InterfaceDAO<Vehicle> {
     @Override
     public ArrayList<Vehicle> getList() {
         ArrayList<Vehicle> lstVehicle = new ArrayList<>();
-        String sql = "SELECT * FROM vehicles";
+        String sql = "EXEC GET_ALL_VEHICLES";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql);
@@ -73,7 +73,7 @@ public class VehicleDAO implements InterfaceDAO<Vehicle> {
 
     @Override
     public boolean insert(Vehicle vehicle) {
-        String sql = "INSERT INTO vehicles (identification_code, vehicle_type_id, vehicle_name, vehicle_color) VALUES (?, ?, ?, ?)";
+        String sql = "EXEC INSERT_VEHICLE @identification_code = ?, @vehicle_type_id = ?, @vehicle_name = ?, @vehicle_color = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)
@@ -91,7 +91,7 @@ public class VehicleDAO implements InterfaceDAO<Vehicle> {
 
     @Override
     public boolean update(Vehicle vehicle) {
-        String sql = "UPDATE vehicles SET identification_code = ?, vehicle_type_id = ?, vehicle_name = ?, vehicle_color = ? WHERE vehicle_id = ?";
+        String sql = "EXEC UPDATE_VEHICLE @identification_code = ?, @vehicle_type_id = ?, @vehicle_name = ?, @vehicle_color = ?, @vehicle_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)
@@ -110,7 +110,7 @@ public class VehicleDAO implements InterfaceDAO<Vehicle> {
 
     @Override
     public boolean delete(int id) {
-        String sql = "DELETE FROM vehicles WHERE vehicle_id = ?";
+        String sql = "EXEC DELETE_VEHICLE @vehicle_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)
@@ -125,7 +125,7 @@ public class VehicleDAO implements InterfaceDAO<Vehicle> {
 
     @Override
     public Vehicle findbyID(int id) {
-        String sql = "SELECT * FROM vehicles WHERE vehicle_id = ?";
+        String sql = "EXEC GET_VEHICLE_BY_ID @vehicle_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)
@@ -145,26 +145,5 @@ public class VehicleDAO implements InterfaceDAO<Vehicle> {
             e.printStackTrace();
         }
         return null;
-    }
-    
-    public static void main(String[] args) {
-        Vehicle vel = new Vehicle("0101010101", 1, "Air Blade", "Red");
-        Vehicle velUp = new Vehicle(2, "0101010101", 1, "Air Blade", "Black");
-        VehicleDAO velDao = VehicleDAO.getInstance();
-//        velDao.insert(vel);
-//        velDao.update(velUp);
-//        Vehicle vehicle = velDao.findbyID(2);
-//        if (vehicle != null) {
-//            System.out.println(vehicle.getVehicle_name());
-//        }
-//
-//        ArrayList<Vehicle> lstVel = velDao.getList();
-//        
-//        if (lstVel != null) {
-//            for (Vehicle v : lstVel) {
-//                System.out.println(v.getIdentification_code());
-//            }
-//        }
-        velDao.delete(2);
-    }   
+    }  
 }

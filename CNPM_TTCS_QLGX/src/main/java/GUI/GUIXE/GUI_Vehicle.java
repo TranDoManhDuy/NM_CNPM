@@ -67,6 +67,11 @@ public class GUI_Vehicle extends javax.swing.JPanel {
                 e.printStackTrace();
             }
         tblModel.fireTableDataChanged();
+//        Vehicle vel = new Vehicle(13, "V011", 2, "Ford Transit", "Silver");
+//        VehicleDAO.getInstance().insert(vel);
+//        VehicleDAO.getInstance().update(vel);
+//        System.out.println(VehicleDAO.getInstance().findbyID(13).getIdentification_code());
+        VehicleDAO.getInstance().delete(13);
     }
     
     @SuppressWarnings("unchecked")
