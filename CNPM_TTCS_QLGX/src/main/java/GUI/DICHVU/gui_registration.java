@@ -16,24 +16,20 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
-
-/**
- *
- * @author manhh
  */
 public class gui_registration extends javax.swing.JPanel {
     private DefaultTableModel tableModel;
@@ -41,6 +37,7 @@ public class gui_registration extends javax.swing.JPanel {
     private LogConfirm logConfirm;
     private LogMessage logMessage;
     private LogSelection logSelection;
+    private ArrayList<ArrayList<String>> dataRegistration = new ArrayList<>();
     /**
      * Creates new form registration
      */
@@ -50,11 +47,11 @@ public class gui_registration extends javax.swing.JPanel {
         this.logMessage = logMessage;
         this.logSelection = logSelection;
         initComponents();
-        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Còn thời hạn", "Hết thời hạn", ""}));
-        combo_trangthai.setSelectedIndex(2);
+        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "San sang gia han", "Dang con han", "Bi huy", ""}));
+        combo_trangthai.setSelectedIndex(3);
         txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
         
-        // 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+        // 
         tableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -62,18 +59,18 @@ public class gui_registration extends javax.swing.JPanel {
             }
         };
         initTable();
+        loadData();
         fillTable();
-        // 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
         
-        combo_ngaybatdau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        combo_ngaybatdau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"
         , "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
         }));
-        combo_ngayketthuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        combo_ngayketthuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"
         , "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
         }));
-        combo_thangbatdau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        combo_thangbatdau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"
         , "11", "12"}));
-        combo_thangketthuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        combo_thangketthuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"
         , "11", "12"}));
         
         combo_nambatdau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", 
@@ -99,33 +96,25 @@ public class gui_registration extends javax.swing.JPanel {
                 combo_trangthai.setEnabled(true);
                 Customer customer = new Customer();
                 Vehicle vehicle = new Vehicle();
+                
                 int row = table_dangki.rowAtPoint(e.getPoint());
                 
-                ArrayList <Regisatration> arr = RegisatrationDAO.getInstance().getList();
-                Regisatration dk = arr.get(row);
-                customer = CustomerDAO.getInstance().findbyID(dk.getCustomer_id());
-                vehicle = VehicleDAO.getInstance().findbyID(dk.getVehicle_id());
+                ArrayList <String> rs_view = dataRegistration.get(row);
                 
-                txt_iddangki.setText(String.valueOf(dk.getRegistration_id()));
-                txt_id_khachhang.setText(String.valueOf(dk.getCustomer_id()));
-                txt_ten_Khachhang.setText(customer.getFull_name());
-                txt_ngaydangki.setText(String.valueOf(dk.getRegistration_date()));
-                txt_phuongtien.setText(vehicle.getIdentification_code());
-                String state = String.valueOf(dk.getState());
-                String trangthai = "";
-                if (state == "A") {
-                    trangthai = "San sang gia han";
-                }
-                else {
-                    if (state == "B") {
-                        trangthai = "Gia han thanh cong";
+                txt_iddangki.setText(rs_view.get(0));
+                txt_id_khachhang.setText(rs_view.get(1));
+                txt_ten_Khachhang.setText(rs_view.get(2));
+                txt_ngaydangki.setText(rs_view.get(3));
+                txt_phuongtien.setText(rs_view.get(4));
+                if (rs_view.get(5).equals("San sang gia han")) {
+                    combo_trangthai.setSelectedIndex(0);
+                } else {
+                    if (rs_view.get(5).equals("Dang con han")) {
+                        combo_trangthai.setSelectedIndex(1);
+                    } else {
+                        combo_trangthai.setSelectedIndex(2);
                     }
-                    else {trangthai = "Bi huy";}
                 }
-                arr = null;
-                dk = null;
-                customer = null;
-                vehicle = null;
             }
         });
     }
@@ -134,38 +123,53 @@ public class gui_registration extends javax.swing.JPanel {
         tableModel.setColumnIdentifiers(header);
         table_dangki.setModel(tableModel);
     }
-    
     public void fillTable() {
-    String sql = "EXEC Registration_render";
-    try (
-        Connection conn = OpenConnection.getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql);
-    ) {
-        while (rs.next()) {
-            int registration_id = rs.getInt("registration_id");
-            String full_name = rs.getString("full_name");
-            LocalDate registration_date = rs.getDate("registration_date").toLocalDate();
-            String identification_code = rs.getString("identification_code");
-            String state = rs.getString("state");
-            String trangthai = "";
-            if (state == "A") {
-                trangthai = "San sang gia han";
-            }
-            else {
-                if (state == "B") {
-                    trangthai = "Gia han thanh cong";
-                }
-                else {trangthai = "Bi huy";}
-            }
-            tableModel.addRow(new String[] {String.valueOf(registration_id), full_name, String.valueOf(registration_date), identification_code, trangthai});
+        tableModel.setRowCount(0);
+        for (ArrayList<String> arr : this.dataRegistration) {
+            tableModel.addRow(new String[] {arr.get(0), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
         }
         tableModel.fireTableDataChanged();
-    } catch (Exception e) {
-        e.printStackTrace();
+        txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
     }
-}
-
+    public void loadData() {
+        String sql = "EXEC Registration_render";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+        ) {
+            int index = 0;
+            while (rs.next()) {
+                int registration_id = rs.getInt("registration_id");
+                int customer_id = rs.getInt("customer_id");
+                String full_name = rs.getString("full_name");
+                LocalDate registration_date = rs.getDate("registration_date").toLocalDate();
+                String identification_code = rs.getString("identification_code");
+                String state = rs.getString("state");
+                String trangthai = "";
+                if (state.equals("A")) {
+                    trangthai = "San sang gia han";
+                }
+                else {
+                    if (state.equals("B")) {
+                        trangthai = "Dang con han";
+                    }
+                    else {trangthai = "Bi huy";}
+                }
+                ArrayList<String> registration_data = new ArrayList<>(Arrays.asList(
+                        String.valueOf(registration_id), 
+                        String.valueOf(customer_id), 
+                        full_name,
+                        String.valueOf(registration_date),
+                        identification_code,
+                        trangthai
+                        ));
+                this.dataRegistration.add(registration_data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -203,7 +207,6 @@ public class gui_registration extends javax.swing.JPanel {
         btn_timkiem = new javax.swing.JButton();
         btn_conhan = new javax.swing.JButton();
         btn_hethan = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
         btn_tatca = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -345,38 +348,16 @@ public class gui_registration extends javax.swing.JPanel {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(inforDetail)
-                .addGap(128, 128, 128))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(36, 36, 36)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(label_ngaydangki)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txt_ngaydangki, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(btn_them)
-                                .addGap(28, 28, 28)
-                                .addComponent(btn_capnhat))
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(label_id_pt)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(txt_phuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(btn_chonphuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(label_trangthai)
-                                    .addGap(36, 36, 36)
-                                    .addComponent(combo_trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(inforDetail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(label_trangthai)
+                                .addGap(36, 36, 36)
+                                .addComponent(combo_trangthai, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                                 .addComponent(label_iddangki)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -395,7 +376,25 @@ public class gui_registration extends javax.swing.JPanel {
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(btn_xoa)
-                                    .addComponent(btn_datlai))))
+                                    .addComponent(btn_datlai)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addComponent(label_ngaydangki)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(txt_ngaydangki))
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addComponent(label_id_pt)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(txt_phuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(btn_chonphuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(btn_them)
+                                        .addGap(28, 28, 28)
+                                        .addComponent(btn_capnhat)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(32, 32, 32))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -440,13 +439,30 @@ public class gui_registration extends javax.swing.JPanel {
                 .addGap(52, 52, 52))
         );
 
+        txt_timkiem.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                txt_timkiemInputMethodTextChanged(evt);
+            }
+        });
         txt_timkiem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_timkiemActionPerformed(evt);
             }
         });
+        txt_timkiem.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_timkiemKeyPressed(evt);
+            }
+        });
 
         btn_timkiem.setText("Tìm kiếm tên");
+        btn_timkiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_timkiemActionPerformed(evt);
+            }
+        });
 
         btn_conhan.setText("Còn hạn");
         btn_conhan.addActionListener(new java.awt.event.ActionListener() {
@@ -455,16 +471,19 @@ public class gui_registration extends javax.swing.JPanel {
             }
         });
 
-        btn_hethan.setText("Hết hạn");
+        btn_hethan.setText("SS gia hạn");
         btn_hethan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_hethanActionPerformed(evt);
             }
         });
 
-        jLabel1.setText("Danh sách:");
-
         btn_tatca.setText("Tất cả");
+        btn_tatca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tatcaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -474,13 +493,11 @@ public class gui_registration extends javax.swing.JPanel {
                 .addGap(37, 37, 37)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(btn_conhan, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_conhan)
+                        .addComponent(btn_hethan, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_hethan)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_tatca))
+                        .addComponent(btn_tatca, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(btn_timkiem, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -498,7 +515,6 @@ public class gui_registration extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_conhan)
                     .addComponent(btn_hethan)
-                    .addComponent(jLabel1)
                     .addComponent(btn_tatca))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
@@ -532,8 +548,18 @@ public class gui_registration extends javax.swing.JPanel {
         combo_namketthuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btn_loc.setText("Lọc");
+        btn_loc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_locActionPerformed(evt);
+            }
+        });
 
         btn_bo_loc.setText("Bỏ lọc");
+        btn_bo_loc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_bo_locActionPerformed(evt);
+            }
+        });
 
         jLabel7.setText("Ngày");
 
@@ -677,17 +703,58 @@ public class gui_registration extends javax.swing.JPanel {
 
     private void btn_datlaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_datlaiActionPerformed
         // TODO add your handling code here:
-//        txt_iddangki.setText("");
-//        txt_ten_Khachhang.setText("");
-//        txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
-//        txt_phuongtien.setText("");
-//        txt_id_khachhang.setText("");
-//        combo_trangthai.setSelectedIndex(2);
-//        combo_trangthai.setEnabled(false);
-//        
-//        btn_them.setEnabled(true);
-//        btn_capnhat.setEnabled(false);
-//        btn_xoa.setEnabled(false);
+        txt_iddangki.setText("");
+        txt_ten_Khachhang.setText("");
+        txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
+        txt_phuongtien.setText("");
+        txt_id_khachhang.setText("");
+        combo_trangthai.setSelectedIndex(2);
+        combo_trangthai.setEnabled(false);
+        
+        btn_them.setEnabled(true);
+        btn_capnhat.setEnabled(false);
+        btn_xoa.setEnabled(false);
+        
+    }//GEN-LAST:event_btn_datlaiActionPerformed
+
+    private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
+        // TODO add your handling code here:
+        if (txt_iddangki.getText().trim().length() > 0) {
+            System.out.println("Phai tao dki moi");
+            return;
+        }
+        if (txt_id_khachhang.getText().trim().length() <= 0) {
+            System.out.println("Chon khach hang");
+            return;
+        }
+        if (txt_phuongtien.getText().trim().length() <= 0) {
+            System.out.println("phuong tien dau");
+            return;
+        }
+    }//GEN-LAST:event_btn_themActionPerformed
+
+    private void btn_chonkhachhangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonkhachhangActionPerformed
+        // TODO add your handling code here:
+//        this.viewmain.setEnabled(false);
+//        this.logMessage = new LogMessage("Không thể xóa") {
+//            @Override
+//            public void action() {
+//                System.out.println("Tat thong bao");
+//                this.setVisible(false);
+//                viewmain.setEnabled(true);
+//                viewmain.requestFocus();
+//            }
+//        };
+//        this.logMessage.setVisible(true);
+        btn_them.setEnabled(true);
+        btn_capnhat.setEnabled(false);
+        btn_xoa.setEnabled(false);
+        
+        txt_iddangki.setText("");
+        txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
+        combo_trangthai.setSelectedIndex(0);
+        combo_trangthai.setEnabled(false);
+        
         this.viewmain.setEnabled(false);
         this.logSelection = new LogSelection() {
             @Override
@@ -724,7 +791,6 @@ public class gui_registration extends javax.swing.JPanel {
                 this.btn_loc.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        System.out.println("CLICK");
                     }
                 });
             }
@@ -737,37 +803,6 @@ public class gui_registration extends javax.swing.JPanel {
         };
         this.logSelection.initContent();
         this.logSelection.setVisible(true);
-    }//GEN-LAST:event_btn_datlaiActionPerformed
-
-    private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
-        // TODO add your handling code here:
-        if (txt_iddangki.getText().trim().length() > 0) {
-            System.out.println("Phai tao dki moi");
-            return;
-        }
-        if (txt_id_khachhang.getText().trim().length() <= 0) {
-            System.out.println("Chon khach hang");
-            return;
-        }
-        if (txt_phuongtien.getText().trim().length() <= 0) {
-            System.out.println("phuong tien dau");
-            return;
-        }
-    }//GEN-LAST:event_btn_themActionPerformed
-
-    private void btn_chonkhachhangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonkhachhangActionPerformed
-        // TODO add your handling code here:
-        this.viewmain.setEnabled(false);
-        this.logMessage = new LogMessage("Không thể xóa") {
-            @Override
-            public void action() {
-                System.out.println("Tat thong bao");
-                this.setVisible(false);
-                viewmain.setEnabled(true);
-                viewmain.requestFocus();
-            }
-        };
-        this.logMessage.setVisible(true);
     }//GEN-LAST:event_btn_chonkhachhangActionPerformed
 
     private void btn_chonphuongtienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonphuongtienActionPerformed
@@ -775,27 +810,85 @@ public class gui_registration extends javax.swing.JPanel {
         // init log confirm
         
         // Khống chế viewmain
+//        this.viewmain.setEnabled(false);
+//        // ghi đè cho các phím xác nhận
+//        this.logConfirm = new LogConfirm( "Cảnh báo cảnh báo") {
+//            @Override
+//            public void action() {
+//                System.out.println("DO SOMETHING");
+//                this.setVisible(false);
+//                viewmain.setEnabled(true);
+//                viewmain.requestFocus();
+//                
+//                System.out.println("hkjdawhkjđnaokwdnkjàcbnưaeoilfjằdưeanlk");
+//            }
+//            @Override
+//            public void reject() {
+//                System.out.println("Huy bo thao tac");
+//                this.setVisible(false);
+//                viewmain.setEnabled(true);
+//                viewmain.requestFocus();
+//            }
+//        };
+//        this.logConfirm.setVisible(true);
+        txt_iddangki.setText("");
+        txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
+        combo_trangthai.setSelectedIndex(0);
+        combo_trangthai.setEnabled(false);
+        btn_them.setEnabled(true);
+        btn_capnhat.setEnabled(false);
+        btn_xoa.setEnabled(false);
+        
         this.viewmain.setEnabled(false);
-        // ghi đè cho các phím xác nhận
-        this.logConfirm = new LogConfirm( "Cảnh báo cảnh báo") {
+        this.logSelection = new LogSelection() {
             @Override
-            public void action() {
-                System.out.println("DO SOMETHING");
-                this.setVisible(false);
-                viewmain.setEnabled(true);
-                viewmain.requestFocus();
+            public void initContent() {
+                this.label_property.setText("Mã định danh phương tiện");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                // khoi tao cac thanh phan bang o day
+                String[] header = new String[] {"ID phương tiện", "Mã định danh", "Tên xe"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table_dangki.rowAtPoint(e.getPoint());
+                        // hien thi cai xe dc chọn
+                        
+                        logSelection.setVisible(false);
+                        viewmain.setEnabled(true);
+                        viewmain.requestFocus();
+                    }
+                });
                 
-                System.out.println("hkjdawhkjđnaokwdnkjàcbnưaeoilfjằdưeanlk");
+                ArrayList<Customer> arrCustomer = CustomerDAO.getInstance().getList();
+                for (Customer customer : arrCustomer) {
+                    this.tableModel.addRow(new String[] {String.valueOf(customer.getCustomer_id()), customer.getFull_name(), customer.getSsn(), customer.getPhone_number()});
+                }
+                
+                this.tableModel.fireTableDataChanged();
+                
+                this.btn_loc.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    }
+                });
             }
             @Override
-            public void reject() {
-                System.out.println("Huy bo thao tac");
+            public void back() {
                 this.setVisible(false);
                 viewmain.setEnabled(true);
                 viewmain.requestFocus();
             }
         };
-        this.logConfirm.setVisible(true);
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
     }//GEN-LAST:event_btn_chonphuongtienActionPerformed
 
     private void txt_timkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_timkiemActionPerformed
@@ -804,10 +897,34 @@ public class gui_registration extends javax.swing.JPanel {
 
     private void btn_conhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_conhanActionPerformed
         // TODO add your handling code here:
+        tableModel.setRowCount(0);
+        int index = 0;
+        for (ArrayList<String> arr : this.dataRegistration) {
+            if (arr.get(5).equals("Dang con han")) {
+                tableModel.addRow(new String[] {arr.get(0), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
+            }
+        }
+        tableModel.fireTableDataChanged();
+        txt_tinnhan.setText("Đang hiển thị danh sách các đăng kí đã lọc theo trạng thái");
+        if (index == this.dataRegistration.size()) {
+            txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
+        }
     }//GEN-LAST:event_btn_conhanActionPerformed
 
     private void btn_hethanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hethanActionPerformed
         // TODO add your handling code here:
+        tableModel.setRowCount(0);
+        int index = 0;
+        for (ArrayList<String> arr : this.dataRegistration) {
+            if (arr.get(5).equals("San sang gia han")) {
+                tableModel.addRow(new String[] {arr.get(0), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
+            }
+        }
+        tableModel.fireTableDataChanged();
+        txt_tinnhan.setText("Đang hiển thị danh sách các đăng kí đã lọc theo trạng thái");
+        if (index == this.dataRegistration.size()) {
+            txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
+        }
     }//GEN-LAST:event_btn_hethanActionPerformed
 
     private void combo_ngaybatdauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_ngaybatdauActionPerformed
@@ -817,6 +934,60 @@ public class gui_registration extends javax.swing.JPanel {
     private void txt_tinnhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tinnhanActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_tinnhanActionPerformed
+
+    private void btn_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_locActionPerformed
+        // TODO add your handling code here:
+        int index = 0;
+        LocalDate dateStart = LocalDate.parse(combo_nambatdau.getSelectedItem() + "-" + combo_thangbatdau.getSelectedItem() + "-" + combo_ngaybatdau.getSelectedItem());
+        LocalDate dateEnd = LocalDate.parse(combo_namketthuc.getSelectedItem() + "-" + combo_thangketthuc.getSelectedItem() + "-" + combo_ngayketthuc.getSelectedItem());
+        tableModel.setRowCount(0);
+        for (ArrayList<String> arr : this.dataRegistration) {
+            LocalDate dateofArr = LocalDate.parse(arr.get(3));
+            if (dateStart.isBefore(dateofArr.plusDays(1)) && dateEnd.isAfter(dateofArr.minusDays(1))) {
+                ++index;
+                tableModel.addRow(new String[] {arr.get(0), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
+            }
+        }
+        tableModel.fireTableDataChanged();
+        txt_tinnhan.setText("Đang hiển thị danh sách các đăng kí đã lọc theo thời gian");
+        if (index == this.dataRegistration.size()) {
+            txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
+        }
+    }//GEN-LAST:event_btn_locActionPerformed
+
+    private void btn_bo_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_bo_locActionPerformed
+        // TODO add your handling code here:
+        fillTable();
+    }//GEN-LAST:event_btn_bo_locActionPerformed
+
+    private void btn_timkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_timkiemActionPerformed
+        int index = 0;
+        tableModel.setRowCount(0);
+        for (ArrayList<String> arr : this.dataRegistration) { 
+            if (Library.Library.StringOnString(txt_timkiem.getText(), arr.get(2))) {
+                tableModel.addRow(new String[] {arr.get(0), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
+                ++index;
+            }
+        }
+        txt_tinnhan.setText("Đang hiển thị danh sách các đăng kí đã lọc theo thời gian");
+        if (index == this.dataRegistration.size()) {
+            txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
+        }
+    }//GEN-LAST:event_btn_timkiemActionPerformed
+
+    private void txt_timkiemInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_txt_timkiemInputMethodTextChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_timkiemInputMethodTextChanged
+
+    private void txt_timkiemKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_timkiemKeyPressed
+        // TODO add your handling code here:
+        System.out.println("thay doi");
+    }//GEN-LAST:event_txt_timkiemKeyPressed
+
+    private void btn_tatcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tatcaActionPerformed
+        // TODO add your handling code here:
+        fillTable();
+    }//GEN-LAST:event_btn_tatcaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -840,7 +1011,6 @@ public class gui_registration extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> combo_thangketthuc;
     private javax.swing.JComboBox<String> combo_trangthai;
     private javax.swing.JLabel inforDetail;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

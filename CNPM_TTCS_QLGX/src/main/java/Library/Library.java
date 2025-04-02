@@ -98,7 +98,23 @@ public class Library {
             }    
         return true;
     } 
-    
+    public static boolean StringOnString(String a, String b) {
+        a = a.toLowerCase();
+        b = b.toLowerCase();
+        
+        int index = 0; // Chỉ số theo dõi vị trí trong `a`
+
+        for (char c : b.toCharArray()) {
+            if (index < a.length() && c == a.charAt(index)) {
+                index++; 
+            }
+            if (index == a.length()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         
     }
