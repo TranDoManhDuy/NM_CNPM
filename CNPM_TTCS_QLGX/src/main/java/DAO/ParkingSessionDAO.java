@@ -2,16 +2,18 @@ package DAO;
 
 import DatabaseHelper.OpenConnection;
 import InterfaceDAO.InterfaceDAO;
-import Model.Customer;
 import Model.ParkingSession;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
     public static ParkingSessionDAO getInstance() {
@@ -21,7 +23,7 @@ public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
     @Override
     public ArrayList<ParkingSession> getList() {
         ArrayList<ParkingSession> lstSessions = new ArrayList<>();
-        String sql = "SELECT * FROM parking_sessions";
+        String sql = "EXEC GET_ALL_PARKING_SESSIONS";
         try (
                 Connection con = OpenConnection.getConnection();
                 Statement st = con.createStatement();
@@ -30,8 +32,8 @@ public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
                 int parking_session_id = rs.getInt("parking_session_id");
                 int card_id = rs.getInt("card_id");
                 boolean is_service = rs.getBoolean("is_service");
-                LocalTime check_in_time = (rs.getTime("check_in_time") != null) ? rs.getTime("check_in_time").toLocalTime() : null;
-                LocalTime check_out_time = (rs.getTime("check_out_time") != null) ? rs.getTime("check_out_time").toLocalTime() : null;
+                LocalDateTime check_in_time = rs.getTimestamp("check_in_time").toLocalDateTime();
+                LocalDateTime check_out_time = (rs.getTimestamp("check_out_time") != null) ? rs.getTimestamp("check_out_time").toLocalDateTime() : null;
                 int check_in_shift_id = rs.getInt("check_in_shift_id");
                 int check_out_shift_id = rs.getInt("check_out_shift_id");
                 int vehicle_id = rs.getInt("vehicle_id");
@@ -44,19 +46,64 @@ public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
         }
         return lstSessions;
     }
+    
+    public Map<String, ArrayList<?>> getAllData() {
+        ArrayList<ParkingSession> lstParking_sessions = new ArrayList<>();
+        ArrayList<String> lstCheck_in_shift_type_name = new ArrayList<>();
+        ArrayList<String> lstCheck_out_shift_type_name = new ArrayList<>();
+        String sql = "EXEC GET_ALL_PARKING_SESSIONS";
+        
+        try (
+                Connection con = OpenConnection.getConnection();
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                int parking_session_id = rs.getInt("parking_session_id");
+                int card_id = rs.getInt("card_id");
+                boolean is_service = rs.getBoolean("is_service");
+                LocalDateTime check_in_time = rs.getTimestamp("check_in_time").toLocalDateTime();
+                LocalDateTime check_out_time = (rs.getTimestamp("check_out_time") != null) ? rs.getTimestamp("check_out_time").toLocalDateTime() : null;
+                int check_in_shift_id = rs.getInt("check_in_shift_id");
+                int check_out_shift_id = rs.getInt("check_out_shift_id");
+                int vehicle_id = rs.getInt("vehicle_id");
+                int amount = rs.getInt("amount");
+                String check_in_shift_type_name = rs.getString("in_shift_type_name");
+                String check_out_shift_type_name = rs.getString("out_shift_type_name");
+                ParkingSession session = new ParkingSession(parking_session_id, card_id, is_service, check_in_time, check_out_time, check_in_shift_id, check_out_shift_id, vehicle_id, amount);
+                
+                lstParking_sessions.add(session);
+                lstCheck_in_shift_type_name.add(check_in_shift_type_name);
+                if (check_out_shift_type_name != null) {
+                    lstCheck_out_shift_type_name.add(check_out_shift_type_name);
+                }
+                else {
+                    lstCheck_out_shift_type_name.add(null);
+                }
+                
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        Map<String, ArrayList<?>> result = new HashMap<>();
+        result.put("parking_sessions", lstParking_sessions);
+        result.put("check_in_shift_type_names", lstCheck_in_shift_type_name);
+        result.put("check_out_shift_type_names", lstCheck_out_shift_type_name);
+        return result;
+    }
 
     @Override
     public boolean insert(ParkingSession session) {
-        String sql = "INSERT INTO parking_sessions (card_id, is_service, check_in_time, check_out_time, check_in_shift_id, check_out_shift_id, vehicle_id, amount) VALUES (?,?,?,?,?,?,?,?)";
+        String sql = "EXEC INSERT_PARKING_SESSION @card_id = ?, @is_service = ?, @check_in_time = ?, @check_out_time = ?, @check_in_shift_id = ?, @check_out_shift_id = ?, @vehicle_id = ?, @amount = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, session.getCard_id());
             ps.setBoolean(2, session.isIs_service());
-            ps.setTime(3, Time.valueOf(session.getCheck_in_time()));
+            ps.setTimestamp(3, Timestamp.valueOf(session.getCheck_in_time())); 
             
             if (session.getCheck_out_time() != null) {
-                ps.setTime(4, Time.valueOf(session.getCheck_out_time()));
+                ps.setTimestamp(4, Timestamp.valueOf(session.getCheck_out_time())); 
             } else {
                 ps.setNull(4, java.sql.Types.TIME);
             }
@@ -87,16 +134,16 @@ public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
 
     @Override
     public boolean update(ParkingSession session) {
-        String sql = "UPDATE parking_sessions SET card_id = ?, is_service = ?, check_in_time = ?, check_out_time = ?, check_in_shift_id = ?, check_out_shift_id = ?, vehicle_id = ?, amount = ? WHERE parking_session_id = ?";
+        String sql = "EXEC UPDATE_PARKING_SESSION @card_id = ?, @is_service = ?, @check_in_time = ?, @check_out_time = ?, @check_in_shift_id = ?, @check_out_shift_id = ?, @vehicle_id = ?, @amount = ?, @parking_session_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, session.getCard_id());
             ps.setBoolean(2, session.isIs_service());
-            ps.setTime(3, Time.valueOf(session.getCheck_in_time()));
+            ps.setTimestamp(3, Timestamp.valueOf(session.getCheck_in_time())); 
             
             if (session.getCheck_out_time() != null) {
-                ps.setTime(4, Time.valueOf(session.getCheck_out_time()));
+                ps.setTimestamp(4, Timestamp.valueOf(session.getCheck_out_time())); 
             } else {
                 ps.setNull(4, java.sql.Types.TIME);
             }
@@ -125,30 +172,17 @@ public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
         return false;
     }
 
-    public boolean delete(ParkingSession session) {
-        String sql = "DELETE FROM parking_sessions WHERE parking_session_id = ?";
-        try (
-                Connection con = OpenConnection.getConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, session.getParking_session_id());
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     @Override
     public ParkingSession findbyID(int id) {
-        String sql = "SELECT * FROM parking_sessions WHERE parking_session_id = ?";
+        String sql = "EXEC GET_PARKING_SESSION_BY_ID @parking_session_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                LocalTime check_in_time = (rs.getTime("check_in_time") != null) ? rs.getTime("check_in_time").toLocalTime() : null;
-                LocalTime check_out_time = (rs.getTime("check_out_time") != null) ? rs.getTime("check_out_time").toLocalTime() : null;
+                LocalDateTime check_in_time = rs.getTimestamp("check_in_time").toLocalDateTime();
+                LocalDateTime check_out_time = (rs.getTimestamp("check_out_time") != null) ? rs.getTimestamp("check_out_time").toLocalDateTime() : null;
                 return new ParkingSession(
                     rs.getInt("parking_session_id"),
                     rs.getInt("card_id"),
@@ -170,7 +204,7 @@ public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
     @Override
     public boolean delete(int id) {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        String sql = "DELETE FROM parking_sessions WHERE parking_session_id = ?";
+        String sql = "EXEC DELETE_PARKING_SESSION @parking_session_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
@@ -180,28 +214,5 @@ public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
             e.printStackTrace();
         }
         return false;
-    }
-    
-    public static void main(String[] args) {
-        LocalTime s1 = LocalTime.of(13, 35);
-        LocalTime s2 = LocalTime.of(13, 40);
-        ParkingSession par = new ParkingSession(1, true, s1, null, 1, -1, 1, -1);
-        ParkingSession par2 = new ParkingSession(4, 1, true, s1, s2, 1, -1, 1, -1);
-//        Customer upCus  = new Customer(3, "Vu Dinh Khoa", "030303030303", dob, "M", "0202020202", "97 Man Thien - TP HCM", 1 , "VietNam");
-        ParkingSessionDAO parDao = ParkingSessionDAO.getInstance();
-        
-//        parDao.insert(par);
-//        parDao.update(par2);
-//        ParkingSession par1 = parDao.findbyID(4);
-//        if (par1 != null) {
-//            System.out.println(par1.getVehicle_id());
-//        }
-//        ArrayList<ParkingSession> lstPar = parDao.getList();
-//        if (lstPar != null) {
-//            for (ParkingSession parkingsession : lstPar) {
-//                System.out.println(parkingsession.getVehicle_id());
-//            }
-//        }
-        parDao.delete(4);
     }
 }

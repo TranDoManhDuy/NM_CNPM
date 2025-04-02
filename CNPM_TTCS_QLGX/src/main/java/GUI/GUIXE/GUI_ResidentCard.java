@@ -68,6 +68,12 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
                 e.printStackTrace();
             }
         tblModel.fireTableDataChanged();
+//        ResidentCard resident = new ResidentCard(13, true);
+//        ResidentCardDAO.getInstance().insert(resident);
+//        ResidentCard resident = new ResidentCard(104, 2, true);
+//        ResidentCardDAO.getInstance().update(resident);
+//        System.out.println(ResidentCardDAO.getInstance().findbyID(105).getCustomer_id());
+//        ResidentCardDAO.getInstance().delete(105);
     }
     
     @SuppressWarnings("unchecked")

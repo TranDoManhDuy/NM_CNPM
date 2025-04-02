@@ -22,7 +22,7 @@ public class ResidentCardDAO implements InterfaceDAO<ResidentCard> {
     @Override
     public ArrayList<ResidentCard> getList() {
         ArrayList<ResidentCard> lstCards = new ArrayList<>();
-        String sql = "SELECT * FROM resident_cards";
+        String sql = "GET_ALL_RESIDENT_CARDS";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql);
@@ -76,7 +76,7 @@ public class ResidentCardDAO implements InterfaceDAO<ResidentCard> {
 
     @Override
     public boolean insert(ResidentCard card) {
-        String sql = "INSERT INTO resident_cards (customer_id, is_active) VALUES (?, ?)";
+        String sql = "EXEC INSERT_RESIDENT_CARD @customer_id = ?, @is_active = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)
@@ -93,7 +93,7 @@ public class ResidentCardDAO implements InterfaceDAO<ResidentCard> {
 
     @Override
     public boolean update(ResidentCard card) {
-        String sql = "UPDATE resident_cards SET customer_id = ?, is_active = ? WHERE pk_resident_card = ?";
+        String sql = "EXEC UPDATE_RESIDENT_CARD @customer_id = ?, @is_active = ?, @pk_resident_card = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)
@@ -109,23 +109,9 @@ public class ResidentCardDAO implements InterfaceDAO<ResidentCard> {
         return false;
     }
 
-    public boolean delete(ResidentCard card) {
-        String sql = "DELETE FROM resident_cards WHERE pk_resident_card = ?";
-        try (
-                Connection con = OpenConnection.getConnection();
-                PreparedStatement ps = con.prepareStatement(sql)
-        ) {
-            ps.setInt(1, card.getPk_resident_card());
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     @Override
     public ResidentCard findbyID(int id) {
-        String sql = "SELECT * FROM resident_cards WHERE pk_resident_card = ?";
+        String sql = "EXEC GET_RESIDENT_CARD_BY_ID @pk_resident_card = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)
@@ -148,7 +134,7 @@ public class ResidentCardDAO implements InterfaceDAO<ResidentCard> {
     
     @Override
     public boolean delete(int id) {
-        String sql = "DELETE FROM resident_cards WHERE pk_resident_card = ?";
+        String sql = "EXEC DELETE_RESIDENT_CARD @pk_resident_card = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)
@@ -159,29 +145,5 @@ public class ResidentCardDAO implements InterfaceDAO<ResidentCard> {
             e.printStackTrace();
         }
         return false;
-    }
-
-    
-    public static void main(String[] args) {
-        ResidentCard resident1 = new ResidentCard(2, 1, false);
-        ResidentCard resident2 = new ResidentCard(3, 1, true);
-//        ResidentCard resident2 = new ResidentCard("12", 3, "1", 9, true);
-//        ResidentCard r = new ResidentCard("3", 11, true);
-        ResidentCardDAO reDao = ResidentCardDAO.getInstance();
-//        reDao.insert(resident2);
-//        reDao.update(resident2);
-//        ResidentCard re1 = reDao.findbyID(2);
-//        if (re1 != null) {
-//            System.out.println(re1.getCustomer_id());
-//        }
-//
-//        ArrayList<ResidentCard> lstRe = reDao.getList();
-//        
-//        if (lstRe != null) {
-//            for (ResidentCard resident : lstRe) {
-//                System.out.println(resident.getCustomer_id());
-//            }
-//        }
-        reDao.delete(resident1);
     }
 }

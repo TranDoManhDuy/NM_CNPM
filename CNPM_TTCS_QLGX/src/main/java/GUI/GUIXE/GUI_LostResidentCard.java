@@ -73,6 +73,12 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
                 e.printStackTrace();
             }
         tblModel.fireTableDataChanged();
+//        LostResidentCard lre = new LostResidentCard(104, 2);
+//        LostResidentCardDAO.getInstance().insert(lre);
+//        Customer TestUpdateCus = new Customer(14, "Nguyen Van B", "000000000002", dob, "M", "0000000010", "123 Le Loi, Quan 1", 1 , "Vietnamese", true);
+//        CustomerDAO.getInstance().update(TestUpdateCus);
+//        System.out.println(LostResidentCardDAO.getInstance().findbyID(8).getPk_resident_card());
+//        LostResidentCardDAO.getInstance().delete(8);
     }
 
     /**

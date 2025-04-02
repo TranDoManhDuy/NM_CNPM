@@ -15,7 +15,6 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 /**
  *
@@ -66,7 +65,8 @@ public class CustomerDAO implements InterfaceDAO<Customer> {
     @Override
     public boolean insert(Customer customer) {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        String sql = "INSERT INTO customers (full_name, ssn, date_of_birth, gender, phone_number, address, building_id, nationality, is_active) VALUES (?,?,?,?,?,?,?,?,?)";
+        String sql = "EXEC INSERT_CUSTOMER @full_name = ?, @ssn = ?, @date_of_birth = ?, @gender = ?, @phone_number = ?, @address = ?, @building_id = ?, @nationality = ?, @is_active = ?";
+//        String sql = "INSERT INTO customers (full_name, ssn, date_of_birth, gender, phone_number, address, building_id, nationality, is_active) VALUES (?,?,?,?,?,?,?,?,?)";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
@@ -91,7 +91,7 @@ public class CustomerDAO implements InterfaceDAO<Customer> {
     @Override
     public boolean update(Customer customer) {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        String sql = "UPDATE customers SET full_name = ?, ssn = ?, date_of_birth = ?, gender = ?, phone_number = ?, address = ?, building_id = ?, nationality = ?, is_active = ? WHERE customer_id = ?";
+        String sql = "EXEC UPDATE_CUSTOMER @full_name = ?, @ssn = ?, @date_of_birth = ?, @gender = ?, @phone_number = ?, @address = ?, @building_id = ?, @nationality = ?, @is_active = ?, @customer_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql);) {
@@ -116,7 +116,7 @@ public class CustomerDAO implements InterfaceDAO<Customer> {
     @Override
     public boolean delete(int id) {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        String sql = "DELETE FROM customers WHERE customer_id = ?";
+        String sql = "EXEC DELETE_CUSTOMER @customer_id = ? ";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql);) {
@@ -132,7 +132,7 @@ public class CustomerDAO implements InterfaceDAO<Customer> {
     @Override
     public Customer findbyID(int id) {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        String sql = "SELECT * FROM customers WHERE customer_id = ?";
+        String sql = "EXEC GET_CUSTOMER_BY_ID @customer_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql);) {
@@ -158,29 +158,6 @@ public class CustomerDAO implements InterfaceDAO<Customer> {
             e.printStackTrace();
         }
         return null;
-    }
-    
-    public static void main(String[] args) {
-        LocalDate dob = LocalDate.of(2004, 1, 1);
-        Customer Cus = new Customer("Vu Dinh Khoa", "010101010101", dob, "M", "0202020202", "97 Man Thien - TP HCM", 1 , "VietNam", true);
-        Customer updateCus = new Customer(2, "Vu Dinh Khoa", "010101010101", dob, "M", "0202020202", "97 Man Thien - TP HCM", 1 , "American", true);
-//        Customer Cus2 = new Customer(8, "Vu Dinh Khoa", "030303030303", dob, "M", "0303030303", "97 Man Thien - TP HCM", 1 , "VietNam");
-//        Customer upCus  = new Customer(3, "Vu Dinh Khoa", "030303030303", dob, "M", "0202020202", "97 Man Thien - TP HCM", 1 , "VietNam");
-        CustomerDAO cusDao = CustomerDAO.getInstance();
-        
-//        cusDao.insert(Cus);
-//        cusDao.update(updateCus);
-//        Customer Cus1 = cusDao.findbyID(2);
-//        if (Cus1 != null) {
-//            System.out.println(Cus1.getFull_name());
-//        }
-//        ArrayList<Customer> lstCus = cusDao.getList();
-//        if (lstCus != null) {
-//            for (Customer customer : lstCus) {
-//                System.out.println(customer.getFull_name());
-//            }
-//        }
-//        cusDao.delete(2);
     }
 
     @Override

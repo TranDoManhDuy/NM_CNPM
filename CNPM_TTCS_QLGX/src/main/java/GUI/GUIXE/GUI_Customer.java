@@ -51,7 +51,6 @@ public class GUI_Customer extends javax.swing.JPanel {
     
     public void fillTable() {
         try {
-            Connection con = OpenConnection.getConnection();
             Map<String, ArrayList<?>> data = CustomerDAO.getInstance().getAllCustomer();
             ArrayList<Customer> customers = (ArrayList<Customer>) data.get("customers");
             ArrayList<String> buildingNames = (ArrayList<String>) data.get("building_names");
@@ -75,6 +74,13 @@ public class GUI_Customer extends javax.swing.JPanel {
                 e.printStackTrace();
             }
         tblModel.fireTableDataChanged();
+//        LocalDate dob = LocalDate.of(1990, 01, 01);
+//        Customer Cus = new Customer("Nguyen Van B", "000000000002", dob, "M", "0000000002", "123 Le Loi, Quan 1", 1 , "Vietnamese", true);
+//        CustomerDAO.getInstance().insert(Cus);
+//        Customer TestUpdateCus = new Customer(14, "Nguyen Van B", "000000000002", dob, "M", "0000000010", "123 Le Loi, Quan 1", 1 , "Vietnamese", true);
+//        CustomerDAO.getInstance().update(TestUpdateCus);
+//        System.out.println(CustomerDAO.getInstance().findbyID(14));
+//        CustomerDAO.getInstance().delete(14);
     }
     
     private void resetFields() { 
