@@ -24,6 +24,7 @@ import GUI.GUIXE.GUI_LostResidentCard;
 import GUI.GUIXE.GUI_ParkingSession;
 import GUI.GUIXE.GUI_ResidentCard;
 import GUI.GUIXE.GUI_Vehicle;
+import Global.DataGlobal;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
@@ -36,11 +37,13 @@ public class ViewMain extends javax.swing.JFrame {
     LogConfirm logComfirm = new LogConfirm("nothing");
     LogMessage logMessage = new LogMessage("Nothing");
     LogSelection logSelection = new LogSelection();
+    DataGlobal dataglocal = new DataGlobal();
     /**
      * Creates new form ViewMain
      */
     
     public ViewMain() {
+        dataglocal.updateAllData();
         initComponents();
         GUI_DICHVU();
         GUI_GUIXE();

@@ -17,11 +17,10 @@ import java.util.ArrayList;
  *
  * @author manhh
  */
-public class RegisatrationDAO implements InterfaceDAO.InterfaceDAO<Regisatration>{
+public class RegisatrationDAO {
     public static RegisatrationDAO getInstance() {
         return new RegisatrationDAO();
     }
-    @Override
     public ArrayList<Regisatration> getList() {
         ArrayList<Regisatration> listRegistration = new ArrayList<>();
         String sql = "EXEC getlist_registration";
@@ -40,13 +39,12 @@ public class RegisatrationDAO implements InterfaceDAO.InterfaceDAO<Regisatration
                 listRegistration.add(registration);
             }
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception e) { 
+            System.out.println("Truy vấn lấy danh sách đăng kí không thành công");
         }
         return listRegistration;
     }
-    @Override
-    public boolean insert(Regisatration regisatration) {
+    public String insert(Regisatration regisatration) {
         String sql = "EXEC insert_registration @customer_id = ?, @registration_date = ?, @vehicle_id = ?, @state = ?";
         try (
             Connection conn = OpenConnection.getConnection();
@@ -57,15 +55,17 @@ public class RegisatrationDAO implements InterfaceDAO.InterfaceDAO<Regisatration
             ptmt.setInt(3 ,regisatration.getVehicle_id());
             ptmt.setString(4, String.valueOf(regisatration.getState()));
             
-            return ptmt.executeUpdate() > 0;
+            // Thanh cong
+            if (ptmt.executeUpdate() > 0) {
+                return "Thêm thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Error: " + e.getMessage();
         }
-        return false;
+        return "Kiểm tra lại thông tin";
     }
-    @Override
-    public boolean update(Regisatration registration) {
-        String sql = "EXEC update_registraion @customer_id = ?, @registration_date = ?, @vehicle_id = ?, @state = ?, @registration_id = ?";
+    public String update(Regisatration registration) {
+        String sql = "EXEC update_registration @customer_id = ?, @registration_date = ?, @vehicle_id = ?, @state = ?, @registration_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt =  conn.prepareStatement(sql);
@@ -76,13 +76,14 @@ public class RegisatrationDAO implements InterfaceDAO.InterfaceDAO<Regisatration
             ptmt.setString(4, String.valueOf(registration.getState()));
             ptmt.setInt(5, registration.getRegistration_id());
             
-            return ptmt.executeUpdate() > 0;
+            if (ptmt.executeUpdate() > 0) {
+                return "Cập nhật thành công";
+            };
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Thông báo: " + e.getMessage();
         }
-        return false;
+        return "Kiểm tra lại thông tin";
     }
-   @Override
     public Regisatration findbyID(int id) {
        String sql = "EXEC findbyID_registration @registration_id = ?";
        try (
@@ -107,19 +108,20 @@ public class RegisatrationDAO implements InterfaceDAO.InterfaceDAO<Regisatration
        }
        return null;
     }
-    @Override
-    public boolean delete(int id) {
+    public String delete(int id) {
         String sql = "EXEC delete_registration @registration_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
             ptmt.setInt(1, id);
-            return ptmt.executeUpdate()> 0;
+            if (ptmt.executeUpdate()> 0) {
+                return "Thông báo: Xóa thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Thông báo: không được phép xóa";
     }
     public static void main(String[] args) {
         ArrayList<Regisatration> list = RegisatrationDAO.getInstance().getList();

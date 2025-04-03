@@ -28,15 +28,33 @@ public class DataGlobal {
     public ArrayList<Regisatration> getArrayRegistration() {
         return arrRegistration;
     }
+    public void insertArrRegistration_local(Regisatration registration) {
+        this.arrRegistration.add(registration);
+    }
+    public void deleteArrRegistration_local(int registrationId) {
+        for (int i = 0; i <= this.arrRegistration.size() - 1; ++i) {
+            if (this.arrRegistration.get(i).getRegistration_id() == registrationId) {
+                this.arrRegistration.remove(i);
+                break;
+            }
+        }
+    }
+    public void updateArrRegistration_local(Regisatration registration) {
+        for (int i = 0; i <= this.arrRegistration.size() - 1; ++i) {
+            if (this.arrRegistration.get(i).getRegistration_id() == registration.getRegistration_id()) {
+                this.arrRegistration.remove(i);
+                break;
+            }
+        }
+        this.arrRegistration.add(registration);
+    }
     public void updateArrRegistration() {
         try {
             arrRegistration = RegisatrationDAO.getInstance().getList();
         } catch (Exception e) {
-            e.printStackTrace();
             System.out.println("LOI KET NOI");
         }
     }
-    
     public ArrayList<Customer> getArrayCustomer() {
         return arrCustomer;
     }
@@ -44,15 +62,12 @@ public class DataGlobal {
         try {
             arrCustomer = CustomerDAO.getInstance().getList();
         } catch (Exception e) {
-            e.printStackTrace();
             System.out.println("LOI KET NOI");
         }
     }
-    
     public ArrayList<Vehicle> getArrayVehicle() {
         return arrVehicle;
     }
-    
     public void updateArrVehicle() {
         try {
             arrVehicle = VehicleDAO.getInstance().getList();
@@ -61,7 +76,6 @@ public class DataGlobal {
             System.out.println("LOI KET NOI");
         }
     }
-    
     public void updateAllData() {
         updateArrRegistration();
         updateArrCustomer();

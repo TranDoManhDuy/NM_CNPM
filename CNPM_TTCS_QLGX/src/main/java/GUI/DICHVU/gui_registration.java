@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 /*
@@ -37,6 +38,7 @@ public class gui_registration extends javax.swing.JPanel {
     private LogConfirm logConfirm;
     private LogMessage logMessage;
     private LogSelection logSelection;
+    private boolean cursorBreak = false;
     private ArrayList<ArrayList<String>> dataRegistration = new ArrayList<>();
     /**
      * Creates new form registration
@@ -46,11 +48,11 @@ public class gui_registration extends javax.swing.JPanel {
         this.logConfirm = logConfirm;
         this.logMessage = logMessage;
         this.logSelection = logSelection;
+        
         initComponents();
         combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "San sang gia han", "Dang con han", "Bi huy", ""}));
         combo_trangthai.setSelectedIndex(3);
         txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
-        
         // 
         tableModel = new DefaultTableModel() {
             @Override
@@ -139,6 +141,7 @@ public class gui_registration extends javax.swing.JPanel {
             ResultSet rs = stmt.executeQuery(sql);
         ) {
             int index = 0;
+            this.dataRegistration = new ArrayList<>();
             while (rs.next()) {
                 int registration_id = rs.getInt("registration_id");
                 int customer_id = rs.getInt("customer_id");
@@ -276,6 +279,11 @@ public class gui_registration extends javax.swing.JPanel {
 
         btn_capnhat.setText("Cập nhật");
         btn_capnhat.setEnabled(false);
+        btn_capnhat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_capnhatActionPerformed(evt);
+            }
+        });
 
         btn_xoa.setText("Xóa");
         btn_xoa.setEnabled(false);
@@ -377,24 +385,21 @@ public class gui_registration extends javax.swing.JPanel {
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(btn_xoa)
                                     .addComponent(btn_datlai)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addComponent(label_ngaydangki)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(txt_ngaydangki))
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addComponent(label_id_pt)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(txt_phuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(btn_chonphuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                            .addComponent(label_ngaydangki)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(txt_ngaydangki))
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                            .addComponent(label_id_pt)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(txt_phuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(btn_chonphuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                        .addComponent(btn_them)
-                                        .addGap(28, 28, 28)
-                                        .addComponent(btn_capnhat)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(btn_them)
+                                .addGap(28, 28, 28)
+                                .addComponent(btn_capnhat)))
                         .addGap(32, 32, 32))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -695,10 +700,65 @@ public class gui_registration extends javax.swing.JPanel {
     private void combo_trangthaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_trangthaiActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_combo_trangthaiActionPerformed
-
-    private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
-        // TODO add your handling code here:
+    private void processDelete() {
+        int registrationId = Integer.parseInt(txt_iddangki.getText());
+        String rs = RegisatrationDAO.getInstance().delete(registrationId);
         
+        this.viewmain.setEnabled(false);
+            this.logMessage = new LogMessage(rs) {
+                @Override
+                public void action() {
+                    this.setVisible(false);
+                    viewmain.setEnabled(true);
+                    viewmain.requestFocus();
+                }
+            };
+        this.logMessage.setVisible(true);
+        loadData();
+        fillTable();
+    }
+    private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
+        this.viewmain.setEnabled(false);
+        this.cursorBreak = false;
+
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn xóa ?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processDelete();
+            }
+        };
+        worker.execute();
+        worker = null;
     }//GEN-LAST:event_btn_xoaActionPerformed
 
     private void btn_datlaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_datlaiActionPerformed
@@ -708,29 +768,82 @@ public class gui_registration extends javax.swing.JPanel {
         txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
         txt_phuongtien.setText("");
         txt_id_khachhang.setText("");
-        combo_trangthai.setSelectedIndex(2);
+        combo_trangthai.setSelectedIndex(3);
         combo_trangthai.setEnabled(false);
         
         btn_them.setEnabled(true);
         btn_capnhat.setEnabled(false);
         btn_xoa.setEnabled(false);
-        
     }//GEN-LAST:event_btn_datlaiActionPerformed
 
     private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
-        // TODO add your handling code here:
         if (txt_iddangki.getText().trim().length() > 0) {
-            System.out.println("Phai tao dki moi");
+            this.viewmain.setEnabled(false);
+            this.logMessage = new LogMessage("Phải khởi tạo đăng kí mới") {
+                @Override
+                public void action() {
+                    this.setVisible(false);
+                    viewmain.setEnabled(true);
+                    viewmain.requestFocus();
+                }
+            };
+            this.logMessage.setVisible(true);
             return;
         }
         if (txt_id_khachhang.getText().trim().length() <= 0) {
-            System.out.println("Chon khach hang");
+            this.viewmain.setEnabled(false);
+            this.logMessage = new LogMessage("Phải chọn khách hàng") {
+                @Override
+                public void action() {
+                    this.setVisible(false);
+                    viewmain.setEnabled(true);
+                    viewmain.requestFocus();
+                }
+            };
+            this.logMessage.setVisible(true);
             return;
         }
         if (txt_phuongtien.getText().trim().length() <= 0) {
-            System.out.println("phuong tien dau");
+            this.viewmain.setEnabled(false);
+            this.logMessage = new LogMessage("Phải chọn phương tiện") {
+                @Override
+                public void action() {
+                    this.setVisible(false);
+                    viewmain.setEnabled(true);
+                    viewmain.requestFocus();
+                }
+            };
+            this.logMessage.setVisible(true);
             return;
         }
+        int id_pt = -1;
+        for (Vehicle vehicle : VehicleDAO.getInstance().getList()) {
+            if (vehicle.getIdentification_code().equals(txt_phuongtien.getText())) {
+                id_pt = vehicle.getVehicle_id();
+                break;
+            }
+        }
+        
+        Regisatration registration = new Regisatration(Integer.parseInt(txt_id_khachhang.getText()), 1, LocalDate.now(), id_pt, 'A');
+        String rs = RegisatrationDAO.getInstance().insert(registration);
+
+        for (Regisatration tmp : RegisatrationDAO.getInstance().getList()) {
+            if (tmp.getCustomer_id() == registration.getCustomer_id() && tmp.getVehicle_id() == registration.getVehicle_id() && rs.equals("Thêm thành công")) {
+                rs = "Tái kích hoạt thành công";
+            }
+        }
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+        loadData();
+        fillTable();
     }//GEN-LAST:event_btn_themActionPerformed
 
     private void btn_chonkhachhangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonkhachhangActionPerformed
@@ -746,15 +859,6 @@ public class gui_registration extends javax.swing.JPanel {
 //            }
 //        };
 //        this.logMessage.setVisible(true);
-        btn_them.setEnabled(true);
-        btn_capnhat.setEnabled(false);
-        btn_xoa.setEnabled(false);
-        
-        txt_iddangki.setText("");
-        txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
-        combo_trangthai.setSelectedIndex(0);
-        combo_trangthai.setEnabled(false);
-        
         this.viewmain.setEnabled(false);
         this.logSelection = new LogSelection() {
             @Override
@@ -774,7 +878,8 @@ public class gui_registration extends javax.swing.JPanel {
                 {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        int row = table_dangki.rowAtPoint(e.getPoint());
+                        int row = table.rowAtPoint(e.getPoint());
+                        System.out.println(row);
                         txt_id_khachhang.setText((String) table.getValueAt(row, 0));
                         txt_ten_Khachhang.setText((String) table.getValueAt(row, 1));
                         logSelection.setVisible(false);
@@ -788,10 +893,8 @@ public class gui_registration extends javax.swing.JPanel {
                 }
                 this.tableModel.fireTableDataChanged();
                 
-                this.btn_loc.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                    }
+                this.btn_loc.addActionListener((ActionEvent e) -> {
+                    
                 });
             }
             @Override
@@ -831,14 +934,6 @@ public class gui_registration extends javax.swing.JPanel {
 //            }
 //        };
 //        this.logConfirm.setVisible(true);
-        txt_iddangki.setText("");
-        txt_ngaydangki.setText(String.valueOf(LocalDate.now()));
-        combo_trangthai.setSelectedIndex(0);
-        combo_trangthai.setEnabled(false);
-        btn_them.setEnabled(true);
-        btn_capnhat.setEnabled(false);
-        btn_xoa.setEnabled(false);
-        
         this.viewmain.setEnabled(false);
         this.logSelection = new LogSelection() {
             @Override
@@ -858,18 +953,18 @@ public class gui_registration extends javax.swing.JPanel {
                 {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        int row = table_dangki.rowAtPoint(e.getPoint());
+                        int row = table.rowAtPoint(e.getPoint());
                         // hien thi cai xe dc chọn
-                        
+                        txt_phuongtien.setText((String) table.getValueAt(row, 1));
                         logSelection.setVisible(false);
                         viewmain.setEnabled(true);
                         viewmain.requestFocus();
                     }
                 });
                 
-                ArrayList<Customer> arrCustomer = CustomerDAO.getInstance().getList();
-                for (Customer customer : arrCustomer) {
-                    this.tableModel.addRow(new String[] {String.valueOf(customer.getCustomer_id()), customer.getFull_name(), customer.getSsn(), customer.getPhone_number()});
+                ArrayList<Vehicle> arrVehicles = VehicleDAO.getInstance().getList();
+                for (Vehicle vehicle : arrVehicles) {
+                    this.tableModel.addRow(new String[] {String.valueOf(vehicle.getVehicle_id()), vehicle.getIdentification_code(), vehicle.getVehicle_name()});
                 }
                 
                 this.tableModel.fireTableDataChanged();
@@ -983,13 +1078,126 @@ public class gui_registration extends javax.swing.JPanel {
         // TODO add your handling code here:
         System.out.println("thay doi");
     }//GEN-LAST:event_txt_timkiemKeyPressed
+    private void processUpdate() {
+        int id_pt = -1;
+        for (Vehicle vehicle : VehicleDAO.getInstance().getList()) {
+            if (vehicle.getIdentification_code().equals(txt_phuongtien.getText())) {
+                id_pt = vehicle.getVehicle_id();
+                break;
+            }
+        }
 
+        LocalDate datetime = LocalDate.parse(txt_ngaydangki.getText());
+        char state = switch (combo_trangthai.getSelectedIndex()) {
+            case 1 -> 'B';
+            case 2 -> 'C';
+            default -> 'A';
+        };
+
+        Regisatration registration = new Regisatration(
+            Integer.parseInt(txt_id_khachhang.getText()),
+            Integer.parseInt(txt_iddangki.getText()),
+            datetime, id_pt, state
+        );
+
+        String rs = RegisatrationDAO.getInstance().update(registration);
+
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+
+        this.logMessage.setVisible(true);
+        loadData();
+        fillTable();
+}
     private void btn_tatcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tatcaActionPerformed
         // TODO add your handling code here:
         fillTable();
     }//GEN-LAST:event_btn_tatcaActionPerformed
+    private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
+        this.viewmain.setEnabled(false);
+        this.cursorBreak = false;
 
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
 
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+
+        this.logConfirm.setVisible(true);
+
+        // Dùng SwingWorker để kiểm tra hộp thoại mà không làm treo UI
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processUpdate();
+            }
+        };
+        worker.execute();
+        worker = null;
+//        int id_pt = -1;
+//        for (Vehicle vehicle : VehicleDAO.getInstance().getList()) {
+//            if (vehicle.getIdentification_code().equals(txt_phuongtien.getText())) {
+//                id_pt = vehicle.getVehicle_id();
+//                break;
+//            }
+//        }
+//        LocalDate datetime = LocalDate.parse(txt_ngaydangki.getText());
+//        char state = 'A';
+//        if (combo_trangthai.getSelectedIndex() == 0) {
+//            state = 'A';
+//        }
+//        if (combo_trangthai.getSelectedIndex() == 1) {
+//            state = 'B';
+//        }
+//        if (combo_trangthai.getSelectedIndex() == 2) {
+//            state = 'C';
+//        }
+//        Regisatration registration = new Regisatration(Integer.parseInt(txt_id_khachhang.getText()), Integer.parseInt(txt_iddangki.getText()), datetime, id_pt, state);
+//        
+//        String rs = RegisatrationDAO.getInstance().update(registration);
+//        this.viewmain.setEnabled(false);
+//        this.logMessage = new LogMessage(rs) {
+//            @Override
+//            public void action() {
+//                this.setVisible(false);
+//                viewmain.setEnabled(true);
+//                viewmain.requestFocus();
+//            }
+//        };
+//        this.logMessage.setVisible(true);
+//        loadData();
+//        fillTable();
+    }//GEN-LAST:event_btn_capnhatActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_bo_loc;
     private javax.swing.JButton btn_capnhat;
