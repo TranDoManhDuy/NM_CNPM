@@ -7,6 +7,7 @@ package GUI;
 import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
+import DAO.BuildingsDAO;
 import GUI.CATRUC.gui_building;
 import GUI.CATRUC.gui_shift_type;
 import GUI.CATRUC.gui_shift_work;
@@ -25,8 +26,11 @@ import GUI.GUIXE.GUI_ParkingSession;
 import GUI.GUIXE.GUI_ResidentCard;
 import GUI.GUIXE.GUI_Vehicle;
 import Global.DataGlobal;
+import Model.Buildings;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JPanel;
 
 /**
@@ -38,12 +42,15 @@ public class ViewMain extends javax.swing.JFrame {
     LogMessage logMessage = new LogMessage("Nothing");
     LogSelection logSelection = new LogSelection();
     DataGlobal dataglocal = new DataGlobal();
+    public List<Buildings> buildings = new ArrayList<>();
+    
     /**
      * Creates new form ViewMain
      */
     
     public ViewMain() {
         dataglocal.updateAllData();
+        this.buildings = BuildingsDAO.getInstance().getAllBuildings();
         initComponents();
         GUI_DICHVU();
         GUI_GUIXE();
@@ -82,7 +89,7 @@ public class ViewMain extends javax.swing.JFrame {
     
     public void GUI_GUIXE() 
     {
-        GUI_Customer gui_customer = new GUI_Customer(this);
+        GUI_Customer gui_customer = new GUI_Customer(this, logSelection);
         GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(this);
         GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(this);
         GUI_ResidentCard gui_resident_card = new GUI_ResidentCard(this);

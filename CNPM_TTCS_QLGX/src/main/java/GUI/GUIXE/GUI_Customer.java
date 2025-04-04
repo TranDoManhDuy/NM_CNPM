@@ -4,15 +4,22 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogSelection;
 import DAO.CustomerDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
+import Model.Buildings;
 import Model.Customer;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.event.DocumentEvent;
@@ -31,35 +38,68 @@ public class GUI_Customer extends javax.swing.JPanel {
             return false;
         }
     };
+    private Map<String, ArrayList<?>> data =  new HashMap<>();
+    ArrayList<Customer> customers = new ArrayList<>();
+    ArrayList<String> buildingNames = new ArrayList<>();
+    private String[] sDay, sMonth, sYear;
+    private LogSelection logSelection;
+    private int choooseIndexBuilding = 0;
+    
+    
+    
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_Customer(ViewMain viewmain) {
+    public GUI_Customer(ViewMain viewmain, LogSelection logSelection) {
         this.viewmain = viewmain;
+        this.logSelection = logSelection;
+        
         initComponents(); 
+        resetFields();
+        resetEnable();
         initTable();
+        loadData();
         fillTable();
+        
+        sDay = Library.Library.getDay(0, 0);
+        sMonth = Library.Library.getMonth(0, 0);
+        sYear = Library.Library.getYear(0, 0);
+        
+        cob_ngay.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
+        cob_thang.setModel(new javax.swing.DefaultComboBoxModel<>(sMonth));
+        cob_nam.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
+        
+        txt_tin_nhan.setText("Đang hiển thị danh sách tất cả các khách hàng");
         addDocumentListeners();
+    }
+    
+    protected void loadData() {
+        try {
+            this.data = CustomerDAO.getInstance().getAllCustomer();
+            this.customers = (ArrayList<Customer>) data.get("customers");
+            this.buildingNames = (ArrayList<String>) data.get("building_names");
+        }
+        catch (Exception e) { 
+            e.printStackTrace();
+        }
     }
     
     public void initTable() { 
         String[] header = new String[] {"ID KH", "ID Tòa Nhà",  "Họ Tên", "Căn Cước", "Ngày Sinh", "Giới Tính", "Điện Thoại", "Thường Trú", "Quốc Tịch", "Cư Dân"};
         tblModel.setColumnIdentifiers(header);
+        tblModel.setRowCount(0);
         tblCustomer.setModel(tblModel);
         btn_insert.setEnabled(false);
     }
     
     public void fillTable() {
         try {
-            Map<String, ArrayList<?>> data = CustomerDAO.getInstance().getAllCustomer();
-            ArrayList<Customer> customers = (ArrayList<Customer>) data.get("customers");
-            ArrayList<String> buildingNames = (ArrayList<String>) data.get("building_names");
             int count = -1;
             String crBuildingName = "";
-            for (Customer cus : customers) { 
+            for (Customer cus : this.customers) { 
                 try {
                     count += 1;
-                    crBuildingName = buildingNames.get(count);
+                    crBuildingName = this.buildingNames.get(count);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -83,12 +123,28 @@ public class GUI_Customer extends javax.swing.JPanel {
 //        CustomerDAO.getInstance().delete(14);
     }
     
+    private void resetEnable() {
+        txt_full_name.setEnabled(true);
+        txt_ssn.setEnabled(true);
+        cob_ngay.setEnabled(true);
+        cob_thang.setEnabled(true);
+        cob_nam.setEnabled(true);
+        cb_gender_M.setEnabled(true);
+        cb_gender_F.setEnabled(true);
+        cb_gender_O.setEnabled(true);
+        cb_is_active.setEnabled(true);
+        txt_phone_number.setEnabled(true);
+        txt_address.setEnabled(true);
+        Txt_nationality.setEnabled(true);
+        btn_update.setEnabled(false);
+        btn_delete.setEnabled(false);
+    }
+    
     private void resetFields() { 
         txt_customer_id.setText("");
         txt_building_id.setText("");
         txt_full_name.setText("");
         txt_ssn.setText("");
-//        txtDate_of_birth.setText("");
         txt_phone_number.setText("");
         txt_address.setText("");
         Txt_nationality.setText("");
@@ -97,6 +153,27 @@ public class GUI_Customer extends javax.swing.JPanel {
         cb_gender_M.setSelected(false);
         cb_gender_O.setSelected(false);
         tblCustomer.clearSelection();
+        cob_ngay.setSelectedIndex(0);
+        cob_thang.setSelectedIndex(0);
+        cob_nam.setSelectedIndex(0);
+        txt_tim_kiem.setText("");
+    }
+    
+    private void showUpdate() {
+        txt_full_name.setEnabled(false);
+        txt_ssn.setEnabled(false);
+        cob_ngay.setEnabled(false);
+        cob_thang.setEnabled(false);
+        cob_nam.setEnabled(false);
+        cb_gender_M.setEnabled(true);
+        cb_gender_F.setEnabled(true);
+        cb_gender_O.setEnabled(true);
+        cb_is_active.setEnabled(true);
+        txt_phone_number.setEnabled(true);
+        txt_address.setEnabled(true);
+        Txt_nationality.setEnabled(true);
+        btn_update.setEnabled(true);
+        btn_delete.setEnabled(true);
     }
 
     private void checkInsertButton () { 
@@ -111,11 +188,14 @@ public class GUI_Customer extends javax.swing.JPanel {
                             !Txt_nationality.getText().trim().isEmpty();
         boolean isGenderSelected = cb_gender_F.isSelected() || cb_gender_M.isSelected() || cb_gender_O.isSelected();
         boolean isResidentSelected = cb_is_active.isSelected();
+        boolean isDateSelected =    !cob_ngay.getSelectedItem().toString().equals("") &&
+                                    !cob_thang.getSelectedItem().toString().equals("") &&
+                                    !cob_nam.getSelectedItem().toString().equals("");
 
-        System.out.println(isFilled + " " + isGenderSelected + " " + isResidentSelected);
+        System.out.println(isFilled + " " + isGenderSelected + " " + isResidentSelected + " " + isDateSelected);
         // Kiểm tra nếu txtCustomer_id đang được bật (enabled)
 //        boolean isCustomerIdEnabled = txtCustomer_id.isEnabled();
-        btn_insert.setEnabled(isFilled && isGenderSelected && isResidentSelected);
+        btn_insert.setEnabled(isFilled && isGenderSelected && isResidentSelected && isDateSelected);
     }
     private void addDocumentListeners() {
         DocumentListener docListener = new DocumentListener() {
@@ -252,6 +332,11 @@ public class GUI_Customer extends javax.swing.JPanel {
 
         btn_tim_kiem.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_tim_kiem.setText("Tìm");
+        btn_tim_kiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tim_kiemActionPerformed(evt);
+            }
+        });
 
         btn_cu_dan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_cu_dan.setText("Cư Dân");
@@ -272,6 +357,11 @@ public class GUI_Customer extends javax.swing.JPanel {
 
         btn_tat_ca.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_tat_ca.setText("Tất cả");
+        btn_tat_ca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tat_caActionPerformed(evt);
+            }
+        });
 
         btn_tang.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_tang.setText("Tăng");
@@ -292,6 +382,11 @@ public class GUI_Customer extends javax.swing.JPanel {
 
         btn_mac_dinh.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_mac_dinh.setText("Mặc Định");
+        btn_mac_dinh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_mac_dinhActionPerformed(evt);
+            }
+        });
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel12.setText("Cư Dân");
@@ -409,16 +504,22 @@ public class GUI_Customer extends javax.swing.JPanel {
         txt_customer_id.setEnabled(false);
 
         txt_building_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_building_id.setEnabled(false);
 
         txt_full_name.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_full_name.setEnabled(false);
 
         txt_ssn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_ssn.setEnabled(false);
 
         txt_phone_number.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_phone_number.setEnabled(false);
 
         txt_address.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_address.setEnabled(false);
 
         Txt_nationality.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        Txt_nationality.setEnabled(false);
 
         btn_insert.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_insert.setText("Thêm");
@@ -436,9 +537,21 @@ public class GUI_Customer extends javax.swing.JPanel {
 
         btn_update.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_update.setText("Cập Nhật");
+        btn_update.setEnabled(false);
+        btn_update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_updateActionPerformed(evt);
+            }
+        });
 
         btn_delete.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_delete.setText("Xóa");
+        btn_delete.setEnabled(false);
+        btn_delete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_deleteMouseClicked(evt);
+            }
+        });
 
         btn_reset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_reset.setText("Reset");
@@ -455,26 +568,48 @@ public class GUI_Customer extends javax.swing.JPanel {
 
         btn_chon.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_chon.setText("Chọn");
+        btn_chon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_chonActionPerformed(evt);
+            }
+        });
 
         cb_is_active.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cb_is_active.setText("Cư Dân");
+        cb_is_active.setEnabled(false);
 
         cb_gender_M.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cb_gender_M.setText("Nam");
+        cb_gender_M.setEnabled(false);
 
         cb_gender_F.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cb_gender_F.setText("Nữ");
+        cb_gender_F.setEnabled(false);
 
         cb_gender_O.setText("Khác");
+        cb_gender_O.setEnabled(false);
 
         cob_ngay.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cob_ngay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "31", "1", "2", "3" }));
+        cob_ngay.setEnabled(false);
+        cob_ngay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cob_ngayActionPerformed(evt);
+            }
+        });
 
         cob_thang.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cob_thang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "31", "1", "2", "3" }));
+        cob_thang.setEnabled(false);
+        cob_thang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cob_thangActionPerformed(evt);
+            }
+        });
 
         cob_nam.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cob_nam.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "98", "04" }));
+        cob_nam.setEnabled(false);
         cob_nam.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cob_namActionPerformed(evt);
@@ -673,6 +808,7 @@ public class GUI_Customer extends javax.swing.JPanel {
             String fullName = tblCustomer.getValueAt(selectedRow, 2).toString();
             String ssn = tblCustomer.getValueAt(selectedRow, 3).toString();
             String dateOfBirth = tblCustomer.getValueAt(selectedRow, 4).toString();
+            LocalDate dob = LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             String gender = tblCustomer.getValueAt(selectedRow, 5).toString();
             String phoneNumber = tblCustomer.getValueAt(selectedRow, 6).toString();
             String address = tblCustomer.getValueAt(selectedRow, 7).toString();
@@ -684,7 +820,9 @@ public class GUI_Customer extends javax.swing.JPanel {
             txt_building_id.setText(buildingName);
             txt_full_name.setText(fullName);
             txt_ssn.setText(ssn);
-//            txtDate_of_birth.setText(dateOfBirth);
+            cob_ngay.setSelectedIndex( dob.getDayOfMonth() );
+            cob_thang.setSelectedIndex( dob.getMonthValue() );
+            cob_nam.setSelectedIndex( dob.getYear() - 1950 );
             txt_phone_number.setText(phoneNumber);
             txt_address.setText(address);
             Txt_nationality.setText(nationality);
@@ -706,6 +844,7 @@ public class GUI_Customer extends javax.swing.JPanel {
                 cb_gender_M.setSelected(false);
                 cb_gender_O.setSelected(true);
             }
+        showUpdate();
         }
     }//GEN-LAST:event_tblCustomerMouseClicked
 
@@ -717,28 +856,22 @@ public class GUI_Customer extends javax.swing.JPanel {
     private void btn_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_resetActionPerformed
         // TODO add your handling code here:
         resetFields();
+        resetEnable();
     }//GEN-LAST:event_btn_resetActionPerformed
 
     private void btn_resetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_resetMouseClicked
         // TODO add your handling code here:
-        txt_customer_id.setText("");
-        txt_building_id.setText("");
-        txt_full_name.setText("");
-        txt_ssn.setText("");
-//        txtDate_of_birth.setText("");
-        txt_phone_number.setText("");
-        txt_address.setText("");
-        Txt_nationality.setText("");
-        cb_is_active.setSelected(false);
-        cb_gender_F.setSelected(false);
-        cb_gender_M.setSelected(false);
-        cb_gender_O.setSelected(false);
     }//GEN-LAST:event_btn_resetMouseClicked
 
     private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked
         // TODO add your handling code here:
+        String day = cob_ngay.getSelectedItem().toString();
+        String month = cob_thang.getSelectedItem().toString();
+        String year = cob_nam.getSelectedItem().toString();
+        if (Integer.parseInt(year) >= 50) year = "19" + year;
+        else year = "20" + year;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); 
-        String txtDate_of_birth = "21/11/2004";
+        String txtDate_of_birth = day + "/" + month + "/" + year;
         LocalDate dateOfBirth = LocalDate.parse(txtDate_of_birth.trim(), formatter);
         Customer customer = new Customer(
             txt_full_name.getText().trim(),
@@ -748,7 +881,7 @@ public class GUI_Customer extends javax.swing.JPanel {
             cb_gender_M.isSelected() ? "M" : "O",
             txt_phone_number.getText().trim(),
             txt_address.getText().trim(),
-            Integer.parseInt(txt_building_id.getText().trim()),
+            choooseIndexBuilding,
             Txt_nationality.getText().trim(),
             cb_is_active.isSelected()
         );
@@ -757,7 +890,11 @@ public class GUI_Customer extends javax.swing.JPanel {
             Connection con = OpenConnection.getConnection();
             CustomerDAO.getInstance().insert(customer);
             resetFields();
+            resetEnable();
+            initTable();
+            loadData();
             fillTable();
+            choooseIndexBuilding = 0;
         }
         catch (Exception e) { 
             e.printStackTrace();
@@ -774,18 +911,104 @@ public class GUI_Customer extends javax.swing.JPanel {
 
     private void btn_cu_danActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cu_danActionPerformed
         // TODO add your handling code here:
+        int index = -1;
+        tblModel.setRowCount(0);
+        for (Customer arr : this.customers) { 
+            index += 1;
+            if (arr.isIs_active()) {
+                tblModel.addRow(new String[] {  String.valueOf(arr.getCustomer_id()), this.buildingNames.get(index), arr.getFull_name(), arr.getSsn(),
+                                                String.valueOf(arr.getDate_of_birth()), arr.getGender(),
+                                                arr.getPhone_number(), arr.getAddress(), arr.getNationality(), String.valueOf(arr.isIs_active())
+                                });
+            }
+        }
+        tblModel.fireTableDataChanged();
     }//GEN-LAST:event_btn_cu_danActionPerformed
 
     private void btn_not_cu_danActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_not_cu_danActionPerformed
         // TODO add your handling code here:
+        int index = -1;
+        tblModel.setRowCount(0);
+        for (Customer arr : this.customers) { 
+            index += 1;
+            if (!arr.isIs_active()) {
+                tblModel.addRow(new String[] {  String.valueOf(arr.getCustomer_id()), this.buildingNames.get(index), arr.getFull_name(), arr.getSsn(),
+                                                String.valueOf(arr.getDate_of_birth()), arr.getGender(),
+                                                arr.getPhone_number(), arr.getAddress(), arr.getNationality(), String.valueOf(arr.isIs_active())
+                                });
+            }
+        }
+        tblModel.fireTableDataChanged();
     }//GEN-LAST:event_btn_not_cu_danActionPerformed
 
     private void btn_giamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_giamActionPerformed
         // TODO add your handling code here:
+        int n = this.customers.size();
+        
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (this.customers.get(i).getSsn().compareTo(this.customers.get(j).getSsn()) < 0) { 
+                    // Hoán đổi vị trí trong lstCustomer
+                    Customer tempCustomer = this.customers.get(i);
+                    this.customers.set(i, this.customers.get(j));
+                    this.customers.set(j, tempCustomer);
+
+                    // Hoán đổi vị trí tương ứng trong lstBuildingName
+                    String tempBuildingName = this.buildingNames.get(i);
+                    this.buildingNames.set(i, this.buildingNames.get(j));
+                    this.buildingNames.set(j, tempBuildingName);
+                }
+            }    
+        }
+        
+        int count = -1;
+        String crBuildingName = "";
+        initTable();
+        for (Customer cus : this.customers) { 
+                count += 1;
+                crBuildingName = this.buildingNames.get(count);
+            tblModel.addRow(new String[] {  String.valueOf(cus.getCustomer_id()), crBuildingName, cus.getFull_name(), cus.getSsn(), 
+                                            String.valueOf(cus.getDate_of_birth()), cus.getGender(),
+                                            cus.getPhone_number(), cus.getAddress(), cus.getNationality(), String.valueOf(cus.isIs_active())
+            });
+        }
+        tblModel.fireTableDataChanged();
+        resetFields();
     }//GEN-LAST:event_btn_giamActionPerformed
 
     private void btn_tangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tangActionPerformed
         // TODO add your handling code here:
+        int n = this.customers.size();
+        
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (this.customers.get(i).getSsn().compareTo(this.customers.get(j).getSsn()) > 0) { 
+                    // Hoán đổi vị trí trong lstCustomer
+                    Customer tempCustomer = this.customers.get(i);
+                    this.customers.set(i, this.customers.get(j));
+                    this.customers.set(j, tempCustomer);
+
+                    // Hoán đổi vị trí tương ứng trong lstBuildingName
+                    String tempBuildingName = this.buildingNames.get(i);
+                    this.buildingNames.set(i, this.buildingNames.get(j));
+                    this.buildingNames.set(j, tempBuildingName);
+                }
+            }    
+        }
+        
+        int count = -1;
+        String crBuildingName = "";
+        initTable();
+        for (Customer cus : this.customers) { 
+                count += 1;
+                crBuildingName = this.buildingNames.get(count);
+            tblModel.addRow(new String[] {  String.valueOf(cus.getCustomer_id()), crBuildingName, cus.getFull_name(), cus.getSsn(), 
+                                            String.valueOf(cus.getDate_of_birth()), cus.getGender(),
+                                            cus.getPhone_number(), cus.getAddress(), cus.getNationality(), String.valueOf(cus.isIs_active())
+            });
+        }
+        tblModel.fireTableDataChanged();
+        resetFields();
     }//GEN-LAST:event_btn_tangActionPerformed
 
     private void btn_ngoai_quocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ngoai_quocActionPerformed
@@ -798,8 +1021,237 @@ public class GUI_Customer extends javax.swing.JPanel {
 
     private void cob_namActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_namActionPerformed
         // TODO add your handling code here:
+        int day = Integer.parseInt(cob_ngay.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam.getSelectedItem().toString());
+        System.out.println(day + " " + month + " " + year);
+        
+        sDay = Library.Library.getDay(month, year);
+        sMonth = Library.Library.getMonth(day, year);
+        
+        cob_ngay.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
+        cob_thang.setModel(new javax.swing.DefaultComboBoxModel<>(sMonth));
+        
+        int dayIndex = Arrays.asList(sDay).indexOf(String.format("%02d", day));
+        int monthIndex = Arrays.asList(sMonth).indexOf(String.format("%02d", month));
+        
+        if (monthIndex == -1 || dayIndex == -1) {
+            cob_ngay.setSelectedIndex(0);
+            cob_thang.setSelectedIndex(0);
+        }
+        else {
+            cob_ngay.setSelectedIndex(dayIndex);
+            cob_thang.setSelectedIndex(monthIndex);
+        }
     }//GEN-LAST:event_cob_namActionPerformed
 
+    private void btn_tim_kiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tim_kiemActionPerformed
+        // TODO add your handling code here:
+        int index = -1;
+        tblModel.setRowCount(0);
+        for (Customer arr : this.customers) { 
+            index += 1;
+            if (Library.Library.StringOnString(this.txt_tim_kiem.getText(), arr.getFull_name())) {
+                tblModel.addRow(new String[] {  String.valueOf(arr.getCustomer_id()), this.buildingNames.get(index), arr.getFull_name(), arr.getSsn(),
+                                                String.valueOf(arr.getDate_of_birth()), arr.getGender(),
+                                                arr.getPhone_number(), arr.getAddress(), arr.getNationality(), String.valueOf(arr.isIs_active())
+                                });
+            }
+        }
+        tblModel.fireTableDataChanged();
+    }//GEN-LAST:event_btn_tim_kiemActionPerformed
+
+    private void btn_tat_caActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tat_caActionPerformed
+        // TODO add your handling code here:
+        int index = -1;
+        tblModel.setRowCount(0);
+        for (Customer arr : this.customers) { 
+            index += 1;
+            tblModel.addRow(new String[] {  String.valueOf(arr.getCustomer_id()), this.buildingNames.get(index), arr.getFull_name(), arr.getSsn(),
+                                            String.valueOf(arr.getDate_of_birth()), arr.getGender(),
+                                            arr.getPhone_number(), arr.getAddress(), arr.getNationality(), String.valueOf(arr.isIs_active())
+                            });
+        }
+        tblModel.fireTableDataChanged();
+    }//GEN-LAST:event_btn_tat_caActionPerformed
+
+    private void cob_ngayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_ngayActionPerformed
+        // TODO add your handling code here:
+        int day = Integer.parseInt(cob_ngay.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam.getSelectedItem().toString());
+        System.out.println(day + " " + month + " " + year);
+        
+        sMonth = Library.Library.getMonth(day, year);
+        sYear = Library.Library.getYear(day, month);
+        cob_thang.setModel(new javax.swing.DefaultComboBoxModel<>(sMonth));
+        cob_nam.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
+        
+        int monthIndex = Arrays.asList(sMonth).indexOf(String.format("%02d", month));
+        int yearIndex = Arrays.asList(sYear).indexOf(String.format("%02d", year));
+        
+        if (monthIndex == -1 || yearIndex == -1) {
+            cob_thang.setSelectedIndex(0);
+            cob_nam.setSelectedIndex(0);
+        }
+        else {
+            cob_thang.setSelectedIndex(monthIndex);
+            cob_nam.setSelectedIndex(yearIndex);
+        }
+    }//GEN-LAST:event_cob_ngayActionPerformed
+
+    private void cob_thangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_thangActionPerformed
+        // TODO add your handling code here:
+        int day = Integer.parseInt(cob_ngay.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam.getSelectedItem().toString());
+        
+        sDay = Library.Library.getDay(month, year);
+        sYear = Library.Library.getYear(day, month);
+        
+        System.out.println(day + " " + month + " " + year);
+        cob_ngay.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
+        cob_nam.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
+        
+        int dayIndex = Arrays.asList(sDay).indexOf(String.format("%02d", day));
+        int yearIndex = Arrays.asList(sYear).indexOf(String.format("%02d", year));
+        
+        if (dayIndex == -1 || yearIndex == -1) {
+            cob_ngay.setSelectedIndex(0);
+            cob_nam.setSelectedIndex(0);
+        }
+        else {
+            cob_ngay.setSelectedIndex(dayIndex);
+            cob_nam.setSelectedIndex(yearIndex);
+        }
+    }//GEN-LAST:event_cob_thangActionPerformed
+
+    private void btn_chonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonActionPerformed
+        // TODO add your handling code here:
+        this.viewmain.setEnabled(false);
+        this.logSelection = new LogSelection() {
+            @Override
+            public void initContent() {
+                this.label_property.setText("Mã Định Danh Các Tòa Nhà");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                String[] header = new String[] {"ID tòa nhà", "Tên tòa nhà",  "Địa chỉ"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table.rowAtPoint(e.getPoint());
+                        txt_building_id.setText((String) table.getValueAt(row, 1));
+                        choooseIndexBuilding = Integer.parseInt((String)table.getValueAt(row, 0));
+                        logSelection.setVisible(false);
+                        viewmain.setEnabled(true);
+                        viewmain.requestFocus();
+                    }
+                });
+                for (Buildings b : viewmain.buildings) {
+                    tableModel.addRow(new String[] {String.valueOf(b.getBuilding_id()), b.getBuilding_name(), b.getAddress()});
+                }
+                this.tableModel.fireTableDataChanged();
+                this.btn_loc.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    }
+                });
+            }
+            @Override
+            public void back() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
+    }//GEN-LAST:event_btn_chonActionPerformed
+
+    private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
+        // TODO add your handling code here:
+        String day = cob_ngay.getSelectedItem().toString();
+        String month = cob_thang.getSelectedItem().toString();
+        String year = cob_nam.getSelectedItem().toString();
+        if (Integer.parseInt(year) >= 50) year = "19" + year;
+        else year = "20" + year;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); 
+        String txtDate_of_birth = day + "/" + month + "/" + year;
+        LocalDate dateOfBirth = LocalDate.parse(txtDate_of_birth.trim(), formatter);
+        
+        for (Buildings b : viewmain.buildings) {
+            String buildingName = b.getBuilding_name();
+            String customerInput = txt_building_id.getText().trim();
+
+            if (buildingName != null && customerInput != null && buildingName.equals(customerInput)) {
+                choooseIndexBuilding = b.getBuilding_id();
+            }
+        }
+        
+        Customer customer = new Customer(
+            Integer.parseInt(txt_customer_id.getText().trim()),
+            txt_full_name.getText().trim(),
+            txt_ssn.getText().trim(),
+            dateOfBirth,
+            cb_gender_F.isSelected() ? "F" :
+            cb_gender_M.isSelected() ? "M" : "O",
+            txt_phone_number.getText().trim(),
+            txt_address.getText().trim(),
+            choooseIndexBuilding,
+            Txt_nationality.getText().trim(),
+            cb_is_active.isSelected()
+        );
+//        System.out.println(txt_building_id.getText() +  customer.getBuilding_id());
+        try {
+            Connection con = OpenConnection.getConnection();
+            CustomerDAO.getInstance().update(customer);
+            resetFields();
+            resetEnable();
+            loadData();
+            for (String n: this.buildingNames) {
+                System.out.println(n);
+            }
+            initTable();
+            fillTable();
+            choooseIndexBuilding = 0;
+        }
+        catch (Exception e) { 
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btn_updateActionPerformed
+
+    private void btn_deleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_deleteMouseClicked
+        // TODO add your handling code here:
+//        System.out.println(txt_customer_id.getText().trim());
+        try {
+            Connection con = OpenConnection.getConnection();
+            CustomerDAO.getInstance().delete(Integer.parseInt(txt_customer_id.getText().trim()));
+            resetFields();
+            resetEnable();
+            loadData();
+            initTable();
+            fillTable();
+            choooseIndexBuilding = 0;
+        }
+        catch (Exception e) { 
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btn_deleteMouseClicked
+
+    private void btn_mac_dinhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mac_dinhActionPerformed
+        // TODO add your handling code here:
+        loadData();
+        initTable();
+        fillTable();
+        resetFields();
+    }//GEN-LAST:event_btn_mac_dinhActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField Txt_nationality;
