@@ -139,7 +139,7 @@ public class gui_staff extends javax.swing.JPanel {
 
         jLabel14.setText("Vai trò");
 
-        setBackground(new java.awt.Color(255, 255, 255));
+        setBackground(new java.awt.Color(204, 255, 255));
         setPreferredSize(new java.awt.Dimension(1125, 485));
 
         Panel_TKCN.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -197,8 +197,6 @@ public class gui_staff extends javax.swing.JPanel {
         });
 
         jComboBox5.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tất cả" }));
-
-        jTextField3.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel9.setText("TÌM KIẾM");
