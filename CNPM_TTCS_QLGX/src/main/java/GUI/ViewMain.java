@@ -8,6 +8,7 @@ import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.BuildingsDAO;
+import DAO.VehicleTypeDAO;
 import GUI.CATRUC.gui_building;
 import GUI.CATRUC.gui_shift_type;
 import GUI.CATRUC.gui_shift_work;
@@ -27,6 +28,7 @@ import GUI.GUIXE.GUI_ResidentCard;
 import GUI.GUIXE.GUI_Vehicle;
 import Global.DataGlobal;
 import Model.Buildings;
+import Model.VehicleType;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
@@ -43,6 +45,7 @@ public class ViewMain extends javax.swing.JFrame {
     LogSelection logSelection = new LogSelection();
     DataGlobal dataglocal = new DataGlobal();
     public List<Buildings> buildings = new ArrayList<>();
+    public ArrayList<VehicleType> vehicle_types = new ArrayList<>();
     
     /**
      * Creates new form ViewMain
@@ -51,6 +54,7 @@ public class ViewMain extends javax.swing.JFrame {
     public ViewMain() {
         dataglocal.updateAllData();
         this.buildings = BuildingsDAO.getInstance().getAllBuildings();
+        this.vehicle_types = VehicleTypeDAO.getInstance().getList();
         initComponents();
         GUI_DICHVU();
         GUI_GUIXE();
@@ -93,7 +97,7 @@ public class ViewMain extends javax.swing.JFrame {
         GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(this);
         GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(this);
         GUI_ResidentCard gui_resident_card = new GUI_ResidentCard(this);
-        GUI_Vehicle gui_vehicle = new GUI_Vehicle(this);
+        GUI_Vehicle gui_vehicle = new GUI_Vehicle(this, logSelection);
         addComponent(panel_khachhang, gui_customer);
         addComponent(panel_mat_the_cd, gui_lost_resident_card);
         addComponent(panel_guixe, gui_parking_session);

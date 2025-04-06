@@ -20,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -114,13 +113,6 @@ public class GUI_Customer extends javax.swing.JPanel {
                 e.printStackTrace();
             }
         tblModel.fireTableDataChanged();
-//        LocalDate dob = LocalDate.of(1990, 01, 01);
-//        Customer Cus = new Customer("Nguyen Van B", "000000000002", dob, "M", "0000000002", "123 Le Loi, Quan 1", 1 , "Vietnamese", true);
-//        CustomerDAO.getInstance().insert(Cus);
-//        Customer TestUpdateCus = new Customer(14, "Nguyen Van B", "000000000002", dob, "M", "0000000010", "123 Le Loi, Quan 1", 1 , "Vietnamese", true);
-//        CustomerDAO.getInstance().update(TestUpdateCus);
-//        System.out.println(CustomerDAO.getInstance().findbyID(14));
-//        CustomerDAO.getInstance().delete(14);
     }
     
     private void resetEnable() {
@@ -148,6 +140,8 @@ public class GUI_Customer extends javax.swing.JPanel {
         txt_phone_number.setText("");
         txt_address.setText("");
         Txt_nationality.setText("");
+        this.choooseIndexBuilding = 0;
+        
         cb_is_active.setSelected(false);
         cb_gender_F.setSelected(false);
         cb_gender_M.setSelected(false);
@@ -182,7 +176,6 @@ public class GUI_Customer extends javax.swing.JPanel {
                             !txt_building_id.getText().trim().isEmpty() &&
                             !txt_full_name.getText().trim().isEmpty() &&
                             !txt_ssn.getText().trim().isEmpty() &&
-//                            !txtDate_of_birth.getText().trim().isEmpty() &&
                             !txt_phone_number.getText().trim().isEmpty() &&
                             !txt_address.getText().trim().isEmpty() &&
                             !Txt_nationality.getText().trim().isEmpty();
@@ -192,9 +185,7 @@ public class GUI_Customer extends javax.swing.JPanel {
                                     !cob_thang.getSelectedItem().toString().equals("") &&
                                     !cob_nam.getSelectedItem().toString().equals("");
 
-        System.out.println(isFilled + " " + isGenderSelected + " " + isResidentSelected + " " + isDateSelected);
-        // Kiểm tra nếu txtCustomer_id đang được bật (enabled)
-//        boolean isCustomerIdEnabled = txtCustomer_id.isEnabled();
+//        System.out.println(isFilled + " " + isGenderSelected + " " + isResidentSelected + " " + isDateSelected);
         btn_insert.setEnabled(isFilled && isGenderSelected && isResidentSelected && isDateSelected);
     }
     private void addDocumentListeners() {
@@ -885,7 +876,7 @@ public class GUI_Customer extends javax.swing.JPanel {
             Txt_nationality.getText().trim(),
             cb_is_active.isSelected()
         );
-        System.out.println(customer.getFull_name());
+//        System.out.println(customer.getFull_name());
         try {
             Connection con = OpenConnection.getConnection();
             CustomerDAO.getInstance().insert(customer);
@@ -894,7 +885,6 @@ public class GUI_Customer extends javax.swing.JPanel {
             initTable();
             loadData();
             fillTable();
-            choooseIndexBuilding = 0;
         }
         catch (Exception e) { 
             e.printStackTrace();
@@ -1080,7 +1070,7 @@ public class GUI_Customer extends javax.swing.JPanel {
         int day = Integer.parseInt(cob_ngay.getSelectedItem().toString());
         int month = Integer.parseInt(cob_thang.getSelectedItem().toString());
         int year = Integer.parseInt(cob_nam.getSelectedItem().toString());
-        System.out.println(day + " " + month + " " + year);
+//        System.out.println(day + " " + month + " " + year);
         
         sMonth = Library.Library.getMonth(day, year);
         sYear = Library.Library.getYear(day, month);
@@ -1109,7 +1099,7 @@ public class GUI_Customer extends javax.swing.JPanel {
         sDay = Library.Library.getDay(month, year);
         sYear = Library.Library.getYear(day, month);
         
-        System.out.println(day + " " + month + " " + year);
+//        System.out.println(day + " " + month + " " + year);
         cob_ngay.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
         cob_nam.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
         
@@ -1215,12 +1205,8 @@ public class GUI_Customer extends javax.swing.JPanel {
             resetFields();
             resetEnable();
             loadData();
-            for (String n: this.buildingNames) {
-                System.out.println(n);
-            }
             initTable();
             fillTable();
-            choooseIndexBuilding = 0;
         }
         catch (Exception e) { 
             e.printStackTrace();
@@ -1238,7 +1224,6 @@ public class GUI_Customer extends javax.swing.JPanel {
             loadData();
             initTable();
             fillTable();
-            choooseIndexBuilding = 0;
         }
         catch (Exception e) { 
             e.printStackTrace();

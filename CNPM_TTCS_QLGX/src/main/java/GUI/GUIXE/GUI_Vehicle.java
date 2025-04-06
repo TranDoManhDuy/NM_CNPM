@@ -4,11 +4,19 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogSelection;
 import DAO.VehicleDAO;
 import GUI.ViewMain;
 import Model.Vehicle;
+import Model.VehicleType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Map;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -24,15 +32,38 @@ public class GUI_Vehicle extends javax.swing.JPanel {
             return false;
         }
     };
+    Map<String, ArrayList<?>> data;
+    ArrayList<Vehicle> vehicles;
+    ArrayList<String> vehicle_type_names;
+    private LogSelection logSelection;
+    private int choooseIndexVehicleType = 0;
+    
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_Vehicle(ViewMain viewmain) {
+    public GUI_Vehicle(ViewMain viewmain, LogSelection logSelection) {
         this.viewmain = viewmain;
+        this.logSelection = logSelection;
+        
         initComponents(); 
         initTable();
+        loadData();
         fillTable();
-//        addDocumentListeners();
+        fillVehicleType();
+        resetFields();
+        resetActive();
+        addDocumentListeners();
+    }
+    
+    protected void loadData() {
+        try {
+            this.data = VehicleDAO.getInstance().getAllData();
+            this.vehicles = (ArrayList<Vehicle>) data.get("vehicles");
+            this.vehicle_type_names = (ArrayList<String>) data.get("vehicle_type_names");
+        }
+        catch (Exception e) { 
+            e.printStackTrace();
+        }
     }
     
     public void initTable() { 
@@ -40,38 +71,101 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         tblModel.setColumnIdentifiers(header);
         tblModel.setRowCount(0);
         tbl_vehicle.setModel(tblModel);
-//        btn_insert.setEnabled(false);
     }
     
     
     public void fillTable() {
-        try {
-            Map<String, ArrayList<?>> data = VehicleDAO.getInstance().getAllData();
-            ArrayList<Vehicle> vehicles = (ArrayList<Vehicle>) data.get("vehicles");
-            ArrayList<String> vehicle_type_names = (ArrayList<String>) data.get("vehicle_type_names");
-            int count = -1;
-            String crVehicle_type_name = "";
-            for (Vehicle vel : vehicles) { 
-                try {
-                    count += 1;
-                    crVehicle_type_name = vehicle_type_names.get(count);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-                tblModel.addRow(new String[] { String.valueOf(vel.getVehicle_id()), vel.getIdentification_code(), crVehicle_type_name, vel.getVehicle_name(), vel.getVehicle_color()
-                });
-            }
+        int count = -1;
+        String crVehicle_type_name = "";
+        for (Vehicle vel : this.vehicles) { 
+            count += 1;
+            crVehicle_type_name = this.vehicle_type_names.get(count);
+            tblModel.addRow(new String[] { String.valueOf(vel.getVehicle_id()), vel.getIdentification_code(), crVehicle_type_name, vel.getVehicle_name(), vel.getVehicle_color()
+            });
         }
-        catch (Exception e) { 
-                e.printStackTrace();
-            }
         tblModel.fireTableDataChanged();
-//        Vehicle vel = new Vehicle(13, "V011", 2, "Ford Transit", "Silver");
-//        VehicleDAO.getInstance().insert(vel);
-//        VehicleDAO.getInstance().update(vel);
-//        System.out.println(VehicleDAO.getInstance().findbyID(13).getIdentification_code());
-        VehicleDAO.getInstance().delete(13);
+    }
+    
+    private void fillVehicleType() { 
+        cob_loai_phuong_tien.removeAllItems();
+        cob_loai_phuong_tien.addItem("None");
+        for (VehicleType vehicle_type : viewmain.vehicle_types) { 
+            if (vehicle_type.isIsPermission()) { 
+                cob_loai_phuong_tien.addItem(vehicle_type.getVehicle_type_name());
+            }
+            
+        }
+    }
+        
+    private void resetActive() { 
+        btn_insert.setEnabled(false);
+        btn_update.setEnabled(false);
+        btn_xoa.setEnabled(false);
+        btn_chon_vehicle_type.setEnabled(true);
+        
+        txt_vehicle_id.setEnabled(false);
+        txt_identification_code.setEnabled(true);
+        txt_vehicle_name.setEnabled(true);
+        txt_vehicle_type.setEnabled(false);
+    }
+    
+    private void showUpdate() { 
+        btn_insert.setEnabled(false);
+        btn_update.setEnabled(true);
+        btn_xoa.setEnabled(true);
+        btn_chon_vehicle_type.setEnabled(false);
+        
+        txt_vehicle_id.setEnabled(false);
+        txt_identification_code.setEnabled(true);
+        txt_vehicle_name.setEnabled(true);
+        txt_vehicle_type.setEnabled(false);
+    }
+    
+    private void resetFields() { 
+        txt_vehicle_id.setText("");
+        txt_identification_code.setText("");
+        txt_vehicle_type.setText("");
+        txt_vehicle_name.setText("");
+        txt_vehicle_color.setText("");
+        this.choooseIndexVehicleType = 0;
+        tbl_vehicle.clearSelection();
+    }
+    
+    private void checkInsertButton () { 
+         // Kiểm tra nếu tất cả các trường không rỗng
+        boolean isFilled =  txt_vehicle_id.getText().trim().isEmpty() &&
+                            !txt_identification_code.getText().trim().isEmpty() &&
+                            !txt_vehicle_type.getText().trim().isEmpty() &&
+                            !txt_vehicle_name.getText().trim().isEmpty() &&
+                            !txt_vehicle_color.getText().trim().isEmpty();
+
+//        System.out.println(isFilled);
+        btn_insert.setEnabled(isFilled);
+    }
+    
+    private void addDocumentListeners() {
+        DocumentListener docListener = new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                checkInsertButton();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                checkInsertButton();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                checkInsertButton();
+            }
+        };
+        // Thêm lắng nghe cho tất cả các JTextField
+        txt_vehicle_id.getDocument().addDocumentListener(docListener);
+        txt_identification_code.getDocument().addDocumentListener(docListener);
+        txt_vehicle_type.getDocument().addDocumentListener(docListener);
+        txt_vehicle_name.getDocument().addDocumentListener(docListener);
+        txt_vehicle_color.getDocument().addDocumentListener(docListener);
     }
     
     @SuppressWarnings("unchecked")
@@ -142,12 +236,22 @@ public class GUI_Vehicle extends javax.swing.JPanel {
 
         btn_tim_kiem.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_tim_kiem.setText("Tìm");
+        btn_tim_kiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tim_kiemActionPerformed(evt);
+            }
+        });
 
         btn_sap_xep.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_sap_xep.setText("Sắp Xếp");
 
         cob_loai_phuong_tien.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cob_loai_phuong_tien.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cob_loai_phuong_tien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cob_loai_phuong_tienActionPerformed(evt);
+            }
+        });
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel13.setText("Tìm Mã Nhận Dạng");
@@ -248,9 +352,19 @@ public class GUI_Vehicle extends javax.swing.JPanel {
 
         btn_update.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_update.setText("Cập Nhật");
+        btn_update.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_updateMouseClicked(evt);
+            }
+        });
 
         btn_xoa.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_xoa.setText("Xóa");
+        btn_xoa.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_xoaMouseClicked(evt);
+            }
+        });
 
         btn_reset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_reset.setText("Reset");
@@ -267,6 +381,11 @@ public class GUI_Vehicle extends javax.swing.JPanel {
 
         btn_chon_vehicle_type.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_chon_vehicle_type.setText("Chọn");
+        btn_chon_vehicle_type.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_chon_vehicle_typeActionPerformed(evt);
+            }
+        });
 
         JL_title.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         JL_title.setText("Thông Tin phương Tiện");
@@ -384,14 +503,44 @@ public class GUI_Vehicle extends javax.swing.JPanel {
 
     private void tbl_vehicleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_vehicleMouseClicked
         // TODO add your handling code here:
+        int selectedRow = tbl_vehicle.getSelectedRow();
+        // Kiểm tra xem có hàng nào được chọn không
+        if (selectedRow != -1) {
+            int vehicleId = Integer.parseInt(tbl_vehicle.getValueAt(selectedRow, 0).toString());
+            String vehicleIden = tbl_vehicle.getValueAt(selectedRow, 1).toString();
+            String vehicleType = tbl_vehicle.getValueAt(selectedRow, 2).toString();
+            String vehicleName = tbl_vehicle.getValueAt(selectedRow, 3).toString();
+            String vehicleColor = tbl_vehicle.getValueAt(selectedRow, 4).toString();
+            
+            txt_vehicle_id.setText(String.valueOf(vehicleId));
+            txt_identification_code.setText(vehicleIden);
+            txt_vehicle_type.setText(vehicleType);
+            txt_vehicle_name.setText(vehicleName);
+            txt_vehicle_color.setText(vehicleColor);
+        }
+        this.showUpdate();
+        
     }//GEN-LAST:event_tbl_vehicleMouseClicked
 
     private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked
         // TODO add your handling code here:
+        String vehicleIden = txt_identification_code.getText().toString().trim();
+        int vehicleTypeId = this.choooseIndexVehicleType;
+        String vehicleName = txt_vehicle_name.getText().toString().trim();
+        String vehicleColor = txt_vehicle_color.getText().toString().trim();
+        
+        Vehicle vel = new Vehicle(vehicleIden, vehicleTypeId, vehicleName, vehicleColor); 
+        VehicleDAO.getInstance().insert(vel);
+        initTable();
+        resetActive();
+        resetFields();
+        loadData();
+        fillTable();
     }//GEN-LAST:event_btn_insertMouseClicked
 
     private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_btn_insertActionPerformed
 
     private void btn_resetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_resetMouseClicked
@@ -400,6 +549,8 @@ public class GUI_Vehicle extends javax.swing.JPanel {
 
     private void btn_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_resetActionPerformed
         // TODO add your handling code here:
+        this.resetFields();
+        this.resetActive();
     }//GEN-LAST:event_btn_resetActionPerformed
 
     private void txt_tin_nhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tin_nhanActionPerformed
@@ -409,6 +560,143 @@ public class GUI_Vehicle extends javax.swing.JPanel {
     private void txt_tim_kiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tim_kiemActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_tim_kiemActionPerformed
+
+    private void cob_loai_phuong_tienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_loai_phuong_tienActionPerformed
+        // TODO add your handling code here:
+        initTable();
+        this.resetActive();
+        resetFields();
+        
+        String ve_t = cob_loai_phuong_tien.getSelectedItem() == null ? "" : cob_loai_phuong_tien.getSelectedItem().toString().trim();
+        int ve_t_id = 0;
+        for (VehicleType vehicle_type: viewmain.vehicle_types) {
+            if (ve_t.equals(vehicle_type.getVehicle_type_name())) {
+                ve_t_id = vehicle_type.getVehicle_type_id();
+            }
+        }
+        String crVehicle_type_name = "";
+        
+//        System.out.println(ve_t_id);
+        int count = -1;
+        for (Vehicle vel : this.vehicles) { 
+            count += 1;
+            if (vel.getVehicle_type_id() == ve_t_id || ve_t_id == 0) {
+                crVehicle_type_name = this.vehicle_type_names.get(count);
+                tblModel.addRow(new String[] {  String.valueOf(vel.getVehicle_id()), 
+                                                vel.getIdentification_code(), crVehicle_type_name, vel.getVehicle_name(), 
+                                                vel.getVehicle_color()
+                });
+            }
+        }
+        tblModel.fireTableDataChanged();
+    }//GEN-LAST:event_cob_loai_phuong_tienActionPerformed
+
+    private void btn_tim_kiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tim_kiemActionPerformed
+        // TODO add your handling code here:
+        initTable();
+        this.resetActive();
+        resetFields();
+        String crVehicle_type_name = "";
+        int count = -1;
+        for (Vehicle vel : this.vehicles) { 
+            count += 1;
+            if (Library.Library.StringOnString(this.txt_tim_kiem.getText(), vel.getIdentification_code())) {
+                crVehicle_type_name = this.vehicle_type_names.get(count);
+                tblModel.addRow(new String[] {  String.valueOf(vel.getVehicle_id()), 
+                                                vel.getIdentification_code(), crVehicle_type_name, vel.getVehicle_name(), 
+                                                vel.getVehicle_color()
+                });
+            }
+        }
+        tblModel.fireTableDataChanged();
+    }//GEN-LAST:event_btn_tim_kiemActionPerformed
+
+    private void btn_chon_vehicle_typeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chon_vehicle_typeActionPerformed
+        // TODO add your handling code here:
+        this.viewmain.setEnabled(false);
+        this.logSelection = new LogSelection() {
+            @Override
+            public void initContent() {
+                this.label_property.setText("Mã Định Danh Các Loại Phương Tiện");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                String[] header = new String[] {"ID Loại Phương Tiện", "Tên Loại Phương Tiện", "Còn cho phép"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table.rowAtPoint(e.getPoint());
+                        txt_vehicle_type.setText((String) table.getValueAt(row, 1));
+                        choooseIndexVehicleType = Integer.parseInt((String)table.getValueAt(row, 0));
+                        System.out.println(choooseIndexVehicleType);
+                        logSelection.setVisible(false);
+                        viewmain.setEnabled(true);
+                        viewmain.requestFocus();
+                    }
+                });
+                for (VehicleType vt : viewmain.vehicle_types) {
+                    tableModel.addRow(new String[] {String.valueOf(vt.getVehicle_type_id()), vt.getVehicle_type_name(), String.valueOf(vt.isIsPermission())});
+                }
+                this.tableModel.fireTableDataChanged();
+                this.btn_loc.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    }
+                });
+            }
+            @Override
+            public void back() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
+    }//GEN-LAST:event_btn_chon_vehicle_typeActionPerformed
+
+    private void btn_updateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_updateMouseClicked
+        // TODO add your handling code here:
+        int vehicleId = Integer.parseInt(txt_vehicle_id.getText().toString().trim());
+        String vehicleIden = txt_identification_code.getText().toString().trim();
+        
+        for (VehicleType vt : viewmain.vehicle_types) {
+            if (vt.getVehicle_type_name().equals(txt_vehicle_type.getText().toString().trim())) {
+                this.choooseIndexVehicleType = vt.getVehicle_type_id(); 
+                break;
+            }
+        }
+        int vehicleTypeId = this.choooseIndexVehicleType;
+                
+        String vehicleName = txt_vehicle_name.getText().toString().trim();
+        String vehicleColor = txt_vehicle_color.getText().toString().trim();
+        
+        Vehicle vel = new Vehicle(vehicleId, vehicleIden, vehicleTypeId, vehicleName, vehicleColor); 
+//        System.out.println(vel.getVehicle_id() + vehicleIden + vehicleTypeId + vehicleName + vehicleColor);
+        VehicleDAO.getInstance().update(vel);
+        initTable();
+        resetActive();
+        resetFields();
+        loadData();
+        fillTable();
+    }//GEN-LAST:event_btn_updateMouseClicked
+
+    private void btn_xoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_xoaMouseClicked
+        // TODO add your handling code here:
+        int vehicleId = Integer.parseInt(txt_vehicle_id.getText().toString().trim());
+        VehicleDAO.getInstance().delete(vehicleId);
+        initTable();
+        resetActive();
+        resetFields();
+        loadData();
+        fillTable();
+    }//GEN-LAST:event_btn_xoaMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
