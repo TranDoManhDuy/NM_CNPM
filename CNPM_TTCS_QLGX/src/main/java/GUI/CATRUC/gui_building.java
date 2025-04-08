@@ -8,6 +8,7 @@ import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import DAO.BuildingsDAO;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.Buildings;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -26,7 +27,7 @@ public class gui_building extends javax.swing.JPanel {
     /**
      * Creates new form gui_building
      */
-    private List<Buildings> list = new ArrayList<>();
+    private DataGlobal dataGlobal = new DataGlobal();
     private DefaultTableModel tableModel;
     private ViewMain viewMain;
     
@@ -39,9 +40,9 @@ public class gui_building extends javax.swing.JPanel {
             };
         this.viewMain = viewMain;
         initComponents();
-        loadList();
         initTable();
-        fillTable(list);
+        dataGlobal.updateArrBuildings();
+        fillTable(dataGlobal.getArrayBuildings());
         jTextField2.setEnabled(false);
 //        jButton1.setEnabled(false);
         jButton2.setEnabled(false);
@@ -53,10 +54,6 @@ public class gui_building extends javax.swing.JPanel {
         tableModel.setColumnIdentifiers(header);
         jTable1.setModel(tableModel);
         jTable1.setRowHeight(25);
-    }
-    
-    public void loadList(){
-        list = BuildingsDAO.getInstance().getAllBuildings();
     }
     
     public void fillTable(List<Buildings> list){
@@ -88,8 +85,8 @@ public class gui_building extends javax.swing.JPanel {
         else{
             viewMain.setEnabled(true);
             viewMain.requestFocus();
-            loadList();
-            fillTable(list);
+            dataGlobal.updateArrBuildings();
+            fillTable(dataGlobal.getArrayBuildings());
         }
     }
     
@@ -113,8 +110,8 @@ public class gui_building extends javax.swing.JPanel {
         else{
             viewMain.setEnabled(true);
             viewMain.requestFocus();
-            loadList();
-            fillTable(list);
+            dataGlobal.updateArrBuildings();
+            fillTable(dataGlobal.getArrayBuildings());
         }
     }
     
@@ -137,8 +134,8 @@ public class gui_building extends javax.swing.JPanel {
         }else{
             viewMain.setEnabled(true);
             viewMain.requestFocus();
-            loadList();
-            fillTable(list);
+            dataGlobal.updateArrBuildings();
+            fillTable(dataGlobal.getArrayBuildings());
         }
     }
     /**
@@ -360,7 +357,7 @@ public class gui_building extends javax.swing.JPanel {
         jButton3.setEnabled(true);
         jButton5.setEnabled(true);
         int row = jTable1.rowAtPoint(evt.getPoint());
-        Buildings arr = list.get(row);
+        Buildings arr = dataGlobal.getArrayBuildings().get(row);
         jTextField2.setText(String.valueOf(arr.getBuilding_id()));
         jTextField3.setText(arr.getBuilding_name());
         jTextArea1.setText(arr.getAddress());
@@ -419,7 +416,7 @@ public class gui_building extends javax.swing.JPanel {
             confirm.setLocationRelativeTo(null);
         }else{
            viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Không được để trống tên tòa nhà"){
+            LogMessage message = new LogMessage("Không được để trống tên"){
                 @Override
                 public void action() {
                     viewMain.setEnabled(true);

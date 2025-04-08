@@ -132,7 +132,6 @@ public class LogSelection extends javax.swing.JFrame implements doAction, InitCo
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btn_quaylai)
-                        .addGap(224, 224, 224)
                         .addComponent(label_logname))
                     .addComponent(jScrollPane1)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -184,7 +183,7 @@ public class LogSelection extends javax.swing.JFrame implements doAction, InitCo
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel label_logname;
+    public javax.swing.JLabel label_logname;
     public javax.swing.JLabel label_property;
     public javax.swing.JTable table;
     private javax.swing.JTextField txt_property;
