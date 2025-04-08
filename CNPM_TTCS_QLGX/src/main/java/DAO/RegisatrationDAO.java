@@ -60,7 +60,8 @@ public class RegisatrationDAO {
                 return "Thêm thành công";
             }
         } catch (Exception e) {
-            return "Error: " + e.getMessage();
+            System.out.println(e.getMessage() + "");
+            return "Lỗi: " + e.getMessage();
         }
         return "Kiểm tra lại thông tin";
     }

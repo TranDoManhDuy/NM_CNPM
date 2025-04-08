@@ -15,17 +15,46 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-
 /**
  *
  * @author manhh
  */
-
-public class TimeFrameDAO  implements InterfaceDAO.InterfaceDAO<TimeFrame>{
+public class TimeFrameDAO {
     public static TimeFrameDAO getInstance() {
         return new TimeFrameDAO();
     }
-    @Override
+    public String insert_timeframe_container(LocalDate decision_date, LocalTime TS1, LocalTime TS2, LocalTime TS3, LocalTime TE1, LocalTime TE2, LocalTime TE3, boolean isActive) {
+        String sql = "EXEC insert_time_frame_container "+
+                "@decision_date = ?,"+
+                "@time_start1 = ?,"+
+                "@time_end1   = ?,"+
+                "@time_start2 = ?,"+
+                "@time_end2   = ?,"+
+                "@time_start3 = ?,"+
+                "@time_end3   = ?,"+
+                "@is_active = ?;";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+        ) {
+            ptmt.setDate(1, Date.valueOf(decision_date));
+            ptmt.setTime(2, Time.valueOf(TS1));
+            ptmt.setTime(3, Time.valueOf(TE1));
+            ptmt.setTime(4, Time.valueOf(TS2));
+            ptmt.setTime(5, Time.valueOf(TE2));
+            ptmt.setTime(6, Time.valueOf(TS3));
+            ptmt.setTime(7, Time.valueOf(TE3));
+            ptmt.setBoolean(8, isActive);
+            
+            if (ptmt.executeUpdate() > 0) {
+                return "Thêm các khung thời gian thành công";
+            }
+        } catch (Exception e) {
+            return "Lỗi: " + e.getMessage();
+        }
+        return "Thêm khung thời gian thành công";
+    }
+    
     public ArrayList<TimeFrame> getList() {
         ArrayList<TimeFrame> listTimeFrames = new ArrayList<>();
         String sql = " EXEC getlist_time_frames";
@@ -50,7 +79,6 @@ public class TimeFrameDAO  implements InterfaceDAO.InterfaceDAO<TimeFrame>{
         return listTimeFrames;
     }
     
-    @Override
     public boolean insert(TimeFrame timeFrame) {
         String sql = "EXEC insert_time_frame @decision_date = ?, @time_start = ?, @time_end = ?, @is_active = ?";
         try (
@@ -68,7 +96,7 @@ public class TimeFrameDAO  implements InterfaceDAO.InterfaceDAO<TimeFrame>{
         }
         return false;
     }
-    @Override
+    
     public boolean update(TimeFrame timeFrame) {
         String sql = "EXEC update_time_frame @decision_date = ?, @time_start = ?, @time_end = ?, @is_active = ?,  @time_frame_id = ?";
         try (
@@ -88,7 +116,6 @@ public class TimeFrameDAO  implements InterfaceDAO.InterfaceDAO<TimeFrame>{
         return false;
     }
     
-    @Override
     public TimeFrame findbyID(int id) {
         String sql = "EXEC findbyID_time_frame @time_frame_id = ?";
         try (
@@ -113,19 +140,20 @@ public class TimeFrameDAO  implements InterfaceDAO.InterfaceDAO<TimeFrame>{
         return null;
     }
     
-    @Override
-    public boolean delete(int id) {
+    public String delete(int id) {
         String sql = "EXEC delete_time_frame @time_frame_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
             ptmt.setInt(1, id);
-            return ptmt.executeUpdate() > 0;
+            if (ptmt.executeUpdate() > 0) {
+                return "Xóa thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Không thể xóa";
     }
     
     public static void main(String[] args) {

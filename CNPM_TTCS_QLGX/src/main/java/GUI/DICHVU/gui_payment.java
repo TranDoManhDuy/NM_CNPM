@@ -4,6 +4,9 @@
  */
 package GUI.DICHVU;
 
+import Annotation.LogConfirm;
+import Annotation.LogMessage;
+import Annotation.LogSelection;
 import DAO.CustomerDAO;
 import DAO.PaymentDAO;
 import DAO.RegisatrationDAO;
@@ -14,6 +17,7 @@ import Model.Customer;
 import Model.Payment;
 import Model.Regisatration;
 import Model.TypeService;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
@@ -21,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -30,11 +35,20 @@ import javax.swing.table.DefaultTableModel;
 public class gui_payment extends javax.swing.JPanel {
     private DefaultTableModel tableModel;
     private ViewMain viewmain;
+    private LogConfirm logConfirm;
+    private LogMessage logMessage;
+    private LogSelection logSelection;
+    private boolean cursorBreak = false;
+    private ArrayList<ArrayList<String>> dataPayment = new ArrayList<>();
     /**
      * Creates new form gui_payment
      */
-    public gui_payment(ViewMain viewmain) {
+    public gui_payment(ViewMain viewmain, LogConfirm logConfirm, LogMessage logMessage, LogSelection logSelection) {
         this.viewmain = viewmain;
+        this.logConfirm = logConfirm;
+        this.logMessage = logMessage;
+        this.logSelection = logSelection;
+        
         tableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -43,20 +57,22 @@ public class gui_payment extends javax.swing.JPanel {
         };
         initComponents();
         txt_ngaylendon.setText(String.valueOf(LocalDate.now()));
-        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Đã thanh toán", "Chưa thanh toán" , ""}));
+        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Đã hoàn tất", "Chưa hoàn tất" , ""}));
         combo_trangthai.setSelectedIndex(2);
         
         initTable();
+        loadData();
         fillTable();
-        comboDayStart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        
+        comboDayStart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"
         , "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
         }));
-        comboDayEnd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        comboDayEnd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"
         , "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"
         }));
-        comboMonthStart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        comboMonthStart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"
         , "11", "12"}));
-        comboMonthEnd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+        comboMonthEnd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"
         , "11", "12"}));
         
         comboYearStart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", 
@@ -75,30 +91,51 @@ public class gui_payment extends javax.swing.JPanel {
         {
             @Override
             public void mouseClicked(MouseEvent e) {
+                btn_them.setEnabled(false);
+                btn_capnhat.setEnabled(true);
+                btn_xoa.setEnabled(true);
+                combo_trangthai.setEnabled(true);
                 
                 int row = table_thanhtoan.rowAtPoint(e.getPoint());
-//                ArrayList <Payment> arr = PaymentDAO.getInstance().getList();
-//                Payment pm = arr.get(row);
-//                txt_idthanhtoan.setText(String.valueOf(pm.getPayment_id()));
-//                
-//                
-//                if (pm.isPayment_state()== true) {
-//                    combo_trangthai.setSelectedIndex(0);
-//                }
-//                else {
-//                    combo_trangthai.setSelectedIndex(1);
-//                }
+                txt_idthanhtoan.setText((String) table_thanhtoan.getValueAt(row, 0));
+                txt_iddangki.setText((String) table_thanhtoan.getValueAt(row, 1));
+                txt_tenkhachhang.setText((String) table_thanhtoan.getValueAt(row, 2));
+                txt_ngaylendon.setText((String) table_thanhtoan.getValueAt(row, 3));
+                txt_loaidichvu.setText((String) table_thanhtoan.getValueAt(row, 4));
+                if (((String) table_thanhtoan.getValueAt(row, 5)).equals("Đã hoàn tất")) {
+                    combo_trangthai.setSelectedIndex(0);
+                }
+                else {
+                    combo_trangthai.setSelectedIndex(1);
+                }
             }
         });
+        LocalDate currentDate = LocalDate.now();
+        String daynow = String.valueOf(currentDate.getDayOfMonth());
+        if (daynow.length() == 1) {daynow = "0" + daynow;}
+        String monthnow = String.valueOf(currentDate.getMonthValue());
+        if (monthnow.length() == 1) {monthnow = "0" + monthnow;}
+        
+        comboDayEnd.setSelectedItem(daynow);
+        comboMonthEnd.setSelectedItem(monthnow);
+        comboYearEnd.setSelectedItem(String.valueOf(currentDate.getYear()));
     }
     
-    public void initTable() {
+    private void initTable() {
         String[] header = new String[] {"ID thanh toán", "ID đăng kí", "Tên khách hàng","Ngày lên đơn", "Loại dịch vụ" ,"Trạng thái"};
         tableModel.setColumnIdentifiers(header);
         table_thanhtoan.setModel(tableModel);
     }
     
-    public void fillTable() {
+    private void fillTable() {
+        tableModel.setRowCount(0);
+        for (ArrayList<String> payment : this.dataPayment) {
+            tableModel.addRow(new String[] {payment.get(0), payment.get(1),payment.get(2),payment.get(3),payment.get(4), payment.get(5)});
+        }
+        tableModel.fireTableDataChanged();
+        txt_tinnhan.setText("Đang hiển thị danh sách tất cả các thanh toán");
+    }
+    private void loadData() {
         String sql = "EXEC Payment_render";
         try (
             Connection conn = OpenConnection.getConnection();
@@ -108,20 +145,21 @@ public class gui_payment extends javax.swing.JPanel {
             while (rs.next()) {
                 int payment_id = rs.getInt("payment_id");
                 int registration_id = rs.getInt("registration_id");
-                String full_name = rs.getString("full_name");
+                String customer_name = rs.getString("full_name");
                 LocalDate extension_time = rs.getDate("extension_time").toLocalDate();
-                String service_name = rs.getString("service_name");
+                String type_service_name = rs.getString("service_name");
                 boolean payment_state = rs.getBoolean("payment_state");
-                String trangthai = "";
-                if (payment_state == true) {
-                    trangthai = "Đã thanh toán";
-                }
-                else {
-                    trangthai = "Chưa thanh toán";
-                }
-                tableModel.addRow(new String[] {String.valueOf(payment_id), String.valueOf(registration_id), full_name, String.valueOf(extension_time), service_name, trangthai});
+                String trangthai = payment_state ? "Đã hoàn tất" : "Chưa hoàn tất";
+                ArrayList<String> registration_data = new ArrayList<>(Arrays.asList(
+                        String.valueOf(payment_id),
+                        String.valueOf(registration_id),
+                        customer_name,
+                        String.valueOf(extension_time),
+                        type_service_name,
+                        trangthai
+                ));
+                this.dataPayment.add(registration_data);
             }
-            tableModel.fireTableDataChanged();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -226,8 +264,10 @@ public class gui_payment extends javax.swing.JPanel {
         });
 
         btn_capnhat.setText("Cập nhật");
+        btn_capnhat.setEnabled(false);
 
         btn_xoa.setText("Xóa");
+        btn_xoa.setEnabled(false);
         btn_xoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_xoaActionPerformed(evt);
@@ -256,6 +296,7 @@ public class gui_payment extends javax.swing.JPanel {
         txt_ngaylendon.setEnabled(false);
 
         combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_trangthai.setEnabled(false);
         combo_trangthai.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 combo_trangthaiActionPerformed(evt);
@@ -275,6 +316,11 @@ public class gui_payment extends javax.swing.JPanel {
         txt_tenkhachhang.setEnabled(false);
 
         btn_chondangki.setText("Chọn");
+        btn_chondangki.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_chondangkiActionPerformed(evt);
+            }
+        });
 
         btn_chondichvu.setText("Chọn dịch vụ");
 
@@ -288,10 +334,10 @@ public class gui_payment extends javax.swing.JPanel {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(8, Short.MAX_VALUE)
+                .addContainerGap(18, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
+                        .addGap(5, 5, 5)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btn_chondichvu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -300,12 +346,25 @@ public class gui_payment extends javax.swing.JPanel {
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
                                     .addComponent(combo_trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(label_ngaydangki, javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(label_tenloaidichvu, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
-                                        .addComponent(label_tenkhachhang, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
-                                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGap(18, 18, 18)
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                                    .addComponent(label_ngaydangki)
+                                                    .addGap(0, 0, Short.MAX_VALUE))
+                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                                    .addGap(0, 0, Short.MAX_VALUE)
+                                                    .addComponent(label_tenkhachhang, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addGap(18, 18, 18))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                            .addGap(0, 0, Short.MAX_VALUE)
+                                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addGap(27, 27, 27))
+                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                                    .addComponent(label_tenloaidichvu, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addGap(32, 32, 32)))))
                                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(txt_tenkhachhang)
                                         .addComponent(txt_ngaylendon)
@@ -316,7 +375,7 @@ public class gui_payment extends javax.swing.JPanel {
                                         .addComponent(txt_loaidichvu)
                                         .addComponent(txt_idthanhtoan)))
                                 .addComponent(label_khachhang, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(18, Short.MAX_VALUE))
+                        .addContainerGap(22, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(btn_them)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -325,7 +384,7 @@ public class gui_payment extends javax.swing.JPanel {
                         .addComponent(btn_xoa)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_datlai)
-                        .addGap(0, 23, Short.MAX_VALUE))))
+                        .addGap(0, 17, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(inforDetail)
@@ -379,15 +438,20 @@ public class gui_payment extends javax.swing.JPanel {
         });
 
         btn_timkiem.setText("Tìm kiếm");
+        btn_timkiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_timkiemActionPerformed(evt);
+            }
+        });
 
-        btn_dathanhtoan.setText("Đã TT");
+        btn_dathanhtoan.setText("Đã HT");
         btn_dathanhtoan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_dathanhtoanActionPerformed(evt);
             }
         });
 
-        btn_chuathanhtoan.setText("Chưa TT");
+        btn_chuathanhtoan.setText("Chưa HT");
         btn_chuathanhtoan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_chuathanhtoanActionPerformed(evt);
@@ -397,6 +461,11 @@ public class gui_payment extends javax.swing.JPanel {
         jLabel1.setText("Danh sách:");
 
         btn_tatca.setText("Tất cả");
+        btn_tatca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tatcaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -417,7 +486,7 @@ public class gui_payment extends javax.swing.JPanel {
                         .addComponent(btn_timkiem, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_timkiem, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -464,8 +533,18 @@ public class gui_payment extends javax.swing.JPanel {
         comboYearEnd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btn_loc.setText("Lọc");
+        btn_loc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_locActionPerformed(evt);
+            }
+        });
 
         btn_bo_loc.setText("Bỏ lọc");
+        btn_bo_loc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_bo_locActionPerformed(evt);
+            }
+        });
 
         jLabel7.setText("Ngày");
 
@@ -563,7 +642,7 @@ public class gui_payment extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -583,7 +662,7 @@ public class gui_payment extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 341, Short.MAX_VALUE))
-                .addGap(25, 25, 25))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -593,10 +672,34 @@ public class gui_payment extends javax.swing.JPanel {
 
     private void btn_chuathanhtoanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chuathanhtoanActionPerformed
         // TODO add your handling code here:
+        int index = 0;
+        tableModel.setRowCount(0);
+        for (ArrayList<String> arr : this.dataPayment) {
+            if (arr.get(5).equals("Chưa hoàn tất")) {
+                tableModel.addRow(new String[] {arr.get(0), arr.get(1), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
+                ++index;
+            }
+        }
+        txt_tinnhan.setText("Đang hiển thị danh sách các thanh toán chưa hoàn tất thanh toán");
+        if (index == this.dataPayment.size()) {
+            txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đơn thanh toán");
+        }
     }//GEN-LAST:event_btn_chuathanhtoanActionPerformed
 
     private void btn_dathanhtoanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_dathanhtoanActionPerformed
         // TODO add your handling code here:
+        int index = 0;
+        tableModel.setRowCount(0);
+        for (ArrayList<String> arr : this.dataPayment) {
+            if (arr.get(5).equals("Đã hoàn tất")) {
+                tableModel.addRow(new String[] {arr.get(0), arr.get(1), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
+                ++index;
+            }
+        }
+        txt_tinnhan.setText("Đang hiển thị danh sách các thanh toán đã hoàn tất thanh toán");
+        if (index == this.dataPayment.size()) {
+            txt_tinnhan.setText("Đang hiển thị danh sách tất cả các thanh toán");
+        }
     }//GEN-LAST:event_btn_dathanhtoanActionPerformed
 
     private void comboDayStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboDayStartActionPerformed
@@ -604,7 +707,17 @@ public class gui_payment extends javax.swing.JPanel {
     }//GEN-LAST:event_comboDayStartActionPerformed
 
     private void btn_datlaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_datlaiActionPerformed
-
+        btn_them.setEnabled(true);
+        btn_capnhat.setEnabled(false);
+        btn_xoa.setEnabled(false);
+        combo_trangthai.setEnabled(false);
+        combo_trangthai.setSelectedIndex(2);
+        
+        txt_idthanhtoan.setText("");
+        txt_iddangki.setText("");
+        txt_loaidichvu.setText("");
+        txt_tenkhachhang.setText("");
+        txt_ngaylendon.setText(String.valueOf(LocalDate.now()));        
     }//GEN-LAST:event_btn_datlaiActionPerformed
 
     private void combo_trangthaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_trangthaiActionPerformed
@@ -626,6 +739,124 @@ public class gui_payment extends javax.swing.JPanel {
     private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_themActionPerformed
+
+    private void btn_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_locActionPerformed
+        // TODO add your handling code here:
+        int index = 0;
+        LocalDate dateStart = LocalDate.parse(comboYearStart.getSelectedItem() + "-" + comboMonthStart.getSelectedItem() + "-" + comboDayStart.getSelectedItem());
+        LocalDate dateEnd = LocalDate.parse(comboYearEnd.getSelectedItem() + "-" + comboMonthEnd.getSelectedItem() + "-" + comboDayEnd.getSelectedItem());
+        tableModel.setRowCount(0);
+        for (ArrayList<String> arr : this.dataPayment) {
+            LocalDate dateofArr = LocalDate.parse(arr.get(3));
+            if (dateStart.isBefore(dateofArr.plusDays(1)) && dateEnd.isAfter(dateofArr.minusDays(1))) {
+                ++index;
+                tableModel.addRow(new String[] {arr.get(0), arr.get(1) ,arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
+            }
+        }
+        tableModel.fireTableDataChanged();
+        txt_tinnhan.setText("Đang hiển thị danh sách các thanh toán đã lọc theo thời gian");
+        if (index == this.dataPayment.size()) {
+            txt_tinnhan.setText("Đang hiển thị danh sách tất cả các thanh toán");
+        }
+    }//GEN-LAST:event_btn_locActionPerformed
+
+    private void btn_tatcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tatcaActionPerformed
+        // TODO add your handling code here:
+        fillTable();
+    }//GEN-LAST:event_btn_tatcaActionPerformed
+
+    private void btn_timkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_timkiemActionPerformed
+        // TODO add your handling code here:
+        int index = 0;
+        tableModel.setRowCount(0);
+        for (ArrayList<String> arr : this.dataPayment) {
+            if (Library.Library.StringOnString(txt_timkiem.getText(), arr.get(2))) {
+                tableModel.addRow(new String[] {arr.get(0), arr.get(1), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
+                ++index;
+            }
+        }
+        txt_tinnhan.setText("Đang hiển thị danh sách các thanh toán đã lọc theo tên khách hàng");
+        if (index == this.dataPayment.size()) {
+            txt_tinnhan.setText("Đang hiển thị danh sách tất cả các thanh toán");
+        }
+    }//GEN-LAST:event_btn_timkiemActionPerformed
+
+    private void btn_bo_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_bo_locActionPerformed
+        // TODO add your handling code here:
+        fillTable();
+    }//GEN-LAST:event_btn_bo_locActionPerformed
+
+    private void btn_chondangkiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chondangkiActionPerformed
+        // TODO add your handling code here:
+        this.viewmain.setEnabled(false);
+        this.logSelection = new LogSelection() {
+            @Override
+            public void initContent() {
+                this.label_property.setText("Tên khách hàng");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                // khoi tao cac thanh phan bang o day
+                String[] header = new String[] {"ID đăng kí", "Khách hàng", "Ngày đăng kí", "Định danh phương tiện", "Trạng thái"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table.rowAtPoint(e.getPoint());
+                        if (!((String) table.getValueAt(row, 4)).equals("Bi huy")) {
+                            txt_tenkhachhang.setText((String) table.getValueAt(row, 1));
+                            txt_iddangki.setText((String) table.getValueAt(row, 0));
+                            
+                            logSelection.setVisible(false);
+                            viewmain.setEnabled(true);
+                            viewmain.requestFocus();
+                        }
+                        else {
+                            viewmain.setEnabled(false);
+                            logMessage = new LogMessage("Không thể chọn đăng kí đã hết hạn") {
+                                @Override
+                                public void action() {
+                                    this.setVisible(false);
+                                    viewmain.setEnabled(true);
+                                    viewmain.requestFocus();
+                                    logSelection.requestFocus();
+                                }
+                            };
+                            logMessage.setVisible(true);
+                        }
+                    }
+                });
+                gui_registration tmp = new gui_registration();
+                ArrayList<ArrayList<String>> tmpDataRegistrationSelect = tmp.shareDataregistration();
+
+                for (ArrayList<String> rs : tmpDataRegistrationSelect) {
+                    this.tableModel.addRow(new String[] {rs.get(0), rs.get(2), rs.get(3), rs.get(4), rs.get(5)});
+                }
+                
+                this.tableModel.fireTableDataChanged();
+                
+                this.btn_loc.addActionListener((ActionEvent e) -> {
+                    
+                });
+                this.btn_boloc.addActionListener(((ActionEvent e) -> {
+                    
+                }));
+            }
+            @Override
+            public void back() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
+    }//GEN-LAST:event_btn_chondangkiActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

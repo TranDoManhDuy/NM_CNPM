@@ -29,7 +29,10 @@ public class gui_timeframe_detail extends javax.swing.JPanel {
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }
-
+    
+    public void EventClick_btnXoa() {} 
+    public void EventClick_btnChinhSua() {}    
+    
     public gui_timeframe_detail(LocalDate decision_date, LocalTime TS1, LocalTime TS2, LocalTime TS3, LocalTime TE1, LocalTime TE2, LocalTime TE3, boolean isActive) {
         initComponents();
         this.decision_date = decision_date;
@@ -93,7 +96,7 @@ public class gui_timeframe_detail extends javax.swing.JPanel {
     /**
      * Creates new form gui_timeframe_detail
      */
-    public void fillTable() {
+    private void fillTable() {
         txt_batdau1.setText(String.valueOf(TS1));
         txt_batdau2.setText(String.valueOf(TS2));
         txt_batdau3.setText(String.valueOf(TS3));
@@ -133,12 +136,12 @@ public class gui_timeframe_detail extends javax.swing.JPanel {
         txt_ngaybanhanh = new javax.swing.JTextField();
         checkbox_conhieuluc = new javax.swing.JCheckBox();
         btn_xoa = new javax.swing.JButton();
-        btn_luu = new javax.swing.JButton();
 
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel1.setText("Khung thời gian thứ 1");
 
+        txt_batdau1.setFocusable(false);
         txt_batdau1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_batdau1ActionPerformed(evt);
@@ -149,19 +152,32 @@ public class gui_timeframe_detail extends javax.swing.JPanel {
 
         jLabel3.setText("Kết thúc");
 
+        txt_ketthuc1.setFocusable(false);
+
         jLabel4.setText("Khung thời gian thứ 2");
 
         jLabel5.setText("Bắt đầu");
 
+        txt_batdau2.setFocusable(false);
+
         jLabel6.setText("Kết thúc");
+
+        txt_ketthuc2.setFocusable(false);
 
         jLabel7.setText("Khung thời gian thứ 3");
 
         jLabel8.setText("Bắt đầu");
 
+        txt_batdau3.setFocusable(false);
+
         jLabel9.setText("Kết thúc");
 
+        txt_ketthuc3.setFocusable(false);
+
         jLabel10.setText("Ngày ban hành");
+
+        txt_ngaybanhanh.setFocusable(false);
+        txt_ngaybanhanh.setRequestFocusEnabled(false);
 
         checkbox_conhieuluc.setText("Còn hiệu lực");
         checkbox_conhieuluc.setEnabled(false);
@@ -172,8 +188,11 @@ public class gui_timeframe_detail extends javax.swing.JPanel {
         });
 
         btn_xoa.setText("XÓA");
-
-        btn_luu.setText("LƯU");
+        btn_xoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_xoaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -189,9 +208,7 @@ public class gui_timeframe_detail extends javax.swing.JPanel {
                 .addContainerGap(243, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btn_luu)
-                    .addComponent(btn_xoa))
+                .addComponent(btn_xoa, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -244,9 +261,7 @@ public class gui_timeframe_detail extends javax.swing.JPanel {
                     .addComponent(checkbox_conhieuluc))
                 .addGap(26, 26, 26)
                 .addComponent(btn_xoa)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_luu)
-                .addContainerGap(95, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(32, 32, 32)
@@ -285,9 +300,13 @@ public class gui_timeframe_detail extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_checkbox_conhieulucActionPerformed
 
+    private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
+        // TODO add your handling code here:
+        this.EventClick_btnXoa();
+    }//GEN-LAST:event_btn_xoaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_luu;
     private javax.swing.JButton btn_xoa;
     private javax.swing.JCheckBox checkbox_conhieuluc;
     private javax.swing.JLabel jLabel1;
@@ -306,6 +325,6 @@ public class gui_timeframe_detail extends javax.swing.JPanel {
     private javax.swing.JTextField txt_ketthuc1;
     private javax.swing.JTextField txt_ketthuc2;
     private javax.swing.JTextField txt_ketthuc3;
-    private javax.swing.JTextField txt_ngaybanhanh;
+    public javax.swing.JTextField txt_ngaybanhanh;
     // End of variables declaration//GEN-END:variables
 }

@@ -17,11 +17,10 @@ import java.util.ArrayList;
  *
  * @author manhh
  */
-public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
+public class VehicleTypeDAO {
      public static VehicleTypeDAO getInstance() {
         return new VehicleTypeDAO();
     }
-     @Override
      public ArrayList<VehicleType> getList() {
         ArrayList<VehicleType> list = new ArrayList<>();
         String sql = "EXEC getlist_vehicle_types";
@@ -42,8 +41,7 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
         }
         return list;
     }
-     @Override
-     public boolean insert(VehicleType vehicleType) {
+     public String insert(VehicleType vehicleType) {
         String sql = "EXEC insert_vehicle_type @vehicle_type_name = ?, @is_availabel = ?";
         
         try (
@@ -52,15 +50,16 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
         ) {
             ptmt.setString(1, vehicleType.getVehicle_type_name());
             ptmt.setBoolean(2, vehicleType.isIsPermission());
-            return ptmt.executeUpdate() > 0;
+            if (ptmt.executeUpdate() > 0) {
+                return "Thêm loại phương tiện thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Kiểm tra lại thông tin";
     }
-     @Override
-     public boolean update(VehicleType vehicleType) {
-        String sql = "EXEC update_vehicle_type @vehicle_type_name = ?, @is_availabel = ?, @vehicle_type_id = 1";
+    public String update(VehicleType vehicleType) {
+        String sql = "EXEC update_vehicle_type @vehicle_type_name = ?, @is_availabel = ?, @vehicle_type_id = ?";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -70,13 +69,14 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
             ptmt.setBoolean(2, vehicleType.isIsPermission());
             ptmt.setInt(3, vehicleType.getVehicle_type_id());
             
-            return ptmt.executeUpdate() > 0;
+            if (ptmt.executeUpdate() > 0) {
+                return "Cập nhật thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Kiểm tra lại thông tin";
     }
-     @Override
      public VehicleType findbyID(int id) {
         String sql = "EXEC findbyID_vehicle_type @vehicle_type_id = ?";
         
@@ -99,9 +99,7 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
         }
         return null;
     }
-     
-     @Override
-     public boolean delete(int id) {
+     public String delete(int id) {
         String sql = "EXEC delete_vehicle_type @vehicle_type_id = ?";
         
         try (
@@ -109,11 +107,13 @@ public class VehicleTypeDAO  implements InterfaceDAO<VehicleType>{
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
             ptmt.setInt(1, id);
-            return ptmt.executeUpdate() > 0;
+            if (ptmt.executeUpdate() > 0) {
+                return "Xóa thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Không thể xóa";
     }
      public static void main(String[] args) {
         ArrayList<VehicleType> list = VehicleTypeDAO.getInstance().getList();

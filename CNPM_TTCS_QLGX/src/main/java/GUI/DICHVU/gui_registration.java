@@ -23,6 +23,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -42,7 +43,15 @@ public class gui_registration extends javax.swing.JPanel {
     private ArrayList<ArrayList<String>> dataRegistration = new ArrayList<>();
     /**
      * Creates new form registration
+     * @return 
      */
+    public ArrayList<ArrayList<String>> shareDataregistration() {
+        loadData();
+        return this.dataRegistration.stream()
+                .map(sublist -> new ArrayList<>(sublist))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+    public gui_registration() {}
     public gui_registration(ViewMain viewmain, LogConfirm logConfirm, LogMessage logMessage, LogSelection logSelection) {
         this.viewmain = viewmain;
         this.logConfirm = logConfirm;
@@ -119,13 +128,22 @@ public class gui_registration extends javax.swing.JPanel {
                 }
             }
         });
+        LocalDate currentDate = LocalDate.now();
+        String daynow = String.valueOf(currentDate.getDayOfMonth());
+        if (daynow.length() == 1) {daynow = "0" + daynow;}
+        String monthnow = String.valueOf(currentDate.getMonthValue());
+        if (monthnow.length() == 1) {monthnow = "0" + monthnow;}
+        
+        combo_ngayketthuc.setSelectedItem(daynow);
+        combo_thangketthuc.setSelectedItem(monthnow);
+        combo_namketthuc.setSelectedItem(String.valueOf(currentDate.getYear()));
     }
-    public void initTable() {
+    private void initTable() {
         String[] header = new String[] {"ID đăng kí", "Khách hàng", "Ngày đăng kí", "Định danh phương tiện", "Trạng thái"};
         tableModel.setColumnIdentifiers(header);
         table_dangki.setModel(tableModel);
     }
-    public void fillTable() {
+    private void fillTable() {
         tableModel.setRowCount(0);
         for (ArrayList<String> arr : this.dataRegistration) {
             tableModel.addRow(new String[] {arr.get(0), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
@@ -133,7 +151,7 @@ public class gui_registration extends javax.swing.JPanel {
         tableModel.fireTableDataChanged();
         txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
     }
-    public void loadData() {
+    private void loadData() {
         String sql = "EXEC Registration_render";
         try (
             Connection conn = OpenConnection.getConnection();
@@ -847,22 +865,11 @@ public class gui_registration extends javax.swing.JPanel {
     }//GEN-LAST:event_btn_themActionPerformed
 
     private void btn_chonkhachhangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonkhachhangActionPerformed
-        // TODO add your handling code here:
-//        this.viewmain.setEnabled(false);
-//        this.logMessage = new LogMessage("Không thể xóa") {
-//            @Override
-//            public void action() {
-//                System.out.println("Tat thong bao");
-//                this.setVisible(false);
-//                viewmain.setEnabled(true);
-//                viewmain.requestFocus();
-//            }
-//        };
-//        this.logMessage.setVisible(true);
         this.viewmain.setEnabled(false);
         this.logSelection = new LogSelection() {
             @Override
             public void initContent() {
+                this.btn_sapxep.setText("Sắp xếp theo tên");
                 this.label_property.setText("Tên khách hàng");
                 this.tableModel = new DefaultTableModel() {
                     @Override
@@ -894,7 +901,30 @@ public class gui_registration extends javax.swing.JPanel {
                 this.tableModel.fireTableDataChanged();
                 
                 this.btn_loc.addActionListener((ActionEvent e) -> {
-                    
+                    this.tableModel.setRowCount(0);
+                    for (Customer customer : arrCustomer) {
+                        if (Library.Library.StringOnString(this.txt_property.getText(), customer.getFull_name())) {
+                            this.tableModel.addRow(new String[] {String.valueOf(customer.getCustomer_id()), customer.getFull_name(), customer.getSsn(), customer.getPhone_number()});
+                        }
+                    }
+                    this.tableModel.fireTableDataChanged();
+                });
+                this.btn_boloc.addActionListener((ActionEvent e) -> {
+                    this.tableModel.setRowCount(0);
+                    for (Customer customer : arrCustomer) {
+                        this.tableModel.addRow(new String[] {String.valueOf(customer.getCustomer_id()), customer.getFull_name(), customer.getSsn(), customer.getPhone_number()});
+                    }
+                    this.tableModel.fireTableDataChanged();
+                });
+                
+                this.btn_sapxep.addActionListener((ActionEvent e) -> {
+                    this.tableModel.setRowCount(0);
+                    ArrayList<Customer> tmp_sorted = new ArrayList<>(arrCustomer);
+                    tmp_sorted.sort((c1, c2) -> c1.getFull_name().compareTo(c2.getFull_name()));
+                    for (Customer customer : tmp_sorted) {
+                        this.tableModel.addRow(new String[] {String.valueOf(customer.getCustomer_id()), customer.getFull_name(), customer.getSsn(), customer.getPhone_number()});
+                    }
+                    this.tableModel.fireTableDataChanged();
                 });
             }
             @Override
@@ -1064,7 +1094,7 @@ public class gui_registration extends javax.swing.JPanel {
                 ++index;
             }
         }
-        txt_tinnhan.setText("Đang hiển thị danh sách các đăng kí đã lọc theo thời gian");
+        txt_tinnhan.setText("Đang hiển thị danh sách các đăng kí đã lọc theo tên");
         if (index == this.dataRegistration.size()) {
             txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
         }
@@ -1123,7 +1153,7 @@ public class gui_registration extends javax.swing.JPanel {
     private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
         this.viewmain.setEnabled(false);
         this.cursorBreak = false;
-
+        
         this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật?") {
             @Override
             public void action() {
@@ -1164,39 +1194,6 @@ public class gui_registration extends javax.swing.JPanel {
         };
         worker.execute();
         worker = null;
-//        int id_pt = -1;
-//        for (Vehicle vehicle : VehicleDAO.getInstance().getList()) {
-//            if (vehicle.getIdentification_code().equals(txt_phuongtien.getText())) {
-//                id_pt = vehicle.getVehicle_id();
-//                break;
-//            }
-//        }
-//        LocalDate datetime = LocalDate.parse(txt_ngaydangki.getText());
-//        char state = 'A';
-//        if (combo_trangthai.getSelectedIndex() == 0) {
-//            state = 'A';
-//        }
-//        if (combo_trangthai.getSelectedIndex() == 1) {
-//            state = 'B';
-//        }
-//        if (combo_trangthai.getSelectedIndex() == 2) {
-//            state = 'C';
-//        }
-//        Regisatration registration = new Regisatration(Integer.parseInt(txt_id_khachhang.getText()), Integer.parseInt(txt_iddangki.getText()), datetime, id_pt, state);
-//        
-//        String rs = RegisatrationDAO.getInstance().update(registration);
-//        this.viewmain.setEnabled(false);
-//        this.logMessage = new LogMessage(rs) {
-//            @Override
-//            public void action() {
-//                this.setVisible(false);
-//                viewmain.setEnabled(true);
-//                viewmain.requestFocus();
-//            }
-//        };
-//        this.logMessage.setVisible(true);
-//        loadData();
-//        fillTable();
     }//GEN-LAST:event_btn_capnhatActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_bo_loc;

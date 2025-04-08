@@ -44,7 +44,6 @@ public class LogSelection extends javax.swing.JFrame implements doAction, InitCo
 
         jPanel1 = new javax.swing.JPanel();
         btn_quaylai = new javax.swing.JButton();
-        label_logname = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         label_property = new javax.swing.JLabel();
         txt_property = new javax.swing.JTextField();
@@ -66,19 +65,24 @@ public class LogSelection extends javax.swing.JFrame implements doAction, InitCo
             }
         });
 
-        label_logname.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        label_logname.setForeground(new java.awt.Color(0, 204, 204));
-        label_logname.setText("Tên Log");
-        label_logname.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        label_logname.setInheritsPopupMenu(false);
-
         label_property.setText("Thuoc Tinh");
+
+        txt_property.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_propertyActionPerformed(evt);
+            }
+        });
 
         btn_loc.setText("Lọc");
 
         btn_boloc.setText("Bỏ lọc");
 
         btn_sapxep.setText("Sắp xếp theo ...");
+        btn_sapxep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_sapxepActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -86,16 +90,15 @@ public class LogSelection extends javax.swing.JFrame implements doAction, InitCo
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(47, 47, 47)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(label_property, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(txt_property, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btn_loc)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btn_boloc)
-                        .addGap(18, 18, 18)
-                        .addComponent(btn_sapxep, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(label_property, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txt_property, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(btn_loc)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btn_boloc)
+                .addGap(18, 18, 18)
+                .addComponent(btn_sapxep, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(204, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -132,10 +135,7 @@ public class LogSelection extends javax.swing.JFrame implements doAction, InitCo
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(38, 38, 38)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btn_quaylai)
-                        .addGap(224, 224, 224)
-                        .addComponent(label_logname))
+                    .addComponent(btn_quaylai)
                     .addComponent(jScrollPane1)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(43, Short.MAX_VALUE))
@@ -143,14 +143,9 @@ public class LogSelection extends javax.swing.JFrame implements doAction, InitCo
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(label_logname)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(btn_quaylai)
-                        .addGap(18, 18, 18)))
+                .addContainerGap(21, Short.MAX_VALUE)
+                .addComponent(btn_quaylai)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -178,6 +173,14 @@ public class LogSelection extends javax.swing.JFrame implements doAction, InitCo
         back();
     }//GEN-LAST:event_btn_quaylaiActionPerformed
 
+    private void btn_sapxepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_sapxepActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_sapxepActionPerformed
+
+    private void txt_propertyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_propertyActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_propertyActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btn_boloc;
     public javax.swing.JButton btn_loc;
@@ -186,9 +189,8 @@ public class LogSelection extends javax.swing.JFrame implements doAction, InitCo
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel label_logname;
     public javax.swing.JLabel label_property;
     public javax.swing.JTable table;
-    private javax.swing.JTextField txt_property;
+    public javax.swing.JTextField txt_property;
     // End of variables declaration//GEN-END:variables
 }

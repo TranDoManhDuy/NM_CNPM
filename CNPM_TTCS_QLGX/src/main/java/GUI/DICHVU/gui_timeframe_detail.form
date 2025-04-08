@@ -34,10 +34,7 @@
           </Group>
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="btn_luu" min="-2" max="-2" attributes="0"/>
-                  <Component id="btn_xoa" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <Component id="btn_xoa" min="-2" pref="93" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
           </Group>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
@@ -107,9 +104,7 @@
               </Group>
               <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
               <Component id="btn_xoa" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="btn_luu" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="95" max="32767" attributes="0"/>
+              <EmptySpace pref="124" max="32767" attributes="0"/>
           </Group>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
@@ -153,6 +148,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txt_batdau1">
+      <Properties>
+        <Property name="focusable" type="boolean" value="false"/>
+      </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_batdau1ActionPerformed"/>
       </Events>
@@ -168,6 +166,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txt_ketthuc1">
+      <Properties>
+        <Property name="focusable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>
@@ -180,6 +181,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txt_batdau2">
+      <Properties>
+        <Property name="focusable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
@@ -187,6 +191,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txt_ketthuc2">
+      <Properties>
+        <Property name="focusable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel7">
       <Properties>
@@ -199,6 +206,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txt_batdau3">
+      <Properties>
+        <Property name="focusable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel9">
       <Properties>
@@ -206,6 +216,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txt_ketthuc3">
+      <Properties>
+        <Property name="focusable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel10">
       <Properties>
@@ -213,6 +226,13 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txt_ngaybanhanh">
+      <Properties>
+        <Property name="focusable" type="boolean" value="false"/>
+        <Property name="requestFocusEnabled" type="boolean" value="false"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JCheckBox" name="checkbox_conhieuluc">
       <Properties>
@@ -227,11 +247,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="X&#xd3;A"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="btn_luu">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="L&#x1af;U"/>
-      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_xoaActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
