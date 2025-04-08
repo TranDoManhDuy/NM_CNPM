@@ -17,12 +17,11 @@ import java.util.ArrayList;
  *
  * @author manhh
  */
-public class SessionFeeDAO implements InterfaceDAO.InterfaceDAO<SessionFee> {
+public class SessionFeeDAO {
     public static SessionFeeDAO getInstance() {
         return new SessionFeeDAO();
     }
     
-    @Override
     public ArrayList<SessionFee> getList() {
         ArrayList<SessionFee> listSessionFees = new ArrayList<>();
         String sql = "EXEC getlist_session_fees";
@@ -47,8 +46,8 @@ public class SessionFeeDAO implements InterfaceDAO.InterfaceDAO<SessionFee> {
         }
         return listSessionFees;
     }
-    @Override
-    public boolean insert(SessionFee sessionFee) {
+    
+    public String insert(SessionFee sessionFee) {
         String sql = "EXEC insert_session_fee @time_frame_id = ?, @vehicle_type_id = ?, @decision_date = ?, @amount = ?, @is_active = ?";
         try (
             Connection conn = OpenConnection.getConnection();
@@ -60,15 +59,16 @@ public class SessionFeeDAO implements InterfaceDAO.InterfaceDAO<SessionFee> {
             ptmt.setInt(4, sessionFee.getAmount());
             ptmt.setBoolean(5, sessionFee.isIs_active());
             
-            return ptmt.executeUpdate() > 0;
+            if(ptmt.executeUpdate() > 0) {
+                return "Thêm thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Thêm không thành công";
     }
     
-    @Override
-    public boolean update(SessionFee sessionFee) {
+    public String update(SessionFee sessionFee) {
         String sql = "EXEC update_session_fee @time_frame_id = ?, @vehicle_type_id = ?, @decision_date = ?, @amount = ?, @is_active = ?, @session_fee_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
@@ -81,14 +81,15 @@ public class SessionFeeDAO implements InterfaceDAO.InterfaceDAO<SessionFee> {
             ptmt.setBoolean(5, sessionFee.isIs_active());
             ptmt.setInt(6, sessionFee.getSession_fee_id());
             
-            return ptmt.executeUpdate() > 0;
+            if (ptmt.executeUpdate() > 0) {
+                return "Cập nhật thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Cập nhật không thành công";
     }
     
-    @Override
     public SessionFee findbyID(int id) {
         String sql = "EXEC findbyID_session_fee @session_fee_id = ?";
         try (
@@ -114,19 +115,22 @@ public class SessionFeeDAO implements InterfaceDAO.InterfaceDAO<SessionFee> {
         return null;
     }
     
-    @Override
-    public boolean delete(int id) {
+    public String delete(int id) {
         String sql = " EXEC delete_session_fee @session_fee_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
             ptmt.setInt(1, id);
-            return ptmt.executeUpdate() > 0;
+            int x = ptmt.executeUpdate();
+            if ( x >= 0) {
+                System.out.println(x);
+                return "Xóa thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Xóa thành công";
     }
     
     public static void main(String[] args) {

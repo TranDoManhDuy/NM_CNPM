@@ -119,6 +119,7 @@ public class gui_payment extends javax.swing.JPanel {
         comboDayEnd.setSelectedItem(daynow);
         comboMonthEnd.setSelectedItem(monthnow);
         comboYearEnd.setSelectedItem(String.valueOf(currentDate.getYear()));
+        table_thanhtoan.setRowHeight(30);
     }
     
     private void initTable() {

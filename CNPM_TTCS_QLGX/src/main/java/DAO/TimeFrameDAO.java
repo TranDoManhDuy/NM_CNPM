@@ -78,7 +78,31 @@ public class TimeFrameDAO {
         }
         return listTimeFrames;
     }
-    
+    public ArrayList<TimeFrame> getListToSelect() {
+        ArrayList<TimeFrame> listTimeFrames = new ArrayList<>();
+        String sql = " EXEC getlist_time_frames";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+        ) {
+            while (rs.next()) {
+                int time_frame_id = rs.getInt("time_frame_id");
+                LocalDate decision_date = rs.getDate("decision_date").toLocalDate();
+                LocalTime time_start = rs.getTime("time_start").toLocalTime();
+                LocalTime time_end = rs.getTime("time_end").toLocalTime();
+                boolean is_active = rs.getBoolean("is_active");
+                
+                TimeFrame timeFrame = new TimeFrame(time_frame_id, decision_date, time_start, time_end, is_active);
+                if (timeFrame.isIs_active()) {
+                    listTimeFrames.add(timeFrame);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listTimeFrames;
+    }
     public boolean insert(TimeFrame timeFrame) {
         String sql = "EXEC insert_time_frame @decision_date = ?, @time_start = ?, @time_end = ?, @is_active = ?";
         try (

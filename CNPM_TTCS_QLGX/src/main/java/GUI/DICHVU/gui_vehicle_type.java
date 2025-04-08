@@ -52,6 +52,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                 btn_them.setEnabled(false);
                 btn_capnhat.setEnabled(true);
                 btn_xoa.setEnabled(true);
+                combo_trangthai.setEnabled(true);
                 
                 int row = table_loaiphuongtien.rowAtPoint(e.getPoint());
                 
@@ -67,6 +68,8 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         initTable();
         loadData();
         fillTable();
+        combo_trangthai.setSelectedIndex(2);
+        table_loaiphuongtien.setRowHeight(30);
     }
     private void initTable() {
         String[] header = new String[] {"ID Loại Phương Tiện", "Tên Loại Phương Tiện", "Còn cho phép"};
@@ -154,7 +157,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         );
 
         txt_idloaiphuongtien.setDisabledTextColor(new java.awt.Color(102, 102, 102));
-        txt_idloaiphuongtien.setEnabled(false);
+        txt_idloaiphuongtien.setFocusable(false);
 
         label_id_dangki.setText("ID loại phương tiện");
 
@@ -197,6 +200,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         jLabel1.setText("Trạng thái");
 
         combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_trangthai.setEnabled(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -380,7 +384,8 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         // TODO add your handling code here:
         txt_idloaiphuongtien.setText("");
         txt_tenloaiphuongtien.setText("");
-        combo_trangthai.setSelectedIndex(0);
+        combo_trangthai.setSelectedIndex(2);
+        combo_trangthai.setEnabled(false);
         
         btn_them.setEnabled(true);
         btn_capnhat.setEnabled(false);

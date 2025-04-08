@@ -137,6 +137,7 @@ public class gui_registration extends javax.swing.JPanel {
         combo_ngayketthuc.setSelectedItem(daynow);
         combo_thangketthuc.setSelectedItem(monthnow);
         combo_namketthuc.setSelectedItem(String.valueOf(currentDate.getYear()));
+        table_dangki.setRowHeight(30);
     }
     private void initTable() {
         String[] header = new String[] {"ID đăng kí", "Khách hàng", "Ngày đăng kí", "Định danh phương tiện", "Trạng thái"};
@@ -276,7 +277,7 @@ public class gui_registration extends javax.swing.JPanel {
 
         txt_iddangki.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txt_iddangki.setDisabledTextColor(new java.awt.Color(153, 153, 153));
-        txt_iddangki.setEnabled(false);
+        txt_iddangki.setFocusable(false);
 
         label_iddangki.setText("Id đăng kí");
 
@@ -313,7 +314,7 @@ public class gui_registration extends javax.swing.JPanel {
 
         txt_ten_Khachhang.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txt_ten_Khachhang.setDisabledTextColor(new java.awt.Color(153, 153, 153));
-        txt_ten_Khachhang.setEnabled(false);
+        txt_ten_Khachhang.setFocusable(false);
         txt_ten_Khachhang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_ten_KhachhangActionPerformed(evt);
@@ -322,7 +323,7 @@ public class gui_registration extends javax.swing.JPanel {
 
         txt_phuongtien.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txt_phuongtien.setDisabledTextColor(new java.awt.Color(153, 153, 153));
-        txt_phuongtien.setEnabled(false);
+        txt_phuongtien.setFocusable(false);
         txt_phuongtien.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_phuongtienActionPerformed(evt);
@@ -340,7 +341,7 @@ public class gui_registration extends javax.swing.JPanel {
 
         txt_ngaydangki.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txt_ngaydangki.setDisabledTextColor(new java.awt.Color(153, 153, 153));
-        txt_ngaydangki.setEnabled(false);
+        txt_ngaydangki.setFocusable(false);
 
         combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         combo_trangthai.setEnabled(false);
@@ -361,7 +362,7 @@ public class gui_registration extends javax.swing.JPanel {
 
         txt_id_khachhang.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txt_id_khachhang.setDisabledTextColor(new java.awt.Color(153, 153, 153));
-        txt_id_khachhang.setEnabled(false);
+        txt_id_khachhang.setFocusable(false);
 
         btn_chonkhachhang.setText("Chọn");
         btn_chonkhachhang.addActionListener(new java.awt.event.ActionListener() {

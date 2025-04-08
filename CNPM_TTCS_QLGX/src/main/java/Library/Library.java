@@ -29,7 +29,9 @@ public class Library {
         String emailRegex = "^[a-zA-Z0-9]+@[a-zA-Z0-9.]+\\.[a-zA-Z]{2,}$";
         return email.matches(emailRegex);
     }
-    
+    public static boolean isNumber(String numberString) {
+        return numberString != null && numberString.matches("\\d+");
+    }
     // kiem tra cccd
     public static boolean isValidSSN(String str) {
         return str.matches("\\d{12}");
@@ -40,7 +42,7 @@ public class Library {
     }
     
     // in dinh dang tien te
-    public static String formatCurrency(int amount) {
+    public static String formatCurrency(float amount) {
         NumberFormat formatter = NumberFormat.getInstance(Locale.US); // Định dạng theo US (1,000,000)
         return formatter.format(amount);
     }
@@ -106,7 +108,68 @@ public class Library {
         }
         return false;
     }
+    
+    public static boolean isLeapYear(int year) {
+        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+    }
+    
+    public static String[] getDay(int month, int year) { 
+        String[] sDay = new String[] { "-1", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
+                                  "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", 
+                                  "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" };
+        if (month == 2) {
+            if (year == -1 || isLeapYear(year)) { 
+                sDay = new String[] { "-1", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", 
+                                      "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", 
+                                      "22", "23", "24", "25", "26", "27", "28", "29" };
+            } else {
+                sDay = new String[] { "-1", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", 
+                                      "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", 
+                                      "22", "23", "24", "25", "26", "27", "28" };
+            }
+        } else if (month == 4 || month == 6 || month == 9 || month == 11) {
+            // Các tháng có 30 ngày
+            sDay = new String[] { "-1", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", 
+                                  "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", 
+                                  "22", "23", "24", "25", "26", "27", "28", "29", "30" };
+        }
+        return sDay;
+    }
+    
+    public static String[] getMonth(int day, int year) { 
+        String[] sMonth = new String[]  {"-1", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
+        if (day == 31) {
+                sMonth = new String[]   {"-1", "01", "03", "05", "07", "08", "10", "12"};
+                return sMonth;
+            }
+        else if (day == 30){
+            sMonth = new String[]   {"-1", "01", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
+            return sMonth;
+        }
+        return sMonth;
+    }
+    
+    public static String[] getYear(int day, int month) {
+        String[] sYear = new String[2035 - 1950 + 2];
+        sYear[0] = "-1";
+        for (int i = 1950; i <= 2035; i++) {
+            sYear[i - 1950 + 1] = String.valueOf(i).substring(2);
+        }
+        if (day == 29 && month == 2) { 
+            ArrayList<String> leapYears = new ArrayList<>();
+            leapYears.add("-1");
 
+            for (int i = 1950; i <= 2035; i++) {
+                if (isLeapYear(i)) {
+                    leapYears.add(String.valueOf(i).substring(2));
+                }
+                
+            }
+            sYear = leapYears.toArray(new String[0]);
+            return sYear;
+        }
+        return sYear;
+    }
     public static void main(String[] args) {
         
     }

@@ -24,10 +24,10 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="txt_tinnhan" min="-2" pref="401" max="-2" attributes="0"/>
-                  <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
+                  <Component id="PanelFilter" min="-2" max="-2" attributes="0"/>
+                  <Component id="txt_tinnhan" min="-2" pref="559" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
               <Component id="jPanel2" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -46,7 +46,7 @@
               <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
+                      <Component id="PanelFilter" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="txt_tinnhan" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -138,7 +138,7 @@
                               </Group>
                               <Component id="jLabel3" alignment="0" max="32767" attributes="0"/>
                               <Component id="label_trangthai" alignment="0" max="32767" attributes="0"/>
-                              <Component id="label_khachhang" pref="111" max="32767" attributes="0"/>
+                              <Component id="label_khachhang" max="32767" attributes="0"/>
                               <Component id="label_id_khachhang" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
@@ -153,7 +153,7 @@
                               <Group type="102" attributes="0">
                                   <Component id="txt_idkhungthoigian" min="-2" pref="115" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="btn_chonkhungthoigian" pref="88" max="32767" attributes="0"/>
+                                  <Component id="btn_chonkhungthoigian" pref="74" max="32767" attributes="0"/>
                               </Group>
                               <Component id="txt_giobatdau" alignment="0" max="32767" attributes="0"/>
                               <Component id="txt_gioketthuc" alignment="0" max="32767" attributes="0"/>
@@ -234,7 +234,7 @@
       <SubComponents>
         <Component class="javax.swing.JTextField" name="txt_idbanghimucgia">
           <Properties>
-            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="focusable" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_idbanghimucgiaActionPerformed"/>
@@ -278,6 +278,9 @@
             <Property name="text" type="java.lang.String" value="C&#x1ead;p nh&#x1ead;t"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_capnhatActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btn_xoa">
           <Properties>
@@ -290,7 +293,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txt_tenphuongtien">
           <Properties>
-            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="focusable" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_tenphuongtienActionPerformed"/>
@@ -298,7 +301,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txt_gioketthuc">
           <Properties>
-            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="focusable" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_gioketthucActionPerformed"/>
@@ -311,7 +314,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txt_giobatdau">
           <Properties>
-            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="focusable" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="combo_trangthai">
@@ -324,7 +327,6 @@
                 <StringItem index="3" value="Item 4"/>
               </StringArray>
             </Property>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="combo_trangthaiActionPerformed"/>
@@ -348,7 +350,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txt_idloaiphuongtien">
           <Properties>
-            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="focusable" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btn_chonloaiphuongtien">
@@ -365,9 +367,10 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txt_giatien1tieng">
-          <Properties>
-            <Property name="enabled" type="boolean" value="false"/>
-          </Properties>
+          <Events>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_giatien1tiengKeyPressed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_giatien1tiengKeyReleased"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
@@ -376,13 +379,16 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txt_idkhungthoigian">
           <Properties>
-            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="focusable" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btn_chonkhungthoigian">
           <Properties>
             <Property name="text" type="java.lang.String" value="Ch&#x1ecd;n"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_chonkhungthoigianActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
@@ -391,23 +397,27 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txt_ngaybanhanh">
           <Properties>
-            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="focusable" type="boolean" value="false"/>
           </Properties>
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="jPanel3">
+    <Container class="javax.swing.JPanel" name="PanelFilter">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
-                  <Component id="btn_timkiem" min="-2" pref="116" max="-2" attributes="0"/>
+                  <Component id="btn_timkiem" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txt_timkiem" min="-2" pref="538" max="-2" attributes="0"/>
+                  <Component id="txt_timkiem" min="-2" pref="459" max="-2" attributes="0"/>
+                  <EmptySpace pref="23" max="32767" attributes="0"/>
               </Group>
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -416,6 +426,7 @@
                   <Component id="btn_hethieuluc" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="btn_tatca" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -423,11 +434,11 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace pref="14" max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="txt_timkiem" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btn_timkiem" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="btn_timkiem" min="-2" max="-2" attributes="0"/>
+                      <Component id="txt_timkiem" pref="29" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btn_conhieuluc" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btn_hethieuluc" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -447,8 +458,11 @@
         </Component>
         <Component class="javax.swing.JButton" name="btn_timkiem">
           <Properties>
-            <Property name="text" type="java.lang.String" value="T&#xec;m ki&#x1ebf;m t&#xea;n"/>
+            <Property name="text" type="java.lang.String" value="T&#xec;m ki&#x1ebf;m t&#xea;n ph&#x1b0;&#x1a1;ng ti&#x1ec7;n"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_timkiemActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btn_conhieuluc">
           <Properties>
@@ -475,13 +489,16 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="T&#x1ea5;t c&#x1ea3;"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_tatcaActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
     <Component class="javax.swing.JTextField" name="txt_tinnhan">
       <Properties>
         <Property name="text" type="java.lang.String" value="&#x110;ang hi&#x1ec3;n th&#x1ecb; b&#x1ea3;ng gi&#xe1; c&#xf3; hi&#x1ec7;u l&#x1ef1;c"/>
-        <Property name="enabled" type="boolean" value="false"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
     </Component>
   </SubComponents>

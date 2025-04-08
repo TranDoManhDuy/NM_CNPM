@@ -36,6 +36,19 @@ public class ParkingSession {
         this.amount = amount;
     }
     
+    public ParkingSession(int card_id, boolean is_service, LocalDateTime check_in_time,int vehicle_id) {
+        this.card_id = card_id;
+        this.is_service = is_service;
+        this.check_in_time = check_in_time;
+        this.vehicle_id = vehicle_id;
+    }
+    
+    public ParkingSession(int parking_session_id, int amount) {
+        this.parking_session_id = parking_session_id;
+        this.amount = amount;
+    }
+    
+    
     public ParkingSession(int parking_session_id, int card_id, boolean is_service, LocalDateTime check_in_time, LocalDateTime check_out_time, int check_in_shift_id, int check_out_shift_id, int vehicle_id, int amount) {
         this.parking_session_id = parking_session_id;
         this.card_id = card_id;

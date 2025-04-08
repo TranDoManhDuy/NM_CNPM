@@ -22,8 +22,13 @@ public class DataGlobal {
     private ArrayList<Regisatration> arrRegistration = new ArrayList<>();
     private ArrayList<Customer> arrCustomer = new ArrayList<>();
     private ArrayList<Vehicle> arrVehicle = new ArrayList<>();
+    private ArrayList<ArrayList<String>> arrServiceFee_render = new ArrayList<>();
     
     public DataGlobal() {}
+    
+    public ArrayList<ArrayList<String>> getArrServiceFee_render() {
+        
+    }
     
     public ArrayList<Regisatration> getArrayRegistration() {
         return arrRegistration;
