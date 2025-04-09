@@ -15,6 +15,20 @@ public class Staff {
     private boolean is_active;
     private int position_id;
     private int account_number;
+    
+    public Staff(int role_id, String full_name, String ssn, LocalDate date_of_birth, String gender, String phone_number, String address, String email, boolean is_active, int position_id, int account_number) {
+        this.role_id = role_id;
+        this.full_name = full_name;
+        this.ssn = ssn;
+        this.date_of_birth = date_of_birth;
+        this.gender = gender;
+        this.phone_number = phone_number;
+        this.address = address;
+        this.email = email;
+        this.is_active = is_active;
+        this.position_id = position_id;
+        this.account_number = account_number;
+    }
 
     public Staff(int staff_id, int role_id, String full_name, String ssn, LocalDate date_of_birth, String gender, String phone_number, String address, String email, boolean is_active, int position_id, int account_number) {
         this.staff_id = staff_id;

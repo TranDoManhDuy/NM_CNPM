@@ -1,10 +1,15 @@
 package GUI.NHANSU;
 
+import DAO.ManagerDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
+import Model.Manager;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
 public class gui_manager extends javax.swing.JPanel {
@@ -51,7 +56,19 @@ public class gui_manager extends javax.swing.JPanel {
     } catch (Exception e) {
         e.printStackTrace();
     }
+    Table_Manager.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            int selectedRow = Table_Manager.getSelectedRow();
+            if (selectedRow >= 0) {
+                txtQuanly.setText(Table_Manager.getValueAt(selectedRow, 0).toString());
+                txtTenquanly.setText(Table_Manager.getValueAt(selectedRow, 1).toString());             
+            }
+        }
+        
+    });
 }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -64,9 +81,9 @@ public class gui_manager extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtQuanly = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtTenquanly = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -95,7 +112,7 @@ public class gui_manager extends javax.swing.JPanel {
                 {null, null}
             },
             new String [] {
-                "ID Quản lí", "Họ tên"
+                "ID Quản lý", "Họ tên"
             }
         ) {
             Class[] types = new Class [] {
@@ -143,7 +160,7 @@ public class gui_manager extends javax.swing.JPanel {
         jLabel12.setText("THÔNG TIN VAI TRÒ");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel1.setText("ID Quản lí");
+        jLabel1.setText("ID Quản lý");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("Họ tên");
@@ -187,11 +204,11 @@ public class gui_manager extends javax.swing.JPanel {
                                 .addComponent(jButton2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jButton1))
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtTenquanly, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel1)
                                 .addComponent(jLabel2)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(txtQuanly, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(49, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -202,11 +219,11 @@ public class gui_manager extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addGap(5, 5, 5)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtQuanly, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtTenquanly, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -363,6 +380,24 @@ public class gui_manager extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
 
+//        public void loadTable() {
+//        DefaultTableModel model = (DefaultTableModel) Table_Manager.getModel();
+//        model.setRowCount(0); // Xoá dữ liệu cũ
+//
+//        ArrayList<Manager> managerList = ManagerDAO.getInstance().getList();
+//        for (Manager manager : managerList) {
+//            model.addRow(new Object[]{
+//                manager.,
+//                position.getPositionName()
+//        });
+//    }
+//}
+//    
+//    private void ResetThongTin(){
+//        txtVitri.setText("");
+//        txtTenvitri.setText("");
+//    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel_DS;
@@ -385,8 +420,8 @@ public class gui_manager extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField txtQuanly;
+    private javax.swing.JTextField txtTenquanly;
     // End of variables declaration//GEN-END:variables
 }

@@ -23,11 +23,11 @@ public class AccountDAO implements InterfaceDAO.InterfaceDAO<Account> {
         ) {
             while (result.next()) {
                 int account_number = result.getInt("account_number");
-                String password = result.getString("password");
+//                String password = result.getString("password");
                 boolean is_active = result.getBoolean("is_active");
                 int role_id = result.getInt("role_id");
                 
-                list_accounts.add(new Account(account_number, password, is_active, role_id));
+                list_accounts.add(new Account(account_number, is_active, role_id));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,15 +36,15 @@ public class AccountDAO implements InterfaceDAO.InterfaceDAO<Account> {
     }
     @Override
     public boolean insert(Account acc) {
-        String sql = "EXEC insert_account @password = ?, @ís_active = ?, @role_id = ?";
+        String sql = "EXEC insert_account @account_number = ?, @password = ?, @is_active = ?, @role_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
-            
-            ptmt.setString(1, acc.getPassword());
-            ptmt.setBoolean(2, acc.isActive());
-            ptmt.setInt(3, acc.getRoleId());
+            ptmt.setInt(1, acc.getAccountNumber());
+            ptmt.setString(2, acc.getPassword());
+            ptmt.setBoolean(3, acc.isActive());
+            ptmt.setInt(4, acc.getRoleId());
             
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -54,15 +54,15 @@ public class AccountDAO implements InterfaceDAO.InterfaceDAO<Account> {
     }
     @Override
     public boolean update(Account acc) {
-        String sql = "EXEC insert_account @password = ?, @ís_active = ?, @role_id = ?";
+        String sql = "EXEC update_account @is_active = ?, @role_id = ?, @account_number = ?" ;
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
-            ptmt.setString(1, acc.getPassword());
-            ptmt.setBoolean(2, acc.isActive());
-            ptmt.setInt(3, acc.getRoleId());
-            ptmt.setInt(4, acc.getAccountNumber());
+            
+            ptmt.setBoolean(1, acc.isActive());
+            ptmt.setInt(2, acc.getRoleId());
+            ptmt.setInt(3, acc.getAccountNumber());
             
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class AccountDAO implements InterfaceDAO.InterfaceDAO<Account> {
     }
     @Override
     public Account findbyID(int id) {
-        String sql = "EXEC findbyID_account @account_number = ?";
+        String sql = "EXEC findbyAN_account @account_number = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
