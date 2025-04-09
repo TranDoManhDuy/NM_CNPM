@@ -8,6 +8,7 @@ import Annotation.LogMessage;
 import Model.ShiftTypes;
 import DAO.ShiftTypesDAO; 
 import GUI.ViewMain;
+import Global.DataGlobal;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,8 @@ public class gui_shift_type extends javax.swing.JPanel {
      * Creates new form gui_shift_type
      */
     private DefaultTableModel tableModel;
-    private List<ShiftTypes> ListShiftTypes = new ArrayList<>();
+//    private List<ShiftTypes> ListShiftTypes = new ArrayList<>();
+    private DataGlobal dataGlobal = new DataGlobal();
     private ViewMain viewMain;
     public gui_shift_type(ViewMain viewMain) {
         this.viewMain = viewMain;
@@ -39,9 +41,9 @@ public class gui_shift_type extends javax.swing.JPanel {
 //        jButton1.setEnabled(false);
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);
-        loadListShiftTypes();
         initTable();
-        fillTable(ListShiftTypes);
+        dataGlobal.updateArrShiftTypes();     
+        fillTable(dataGlobal.getArrayShiftTypes());
     }
     
     public void initTable() {
@@ -49,10 +51,6 @@ public class gui_shift_type extends javax.swing.JPanel {
         tableModel.setColumnIdentifiers(header);
         jTable1.setModel(tableModel);
         jTable1.setRowHeight(25);
-    }
-    
-    public void loadListShiftTypes(){
-        ListShiftTypes = ShiftTypesDAO.getInstance().getAllShiftTypes();
     }
     
     public void fillTable(List<ShiftTypes> ListShiftTypes){
@@ -74,8 +72,8 @@ public class gui_shift_type extends javax.swing.JPanel {
         if(r){
             viewMain.setEnabled(true);
             viewMain.requestFocus();
-            ListShiftTypes = ShiftTypesDAO.getInstance().getAllShiftTypes();
-            fillTable(ListShiftTypes);
+            dataGlobal.updateArrShiftTypes();     
+            fillTable(dataGlobal.getArrayShiftTypes());
         }
         else{
             viewMain.setEnabled(false);
@@ -105,8 +103,8 @@ public class gui_shift_type extends javax.swing.JPanel {
         if(r){
             viewMain.setEnabled(true);
             viewMain.requestFocus();
-            ListShiftTypes = ShiftTypesDAO.getInstance().getAllShiftTypes();
-            fillTable(ListShiftTypes);
+            dataGlobal.updateArrShiftTypes();     
+            fillTable(dataGlobal.getArrayShiftTypes());
         }else{
             LogMessage message = new LogMessage("Không thể cập nhật"){
                 @Override
@@ -127,8 +125,8 @@ public class gui_shift_type extends javax.swing.JPanel {
         if(r){
             viewMain.setEnabled(true);
             viewMain.requestFocus();
-            ListShiftTypes = ShiftTypesDAO.getInstance().getAllShiftTypes();
-            fillTable(ListShiftTypes);
+            dataGlobal.updateArrShiftTypes();     
+            fillTable(dataGlobal.getArrayShiftTypes());
         }else{
             LogMessage message = new LogMessage("Không thể xoá"){
                 @Override
@@ -418,7 +416,7 @@ public class gui_shift_type extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if(jTextField2.getText() == null||jTextField2.getText().isEmpty()){
-            LogMessage message = new LogMessage("Không được để trống tên ca loại trực"){
+            LogMessage message = new LogMessage("Không được để trống tên"){
                 @Override
                 public void action() {
                     viewMain.setEnabled(true);
@@ -480,7 +478,7 @@ public class gui_shift_type extends javax.swing.JPanel {
         jButton5.setEnabled(true);
         
         int row = jTable1.rowAtPoint(evt.getPoint());
-        ShiftTypes arr = ListShiftTypes.get(row);
+        ShiftTypes arr = dataGlobal.getArrayShiftTypes().get(row);
         jTextField1.setText(String.valueOf(arr.getShift_type_id()));
         jTextField2.setText(arr.getShift_type_name());
         jComboBox1.setSelectedIndex(arr.getStart_time().getHour());

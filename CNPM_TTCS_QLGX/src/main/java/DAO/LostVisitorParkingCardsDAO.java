@@ -19,12 +19,12 @@ public class LostVisitorParkingCardsDAO {
 
     public List<LostVisitorParkingCards> getAll() {
         List<LostVisitorParkingCards> list = new ArrayList<>();
-        String sql = "SELECT * FROM lost_visitor_parking_cards";
+        String sql = "{CALL GetAllLostVisitorParkingCards()}";
 
         try (
             Connection conn = OpenConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            CallableStatement stmt = conn.prepareCall(sql);
+            ResultSet rs = stmt.executeQuery();
         ) {
             while (rs.next()) {
                 LostVisitorParkingCards lostCard = new LostVisitorParkingCards(
@@ -40,11 +40,11 @@ public class LostVisitorParkingCardsDAO {
     }
 
     public boolean insert(LostVisitorParkingCards lostCard) {
-        String sql = "INSERT INTO lost_visitor_parking_cards (parking_session_id) VALUES (?)";
+        String sql = "{CALL InsertLostVisitorParkingCard(?)}";
 
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, lostCard.getParking_session_id());
 
@@ -56,15 +56,14 @@ public class LostVisitorParkingCardsDAO {
     }
 
     public boolean update(LostVisitorParkingCards lostCard) {
-        String sql = "UPDATE lost_visitor_parking_cards SET parking_session_id = ? WHERE lost_visitor_parking_card_id = ?";
+        String sql = "{CALL UpdateLostVisitorParkingCard(?,?)}";
 
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
-            ptmt.setInt(1, lostCard.getParking_session_id());
-            ptmt.setInt(2, lostCard.getLost_visitor_parking_card_id());
-
+            ptmt.setInt(1, lostCard.getLost_visitor_parking_card_id());
+            ptmt.setInt(2, lostCard.getParking_session_id());
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,11 +72,11 @@ public class LostVisitorParkingCardsDAO {
     }
 
     public boolean delete(int lost_visitor_parking_card_id) {
-        String sql = "DELETE FROM lost_visitor_parking_cards WHERE lost_visitor_parking_card_id = ?";
+        String sql = "{CALL  DeleteLostVisitorParkingCard(?)}";
 
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, lost_visitor_parking_card_id);
             return ptmt.executeUpdate() > 0;
@@ -88,11 +87,11 @@ public class LostVisitorParkingCardsDAO {
     }
 
     public LostVisitorParkingCards findById(int lost_visitor_parking_card_id) {
-        String sql = "SELECT * FROM lost_visitor_parking_cards WHERE lost_visitor_parking_card_id = ?";
+        String sql = "{CALL FindLostVisitorParkingCardByID(?)";
 
         try (
             Connection conn = OpenConnection.getConnection();
-            PreparedStatement ptmt = conn.prepareStatement(sql);
+            CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, lost_visitor_parking_card_id);
             try (ResultSet rs = ptmt.executeQuery()) {
@@ -108,4 +107,26 @@ public class LostVisitorParkingCardsDAO {
         }
         return null;
     }
+    public LostVisitorParkingCards findBySesionId(int parking_session_id) {
+        String sql = "{CALL FindLostVisitorParkingCardBySession(?)";
+
+        try (
+            Connection conn = OpenConnection.getConnection();
+            CallableStatement ptmt = conn.prepareCall(sql);
+        ) {
+            ptmt.setInt(1, parking_session_id);
+            try (ResultSet rs = ptmt.executeQuery()) {
+                if (rs.next()) {
+                    return new LostVisitorParkingCards(
+                        rs.getInt("lost_visitor_parking_card_id"),
+                        rs.getInt("parking_session_id")
+                    );
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
+

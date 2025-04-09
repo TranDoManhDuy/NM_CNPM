@@ -212,6 +212,7 @@ public class LogSelection extends javax.swing.JFrame implements doAction, InitCo
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    public javax.swing.JLabel label_logname;
     public javax.swing.JLabel label_property;
     public javax.swing.JPanel panel_filter;
     public javax.swing.JTable table;

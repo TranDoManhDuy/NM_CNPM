@@ -9,6 +9,7 @@ import Annotation.LogMessage;
 import DAO.ShiftTypesDAO;
 import DAO.TasksDAO;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.ShiftTypes;
 import Model.Tasks;
 import java.time.LocalTime;
@@ -27,7 +28,8 @@ public class gui_task extends javax.swing.JPanel {
      * Creates new form gui_task
      */
     private DefaultTableModel tableModel;
-    private List<Tasks> listTasks = new ArrayList<>();
+//    private List<Tasks> listTasks = new ArrayList<>();
+    private DataGlobal dataGlobal = new DataGlobal();
     private ViewMain viewMain;
     public gui_task(ViewMain viewMain) {
         this.viewMain = viewMain;
@@ -38,9 +40,9 @@ public class gui_task extends javax.swing.JPanel {
                 }
             };
         initComponents();
-        loadList();
         initTable();
-        fillTable(listTasks);
+        dataGlobal.updateArrtasks();
+        fillTable(dataGlobal.getArrayTasks());
         jTextField1.setEnabled(false);
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);
@@ -52,10 +54,6 @@ public class gui_task extends javax.swing.JPanel {
         jTable1.setModel(tableModel);
         jTable1.setRowHeight(25);
         
-    }
-    
-    public void loadList(){
-        listTasks = TasksDAO.getInstance().getAllTasks();
     }
     
     public void fillTable(List<Tasks> ListTasks){
@@ -72,8 +70,8 @@ public class gui_task extends javax.swing.JPanel {
         if(r){
             viewMain.setEnabled(true);
             viewMain.requestFocus();
-            loadList();
-            fillTable(listTasks);
+            dataGlobal.updateArrtasks();
+            fillTable(dataGlobal.getArrayTasks());
         }
         else{
             viewMain.setEnabled(false);
@@ -97,8 +95,8 @@ public class gui_task extends javax.swing.JPanel {
         if(r){
             viewMain.setEnabled(true);
             viewMain.requestFocus();
-            loadList();
-            fillTable(listTasks);
+            dataGlobal.updateArrtasks();
+            fillTable(dataGlobal.getArrayTasks());
         }else{
             LogMessage message = new LogMessage("Không thể cập nhật"){
                 @Override
@@ -120,8 +118,8 @@ public class gui_task extends javax.swing.JPanel {
         if(r){
             viewMain.setEnabled(true);
             viewMain.requestFocus();
-            loadList();
-            fillTable(listTasks);
+            dataGlobal.updateArrtasks();
+            fillTable(dataGlobal.getArrayTasks());
         }else{
             LogMessage message = new LogMessage("Không thể xoá"){
                 @Override
@@ -366,7 +364,7 @@ public class gui_task extends javax.swing.JPanel {
         jButton3.setEnabled(true);
         jButton5.setEnabled(true);
         int row = jTable1.rowAtPoint(evt.getPoint());
-        Tasks arr = listTasks.get(row);
+        Tasks arr = dataGlobal.getArrayTasks().get(row);
         jTextField1.setText(String.valueOf(arr.getTask_id()));
         jTextField2.setText(arr.getTask_name());
         jTextArea1.setText(arr.getTask_desc());
@@ -383,7 +381,7 @@ public class gui_task extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if(jTextField2.getText().isEmpty()){
-           LogMessage message = new LogMessage("Không được để trống tên nhiệm vụ"){
+           LogMessage message = new LogMessage("Không được để trống tên"){
                 @Override
                 public void action() {
                     viewMain.setEnabled(true);

@@ -6,6 +6,7 @@ package GUI.CATRUC;
 
 import Annotation.LogConfirm;
 import Annotation.LogMessage;
+import Annotation.LogSelection;
 import DAO.BuildingsDAO;
 import DAO.ShiftTypesDAO;
 import DAO.ShiftWorksDAO;
@@ -13,11 +14,16 @@ import DAO.StaffDAO;
 import DAO.TasksDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.Buildings;
 import Model.ShiftTypes;
 import Model.ShiftWorks;
 import Model.Staff;
 import Model.Tasks;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
@@ -40,12 +46,12 @@ public class gui_shift_work extends javax.swing.JPanel {
     /**
      * Creates new form gui_shift_work
      */
-    private List<ShiftWorks> list = new ArrayList<>();
-    private List<Buildings> listBuildings = new ArrayList<>();
-    private List<ShiftTypes> listShiftTypes = new ArrayList<>();
-    private List<Tasks> listTasks = new ArrayList<>();
     private DefaultTableModel tableModel;
     private ViewMain viewMain;
+    private DataGlobal dataGlobal = new DataGlobal();
+    private LogSelection logSelection;
+    private LogConfirm confirm;
+    private LogMessage message;
     public gui_shift_work(ViewMain viewMain) {
         tableModel = new DefaultTableModel(){
             @Override
@@ -55,9 +61,6 @@ public class gui_shift_work extends javax.swing.JPanel {
             };
         this.viewMain = viewMain;
         initComponents();
-        loadList();
-        loadListBuildings();
-        loadListShiftTypes();
         initTable();
         fillTable();
         jTextField1.setEnabled(false);
@@ -68,18 +71,6 @@ public class gui_shift_work extends javax.swing.JPanel {
         jButton3.setEnabled(false);
     }
     
-    private void loadList() {
-        list = ShiftWorksDAO.getInstance().getAllShiftWorks();
-    }
-    private void loadListBuildings(){
-        listBuildings = BuildingsDAO.getInstance().getAllBuildings();
-    }
-    private void loadListTasks(){
-        listTasks = TasksDAO.getInstance().getAllTasks();
-    }
-    private void loadListShiftTypes(){
-        listShiftTypes = ShiftTypesDAO.getInstance().getAllShiftTypes();
-    }
     private void initTable() {
         String[] header = new String[] {"ID ca trực", "Tên loại ca trực", "Tên tòa nhà", "Mã nhân viên" ,"Tên nhân viên", "Tên nhiệm vụ", "Ngày trực"};
         tableModel.setColumnIdentifiers(header);
@@ -90,7 +81,7 @@ public class gui_shift_work extends javax.swing.JPanel {
     private void fillTable(){
         tableModel.setRowCount(0);
         String sql = "SELECT * FROM SHIFTWORKS";
-        
+        dataGlobal.updateArrShiftWorks();
         try (
             Connection conn = OpenConnection.getConnection();
             Statement stmt = conn.createStatement();
@@ -109,14 +100,7 @@ public class gui_shift_work extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-    
-    private void fillTable(List<ShiftWorks> list) {
-        tableModel.setRowCount(0);
-            for (ShiftWorks s : list) {
-                tableModel.addRow(new String[] {String.valueOf(s.getShift_work_id()), String.valueOf(s.getShift_type_id()), String.valueOf(s.getBuilding_id()), String.valueOf(s.getStaff_id()), String.valueOf(s.getTask_id()), String.valueOf(s.getShift_date())});
-            }
-            tableModel.fireTableDataChanged();
-    }
+  
     
     public void insertShiftWork(){
         LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1); 
@@ -128,12 +112,12 @@ public class gui_shift_work extends javax.swing.JPanel {
         boolean r = ShiftWorksDAO.getInstance().insert(a);
         if(!r){
             viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Không thể thêm"){
+            this.message = new LogMessage("Không thể thêm"){
                 @Override
                 public void action() {
                     viewMain.setEnabled(true);
                     viewMain.requestFocus();
-                    this.dispose();
+                    this.setVisible(false);
                 }
             };
             message.setLocationRelativeTo(null);
@@ -142,7 +126,6 @@ public class gui_shift_work extends javax.swing.JPanel {
         }else{
             viewMain.setEnabled(true);
             viewMain.requestFocus();
-            loadList();
             fillTable();
         }
     }
@@ -157,12 +140,12 @@ public class gui_shift_work extends javax.swing.JPanel {
         boolean r = ShiftWorksDAO.getInstance().update(a);
         if(!r){
             viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Lỗi cập nhật"){
+            this.message = new LogMessage("Lỗi cập nhật"){
                 @Override
                 public void action() {
                     viewMain.setEnabled(true);
                     viewMain.requestFocus();
-                    this.dispose();
+                    this.setVisible(false);
                 }
             };
             message.setLocationRelativeTo(null);
@@ -171,7 +154,6 @@ public class gui_shift_work extends javax.swing.JPanel {
         }else{
             viewMain.setEnabled(true);
             viewMain.requestFocus();
-            loadList();
             fillTable();
         }
     }
@@ -180,12 +162,12 @@ public class gui_shift_work extends javax.swing.JPanel {
         boolean r = ShiftWorksDAO.getInstance().delete(t);
         if(!r){
             viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Không thể xóa"){
+            this.message = new LogMessage("Không thể xóa"){
                 @Override
                 public void action() {
                     viewMain.setEnabled(true);
                     viewMain.requestFocus();
-                    this.dispose();
+                    this.setVisible(false);
                 }
             };
             message.setLocationRelativeTo(null);
@@ -195,7 +177,6 @@ public class gui_shift_work extends javax.swing.JPanel {
         else{
             viewMain.setEnabled(true);
             viewMain.requestFocus();
-            loadList();
             fillTable();
         }
     }
@@ -388,10 +369,12 @@ public class gui_shift_work extends javax.swing.JPanel {
             }
         });
 
-        loadListTasks();
-        String strT[] = new String[listTasks.size()];
-        for(int i =0; i<listTasks.size(); i++){
-            strT[i] = listTasks.get(i).getTask_name();
+        dataGlobal.updateArrtasks();
+        List<Tasks> arrTask = dataGlobal.getArrayTasks();
+        String strT[] = new String[arrTask.size() + 1];
+        strT[0] = "";
+        for(int i = 1; i<arrTask.size(); i++){
+            strT[i] = arrTask.get(i-1).getTask_name();
         }
         jComboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(strT));
         jComboBox7.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -411,10 +394,12 @@ public class gui_shift_work extends javax.swing.JPanel {
 
         jLabel17.setText("Tên tòa nhà");
 
-        loadListShiftTypes();
-        String st[] = new String[listShiftTypes.size()];
-        for(int i = 0; i< listShiftTypes.size(); i++){
-            st[i] = listShiftTypes.get(i).getShift_type_name();
+        dataGlobal.updateArrShiftTypes();
+        List<ShiftTypes> arrShiftTypes = dataGlobal.getArrayShiftTypes();;
+        String st[] = new String[arrShiftTypes.size() +1];
+        st[0] = "";
+        for(int i = 1; i< arrShiftTypes.size(); i++){
+            st[i] = arrShiftTypes.get(i-1).getShift_type_name();
         }
         jComboBox8.setModel(new javax.swing.DefaultComboBoxModel<>(st));
         jComboBox8.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -428,10 +413,12 @@ public class gui_shift_work extends javax.swing.JPanel {
             }
         });
 
-        loadListBuildings();
-        String strB[] = new String[listBuildings.size()];
-        for(int i =0; i<listBuildings.size(); i++ ){
-            strB[i] = listBuildings.get(i).getBuilding_name();
+        dataGlobal.updateArrBuildings();
+        List<Buildings> listBuildings = dataGlobal.getArrayBuildings();
+        String strB[] = new String[listBuildings.size()+1];
+        strB[0] = "";
+        for(int i =1; i<listBuildings.size(); i++ ){
+            strB[i] = listBuildings.get(i-1).getBuilding_name();
         }
         jComboBox9.setModel(new javax.swing.DefaultComboBoxModel<>(strB));
         jComboBox9.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -452,6 +439,11 @@ public class gui_shift_work extends javax.swing.JPanel {
         jLabel6.setText("Mã nhiệm vụ");
 
         jButton7.setText("Chọn");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -730,29 +722,29 @@ public class gui_shift_work extends javax.swing.JPanel {
                             || jTextField4.getText().trim().isEmpty()
                             || jTextField5.getText().trim().isEmpty()){
             viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Không để trống thông tin"){
+            this.message = new LogMessage("Không để trống thông tin"){
                 @Override
                 public void action() {
                     viewMain.setEnabled(true);
                     viewMain.requestFocus();
-                    this.dispose();
+                    this.setVisible(false);
                 }
             };
             message.setLocationRelativeTo(null);
             message.setVisible(true);
             message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         }else{
-            LogConfirm confirm = new LogConfirm("Xác nhận cập nhật"){
+            this.confirm = new LogConfirm("Xác nhận cập nhật"){
                 @Override
                 public void action() {
                     updateShiftWork();
-                    this.dispose();
+                    this.setVisible(false);
                 }
                 @Override
                 public void reject() {
                     viewMain.setEnabled(true);
                     viewMain.requestFocus();
-                    this.dispose();
+                    this.setVisible(false);
                 }
             };
             confirm.setEnabled(true);
@@ -814,32 +806,30 @@ public class gui_shift_work extends javax.swing.JPanel {
                              || jTextField4.getText() == null||jTextField4.getText().isEmpty()
                              || jTextField5.getText() == null||jTextField5.getText().isEmpty()){
             viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Không để trống thông tin"){
+            this.message = new LogMessage("Không để trống thông tin"){
                 @Override
                 public void action() {
                     viewMain.setEnabled(true);
                     viewMain.requestFocus();
-                    this.dispose();
+                    this.setVisible(false);
                 }
             };
             message.setLocationRelativeTo(null);
             message.setVisible(true);
             message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         }else{
-            LogConfirm confirm;
-            confirm = new LogConfirm("Xác nhận thêm"){
+            this.confirm = new LogConfirm("Xác nhận thêm"){
                 @Override
                 public void action() {
                     insertShiftWork();
-                    this.dispose();
+                    this.setVisible(false);
                 }
                 @Override
                 public void reject() {
                     viewMain.setEnabled(true);
                     viewMain.requestFocus();
-                    this.dispose();
+                    this.setVisible(false);
                 }
-
             };
             viewMain.setEnabled(false);
             confirm.setEnabled(true);
@@ -850,17 +840,17 @@ public class gui_shift_work extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        LogConfirm confirm = new LogConfirm("Xác nhận xóa"){
+        this.confirm = new LogConfirm("Xác nhận xóa"){
             @Override
             public void action() {
                 deleteShiftWork();
-                this.dispose();
+                this.setVisible(false);
                 }
             @Override
             public void reject() {
                 viewMain.setEnabled(true);
                 viewMain.requestFocus();
-                this.dispose();
+                this.setVisible(false);
             }
         };
         viewMain.setEnabled(false);
@@ -877,15 +867,15 @@ public class gui_shift_work extends javax.swing.JPanel {
         jButton5.setEnabled(true);
         jTextField1.setText((String) jTable1.getValueAt(jTable1.rowAtPoint(evt.getPoint()), 0));
         jComboBox8.setSelectedItem((String) jTable1.getValueAt(jTable1.rowAtPoint(evt.getPoint()), 1));
-        jTextField2.setText(String.valueOf( listShiftTypes.get(jComboBox8.getSelectedIndex()).getShift_type_id()));
+        jTextField2.setText(String.valueOf( dataGlobal.getArrayShiftTypes().get(jComboBox8.getSelectedIndex() - 1).getShift_type_id()));
         jComboBox9.setSelectedItem((String) jTable1.getValueAt(jTable1.rowAtPoint(evt.getPoint()), 2));
-        jTextField3.setText(String.valueOf( listShiftTypes.get(jComboBox9.getSelectedIndex()).getShift_type_id()));
+        jTextField3.setText(String.valueOf( dataGlobal.getArrayBuildings().get(jComboBox9.getSelectedIndex() - 1).getBuilding_id()));
         jTextField4.setText((String) jTable1.getValueAt(jTable1.rowAtPoint(evt.getPoint()), 3));
         jTextField6.setText((String) jTable1.getValueAt(jTable1.rowAtPoint(evt.getPoint()), 4));
         jComboBox7.setSelectedItem((String) jTable1.getValueAt(jTable1.rowAtPoint(evt.getPoint()), 5));
-        jTextField5.setText(String.valueOf( listTasks.get(jComboBox7.getSelectedIndex()).getTask_id()));
+        jTextField5.setText(String.valueOf( dataGlobal.getArrayTasks().get(jComboBox7.getSelectedIndex() - 1).getTask_id()));
         int row = jTable1.rowAtPoint(evt.getPoint());
-        LocalDate date = list.get(row).getShift_date();
+        LocalDate date = dataGlobal.getArrayShiftWorks().get(row).getShift_date();
         jComboBox4.setSelectedIndex(date.getDayOfMonth());
         jComboBox5.setSelectedIndex(date.getMonthValue());
         jComboBox6.setSelectedIndex(date.getYear() - 2000);
@@ -896,28 +886,34 @@ public class gui_shift_work extends javax.swing.JPanel {
     }//GEN-LAST:event_jComboBox4ActionPerformed
 
     private void jComboBox8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jComboBox8MouseClicked
-        loadListShiftTypes();
-        String st[] = new String[listShiftTypes.size()];
-        for(int i = 0; i< listShiftTypes.size(); i++){
-            st[i] = listShiftTypes.get(i).getShift_type_name();
+        dataGlobal.updateArrShiftTypes();
+        List<ShiftTypes> arrShiftTypes = dataGlobal.getArrayShiftTypes();
+        String st[] = new String[arrShiftTypes.size() +1];
+        st[0] = "";
+        for(int i = 1; i< arrShiftTypes.size(); i++){
+            st[i] = arrShiftTypes.get(i -1).getShift_type_name();
         }
         jComboBox8.setModel(new javax.swing.DefaultComboBoxModel<>(st));
     }//GEN-LAST:event_jComboBox8MouseClicked
 
     private void jComboBox9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jComboBox9MouseClicked
-        loadListBuildings();
-        String st[] = new String[listBuildings.size()];
-        for(int i = 0; i< listBuildings.size(); i++){
-            st[i] = listBuildings.get(i).getBuilding_name();
+        dataGlobal.updateArrBuildings();
+        List<Buildings> listBuildings = dataGlobal.getArrayBuildings();
+        String st[] = new String[listBuildings.size()+1];
+        st[0] = "";
+        for(int i =1; i<listBuildings.size(); i++ ){
+            st[i] = listBuildings.get(i-1).getBuilding_name();
         }
         jComboBox9.setModel(new javax.swing.DefaultComboBoxModel<>(st));
     }//GEN-LAST:event_jComboBox9MouseClicked
 
     private void jComboBox7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jComboBox7MouseClicked
-        loadListTasks();
-        String st[] = new String[listTasks.size()];
-        for(int i = 0; i< listTasks.size(); i++){
-            st[i] = listTasks.get(i).getTask_name();
+        dataGlobal.updateArrtasks();
+        List<Tasks> arrTask = dataGlobal.getArrayTasks();
+        String st[] = new String[arrTask.size() + 1];
+        st[0] = "";
+        for(int i = 1; i< arrTask.size(); i++){
+            st[i] = arrTask.get(i).getTask_name();
         }
         jComboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(st));
     }//GEN-LAST:event_jComboBox7MouseClicked
@@ -931,7 +927,8 @@ public class gui_shift_work extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField5ActionPerformed
 
     private void jComboBox7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox7ActionPerformed
-        jTextField5.setText(String.valueOf(listTasks.get(jComboBox7.getSelectedIndex()).getTask_id()));
+        if(jComboBox7.getSelectedIndex()!=0)
+            jTextField5.setText(String.valueOf(dataGlobal.getArrayTasks().get(jComboBox7.getSelectedIndex()-1).getTask_id()));
     }//GEN-LAST:event_jComboBox7ActionPerformed
 
     private void jTextField4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyReleased
@@ -941,11 +938,13 @@ public class gui_shift_work extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField4KeyReleased
 
     private void jComboBox8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox8ActionPerformed
-        jTextField2.setText(String.valueOf(listShiftTypes.get(jComboBox8.getSelectedIndex()).getShift_type_id()));
+        if(jComboBox8.getSelectedIndex()!=0)
+            jTextField2.setText(String.valueOf(dataGlobal.getArrayShiftTypes().get(jComboBox8.getSelectedIndex()-1).getShift_type_id()));
     }//GEN-LAST:event_jComboBox8ActionPerformed
 
     private void jComboBox9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox9ActionPerformed
-        jTextField3.setText(String.valueOf(listBuildings.get(jComboBox9.getSelectedIndex()).getBuilding_id()));
+        if(jComboBox9.getSelectedIndex() != 0)
+        jTextField3.setText(String.valueOf(dataGlobal.getArrayBuildings().get(jComboBox9.getSelectedIndex()-1).getBuilding_id()));
     }//GEN-LAST:event_jComboBox9ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -1004,6 +1003,58 @@ public class gui_shift_work extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        viewMain.setEnabled(false);
+        this.logSelection = new LogSelection(){
+            @Override
+            public void initContent() {
+                this.label_logname.setText("Danh sách nhân viên");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                // khoi tao cac thanh phan bang o day
+                String[] header = new String[] {"ID nhân viên", "Tên nhân viên", "Số CCCD", "Số điện thoại"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table.rowAtPoint(e.getPoint());
+                        jTextField4.setText((String) table.getValueAt(row, 0));
+                        jTextField6.setText((String) table.getValueAt(row, 1));
+                        logSelection.setVisible(false);
+                        viewMain.setEnabled(true);
+                        viewMain.requestFocus();
+                    }
+                });
+                
+                ArrayList<Staff> arrStaff = StaffDAO.getInstance().getListStaff();
+                for (Staff s : arrStaff) {
+                    this.tableModel.addRow(new String[] {String.valueOf(s.getStaffId()), s.getFullName(), s.getSsn(), s.getPhoneNumber()});
+                }
+                this.tableModel.fireTableDataChanged();
+                this.btn_loc.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.out.println("CLICK");
+                    }
+                });
+            }
+            @Override
+            public void back() {
+                this.setVisible(false);
+                viewMain.setEnabled(true);
+                viewMain.requestFocus();
+            }
+        };
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
+    }//GEN-LAST:event_jButton7ActionPerformed
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
