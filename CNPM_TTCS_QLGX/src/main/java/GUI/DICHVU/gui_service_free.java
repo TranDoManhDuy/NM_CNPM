@@ -150,6 +150,7 @@ public final class gui_service_free extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         btn_tatca = new javax.swing.JButton();
         txt_tinnhan = new javax.swing.JTextField();
+        btn_tailai = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(204, 255, 255));
 
@@ -243,6 +244,12 @@ public final class gui_service_free extends javax.swing.JPanel {
         btn_chonloaixe.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_chonloaixeActionPerformed(evt);
+            }
+        });
+
+        txt_tonggiatien.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txt_tonggiatienKeyReleased(evt);
             }
         });
 
@@ -347,6 +354,11 @@ public final class gui_service_free extends javax.swing.JPanel {
                 txt_timkiemActionPerformed(evt);
             }
         });
+        txt_timkiem.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txt_timkiemKeyReleased(evt);
+            }
+        });
 
         btn_timkiem.setText("Tìm kiếm tên");
         btn_timkiem.addActionListener(new java.awt.event.ActionListener() {
@@ -418,19 +430,31 @@ public final class gui_service_free extends javax.swing.JPanel {
         txt_tinnhan.setText("Đang hiển thị danh sách các bản ghi còn hiệu lực");
         txt_tinnhan.setFocusable(false);
 
+        btn_tailai.setText("Tải lại");
+        btn_tailai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tailaiActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_tailai))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, 554, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, 554, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(14, Short.MAX_VALUE))
@@ -438,13 +462,15 @@ public final class gui_service_free extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
+                .addContainerGap(22, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_tailai))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(21, 21, 21))
@@ -682,12 +708,39 @@ public final class gui_service_free extends javax.swing.JPanel {
         fillTable();
     }//GEN-LAST:event_btn_capnhatActionPerformed
 
+    private void btn_tailaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tailaiActionPerformed
+        // TODO add your handling code here:
+        this.dataGlobal.updateArrServiceFee_render();
+        fillTable();
+    }//GEN-LAST:event_btn_tailaiActionPerformed
+    private String lastTGT = "";
+    private void txt_tonggiatienKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_tonggiatienKeyReleased
+        // TODO add your handling code here:
+        if (Library.isNumber(txt_tonggiatien.getText())) {
+            this.lastTGT = txt_tonggiatien.getText();
+        }
+        else {
+            txt_tonggiatien.setText(this.lastTGT);
+        }
+    }//GEN-LAST:event_txt_tonggiatienKeyReleased
+    private String lasttimkiem = "";
+    private void txt_timkiemKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_timkiemKeyReleased
+        // TODO add your handling code here:
+        if (Library.isValidString(txt_timkiem.getText())) {
+            this.lasttimkiem = txt_timkiem.getText();
+        }
+        else {
+            txt_timkiem.setText(this.lasttimkiem);
+        }
+    }//GEN-LAST:event_txt_timkiemKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_capnhat;
     private javax.swing.JButton btn_chonloaixe;
     private javax.swing.JButton btn_conhieuluc;
     private javax.swing.JButton btn_datlai;
     private javax.swing.JButton btn_hethieuluc;
+    private javax.swing.JButton btn_tailai;
     private javax.swing.JButton btn_tatca;
     private javax.swing.JButton btn_them;
     private javax.swing.JButton btn_timkiem;

@@ -199,6 +199,7 @@ public class gui_session_free extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         btn_tatca = new javax.swing.JButton();
         txt_tinnhan = new javax.swing.JTextField();
+        btn_tailai = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(204, 255, 255));
 
@@ -444,6 +445,11 @@ public class gui_session_free extends javax.swing.JPanel {
                 txt_timkiemActionPerformed(evt);
             }
         });
+        txt_timkiem.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txt_timkiemKeyReleased(evt);
+            }
+        });
 
         btn_timkiem.setText("Tìm kiếm tên phương tiện");
         btn_timkiem.addActionListener(new java.awt.event.ActionListener() {
@@ -515,15 +521,25 @@ public class gui_session_free extends javax.swing.JPanel {
         txt_tinnhan.setText("Đang hiển thị bảng giá có hiệu lực");
         txt_tinnhan.setFocusable(false);
 
+        btn_tailai.setText("Tải lại");
+        btn_tailai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tailaiActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(PanelFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, 559, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, 559, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_tailai)))
                 .addGap(31, 31, 31)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -541,7 +557,9 @@ public class gui_session_free extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(PanelFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_tailai)))
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(31, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -984,6 +1002,22 @@ public class gui_session_free extends javax.swing.JPanel {
         worker.execute();
         worker = null;
     }//GEN-LAST:event_btn_capnhatActionPerformed
+    private String lasttimkiem = "";
+    private void txt_timkiemKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_timkiemKeyReleased
+        // TODO add your handling code here:
+        if (Library.Library.isValidString(txt_timkiem.getText())) {
+            this.lasttimkiem = txt_timkiem.getText();
+        }
+        else {
+            txt_timkiem.setText(this.lasttimkiem);
+        }
+    }//GEN-LAST:event_txt_timkiemKeyReleased
+
+    private void btn_tailaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tailaiActionPerformed
+        // TODO add your handling code here:
+        loadData();
+        fillTable();
+    }//GEN-LAST:event_btn_tailaiActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JPanel PanelFilter;
@@ -993,6 +1027,7 @@ public class gui_session_free extends javax.swing.JPanel {
     private javax.swing.JButton btn_conhieuluc;
     private javax.swing.JButton btn_datlai;
     private javax.swing.JButton btn_hethieuluc;
+    private javax.swing.JButton btn_tailai;
     private javax.swing.JButton btn_tatca;
     private javax.swing.JButton btn_them;
     private javax.swing.JButton btn_timkiem;

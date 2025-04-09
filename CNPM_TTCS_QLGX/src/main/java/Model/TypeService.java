@@ -17,7 +17,7 @@ public class TypeService {
     private int month_unit;
     private String service_name;
     private LocalDate decision_date;
-    private int payment_coefficient;
+    private float payment_coefficient;
     private boolean is_active;
 
     public LocalDate getDecision_date() {
@@ -28,7 +28,7 @@ public class TypeService {
         this.decision_date = decision_date;
     }
 
-    public TypeService(int type_service_id, int service_fee_id, int month_unit, String service_name, LocalDate decision_date,int payment_coefficient, boolean is_active) {
+    public TypeService(int type_service_id, int service_fee_id, int month_unit, String service_name, LocalDate decision_date,float payment_coefficient, boolean is_active) {
         this.type_service_id = type_service_id;
         this.service_fee_id = service_fee_id;
         this.month_unit = month_unit;
@@ -81,13 +81,11 @@ public class TypeService {
         this.service_name = service_name;
     }
 
-    public int getPayment_coefficient() {
+    public float getPayment_coefficient() {
         return payment_coefficient;
     }
 
     public void setPayment_coefficient(int payment_coefficient) {
         this.payment_coefficient = payment_coefficient;
     }
-    
-    
 }

@@ -56,7 +56,14 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                 
                 int row = table_loaiphuongtien.rowAtPoint(e.getPoint());
                 
-                VehicleType vehicleType = dataVehicleType.get(row);
+                VehicleType vehicleType = new VehicleType();
+                
+                for (VehicleType i : dataVehicleType) {
+                    if (i.getVehicle_type_id() == Integer.parseInt((String) table_loaiphuongtien.getValueAt(row, 0))) {
+                        vehicleType = i;
+                        break;
+                    }
+                }
                 
                 txt_idloaiphuongtien.setText(String.valueOf(vehicleType.getVehicle_type_id()));
                 txt_tenloaiphuongtien.setText(vehicleType.getVehicle_type_name());
@@ -68,7 +75,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         initTable();
         loadData();
         fillTable();
-        combo_trangthai.setSelectedIndex(2);
+        combo_trangthai.setSelectedIndex(0);
         table_loaiphuongtien.setRowHeight(30);
     }
     private void initTable() {
@@ -127,6 +134,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         jLabel21 = new javax.swing.JLabel();
         btn_tatca = new javax.swing.JButton();
         txt_tinnhan = new javax.swing.JTextField();
+        btn_tailai = new javax.swing.JButton();
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -153,7 +161,9 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         txt_idloaiphuongtien.setDisabledTextColor(new java.awt.Color(102, 102, 102));
@@ -196,6 +206,11 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         label_id_khachhang.setText("Tên loại phương tiện");
 
         txt_tenloaiphuongtien.setDisabledTextColor(new java.awt.Color(102, 102, 102));
+        txt_tenloaiphuongtien.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txt_tenloaiphuongtienKeyReleased(evt);
+            }
+        });
 
         jLabel1.setText("Trạng thái");
 
@@ -267,6 +282,11 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         txt_timkiem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_timkiemActionPerformed(evt);
+            }
+        });
+        txt_timkiem.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txt_timkiemKeyReleased(evt);
             }
         });
 
@@ -341,6 +361,13 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         txt_tinnhan.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txt_tinnhan.setEnabled(false);
 
+        btn_tailai.setText("Tải lại");
+        btn_tailai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tailaiActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -351,7 +378,8 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_tailai)))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32))
@@ -359,7 +387,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                 .addGroup(layout.createSequentialGroup()
                     .addGap(26, 26, 26)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(401, Short.MAX_VALUE)))
+                    .addContainerGap(402, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -370,13 +398,15 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_tailai, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(188, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(134, 134, 134)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addContainerGap(152, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(23, Short.MAX_VALUE)))
+                    .addContainerGap()))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -384,7 +414,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         // TODO add your handling code here:
         txt_idloaiphuongtien.setText("");
         txt_tenloaiphuongtien.setText("");
-        combo_trangthai.setSelectedIndex(2);
+        combo_trangthai.setSelectedIndex(0);
         combo_trangthai.setEnabled(false);
         
         btn_them.setEnabled(true);
@@ -637,12 +667,39 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         worker.execute();
         worker = null;
     }//GEN-LAST:event_btn_capnhatActionPerformed
+    private String lasttimkiem = "";
+    private void txt_timkiemKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_timkiemKeyReleased
+        // TODO add your handling code here:
+        if (Library.Library.isValidString(txt_timkiem.getText())) {
+            this.lasttimkiem = txt_timkiem.getText();
+        }
+        else {
+            txt_timkiem.setText(this.lasttimkiem);
+        }
+    }//GEN-LAST:event_txt_timkiemKeyReleased
+    private String lastName = "";
+    private void txt_tenloaiphuongtienKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_tenloaiphuongtienKeyReleased
+        // TODO add your handling code here:
+        if (Library.Library.isValidString(txt_tenloaiphuongtien.getText())) {
+            this.lastName = txt_tenloaiphuongtien.getText();
+        }
+        else {
+            txt_tenloaiphuongtien.setText(this.lastName);
+        }
+    }//GEN-LAST:event_txt_tenloaiphuongtienKeyReleased
+
+    private void btn_tailaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tailaiActionPerformed
+        // TODO add your handling code here:
+        loadData();
+        fillTable();
+    }//GEN-LAST:event_btn_tailaiActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_capnhat;
     private javax.swing.JButton btn_conchophep;
     private javax.swing.JButton btn_datlai;
     private javax.swing.JButton btn_khongconchophep;
+    private javax.swing.JButton btn_tailai;
     private javax.swing.JButton btn_tatca;
     private javax.swing.JButton btn_them;
     private javax.swing.JButton btn_timkiem;

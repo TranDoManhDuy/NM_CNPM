@@ -89,7 +89,7 @@ public class ViewMain extends javax.swing.JFrame {
         // init component
         gui_registration registration_gui = new gui_registration(this, logComfirm, logMessage, logSelection);
         gui_payment payment_gui = new gui_payment(this, logComfirm, logMessage, logSelection);
-        gui_serviceType service_type_gui = new gui_serviceType();
+        gui_serviceType service_type_gui = new gui_serviceType(this, logComfirm, logMessage, logSelection, dataglocal);
         gui_service_free service_free_gui = new gui_service_free(this, logComfirm, logMessage, logSelection, dataglocal);
         gui_vehicle_type vehicle_type_gui = new gui_vehicle_type(this, logComfirm, logMessage, logSelection);
         gui_timeframe time_frame_gui = new gui_timeframe(this, logComfirm, logMessage);
@@ -825,7 +825,6 @@ public class ViewMain extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
     /**
      * @param args the command line arguments
      */

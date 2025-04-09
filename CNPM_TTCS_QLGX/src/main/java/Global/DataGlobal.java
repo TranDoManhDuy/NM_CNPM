@@ -7,6 +7,7 @@ package Global;
 import DAO.CustomerDAO;
 import DAO.RegisatrationDAO;
 import DAO.ServiceFeeDAO;
+import DAO.TypeServiceDAO;
 import DAO.VehicleDAO;
 import DatabaseHelper.OpenConnection;
 import Model.Customer;
@@ -25,18 +26,25 @@ import javax.swing.JFrame;
  * @author manhh
  */
 public class DataGlobal {
+    public DataGlobal() {}
+    
     private JFrame viewmain;
     private ArrayList<Regisatration> arrRegistration = new ArrayList<>();
     private ArrayList<Customer> arrCustomer = new ArrayList<>();
     private ArrayList<Vehicle> arrVehicle = new ArrayList<>();
     private ArrayList<ArrayList<String>> arrServiceFee_render = new ArrayList<>();
+    private ArrayList<ArrayList<String>> arrServiceType_render = new ArrayList<>();
     
-    public DataGlobal() {}
+    public void updateArrServiceType_render() {
+        this.arrServiceType_render = TypeServiceDAO.getInstance().getArrServiceTypeRender();
+    }
+    public ArrayList<ArrayList<String>> getArrServiceType_render() {
+        return this.arrServiceType_render;
+    }
     
     public void updateArrServiceFee_render() {
         this.arrServiceFee_render = ServiceFeeDAO.getInstance().getArrServiceFee_render();
     }
-    
     public ArrayList<ArrayList<String>> getArrServiceFee_render() {
         return this.arrServiceFee_render;
     }
@@ -97,5 +105,6 @@ public class DataGlobal {
         updateArrCustomer();
         updateArrVehicle();
         updateArrServiceFee_render();
+        updateArrServiceType_render();
     }
 }

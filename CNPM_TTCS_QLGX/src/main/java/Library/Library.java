@@ -21,16 +21,27 @@ import java.util.Locale;
 public class Library {
     // Ten chi gom a - z, A - Z
     public static boolean isValidString(String str) {
-        return str != null && str != "" && str.matches("^[a-zA-Z0-9\\-\\s]+$");
+        if (str.equals("")) {
+            return true;
+        }
+        return str != null && str.matches("^[a-zA-Z0-9\\-\\s]+$");
     }
-    
+    public static String acInput(String lastInput, String newInput) {
+        if (isValidString(newInput)) {
+            return newInput;
+        }
+        return lastInput;
+    }
     // email validate
     public static boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9]+@[a-zA-Z0-9.]+\\.[a-zA-Z]{2,}$";
         return email.matches(emailRegex);
     }
     public static boolean isNumber(String numberString) {
-        return numberString != null && numberString.matches("\\d+");
+        if (numberString.equals("")) {
+            return true;
+        }
+        return numberString != null && numberString.matches("\\d+(\\.\\d+)?");
     }
     // kiem tra cccd
     public static boolean isValidSSN(String str) {
@@ -51,7 +62,6 @@ public class Library {
     public static boolean isValidDateOfBirth(LocalDate dateOfBirth) {
         return dateOfBirth != null && !dateOfBirth.isAfter(LocalDate.now());
     }
-
     // Chuyển đổi chuỗi "dd/MM/yyyy" thành LocalDate
     public static LocalDate parseDateOfBirth(String dateStr) {
         if (dateStr == null || dateStr.isEmpty()) return null;
@@ -171,6 +181,5 @@ public class Library {
         return sYear;
     }
     public static void main(String[] args) {
-        
     }
 }
