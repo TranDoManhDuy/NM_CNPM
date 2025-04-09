@@ -63,7 +63,7 @@ public class RegisatrationDAO {
             System.out.println(e.getMessage() + "");
             return "Lỗi: " + e.getMessage();
         }
-        return "Kiểm tra lại thông tin";
+        return "Thêm thành công";
     }
     public String update(Regisatration registration) {
         String sql = "EXEC update_registration @customer_id = ?, @registration_date = ?, @vehicle_id = ?, @state = ?, @registration_id = ?";
@@ -83,7 +83,7 @@ public class RegisatrationDAO {
         } catch (Exception e) {
             return "Thông báo: " + e.getMessage();
         }
-        return "Kiểm tra lại thông tin";
+        return  "Cập nhật thành công";
     }
     public Regisatration findbyID(int id) {
        String sql = "EXEC findbyID_registration @registration_id = ?";
@@ -122,7 +122,7 @@ public class RegisatrationDAO {
         } catch (Exception e) {
             return "Lỗi: " + e.getMessage();
         }
-        return "Thông báo: không được phép xóa";
+        return "Thông báo: Xóa thành công";
     }
     public static void main(String[] args) {
         ArrayList<Regisatration> list = RegisatrationDAO.getInstance().getList();

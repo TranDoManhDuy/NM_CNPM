@@ -177,7 +177,7 @@ public class TimeFrameDAO {
         } catch (Exception e) {
             return "Lỗi: " + e.getMessage();
         }
-        return "Không thể xóa";
+        return "Xóa thành công";
     }
     
     public static void main(String[] args) {

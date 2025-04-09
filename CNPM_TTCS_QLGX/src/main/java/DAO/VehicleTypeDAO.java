@@ -12,7 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-
 /**
  *
  * @author manhh
@@ -43,7 +42,6 @@ public class VehicleTypeDAO {
     }
      public String insert(VehicleType vehicleType) {
         String sql = "EXEC insert_vehicle_type @vehicle_type_name = ?, @is_availabel = ?";
-        
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -56,7 +54,7 @@ public class VehicleTypeDAO {
         } catch (Exception e) {
             return "Lỗi: " + e.getMessage();
         }
-        return "Kiểm tra lại thông tin";
+        return "Thêm loại phương tiện thành công";
     }
     public String update(VehicleType vehicleType) {
         String sql = "EXEC update_vehicle_type @vehicle_type_name = ?, @is_availabel = ?, @vehicle_type_id = ?";
@@ -70,12 +68,12 @@ public class VehicleTypeDAO {
             ptmt.setInt(3, vehicleType.getVehicle_type_id());
             
             if (ptmt.executeUpdate() > 0) {
-                return "Cập nhật thành công";
+                return "Cập nhật phương tiện thành công";
             }
         } catch (Exception e) {
             return "Lỗi: " + e.getMessage();
         }
-        return "Kiểm tra lại thông tin";
+        return "Cập nhật phương tiện thành công";
     }
      public VehicleType findbyID(int id) {
         String sql = "EXEC findbyID_vehicle_type @vehicle_type_id = ?";
@@ -113,7 +111,7 @@ public class VehicleTypeDAO {
         } catch (Exception e) {
             return "Lỗi: " + e.getMessage();
         }
-        return "Không thể xóa";
+        return "Xóa thành công";
     }
      public static void main(String[] args) {
         ArrayList<VehicleType> list = VehicleTypeDAO.getInstance().getList();

@@ -4,11 +4,21 @@
  */
 package GUI.DICHVU;
 
+import Annotation.LogConfirm;
+import Annotation.LogMessage;
+import Annotation.LogSelection;
 import DAO.ServiceFeeDAO;
 import DAO.VehicleTypeDAO;
 import DatabaseHelper.OpenConnection;
+import GUI.ViewMain;
+import Global.DataGlobal;
+import Library.Library;
 import Model.ServiceFee;
+import Model.Vehicle;
 import Model.VehicleType;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -20,19 +30,64 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author manhh
  */
-public class gui_service_free extends javax.swing.JPanel {
+public final class gui_service_free extends javax.swing.JPanel {
     private DefaultTableModel tableModel;
+    private ViewMain viewmain;
+    private LogConfirm logConfirm;
+    private LogMessage logMessage;
+    private LogSelection logSelection;
+    private boolean cursorBreak = false;
+    private DataGlobal dataGlobal;
     /**
      * Creates new form gui_service_free
      */
-    public gui_service_free() {
+    public gui_service_free() {}
+    public gui_service_free(ViewMain viewmain, LogConfirm logConfirm, LogMessage logMessage, LogSelection logSelection, DataGlobal dataGlobal) {
+        this.viewmain = viewmain;
+        this.logConfirm = logConfirm;
+        this.logMessage = logMessage;
+        this.logSelection = logSelection;
+        this.dataGlobal = dataGlobal;
+        initComponents();
+        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Còn hạn", "Hết hạn", ""}));
         tableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        initComponents();
+        table_phidichvu.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                btn_them.setEnabled(false);
+                btn_capnhat.setEnabled(true);
+                btn_xoa.setEnabled(true);
+                combo_trangthai.setEnabled(true);
+                
+                int row = table_phidichvu.rowAtPoint(e.getPoint());
+                String index = (String) table_phidichvu.getValueAt(row, 0);
+                ArrayList<String> dataRenderDetail = new ArrayList<>();
+                for (ArrayList<String> i : dataGlobal.getArrServiceFee_render()) {
+                    if (i.get(0).equals(index)) {
+                        dataRenderDetail = i;
+                        break;
+                    }
+                }
+                txt_idbanghi.setText(dataRenderDetail.get(0));
+                txt_idloaixe.setText(dataRenderDetail.get(1));
+                txt_tenloaixe.setText(dataRenderDetail.get(2));
+                txt_tonggiatien.setText(dataRenderDetail.get(3));
+                txt_ngayapdung.setText(dataRenderDetail.get(4));
+                if (dataRenderDetail.get(5).equals("Còn hạn")) {
+                    combo_trangthai.setSelectedIndex(0);
+                } else {
+                    combo_trangthai.setSelectedIndex(1);
+                }
+            }
+        });
+        txt_ngayapdung.setText(String.valueOf(LocalDate.now()));
+        table_phidichvu.setRowHeight(30);
         initTable();
         fillTable();
     }
@@ -41,34 +96,19 @@ public class gui_service_free extends javax.swing.JPanel {
         tableModel.setColumnIdentifiers(header);
         table_phidichvu.setModel(tableModel);
     }
-    
     public void fillTable() {
-    String sql = "EXEC ServiceFee_render";
-    try (
-        Connection conn = OpenConnection.getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql);
-    ) {
-        while (rs.next()) {
-            int service_fee_id = rs.getInt("service_fee_id");
-            String vehicle_type_name = rs.getString("vehicle_type_name");
-            double amount = rs.getDouble("amount");
-            LocalDate decision_date = rs.getDate("decision_date").toLocalDate();
-            boolean is_active = rs.getBoolean("is_active");
+        tableModel.setRowCount(0);
+        for (ArrayList<String> rowDataServiceFee : dataGlobal.getArrServiceFee_render()) {
             tableModel.addRow(new String[] {
-                String.valueOf(service_fee_id),
-                vehicle_type_name,
-                String.valueOf(amount),
-                decision_date.toString(),
-                is_active ? "Còn hạn" : "Hết hạn"
+                rowDataServiceFee.get(0),
+                rowDataServiceFee.get(2),
+                Library.formatCurrency(Float.parseFloat(rowDataServiceFee.get(3))) + " VNĐ",
+                rowDataServiceFee.get(4),
+                rowDataServiceFee.get(5)
             });
         }
-        tableModel.fireTableDataChanged();
-    } catch (Exception e) {
-        e.printStackTrace();
+        txt_tinnhan.setText("Hiển thị tất cả các giá dịch vụ / tháng của các loại xe");
     }
-}
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -137,7 +177,7 @@ public class gui_service_free extends javax.swing.JPanel {
             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
         );
 
-        txt_idbanghi.setEnabled(false);
+        txt_idbanghi.setFocusable(false);
 
         label_id_dangki.setText("ID bản ghi giá dịch vụ tháng");
 
@@ -156,6 +196,11 @@ public class gui_service_free extends javax.swing.JPanel {
 
         btn_capnhat.setText("Cập nhật");
         btn_capnhat.setEnabled(false);
+        btn_capnhat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_capnhatActionPerformed(evt);
+            }
+        });
 
         btn_xoa.setText("Xóa");
         btn_xoa.setEnabled(false);
@@ -165,7 +210,7 @@ public class gui_service_free extends javax.swing.JPanel {
             }
         });
 
-        txt_tenloaixe.setEnabled(false);
+        txt_tenloaixe.setFocusable(false);
         txt_tenloaixe.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_tenloaixeActionPerformed(evt);
@@ -192,7 +237,7 @@ public class gui_service_free extends javax.swing.JPanel {
 
         label_id_khachhang.setText("ID loại xe");
 
-        txt_idloaixe.setEnabled(false);
+        txt_idloaixe.setFocusable(false);
 
         btn_chonloaixe.setText("Chọn");
         btn_chonloaixe.addActionListener(new java.awt.event.ActionListener() {
@@ -201,14 +246,12 @@ public class gui_service_free extends javax.swing.JPanel {
             }
         });
 
-        txt_tonggiatien.setEnabled(false);
-
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText(" loại phương tiện trên một tháng");
 
         jLabel3.setText("Ngày áp dụng");
 
-        txt_ngayapdung.setEnabled(false);
+        txt_ngayapdung.setFocusable(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -217,43 +260,45 @@ public class gui_service_free extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_ngayapdung))
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(inforDetail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(label_id_dangki, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txt_idloaixe, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_idbanghi, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(label_id_khachhang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(label_khachhang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(label_ngaydangki))
+                            .addComponent(label_ngaydangki)
+                            .addComponent(label_trangthai))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(txt_tenloaixe, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(txt_idloaixe, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btn_chonloaixe, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE))
-                            .addComponent(txt_tonggiatien)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(label_trangthai)
-                        .addGap(28, 28, 28)
-                        .addComponent(combo_trangthai, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(label_id_dangki, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_idbanghi, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(combo_trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                    .addGap(98, 98, 98)
+                                    .addComponent(btn_chonloaixe, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE))
+                                .addComponent(txt_tonggiatien)
+                                .addComponent(txt_tenloaixe))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btn_them)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(btn_them)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_capnhat))
+                            .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_capnhat)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_xoa)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_datlai)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txt_ngayapdung)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(btn_xoa)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_datlai)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(17, 17, 17))
         );
         jPanel2Layout.setVerticalGroup(
@@ -304,6 +349,11 @@ public class gui_service_free extends javax.swing.JPanel {
         });
 
         btn_timkiem.setText("Tìm kiếm tên");
+        btn_timkiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_timkiemActionPerformed(evt);
+            }
+        });
 
         btn_conhieuluc.setText("Còn hiệu lực");
         btn_conhieuluc.addActionListener(new java.awt.event.ActionListener() {
@@ -322,6 +372,11 @@ public class gui_service_free extends javax.swing.JPanel {
         jLabel2.setText("Danh sách:");
 
         btn_tatca.setText("Tất cả");
+        btn_tatca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tatcaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -361,7 +416,7 @@ public class gui_service_free extends javax.swing.JPanel {
         );
 
         txt_tinnhan.setText("Đang hiển thị danh sách các bản ghi còn hiệu lực");
-        txt_tinnhan.setEnabled(false);
+        txt_tinnhan.setFocusable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -374,7 +429,7 @@ public class gui_service_free extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, 554, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -398,12 +453,88 @@ public class gui_service_free extends javax.swing.JPanel {
 
     private void btn_chonloaixeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonloaixeActionPerformed
         // TODO add your handling code here:
-
+        this.viewmain.setEnabled(false);
+        this.logSelection = new LogSelection() {
+            @Override
+            public void initContent() {
+                this.btn_sapxep.setText("Sắp xếp theo tên");
+                this.label_property.setText("Tên loại xe");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                // khoi tao cac thanh phan bang o day
+                String[] header = new String[] {"ID loại xe", "Tên loại xe"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table.rowAtPoint(e.getPoint());
+                        System.out.println(row);
+                        txt_idloaixe.setText((String) table.getValueAt(row, 0));
+                        txt_tenloaixe.setText((String) table.getValueAt(row, 1));
+                        logSelection.setVisible(false);
+                        viewmain.setEnabled(true);
+                        viewmain.requestFocus();
+                    }
+                });
+                ArrayList<VehicleType> arrVehicle = VehicleTypeDAO.getInstance().getList();
+                for (VehicleType vehicle : arrVehicle) {
+                    if (vehicle.isIsPermission()) {
+                        this.tableModel.addRow(new String[] {String.valueOf(vehicle.getVehicle_type_id()), vehicle.getVehicle_type_name()});
+                    }
+                }
+                this.tableModel.fireTableDataChanged();
+                
+                this.btn_loc.addActionListener((ActionEvent e) -> {
+                    this.tableModel.setRowCount(0);
+                    for (VehicleType vehicle : arrVehicle) {
+                        if (Library.StringOnString(this.txt_property.getText(), vehicle.getVehicle_type_name())) {
+                            this.tableModel.addRow(new String[] {String.valueOf(vehicle.getVehicle_type_id()), vehicle.getVehicle_type_name()});
+                        }
+                    }
+                    this.tableModel.fireTableDataChanged();
+                });
+                this.btn_boloc.addActionListener((ActionEvent e) -> {
+                    this.tableModel.setRowCount(0);
+                    for (VehicleType vehicle : arrVehicle) {
+                        this.tableModel.addRow(new String[] {String.valueOf(vehicle.getVehicle_type_id()), vehicle.getVehicle_type_name()});
+                    }
+                    this.tableModel.fireTableDataChanged();
+                });
+                this.btn_sapxep.setVisible(false);
+            }
+            @Override
+            public void back() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
         // vo hieu hoa
     }//GEN-LAST:event_btn_chonloaixeActionPerformed
 
     private void btn_datlaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_datlaiActionPerformed
         // TODO add your handling code here:
+        txt_idbanghi.setText("");
+        txt_idloaixe.setText("");
+        txt_tenloaixe.setText("");
+        txt_tonggiatien.setText("");
+        combo_trangthai.setSelectedIndex(0);
+        txt_ngayapdung.setText("");
+        
+        combo_trangthai.setEnabled(false);
+        btn_them.setEnabled(true);
+        btn_capnhat.setEnabled(false);
+        btn_xoa.setEnabled(false);
+        
+        txt_ngayapdung.setText(String.valueOf(LocalDate.now()));
     }//GEN-LAST:event_btn_datlaiActionPerformed
 
     private void combo_trangthaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_trangthaiActionPerformed
@@ -416,10 +547,37 @@ public class gui_service_free extends javax.swing.JPanel {
 
     private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
         // TODO add your handling code here:
+        String rs = ServiceFeeDAO.getInstance().delete(Integer.parseInt(txt_idbanghi.getText()));
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+        dataGlobal.updateArrServiceFee_render();
+        fillTable();
     }//GEN-LAST:event_btn_xoaActionPerformed
 
     private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
         // TODO add your handling code here:
+        ServiceFee service_fee = new ServiceFee(1, LocalDate.now(), Integer.parseInt(txt_idloaixe.getText()), (int) Float.parseFloat(txt_tonggiatien.getText()), true);
+        String rs = ServiceFeeDAO.getInstance().insert(service_fee);
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+            }
+        };
+
+        this.logMessage.setVisible(true);
+        dataGlobal.updateArrServiceFee_render();
+        fillTable();
     }//GEN-LAST:event_btn_themActionPerformed
 
     private void txt_timkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_timkiemActionPerformed
@@ -428,12 +586,101 @@ public class gui_service_free extends javax.swing.JPanel {
 
     private void btn_conhieulucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_conhieulucActionPerformed
         // TODO add your handling code here:
+        tableModel.setRowCount(0);
+        int index = 0;
+        for (ArrayList<String> rowDataServiceFee : dataGlobal.getArrServiceFee_render()) {
+            if (rowDataServiceFee.get(5).equals("Còn hạn")) {
+                index++;
+                tableModel.addRow(new String[] {
+                    rowDataServiceFee.get(0),
+                    rowDataServiceFee.get(2),
+                    Library.formatCurrency(Float.parseFloat(rowDataServiceFee.get(3))) + " VNĐ",
+                    rowDataServiceFee.get(4),
+                    rowDataServiceFee.get(5)
+                });
+            }
+        }
+        txt_tinnhan.setText("Hiển thị tất cả các giá dịch vụ / tháng của các loại xe");
+        if (index != dataGlobal.getArrServiceFee_render().size()) {
+            txt_tinnhan.setText("Hiển thị tất cả các giá dịch vụ / tháng của các loại xe còn hạn");
+        }
+        
     }//GEN-LAST:event_btn_conhieulucActionPerformed
 
     private void btn_hethieulucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hethieulucActionPerformed
         // TODO add your handling code here:
+        tableModel.setRowCount(0);
+        int index = 0;
+        for (ArrayList<String> rowDataServiceFee : dataGlobal.getArrServiceFee_render()) {
+            if (!rowDataServiceFee.get(5).equals("Còn hạn")) {
+                index++;
+                tableModel.addRow(new String[] {
+                    rowDataServiceFee.get(0),
+                    rowDataServiceFee.get(2),
+                    Library.formatCurrency(Float.parseFloat(rowDataServiceFee.get(3))) + " VNĐ",
+                    rowDataServiceFee.get(4),
+                    rowDataServiceFee.get(5)
+                });
+            }
+        }
+        txt_tinnhan.setText("Hiển thị tất cả các giá dịch vụ / tháng của các loại xe");
+        if (index != dataGlobal.getArrServiceFee_render().size()) {
+            txt_tinnhan.setText("Hiển thị tất cả các giá dịch vụ / tháng của các loại xe còn hạn");
+        }
     }//GEN-LAST:event_btn_hethieulucActionPerformed
 
+    private void btn_tatcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tatcaActionPerformed
+        // TODO add your handling code here:
+        fillTable();
+    }//GEN-LAST:event_btn_tatcaActionPerformed
+
+    private void btn_timkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_timkiemActionPerformed
+        // TODO add your handling code here:
+        tableModel.setRowCount(0);
+        int index = 0;
+        for (ArrayList<String> rowDataServiceFee : dataGlobal.getArrServiceFee_render()) {
+            if (Library.StringOnString(txt_timkiem.getText(), rowDataServiceFee.get(2))) {
+                index++;
+                tableModel.addRow(new String[] {
+                    rowDataServiceFee.get(0),
+                    rowDataServiceFee.get(2),
+                    Library.formatCurrency(Float.parseFloat(rowDataServiceFee.get(3))) + " VNĐ",
+                    rowDataServiceFee.get(4),
+                    rowDataServiceFee.get(5)
+                });
+            }
+        }
+        txt_tinnhan.setText("Hiển thị tất cả các giá dịch vụ / tháng của các loại xe");
+        if (index != dataGlobal.getArrServiceFee_render().size()) {
+            txt_tinnhan.setText("Hiển thị tất cả các giá dịch vụ / tháng của các loại xe còn hạn");
+        }
+    }//GEN-LAST:event_btn_timkiemActionPerformed
+
+    private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
+        // TODO add your handling code here:
+        boolean state;
+        if (combo_trangthai.getSelectedIndex() == 0) {
+            state = true;
+        }
+        else {
+            state = false;
+        }
+        ServiceFee service_fee = new ServiceFee(Integer.parseInt(txt_idbanghi.getText()), LocalDate.parse(txt_ngayapdung.getText()), Integer.parseInt(txt_idloaixe.getText()), (int) Float.parseFloat(txt_tonggiatien.getText()), state);
+        String rs = ServiceFeeDAO.getInstance().update(service_fee);
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+
+        this.logMessage.setVisible(true);
+        dataGlobal.updateArrServiceFee_render();
+        fillTable();
+    }//GEN-LAST:event_btn_capnhatActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_capnhat;

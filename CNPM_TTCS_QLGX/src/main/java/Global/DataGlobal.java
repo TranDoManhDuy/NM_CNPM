@@ -6,11 +6,18 @@ package Global;
 
 import DAO.CustomerDAO;
 import DAO.RegisatrationDAO;
+import DAO.ServiceFeeDAO;
 import DAO.VehicleDAO;
+import DatabaseHelper.OpenConnection;
 import Model.Customer;
 import Model.Regisatration;
 import Model.Vehicle;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.JFrame;
 
 /**
@@ -26,8 +33,12 @@ public class DataGlobal {
     
     public DataGlobal() {}
     
+    public void updateArrServiceFee_render() {
+        this.arrServiceFee_render = ServiceFeeDAO.getInstance().getArrServiceFee_render();
+    }
+    
     public ArrayList<ArrayList<String>> getArrServiceFee_render() {
-        
+        return this.arrServiceFee_render;
     }
     
     public ArrayList<Regisatration> getArrayRegistration() {
@@ -85,5 +96,6 @@ public class DataGlobal {
         updateArrRegistration();
         updateArrCustomer();
         updateArrVehicle();
+        updateArrServiceFee_render();
     }
 }

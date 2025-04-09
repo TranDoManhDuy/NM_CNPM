@@ -65,9 +65,8 @@ public class SessionFeeDAO {
         } catch (Exception e) {
             return "Lỗi: " + e.getMessage();
         }
-        return "Thêm không thành công";
+        return "Thêm thành công";
     }
-    
     public String update(SessionFee sessionFee) {
         String sql = "EXEC update_session_fee @time_frame_id = ?, @vehicle_type_id = ?, @decision_date = ?, @amount = ?, @is_active = ?, @session_fee_id = ?";
         try (
@@ -87,9 +86,8 @@ public class SessionFeeDAO {
         } catch (Exception e) {
             return "Lỗi: " + e.getMessage();
         }
-        return "Cập nhật không thành công";
+        return "Cập nhật thành công";
     }
-    
     public SessionFee findbyID(int id) {
         String sql = "EXEC findbyID_session_fee @session_fee_id = ?";
         try (
@@ -140,4 +138,4 @@ public class SessionFeeDAO {
             System.out.println(x.getSession_fee_id());
         });
     }
-}   
+}

@@ -756,6 +756,7 @@ public class gui_session_free extends javax.swing.JPanel {
                     this.tableModel.fireTableDataChanged();
                 });
                 this.btn_boloc.addActionListener((ActionEvent e) -> {
+                    this.tableModel.setRowCount(0);
                     for (VehicleType vehicle_type : vehicle_types) {
                         String trangthai;
                         if (vehicle_type.isIsPermission()) {
@@ -944,7 +945,7 @@ public class gui_session_free extends javax.swing.JPanel {
         this.viewmain.setEnabled(false);
         this.cursorBreak = false;
 
-        this.logConfirm = new LogConfirm("Bạn có chắc là muốn xóa ?") {
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật?") {
             @Override
             public void action() {
                 cursorBreak = true;

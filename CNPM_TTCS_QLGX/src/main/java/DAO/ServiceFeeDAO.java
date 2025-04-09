@@ -13,15 +13,55 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 /**
  *
  * @author manhh
  */
-public class ServiceFeeDAO implements InterfaceDAO.InterfaceDAO <ServiceFee>{
+public class ServiceFeeDAO  {
     public static ServiceFeeDAO getInstance() {
         return new ServiceFeeDAO();
     }
-    @Override
+    public ArrayList<ArrayList<String>> getArrServiceFee_render() {
+        String sql = "EXEC ServiceFee_render";
+        ArrayList<ArrayList<String>> arrServiceFee_render = new ArrayList<>();
+        try (
+            Connection conn = OpenConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+        ) {
+            int index = 0;
+            arrServiceFee_render = new ArrayList<>();
+            while (rs.next()) {
+                int service_fee_id = rs.getInt("service_fee_id");
+                int vehicle_type_id = rs.getInt("vehicle_type_id");
+                String vehicle_type_name = rs.getString("vehicle_type_name");
+                int amount = rs.getInt("amount");
+                LocalDate decision_date = rs.getDate("decision_date").toLocalDate();
+                boolean state = rs.getBoolean("is_active");
+                String trangthai;
+                if (state) {
+                    trangthai = "Còn hạn";
+                }
+                else {
+                    trangthai = "Hết hạn";
+                }
+                ArrayList<String> service_data = new ArrayList<>(Arrays.asList(
+                        String.valueOf(service_fee_id),
+                        String.valueOf(vehicle_type_id),
+                        vehicle_type_name,
+                        String.valueOf(amount),
+                        String.valueOf(decision_date),
+                        trangthai
+                        ));
+                arrServiceFee_render.add(service_data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return arrServiceFee_render;
+    }
+    
     public ArrayList<ServiceFee> getList() {
         ArrayList<ServiceFee> list = new ArrayList<>();
         String sql = "EXEC getlist_service_fees";
@@ -45,7 +85,7 @@ public class ServiceFeeDAO implements InterfaceDAO.InterfaceDAO <ServiceFee>{
         }
         return list;
     }
-    public boolean insert(ServiceFee serviceFee) {
+    public String insert(ServiceFee serviceFee) {
         String sql = "EXEC insert_service_fee @decision_date = ?, @vehicle_type_id = ?, @amount = ?, @is_active = ?";
         try (
             Connection conn = OpenConnection.getConnection();
@@ -56,13 +96,15 @@ public class ServiceFeeDAO implements InterfaceDAO.InterfaceDAO <ServiceFee>{
             ptmt.setInt(3, serviceFee.getAmount());
             ptmt.setBoolean(4, serviceFee.isIs_active());
             
-            return ptmt.executeUpdate() > 0;
+            if (ptmt.executeUpdate() >= 0) {
+                return "Thêm thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Thêm thành công";
     }
-    public boolean update(ServiceFee serviceFee) {
+    public String update(ServiceFee serviceFee) {
         String sql = "EXEC update_service_fee @decision_date = ?, @vehicle_type_id = ?, @amount = ?, @is_active = ?, @service_fee_id = ?";
         
         try (
@@ -75,11 +117,13 @@ public class ServiceFeeDAO implements InterfaceDAO.InterfaceDAO <ServiceFee>{
             ptmt.setBoolean(4, serviceFee.isIs_active());
             ptmt.setInt(5, serviceFee.getService_fee_id());
             
-            return ptmt.executeUpdate() > 0;
+            if (ptmt.executeUpdate() >= 0) {
+                return "Cập nhật thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Cập nhật thành công";
     }
     public ServiceFee findbyID(int id) {
         String sql = "EXEC findbyID_service_fee @service_fee_id = ?";
@@ -104,18 +148,20 @@ public class ServiceFeeDAO implements InterfaceDAO.InterfaceDAO <ServiceFee>{
         }
         return null;
     }
-    public boolean delete(int id) {
+    public String delete(int id) {
         String sql = " EXEC delete_service_fee @service_fee_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
             ptmt.setInt(1, id);
-            return ptmt.executeUpdate()> 0;
+            if (ptmt.executeUpdate() >= 0) {
+                return "Xóa thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Xóa thành công";
     }
     public static void main(String[] args) {
         ArrayList<ServiceFee> list = ServiceFeeDAO.getInstance().getList();

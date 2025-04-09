@@ -27,7 +27,6 @@ import GUI.GUIXE.GUI_Vehicle;
 import Global.DataGlobal;
 import Model.Buildings;
 import Model.ResidentCard;
-import Model.SessionFee;
 import Model.TimeFrame;
 import Model.Vehicle;
 import Model.VehicleType;
@@ -91,7 +90,7 @@ public class ViewMain extends javax.swing.JFrame {
         gui_registration registration_gui = new gui_registration(this, logComfirm, logMessage, logSelection);
         gui_payment payment_gui = new gui_payment(this, logComfirm, logMessage, logSelection);
         gui_serviceType service_type_gui = new gui_serviceType();
-        gui_service_free service_free_gui = new gui_service_free();
+        gui_service_free service_free_gui = new gui_service_free(this, logComfirm, logMessage, logSelection, dataglocal);
         gui_vehicle_type vehicle_type_gui = new gui_vehicle_type(this, logComfirm, logMessage, logSelection);
         gui_timeframe time_frame_gui = new gui_timeframe(this, logComfirm, logMessage);
         gui_session_free session_fee_gui = new gui_session_free(this, logComfirm, logMessage, logSelection);
