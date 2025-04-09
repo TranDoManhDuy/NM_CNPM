@@ -8,7 +8,14 @@ import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.BuildingsDAO;
+import DAO.CustomerDAO;
+import DAO.ParkingSessionDAO;
+import DAO.ResidentCardDAO;
+import DAO.SessionFeeDAO;
+import DAO.TimeFrameDAO;
+import DAO.VehicleDAO;
 import DAO.VehicleTypeDAO;
+import DAO.VisitorParkingCardsDAO;
 import GUI.CATRUC.gui_building;
 import GUI.CATRUC.gui_shift_type;
 import GUI.CATRUC.gui_shift_work;
@@ -28,7 +35,14 @@ import GUI.GUIXE.GUI_ResidentCard;
 import GUI.GUIXE.GUI_Vehicle;
 import Global.DataGlobal;
 import Model.Buildings;
+import Model.Customer;
+import Model.ParkingSession;
+import Model.ResidentCard;
+import Model.SessionFee;
+import Model.TimeFrame;
+import Model.Vehicle;
 import Model.VehicleType;
+import Model.VisitorParkingCards;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
@@ -43,9 +57,15 @@ public class ViewMain extends javax.swing.JFrame {
     LogConfirm logComfirm = new LogConfirm("nothing");
     LogMessage logMessage = new LogMessage("Nothing");
     LogSelection logSelection = new LogSelection();
-    DataGlobal dataglocal = new DataGlobal();
-    public List<Buildings> buildings = new ArrayList<>();
+    DataGlobal dataglocal = new DataGlobal();public List<Buildings> buildings = new ArrayList<>();
     public ArrayList<VehicleType> vehicle_types = new ArrayList<>();
+    public List<VisitorParkingCards> visitor_parking_cards = new ArrayList<>();
+    public ArrayList<ResidentCard> resident_cards = new ArrayList<>();
+    public ArrayList<Vehicle> vehicles = new ArrayList<>();
+    public ArrayList<TimeFrame> listTimeFrames = new ArrayList<>();
+    public ArrayList<SessionFee> listSessionFees = new ArrayList<>();
+    public ArrayList<Customer> lstCustomer = new ArrayList<>();
+    public ArrayList<ParkingSession> parking_sessions;
     
     /**
      * Creates new form ViewMain
@@ -54,7 +74,14 @@ public class ViewMain extends javax.swing.JFrame {
     public ViewMain() {
         dataglocal.updateAllData();
         this.buildings = BuildingsDAO.getInstance().getAllBuildings();
+        this.vehicles = VehicleDAO.getInstance().getList();
         this.vehicle_types = VehicleTypeDAO.getInstance().getList();
+        this.visitor_parking_cards = VisitorParkingCardsDAO.getInstance().getAll();
+        this.resident_cards = ResidentCardDAO.getInstance().getList();
+        this.listTimeFrames = TimeFrameDAO.getInstance().getList();
+        this.listSessionFees = SessionFeeDAO.getInstance().getList();
+        this.lstCustomer = CustomerDAO.getInstance().getList();
+        this.parking_sessions = ParkingSessionDAO.getInstance().getList();
         initComponents();
         GUI_DICHVU();
         GUI_GUIXE();
@@ -94,9 +121,9 @@ public class ViewMain extends javax.swing.JFrame {
     public void GUI_GUIXE() 
     {
         GUI_Customer gui_customer = new GUI_Customer(this, logSelection);
-        GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(this);
-        GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(this);
-        GUI_ResidentCard gui_resident_card = new GUI_ResidentCard(this);
+        GUI_ResidentCard gui_resident_card = new GUI_ResidentCard(this, logSelection);
+        GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(this, logSelection, gui_resident_card);
+        GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(this, logSelection);
         GUI_Vehicle gui_vehicle = new GUI_Vehicle(this, logSelection);
         addComponent(panel_khachhang, gui_customer);
         addComponent(panel_mat_the_cd, gui_lost_resident_card);

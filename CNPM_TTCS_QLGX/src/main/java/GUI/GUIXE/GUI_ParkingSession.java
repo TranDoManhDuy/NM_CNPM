@@ -4,14 +4,33 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogSelection;
 import DAO.ParkingSessionDAO;
+import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import javax.swing.table.DefaultTableModel;
 import Model.ParkingSession;
+import Model.ResidentCard;
+import Model.SessionFee;
+import Model.TimeFrame;
+import Model.Vehicle;
+import Model.VisitorParkingCards;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -25,15 +44,45 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             return false;
         }
     };
+    Map<String, ArrayList<?>> data;
+    ArrayList<ParkingSession> parking_sessions;
+    ArrayList<String> check_in_shift_type_names;
+    ArrayList<String> check_out_shift_type_names;
+    private String[] sDay, sMonth, sYear;
+    private String[] s1Day, s1Month, s1Year;
+    private boolean isUpdating = false;
+    private LogSelection logSelection;
+    private int chooseCardId = 0;
+    private int chooseVehicleId = 0;
+    
+    
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_ParkingSession(ViewMain viewmain) {
+    public GUI_ParkingSession(ViewMain viewmain, LogSelection logSelection) {
         this.viewmain = viewmain;
-        initComponents(); 
+        initComponents();
+        resetFields();
+        resetBtn();
         initTable();
+        loadData();
         fillTable();
-//        addDocumentListeners();
+        sDay = Library.Library.getDay(0, 0);
+        sMonth = Library.Library.getMonth(0, 0);
+        sYear = Library.Library.getYear(0, 0);
+        s1Day = Library.Library.getDay(0, 0);
+        s1Month = Library.Library.getMonth(0, 0);
+        s1Year = Library.Library.getYear(0, 0);
+        
+        cob_ngay_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
+        cob_ngay_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Day));
+        cob_thang_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sMonth));
+        cob_thang_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Month));
+        cob_nam_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
+        cob_nam_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Year));
+        addComboBoxListeners();
+        addCheckBoxListeners();
+        addDocumentListeners();
     }
     
     public void initTable() { 
@@ -44,48 +93,181 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         btn_insert.setEnabled(false);
     }
     
-    public void fillTable() {
+    private void loadData() {
         try {
-            Map<String, ArrayList<?>> data = ParkingSessionDAO.getInstance().getAllData();
-            ArrayList<ParkingSession> parking_sessions = (ArrayList<ParkingSession>) data.get("parking_sessions");
-            ArrayList<String> check_in_shift_type_names = (ArrayList<String>) data.get("check_in_shift_type_names");
-            ArrayList<String> check_out_shift_type_names = (ArrayList<String>) data.get("check_out_shift_type_names");
-            int count = -1;
-            String crCheck_in_shift_type_name = "";
-            String crCheck_out_shift_type_name = "";
-            for (ParkingSession par: parking_sessions) { 
-                try {
-                    count += 1;
-                    crCheck_in_shift_type_name = check_in_shift_type_names.get(count);
-                    crCheck_out_shift_type_name = check_out_shift_type_names.get(count);
-                    if (crCheck_out_shift_type_name == null) {
-                        crCheck_out_shift_type_name = "Trong Bai";
-                    }
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                tblModel.addRow(new String[] {  String.valueOf(par.getParking_session_id()), String.valueOf(par.getCard_id()), String.valueOf(par.isIs_service()),
-                                                String.valueOf(par.getCheck_in_time()), String.valueOf(par.getCheck_out_time()),
-                                                crCheck_in_shift_type_name, 
-                                                crCheck_out_shift_type_name, 
-                                                String.valueOf(par.getVehicle_id()), String.valueOf(par.getAmount())
-                });
-            }
+            this.data = ParkingSessionDAO.getInstance().getAllData();
+            this.parking_sessions = (ArrayList<ParkingSession>) data.get("parking_sessions");
+            this.check_in_shift_type_names = (ArrayList<String>) data.get("check_in_shift_type_names");
+            this.check_out_shift_type_names = (ArrayList<String>) data.get("check_out_shift_type_names");
         }
         catch (Exception e) { 
-                e.printStackTrace();
+            e.printStackTrace();
+        }
+    }
+    
+    
+    private void fillTable() {
+        int count = -1;
+        String crCheck_in_shift_type_name = "";
+        String crCheck_out_shift_type_name = "";
+        
+        
+        for (ParkingSession par: parking_sessions) { 
+            count += 1;
+            crCheck_in_shift_type_name = check_in_shift_type_names.get(count);
+            crCheck_out_shift_type_name = check_out_shift_type_names.get(count);
+            String dt_start = "null";
+            String dt_end = "null";
+            
+            dt_start =  String.valueOf(par.getCheck_in_time().toLocalDate()) + " " + 
+                        String.valueOf(par.getCheck_in_time().toLocalTime());
+            
+            if (par.getCheck_out_time() != null ){ 
+                dt_end =    String.valueOf(par.getCheck_out_time().toLocalDate()) + " " +
+                        String.valueOf(par.getCheck_out_time().toLocalTime());
             }
+            
+            if (crCheck_out_shift_type_name == null) {
+                crCheck_out_shift_type_name = "Trong Bai";
+            }
+            tblModel.addRow(new String[] {  String.valueOf(par.getParking_session_id()), String.valueOf(par.getCard_id()), String.valueOf(par.isIs_service()),
+                                            dt_start, dt_end,
+                                            crCheck_in_shift_type_name, 
+                                            crCheck_out_shift_type_name, 
+                                            String.valueOf(par.getVehicle_id()), String.valueOf(par.getAmount())
+            });
+        }
         tblModel.fireTableDataChanged();
-//        LocalDateTime s1 = LocalDateTime.of(2025, 3, 7, 8, 0);
-//        LocalTime s2 = LocalTime.of(13, 40);
-//        ParkingSession par = new ParkingSession(106, 2, false, s1, null, 2, -1, 5, -1);
-//        ParkingSessionDAO.getInstance().insert(par);
-//        ParkingSessionDAO.getInstance().update(par);
-//        System.out.println(ParkingSessionDAO.getInstance().findbyID(106).getCheck_in_shift_id());
-//        ParkingSessionDAO.getInstance().delete(106);
     }  
+    
+    private void resetFields() { 
+        txt_parking_session_id.setText("");
+        txt_card_id.setText("");
+        cb_is_service.setSelected(false);
+        cb_not_service.setSelected(false);
+        txt_check_in_time.setText("");
+        txt_check_out_time.setText("");
+        txt_check_in_shift_id.setText("");
+        txt_check_out_shift_id.setText("");            
+        txt_vehicle.setText("");
+        txt_amount.setText("");
+        tbl_parking_session.clearSelection();
+        
+        txt_parking_session_id.setEnabled(false);
+        cb_is_service.setEnabled(true);
+        cb_not_service.setEnabled(true);
+        txt_check_in_time.setEnabled(false);
+        txt_check_out_time.setEnabled(false);
+        txt_check_in_shift_id.setEnabled(false);
+        txt_check_out_shift_id.setEnabled(false);
+        txt_vehicle.setEnabled(false);
+        txt_amount.setEnabled(false);
+    }
+    
+    private void showUpdate() { 
+        cb_is_service.setEnabled(false);
+        cb_not_service.setEnabled(false);
+        btn_vehicle.setEnabled(false);
+        btn_update.setEnabled(true);
+        btn_delete.setEnabled(false);
+        btn_insert.setEnabled(false);
+    }
+    
+    private void showDelete() { 
+        cb_is_service.setEnabled(false);
+        cb_not_service.setEnabled(false);
+        btn_vehicle.setEnabled(false);
+        btn_update.setEnabled(false);
+        btn_delete.setEnabled(true);
+        btn_insert.setEnabled(false);
+    }
+    
+    private void resetBtn() {
+        btn_loc.setEnabled(false);
+        btn_bo_loc.setEnabled(false);
+        
+        btn_card_id.setEnabled(false);
+        btn_vehicle.setEnabled(true);
+        
+        btn_delete.setEnabled(false);
+        btn_update.setEnabled(false);
+    }
+    
+    private void checkDayMonthYearSort() {
+        boolean isDateSelected =    !cob_ngay_bat_dau.getSelectedItem().toString().equals("-1") &&
+                                    !cob_ngay_ket_thuc.getSelectedItem().toString().equals("-1") &&
+                                    !cob_thang_bat_dau.getSelectedItem().toString().equals("-1") &&
+                                    !cob_thang_ket_thuc.getSelectedItem().toString().equals("-1") &&
+                                    !cob_nam_bat_dau.getSelectedItem().toString().equals("-1") &&
+                                    !cob_nam_ket_thuc.getSelectedItem().toString().equals("-1");
+
+//        System.out.println(isDateSelected);
+        btn_loc.setEnabled(isDateSelected);
+    }
+    
+    private void addComboBoxListeners() {
+        ActionListener comboListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                checkDayMonthYearSort();
+            }
+        };
+        
+        cob_ngay_bat_dau.addActionListener(comboListener);
+        cob_thang_bat_dau.addActionListener(comboListener);
+        cob_nam_bat_dau.addActionListener(comboListener);
+        cob_ngay_ket_thuc.addActionListener(comboListener);
+        cob_thang_ket_thuc.addActionListener(comboListener);
+        cob_nam_ket_thuc.addActionListener(comboListener);
+    }
+    
+    private void checkTurnOnButtonCardId () { 
+        btn_card_id.setEnabled(cb_is_service.isSelected() || cb_not_service.isSelected());
+    }
+    
+    private void checkBtnInsert() {
+        boolean isFilled =      !txt_card_id.getText().trim().isEmpty() && 
+                                !txt_vehicle.getText().trim().isEmpty();
+        boolean isButton =      (cb_is_service.isSelected() || cb_not_service.isSelected());
+
+        System.out.println(isFilled + " " + isButton);
+        btn_insert.setEnabled(isFilled && isButton);
+    }
+    
+    private void addCheckBoxListeners() {
+        ActionListener checkboxListener = new ActionListener() {
+        @Override
+            public void actionPerformed(ActionEvent e) {
+                checkTurnOnButtonCardId();
+                checkBtnInsert();
+            }
+        };
+
+        cb_is_service.addActionListener(checkboxListener);
+        cb_not_service.addActionListener(checkboxListener); 
+    }
+    
+    private void addDocumentListeners() {
+        DocumentListener docListener = new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                checkBtnInsert();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                checkBtnInsert();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                checkBtnInsert();
+            }
+        };
+        
+        txt_card_id.getDocument().addDocumentListener(docListener);
+        txt_vehicle.getDocument().addDocumentListener(docListener);
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -122,9 +304,9 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         btn_tang = new javax.swing.JButton();
         btn_giam = new javax.swing.JButton();
         btn_tat_ca = new javax.swing.JButton();
-        btn_tang_the = new javax.swing.JButton();
-        btn_giam_the = new javax.swing.JButton();
-        btn_tat_ca_the = new javax.swing.JButton();
+        btn_tang_gia = new javax.swing.JButton();
+        btn_giam_gia = new javax.swing.JButton();
+        btn_mac_dinh_gia = new javax.swing.JButton();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
@@ -134,18 +316,18 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         btn_update = new javax.swing.JButton();
         btn_delete = new javax.swing.JButton();
         btn_reset = new javax.swing.JButton();
-        btn_chon_building = new javax.swing.JButton();
-        btn_chon_ca_truc_vao = new javax.swing.JButton();
-        btn_chon_ca_truc_ra = new javax.swing.JButton();
+        btn_card_id = new javax.swing.JButton();
+        btn_vehicle = new javax.swing.JButton();
         txt_parking_session_id = new javax.swing.JTextField();
-        txt_is_service = new javax.swing.JTextField();
         txt_check_in_time = new javax.swing.JTextField();
         txt_check_out_time = new javax.swing.JTextField();
         txt_vehicle = new javax.swing.JTextField();
         txt_amount = new javax.swing.JTextField();
-        txt_building_id = new javax.swing.JTextField();
+        txt_card_id = new javax.swing.JTextField();
         txt_check_in_shift_id = new javax.swing.JTextField();
         txt_check_out_shift_id = new javax.swing.JTextField();
+        cb_is_service = new javax.swing.JCheckBox();
+        cb_not_service = new javax.swing.JCheckBox();
         jL_title = new javax.swing.JLabel();
         jL_parking_session_id = new javax.swing.JLabel();
         jL_card_id = new javax.swing.JLabel();
@@ -182,8 +364,18 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         btn_loc.setRequestFocusEnabled(false);
         btn_loc.setRolloverEnabled(false);
         btn_loc.setVerifyInputWhenFocusTarget(false);
+        btn_loc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_locActionPerformed(evt);
+            }
+        });
 
         btn_bo_loc.setText("Bỏ lọc");
+        btn_bo_loc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_bo_locActionPerformed(evt);
+            }
+        });
 
         cob_ngay_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cob_ngay_bat_dau.setMinimumSize(new java.awt.Dimension(100, 22));
@@ -194,14 +386,39 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         });
 
         cob_thang_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cob_thang_bat_dau.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cob_thang_bat_dauActionPerformed(evt);
+            }
+        });
 
         cob_nam_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cob_nam_bat_dau.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cob_nam_bat_dauActionPerformed(evt);
+            }
+        });
 
         cob_ngay_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cob_ngay_ket_thuc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cob_ngay_ket_thucActionPerformed(evt);
+            }
+        });
 
         cob_thang_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cob_thang_ket_thuc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cob_thang_ket_thucActionPerformed(evt);
+            }
+        });
 
         cob_nam_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cob_nam_ket_thuc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cob_nam_ket_thucActionPerformed(evt);
+            }
+        });
 
         jLabel34.setText("Thời Gian: Từ");
 
@@ -294,6 +511,11 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
 
         btn_tim_kiem.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_tim_kiem.setText("Tìm");
+        btn_tim_kiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tim_kiemActionPerformed(evt);
+            }
+        });
 
         btn_tang.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_tang.setText("Tăng");
@@ -314,26 +536,36 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
 
         btn_tat_ca.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_tat_ca.setText("Tất cả");
-
-        btn_tang_the.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_tang_the.setText("Tăng");
-        btn_tang_the.setToolTipText("");
-        btn_tang_the.addActionListener(new java.awt.event.ActionListener() {
+        btn_tat_ca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_tang_theActionPerformed(evt);
+                btn_tat_caActionPerformed(evt);
             }
         });
 
-        btn_giam_the.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_giam_the.setText("Giảm");
-        btn_giam_the.addActionListener(new java.awt.event.ActionListener() {
+        btn_tang_gia.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_tang_gia.setText("Tăng");
+        btn_tang_gia.setToolTipText("");
+        btn_tang_gia.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_giam_theActionPerformed(evt);
+                btn_tang_giaActionPerformed(evt);
             }
         });
 
-        btn_tat_ca_the.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_tat_ca_the.setText("Tất cả");
+        btn_giam_gia.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_giam_gia.setText("Giảm");
+        btn_giam_gia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_giam_giaActionPerformed(evt);
+            }
+        });
+
+        btn_mac_dinh_gia.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_mac_dinh_gia.setText("Mặc Định");
+        btn_mac_dinh_gia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_mac_dinh_giaActionPerformed(evt);
+            }
+        });
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel12.setText("Thời Gian");
@@ -342,7 +574,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         jLabel13.setText("Tìm Mã Gửi:");
 
         jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel14.setText("Mã Thẻ");
+        jLabel14.setText("Giá Tiền");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -368,11 +600,11 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_tang_the)
+                        .addComponent(btn_tang_gia)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_giam_the)
+                        .addComponent(btn_giam_gia)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_tat_ca_the)))
+                        .addComponent(btn_mac_dinh_gia)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -389,10 +621,10 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                     .addComponent(jLabel12)
                     .addComponent(btn_giam)
                     .addComponent(btn_tat_ca)
-                    .addComponent(btn_tang_the)
+                    .addComponent(btn_tang_gia)
                     .addComponent(jLabel14)
-                    .addComponent(btn_giam_the)
-                    .addComponent(btn_tat_ca_the))
+                    .addComponent(btn_giam_gia)
+                    .addComponent(btn_mac_dinh_gia))
                 .addContainerGap(12, Short.MAX_VALUE))
         );
 
@@ -453,9 +685,19 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
 
         btn_update.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_update.setText("Cập Nhật");
+        btn_update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_updateActionPerformed(evt);
+            }
+        });
 
         btn_delete.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_delete.setText("Xóa");
+        btn_delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_deleteActionPerformed(evt);
+            }
+        });
 
         btn_reset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_reset.setText("Reset");
@@ -470,38 +712,62 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             }
         });
 
-        btn_chon_building.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_chon_building.setText("Chọn");
+        btn_card_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_card_id.setText("Chọn");
+        btn_card_id.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_card_idActionPerformed(evt);
+            }
+        });
 
-        btn_chon_ca_truc_vao.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_chon_ca_truc_vao.setText("Chọn");
-
-        btn_chon_ca_truc_ra.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_chon_ca_truc_ra.setText("Chọn");
+        btn_vehicle.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_vehicle.setText("Chọn");
+        btn_vehicle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_vehicleActionPerformed(evt);
+            }
+        });
 
         txt_parking_session_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txt_parking_session_id.setEnabled(false);
 
-        txt_is_service.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txt_is_service.setEnabled(false);
-
         txt_check_in_time.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_check_in_time.setEnabled(false);
 
         txt_check_out_time.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_check_out_time.setEnabled(false);
 
         txt_vehicle.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         txt_amount.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txt_amount.setEnabled(false);
 
-        txt_building_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txt_building_id.setEnabled(false);
+        txt_card_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_card_id.setEnabled(false);
 
         txt_check_in_shift_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txt_check_in_shift_id.setEnabled(false);
 
         txt_check_out_shift_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txt_check_out_shift_id.setEnabled(false);
+
+        cb_is_service.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cb_is_service.setText("Có");
+        cb_is_service.setEnabled(false);
+        cb_is_service.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cb_is_serviceActionPerformed(evt);
+            }
+        });
+
+        cb_not_service.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cb_not_service.setText("Không");
+        cb_not_service.setEnabled(false);
+        cb_not_service.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cb_not_serviceActionPerformed(evt);
+            }
+        });
 
         jL_title.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jL_title.setText("Thông Tin Gửi Xe");
@@ -559,24 +825,27 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                             .addComponent(jL_check_out_shift_d, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jL_check_in_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txt_check_out_time, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_check_in_time, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_is_service, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_parking_session_id, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_vehicle, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(txt_building_id, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(txt_card_id, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_chon_building, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(btn_card_id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(txt_check_in_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_chon_ca_truc_vao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(txt_check_out_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_chon_ca_truc_ra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txt_check_out_time)
+                                    .addComponent(txt_check_in_time)
+                                    .addComponent(txt_parking_session_id)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(cb_is_service)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(cb_not_service))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(txt_vehicle, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_vehicle, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(txt_check_in_shift_id)
+                                    .addComponent(txt_check_out_shift_id))
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(41, 41, 41)
                         .addComponent(btn_insert, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -600,13 +869,14 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txt_building_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_chon_building))
+                        .addComponent(txt_card_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_card_id))
                     .addComponent(jL_card_id))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jL_is_service)
-                    .addComponent(txt_is_service, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cb_is_service)
+                    .addComponent(cb_not_service))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jL_check_in_time)
@@ -617,20 +887,17 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                     .addComponent(txt_check_out_time, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txt_check_in_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_chon_ca_truc_vao))
+                    .addComponent(txt_check_in_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jL_check_in_shift_id))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txt_check_out_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_chon_ca_truc_ra))
+                    .addComponent(txt_check_out_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jL_check_out_shift_d))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jL_vehicle_id)
-                    .addComponent(txt_vehicle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_vehicle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_vehicle))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jL_amount)
@@ -667,6 +934,46 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
 
     private void tbl_parking_sessionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_parking_sessionMouseClicked
         // TODO add your handling code here:
+        int selectedRow = tbl_parking_session.getSelectedRow();
+        // Kiểm tra xem có hàng nào được chọn không
+        if (selectedRow != -1) {
+            // Lấy dữ liệu từ bảng và gán vào các biến
+            int parkingSessionId = Integer.parseInt(tbl_parking_session.getValueAt(selectedRow, 0).toString());
+            String cardId = tbl_parking_session.getValueAt(selectedRow, 1).toString();
+            boolean isService = Boolean.parseBoolean(tbl_parking_session.getValueAt(selectedRow, 2).toString());
+            String checkInTime = tbl_parking_session.getValueAt(selectedRow, 3).toString();
+            String checkOutTime = tbl_parking_session.getValueAt(selectedRow, 4).toString();
+            String checkInShiftId = tbl_parking_session.getValueAt(selectedRow, 5).toString();
+            String checkOutShiftId = tbl_parking_session.getValueAt(selectedRow, 6).toString();
+            String vehicleId = tbl_parking_session.getValueAt(selectedRow, 7).toString();
+            int amount = Integer.parseInt(tbl_parking_session.getValueAt(selectedRow, 8).toString());
+            
+            // Hiển thị dữ liệu lên các ô nhập liệu
+            txt_parking_session_id.setText(String.valueOf(parkingSessionId));
+            txt_card_id.setText(cardId);
+            if (isService) { 
+                cb_is_service.setSelected(true);
+                cb_not_service.setSelected(false);
+            }
+            else { 
+                cb_is_service.setSelected(false);
+                cb_not_service.setSelected(true);
+            }
+            txt_check_in_time.setText(checkInTime);
+            txt_check_out_time.setText(checkOutTime);
+            txt_check_in_shift_id.setText(checkInShiftId);
+            txt_check_out_shift_id.setText(checkOutShiftId);            
+            txt_vehicle.setText(vehicleId);
+            txt_amount.setText(String.valueOf(amount));
+            
+            if (checkOutTime == "null") {
+                
+                showUpdate();
+            }
+            else {
+                showDelete();
+            }
+        }
     }//GEN-LAST:event_tbl_parking_sessionMouseClicked
 
     private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked
@@ -675,7 +982,23 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
 
     private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
         // TODO add your handling code here:
-
+        boolean isService = true;
+        if (cb_is_service.isSelected()) {
+            isService = true;
+        }
+        else if (cb_not_service.isSelected()) { 
+            isService = false;
+        }
+        LocalDateTime now = LocalDateTime.now();
+        
+        ParkingSession par = new ParkingSession(chooseCardId, isService, now, chooseVehicleId);
+        ParkingSessionDAO.getInstance().insert(par);
+        resetFields();
+        resetBtn();
+        initTable();
+        loadData();
+        fillTable();
+//        System.out.println(par.getCard_id() + " " + par.getCheck_in_time() + " " + par.getVehicle_id());
     }//GEN-LAST:event_btn_insertActionPerformed
 
     private void btn_resetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_resetMouseClicked
@@ -684,10 +1007,38 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
 
     private void btn_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_resetActionPerformed
         // TODO add your handling code here:
+        resetFields();
+        resetBtn();
     }//GEN-LAST:event_btn_resetActionPerformed
 
     private void cob_ngay_bat_dauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_ngay_bat_dauActionPerformed
         // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        
+        int day = Integer.parseInt(cob_ngay_bat_dau.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang_bat_dau.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam_bat_dau.getSelectedItem().toString());
+//        System.out.println(day + " " + month + " " + year);
+        
+        sMonth = Library.Library.getMonth(day, year);
+        sYear = Library.Library.getYear(day, month);
+        cob_thang_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sMonth));
+        cob_nam_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
+        
+        int monthIndex = Arrays.asList(sMonth).indexOf(String.format("%02d", month));
+        int yearIndex = Arrays.asList(sYear).indexOf(String.format("%02d", year));
+        
+        if (monthIndex == -1 || yearIndex == -1) {
+            cob_thang_bat_dau.setSelectedIndex(0);
+            cob_nam_bat_dau.setSelectedIndex(0);
+        }
+        else {
+            cob_thang_bat_dau.setSelectedIndex(monthIndex);
+            cob_nam_bat_dau.setSelectedIndex(yearIndex);
+        }
+        
+        isUpdating = false;
     }//GEN-LAST:event_cob_ngay_bat_dauActionPerformed
 
     private void txt_tim_kiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tim_kiemActionPerformed
@@ -696,42 +1047,857 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
 
     private void btn_tangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tangActionPerformed
         // TODO add your handling code here:
+        initTable();
+        int n = this.parking_sessions.size();
+        
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (this.parking_sessions.get(i).getCheck_in_time().compareTo(this.parking_sessions.get(j).getCheck_in_time()) > 0) { 
+                    // Hoán đổi vị trí trong lstCustomer
+                    ParkingSession tempParkingSession = this.parking_sessions.get(i);
+                    this.parking_sessions.set(i, this.parking_sessions.get(j));
+                    this.parking_sessions.set(j, tempParkingSession);
+
+                    String tempShiftTypeName = this.check_in_shift_type_names.get(i);
+                    this.check_in_shift_type_names.set(i, this.check_in_shift_type_names.get(j));
+                    this.check_in_shift_type_names.set(j, tempShiftTypeName);
+                    
+                    tempShiftTypeName = this.check_out_shift_type_names.get(i);
+                    this.check_out_shift_type_names.set(i, this.check_out_shift_type_names.get(j));
+                    this.check_out_shift_type_names.set(j, tempShiftTypeName);
+                }
+            }    
+        }
+        
+        int count = -1;
+        String crCheck_in_shift_type_name = "";
+        String crCheck_out_shift_type_name = "";
+        
+        
+        for (ParkingSession par: parking_sessions) { 
+            count += 1;
+            crCheck_in_shift_type_name = check_in_shift_type_names.get(count);
+            crCheck_out_shift_type_name = check_out_shift_type_names.get(count);
+            String dt_start = "null";
+            String dt_end = "null";
+            
+            dt_start =  String.valueOf(par.getCheck_in_time().toLocalDate()) + " " + 
+                        String.valueOf(par.getCheck_in_time().toLocalTime());
+            
+            if (par.getCheck_out_time() != null ){ 
+                dt_end =    String.valueOf(par.getCheck_out_time().toLocalDate()) + " " +
+                        String.valueOf(par.getCheck_out_time().toLocalTime());
+            }
+            
+            if (crCheck_out_shift_type_name == null) {
+                crCheck_out_shift_type_name = "Trong Bai";
+            }
+            tblModel.addRow(new String[] {  String.valueOf(par.getParking_session_id()), String.valueOf(par.getCard_id()), String.valueOf(par.isIs_service()),
+                                            dt_start, dt_end,
+                                            crCheck_in_shift_type_name, 
+                                            crCheck_out_shift_type_name, 
+                                            String.valueOf(par.getVehicle_id()), String.valueOf(par.getAmount())
+            });
+        }
+        tblModel.fireTableDataChanged();
+        resetFields();
     }//GEN-LAST:event_btn_tangActionPerformed
 
     private void btn_giamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_giamActionPerformed
         // TODO add your handling code here:
+        initTable();
+        int n = this.parking_sessions.size();
+        
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (this.parking_sessions.get(i).getCheck_in_time().compareTo(this.parking_sessions.get(j).getCheck_in_time()) < 0) { 
+                    // Hoán đổi vị trí trong lstCustomer
+                    ParkingSession tempParkingSession = this.parking_sessions.get(i);
+                    this.parking_sessions.set(i, this.parking_sessions.get(j));
+                    this.parking_sessions.set(j, tempParkingSession);
+
+                    String tempShiftTypeName = this.check_in_shift_type_names.get(i);
+                    this.check_in_shift_type_names.set(i, this.check_in_shift_type_names.get(j));
+                    this.check_in_shift_type_names.set(j, tempShiftTypeName);
+                    
+                    tempShiftTypeName = this.check_out_shift_type_names.get(i);
+                    this.check_out_shift_type_names.set(i, this.check_out_shift_type_names.get(j));
+                    this.check_out_shift_type_names.set(j, tempShiftTypeName);
+                }
+            }    
+        }
+        
+        int count = -1;
+        String crCheck_in_shift_type_name = "";
+        String crCheck_out_shift_type_name = "";
+        
+        
+        for (ParkingSession par: parking_sessions) { 
+            count += 1;
+            crCheck_in_shift_type_name = check_in_shift_type_names.get(count);
+            crCheck_out_shift_type_name = check_out_shift_type_names.get(count);
+            String dt_start = "null";
+            String dt_end = "null";
+            
+            dt_start =  String.valueOf(par.getCheck_in_time().toLocalDate()) + " " + 
+                        String.valueOf(par.getCheck_in_time().toLocalTime());
+            
+            if (par.getCheck_out_time() != null ){ 
+                dt_end =    String.valueOf(par.getCheck_out_time().toLocalDate()) + " " +
+                        String.valueOf(par.getCheck_out_time().toLocalTime());
+            }
+            
+            if (crCheck_out_shift_type_name == null) {
+                crCheck_out_shift_type_name = "Trong Bai";
+            }
+            tblModel.addRow(new String[] {  String.valueOf(par.getParking_session_id()), String.valueOf(par.getCard_id()), String.valueOf(par.isIs_service()),
+                                            dt_start, dt_end,
+                                            crCheck_in_shift_type_name, 
+                                            crCheck_out_shift_type_name, 
+                                            String.valueOf(par.getVehicle_id()), String.valueOf(par.getAmount())
+            });
+        }
+        tblModel.fireTableDataChanged();
+        resetFields();
     }//GEN-LAST:event_btn_giamActionPerformed
 
-    private void btn_tang_theActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tang_theActionPerformed
+    private void btn_tang_giaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tang_giaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_tang_theActionPerformed
+        initTable();
+        int n = this.parking_sessions.size();
+        
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (this.parking_sessions.get(i).getAmount() > this.parking_sessions.get(j).getAmount()) { 
+                    // Hoán đổi vị trí trong lstCustomer
+                    ParkingSession tempParkingSession = this.parking_sessions.get(i);
+                    this.parking_sessions.set(i, this.parking_sessions.get(j));
+                    this.parking_sessions.set(j, tempParkingSession);
 
-    private void btn_giam_theActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_giam_theActionPerformed
+                    String tempShiftTypeName = this.check_in_shift_type_names.get(i);
+                    this.check_in_shift_type_names.set(i, this.check_in_shift_type_names.get(j));
+                    this.check_in_shift_type_names.set(j, tempShiftTypeName);
+                    
+                    tempShiftTypeName = this.check_out_shift_type_names.get(i);
+                    this.check_out_shift_type_names.set(i, this.check_out_shift_type_names.get(j));
+                    this.check_out_shift_type_names.set(j, tempShiftTypeName);
+                }
+            }    
+        }
+        
+        int count = -1;
+        String crCheck_in_shift_type_name = "";
+        String crCheck_out_shift_type_name = "";
+        
+        
+        for (ParkingSession par: parking_sessions) { 
+            count += 1;
+            crCheck_in_shift_type_name = check_in_shift_type_names.get(count);
+            crCheck_out_shift_type_name = check_out_shift_type_names.get(count);
+            String dt_start = "null";
+            String dt_end = "null";
+            
+            dt_start =  String.valueOf(par.getCheck_in_time().toLocalDate()) + " " + 
+                        String.valueOf(par.getCheck_in_time().toLocalTime());
+            
+            if (par.getCheck_out_time() != null ){ 
+                dt_end =    String.valueOf(par.getCheck_out_time().toLocalDate()) + " " +
+                        String.valueOf(par.getCheck_out_time().toLocalTime());
+            }
+            
+            if (crCheck_out_shift_type_name == null) {
+                crCheck_out_shift_type_name = "Trong Bai";
+            }
+            tblModel.addRow(new String[] {  String.valueOf(par.getParking_session_id()), String.valueOf(par.getCard_id()), String.valueOf(par.isIs_service()),
+                                            dt_start, dt_end,
+                                            crCheck_in_shift_type_name, 
+                                            crCheck_out_shift_type_name, 
+                                            String.valueOf(par.getVehicle_id()), String.valueOf(par.getAmount())
+            });
+        }
+        tblModel.fireTableDataChanged();
+        resetFields();
+    }//GEN-LAST:event_btn_tang_giaActionPerformed
+
+    private void btn_giam_giaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_giam_giaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_giam_theActionPerformed
+        initTable();
+        int n = this.parking_sessions.size();
+        
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (this.parking_sessions.get(i).getAmount() < this.parking_sessions.get(j).getAmount()) { 
+                    // Hoán đổi vị trí trong lstCustomer
+                    ParkingSession tempParkingSession = this.parking_sessions.get(i);
+                    this.parking_sessions.set(i, this.parking_sessions.get(j));
+                    this.parking_sessions.set(j, tempParkingSession);
+
+                    String tempShiftTypeName = this.check_in_shift_type_names.get(i);
+                    this.check_in_shift_type_names.set(i, this.check_in_shift_type_names.get(j));
+                    this.check_in_shift_type_names.set(j, tempShiftTypeName);
+                    
+                    tempShiftTypeName = this.check_out_shift_type_names.get(i);
+                    this.check_out_shift_type_names.set(i, this.check_out_shift_type_names.get(j));
+                    this.check_out_shift_type_names.set(j, tempShiftTypeName);
+                }
+            }    
+        }
+        
+        int count = -1;
+        String crCheck_in_shift_type_name = "";
+        String crCheck_out_shift_type_name = "";
+        
+        
+        for (ParkingSession par: parking_sessions) { 
+            count += 1;
+            crCheck_in_shift_type_name = check_in_shift_type_names.get(count);
+            crCheck_out_shift_type_name = check_out_shift_type_names.get(count);
+            String dt_start = "null";
+            String dt_end = "null";
+            
+            dt_start =  String.valueOf(par.getCheck_in_time().toLocalDate()) + " " + 
+                        String.valueOf(par.getCheck_in_time().toLocalTime());
+            
+            if (par.getCheck_out_time() != null ){ 
+                dt_end =    String.valueOf(par.getCheck_out_time().toLocalDate()) + " " +
+                        String.valueOf(par.getCheck_out_time().toLocalTime());
+            }
+            
+            if (crCheck_out_shift_type_name == null) {
+                crCheck_out_shift_type_name = "Trong Bai";
+            }
+            tblModel.addRow(new String[] {  String.valueOf(par.getParking_session_id()), String.valueOf(par.getCard_id()), String.valueOf(par.isIs_service()),
+                                            dt_start, dt_end,
+                                            crCheck_in_shift_type_name, 
+                                            crCheck_out_shift_type_name, 
+                                            String.valueOf(par.getVehicle_id()), String.valueOf(par.getAmount())
+            });
+        }
+        tblModel.fireTableDataChanged();
+        resetFields();
+    }//GEN-LAST:event_btn_giam_giaActionPerformed
 
     private void txt_tin_nhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tin_nhanActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_tin_nhanActionPerformed
 
+    private void cob_thang_bat_dauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_thang_bat_dauActionPerformed
+        // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        
+        int day = Integer.parseInt(cob_ngay_bat_dau.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang_bat_dau.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam_bat_dau.getSelectedItem().toString());
+        
+        sDay = Library.Library.getDay(month, year);
+        sYear = Library.Library.getYear(day, month);
+        
+//        System.out.println(day + " " + month + " " + year);
+        cob_ngay_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
+        cob_nam_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
+        
+        int dayIndex = Arrays.asList(sDay).indexOf(String.format("%02d", day));
+        int yearIndex = Arrays.asList(sYear).indexOf(String.format("%02d", year));
+        
+        if (dayIndex == -1 || yearIndex == -1) {
+            cob_ngay_bat_dau.setSelectedIndex(0);
+            cob_nam_bat_dau.setSelectedIndex(0);
+        }
+        else {
+            cob_ngay_bat_dau.setSelectedIndex(dayIndex);
+            cob_nam_bat_dau.setSelectedIndex(yearIndex);
+        }
+        isUpdating = false;
+    }//GEN-LAST:event_cob_thang_bat_dauActionPerformed
+
+    private void cob_nam_bat_dauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_nam_bat_dauActionPerformed
+        // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        int day = Integer.parseInt(cob_ngay_bat_dau.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang_bat_dau.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam_bat_dau.getSelectedItem().toString());
+//        System.out.println(day + " " + month + " " + year);
+        
+        sDay = Library.Library.getDay(month, year);
+        sMonth = Library.Library.getMonth(day, year);
+        
+        cob_ngay_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
+        cob_thang_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sMonth));
+        
+        int dayIndex = Arrays.asList(sDay).indexOf(String.format("%02d", day));
+        int monthIndex = Arrays.asList(sMonth).indexOf(String.format("%02d", month));
+        
+        if (monthIndex == -1 || dayIndex == -1) {
+            cob_ngay_bat_dau.setSelectedIndex(0);
+            cob_thang_bat_dau.setSelectedIndex(0);
+        }
+        else {
+            cob_ngay_bat_dau.setSelectedIndex(dayIndex);
+            cob_thang_bat_dau.setSelectedIndex(monthIndex);
+        }
+        isUpdating = false;
+    }//GEN-LAST:event_cob_nam_bat_dauActionPerformed
+
+    private void cob_ngay_ket_thucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_ngay_ket_thucActionPerformed
+        // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        int day = Integer.parseInt(cob_ngay_ket_thuc.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang_ket_thuc.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam_ket_thuc.getSelectedItem().toString());
+//        System.out.println(day + " " + month + " " + year);
+        
+        s1Month = Library.Library.getMonth(day, year);
+        s1Year = Library.Library.getYear(day, month);
+        cob_thang_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Month));
+        cob_nam_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Year));
+        
+        int monthIndex = Arrays.asList(s1Month).indexOf(String.format("%02d", month));
+        int yearIndex = Arrays.asList(s1Year).indexOf(String.format("%02d", year));
+        
+        if (monthIndex == -1 || yearIndex == -1) {
+            cob_thang_ket_thuc.setSelectedIndex(0);
+            cob_nam_ket_thuc.setSelectedIndex(0);
+        }
+        else {
+            cob_thang_ket_thuc.setSelectedIndex(monthIndex);
+            cob_nam_ket_thuc.setSelectedIndex(yearIndex);
+        }
+        isUpdating = false;
+    }//GEN-LAST:event_cob_ngay_ket_thucActionPerformed
+
+    private void cob_thang_ket_thucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_thang_ket_thucActionPerformed
+        // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        int day = Integer.parseInt(cob_ngay_ket_thuc.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang_ket_thuc.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam_ket_thuc.getSelectedItem().toString());
+        
+        s1Day = Library.Library.getDay(month, year);
+        s1Year = Library.Library.getYear(day, month);
+        
+//        System.out.println(day + " " + month + " " + year);
+        cob_ngay_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Day));
+        cob_nam_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Year));
+        
+        int dayIndex = Arrays.asList(s1Day).indexOf(String.format("%02d", day));
+        int yearIndex = Arrays.asList(s1Year).indexOf(String.format("%02d", year));
+        
+        if (dayIndex == -1 || yearIndex == -1) {
+            cob_ngay_ket_thuc.setSelectedIndex(0);
+            cob_nam_ket_thuc.setSelectedIndex(0);
+        }
+        else {
+            cob_ngay_ket_thuc.setSelectedIndex(dayIndex);
+            cob_nam_ket_thuc.setSelectedIndex(yearIndex);
+        }
+        isUpdating = false;
+    }//GEN-LAST:event_cob_thang_ket_thucActionPerformed
+
+    private void cob_nam_ket_thucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_nam_ket_thucActionPerformed
+        // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        int day = Integer.parseInt(cob_ngay_ket_thuc.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang_ket_thuc.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam_ket_thuc.getSelectedItem().toString());
+//        System.out.println(day + " " + month + " " + year);
+        
+        s1Day = Library.Library.getDay(month, year);
+        s1Month = Library.Library.getMonth(day, year);
+        
+        cob_ngay_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Day));
+        cob_thang_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Month));
+        
+        int dayIndex = Arrays.asList(s1Day).indexOf(String.format("%02d", day));
+        int monthIndex = Arrays.asList(s1Month).indexOf(String.format("%02d", month));
+        
+        if (monthIndex == -1 || dayIndex == -1) {
+            cob_ngay_ket_thuc.setSelectedIndex(0);
+            cob_thang_ket_thuc.setSelectedIndex(0);
+        }
+        else {
+            cob_ngay_ket_thuc.setSelectedIndex(dayIndex);
+            cob_thang_ket_thuc.setSelectedIndex(monthIndex);
+        }
+        
+        isUpdating = false;
+    }//GEN-LAST:event_cob_nam_ket_thucActionPerformed
+
+    private void btn_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_locActionPerformed
+        // TODO add your handling code here:
+        initTable();
+        int ngay_bat_dau = Integer.parseInt(cob_ngay_bat_dau.getSelectedItem().toString());
+        int ngay_ket_thuc = Integer.parseInt(cob_ngay_ket_thuc.getSelectedItem().toString());
+        int thang_bat_dau = Integer.parseInt(cob_thang_bat_dau.getSelectedItem().toString());
+        int thang_ket_thuc = Integer.parseInt(cob_thang_ket_thuc.getSelectedItem().toString());
+        int nam_bat_dau = Integer.parseInt(cob_nam_bat_dau.getSelectedItem().toString());
+        int nam_ket_thuc = Integer.parseInt(cob_nam_ket_thuc.getSelectedItem().toString());
+        
+        if (nam_bat_dau >= 50) nam_bat_dau += 1900;
+        else nam_bat_dau += 2000;
+        
+        if (nam_ket_thuc >= 50) nam_ket_thuc += 1900;
+        else nam_ket_thuc += 2000;
+        
+        LocalDate dateStart = LocalDate.of(nam_bat_dau, thang_bat_dau, ngay_bat_dau);
+        LocalDate dateEnd = LocalDate.of(nam_ket_thuc, thang_ket_thuc, ngay_ket_thuc);
+        
+        int count = -1;
+        String crCheck_in_shift_type_name = "";
+        String crCheck_out_shift_type_name = "";
+        LocalDate dateStartPs;
+        LocalDate dateEndPs;
+        for (ParkingSession par: parking_sessions) { 
+            count += 1;
+            dateStartPs = par.getCheck_in_time().toLocalDate();
+            dateEndPs = par.getCheck_out_time() != null ? par.getCheck_out_time().toLocalDate() : null;
+            if (    
+                    dateEndPs != null &&
+                    (
+                        dateStart.isBefore(dateStartPs) || dateStart.equals(dateStartPs)
+                    ) &&
+                    (
+                        dateEnd.isAfter(dateEndPs) || dateEnd.equals(dateEndPs)
+                    )
+                ) 
+            {
+                crCheck_in_shift_type_name = check_in_shift_type_names.get(count);
+                crCheck_out_shift_type_name = check_out_shift_type_names.get(count);
+                
+                String dt_start = "null";
+                String dt_end = "null";
+
+                dt_start =  String.valueOf(par.getCheck_in_time().toLocalDate()) + " " + 
+                            String.valueOf(par.getCheck_in_time().toLocalTime());
+
+                if (par.getCheck_out_time() != null ){ 
+                    dt_end =    String.valueOf(par.getCheck_out_time().toLocalDate()) + " " +
+                            String.valueOf(par.getCheck_out_time().toLocalTime());
+                }
+                
+                tblModel.addRow(new String[] {  String.valueOf(par.getParking_session_id()), String.valueOf(par.getCard_id()), String.valueOf(par.isIs_service()),
+                                                dt_start, dt_end,
+                                                crCheck_in_shift_type_name, 
+                                                crCheck_out_shift_type_name, 
+                                                String.valueOf(par.getVehicle_id()), String.valueOf(par.getAmount())
+                }); 
+            }
+        }
+        tblModel.fireTableDataChanged();
+        resetFields();
+        btn_loc.setEnabled(false);
+        btn_bo_loc.setEnabled(true);
+    }//GEN-LAST:event_btn_locActionPerformed
+
+    private void btn_bo_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_bo_locActionPerformed
+        // TODO add your handling code here:
+        initTable();
+        fillTable();
+        resetBtn();
+        resetFields();
+    }//GEN-LAST:event_btn_bo_locActionPerformed
+
+    private void btn_tim_kiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tim_kiemActionPerformed
+        // TODO add your handling code here:
+        initTable();
+        
+        int count = -1;
+        String crCheck_in_shift_type_name = "";
+        String crCheck_out_shift_type_name = "";
+        
+        for (ParkingSession par: parking_sessions) { 
+            count += 1;
+            if (Library.Library.StringOnString(this.txt_tim_kiem.getText().toString().trim(), String.valueOf(par.getParking_session_id()))) {
+                crCheck_in_shift_type_name = check_in_shift_type_names.get(count);
+                crCheck_out_shift_type_name = check_out_shift_type_names.get(count);
+                String dt_start = "null";
+                String dt_end = "null";
+
+                dt_start =  String.valueOf(par.getCheck_in_time().toLocalDate()) + " " + 
+                            String.valueOf(par.getCheck_in_time().toLocalTime());
+
+                if (par.getCheck_out_time() != null ){ 
+                    dt_end =    String.valueOf(par.getCheck_out_time().toLocalDate()) + " " +
+                            String.valueOf(par.getCheck_out_time().toLocalTime());
+                }
+
+                if (crCheck_out_shift_type_name == null) {
+                    crCheck_out_shift_type_name = "Trong Bai";
+                }
+                tblModel.addRow(new String[] {  String.valueOf(par.getParking_session_id()), String.valueOf(par.getCard_id()), String.valueOf(par.isIs_service()),
+                                                dt_start, dt_end,
+                                                crCheck_in_shift_type_name, 
+                                                crCheck_out_shift_type_name, 
+                                                String.valueOf(par.getVehicle_id()), String.valueOf(par.getAmount())
+                });
+            }
+        }
+        tblModel.fireTableDataChanged();
+        resetFields();
+    }//GEN-LAST:event_btn_tim_kiemActionPerformed
+
+    private void btn_tat_caActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tat_caActionPerformed
+        // TODO add your handling code here:
+        loadData();
+        initTable();
+        fillTable();
+        resetFields();
+    }//GEN-LAST:event_btn_tat_caActionPerformed
+
+    private void btn_card_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_card_idActionPerformed
+        // TODO add your handling code here:
+        this.viewmain.setEnabled(false);
+        if (cb_is_service.isSelected()) {
+            this.logSelection = new LogSelection() {
+                @Override
+                public void initContent() {
+                    this.label_property.setText("Mã Định Danh Các Thẻ Cư Dân");
+                    this.tableModel = new DefaultTableModel() {
+                        @Override
+                        public boolean isCellEditable(int row, int column) {
+                            return false;
+                        };
+                    };
+                    String[] header = new String[] {"Mã Thẻ", "Khách Hàng", "Còn/Mất"};
+                    this.tableModel.setColumnIdentifiers(header);
+                    this.table.setModel(tableModel);
+                    this.table.addMouseListener(new MouseAdapter()
+                    {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            int row = table.rowAtPoint(e.getPoint());
+                            txt_card_id.setText((String) table.getValueAt(row, 1));
+                            chooseCardId = Integer.parseInt((String)table.getValueAt(row, 0));
+                            logSelection.setVisible(false);
+                            viewmain.setEnabled(true);
+                            viewmain.requestFocus();
+                        }
+                    });
+                    for (ResidentCard re : viewmain.resident_cards) {
+                        tableModel.addRow(new String[] {String.valueOf(re.getPk_resident_card()), String.valueOf(re.getCustomer_id()),
+                                                        String.valueOf(re.isIs_active())});
+                    }
+                    this.tableModel.fireTableDataChanged();
+                    this.btn_loc.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                        }
+                    });
+                }
+                
+                @Override
+                public void back() {
+                    this.setVisible(false);
+                    viewmain.setEnabled(true);
+                    viewmain.requestFocus();
+                }
+            };
+        }
+        else if (cb_not_service.isSelected()) { 
+            this.logSelection = new LogSelection() {
+                @Override
+                public void initContent() {
+                    this.label_property.setText("Mã Định Danh Các Thẻ Vãn Lai");
+                    this.tableModel = new DefaultTableModel() {
+                        @Override
+                        public boolean isCellEditable(int row, int column) {
+                            return false;
+                        };
+                    };
+                    String[] header = new String[] {"Mã Thẻ", "Còn/Mất"};
+                    this.tableModel.setColumnIdentifiers(header);
+                    this.table.setModel(tableModel);
+                    this.table.addMouseListener(new MouseAdapter()
+                    {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            int row = table.rowAtPoint(e.getPoint());
+                            txt_card_id.setText((String) table.getValueAt(row, 1));
+                            chooseCardId = Integer.parseInt((String)table.getValueAt(row, 0));
+                            logSelection.setVisible(false);
+                            viewmain.setEnabled(true);
+                            viewmain.requestFocus();
+                        }
+                    });
+                    for (VisitorParkingCards vc : viewmain.visitor_parking_cards) {
+                        tableModel.addRow(new String[] {String.valueOf(vc.getVisitor_parking_card_id()),
+                                                        String.valueOf(vc.isIs_active())});
+                    }
+                    this.tableModel.fireTableDataChanged();
+                    this.btn_loc.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                        }
+                    });
+                }
+                
+                @Override
+                public void back() {
+                    this.setVisible(false);
+                    viewmain.setEnabled(true);
+                    viewmain.requestFocus();
+                }
+            };
+        }
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
+    }//GEN-LAST:event_btn_card_idActionPerformed
+
+    private void cb_is_serviceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_is_serviceActionPerformed
+        // TODO add your handling code here:
+        if (cb_is_service.isSelected()) { 
+                cb_is_service.setSelected(true);
+                cb_not_service.setSelected(false);
+            }
+        else { 
+            cb_is_service.setSelected(false);
+            cb_not_service.setSelected(true);
+        }
+    }//GEN-LAST:event_cb_is_serviceActionPerformed
+
+    private void cb_not_serviceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_not_serviceActionPerformed
+        // TODO add your handling code here:
+        if (cb_not_service.isSelected() == false) { 
+                cb_is_service.setSelected(true);
+                cb_not_service.setSelected(false);
+            }
+        else { 
+            cb_is_service.setSelected(false);
+            cb_not_service.setSelected(true);
+        }
+    }//GEN-LAST:event_cb_not_serviceActionPerformed
+
+    private void btn_vehicleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_vehicleActionPerformed
+        // TODO add your handling code here:
+        this.viewmain.setEnabled(false);
+        this.logSelection = new LogSelection() {
+            @Override
+            public void initContent() {
+                this.label_property.setText("Mã Định Danh Các Phương Tiện");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                String[] header = new String[] {"Mã Phương Tiện", "Mã Nhận Dạng", "Loại Phương Tiện", "Tên Phương Tiện", "Màu Phương Tiện"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table.rowAtPoint(e.getPoint());
+                        txt_vehicle.setText((String) table.getValueAt(row, 1));
+                        chooseVehicleId = Integer.parseInt((String)table.getValueAt(row, 0));
+                        logSelection.setVisible(false);
+                        viewmain.setEnabled(true);
+                        viewmain.requestFocus();
+                    }
+                });
+                for (Vehicle vel : viewmain.vehicles) {
+                    tableModel.addRow(new String[] {String.valueOf(vel.getVehicle_id()), vel.getIdentification_code(), 
+                                                    String.valueOf(vel.getVehicle_type_id()), vel.getVehicle_name(), 
+                                                    vel.getVehicle_color()
+                    });
+                }
+                this.tableModel.fireTableDataChanged();
+                this.btn_loc.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    }
+                });
+            }
+            @Override
+            public void back() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
+    }//GEN-LAST:event_btn_vehicleActionPerformed
+
+    private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
+        // TODO add your handling code here:
+        LocalDateTime start_date_time = null;
+        int id_end_time = 0, id_start_time = 0;
+        LocalDateTime end_date_time = null;
+        LocalDate end_date = null;
+        LocalTime end_time = null;
+        int vehicle_id = -1; 
+        int vehicle_type_id = -1;
+        int amount = 0;
+        long dateDistance = 0;
+        int check_in_shift_id = -1;
+
+        int pk_id = Integer.parseInt(txt_parking_session_id.getText().toString().trim());
+        for (ParkingSession par: this.parking_sessions) { 
+            if (par.getParking_session_id() == pk_id) { 
+                start_date_time = par.getCheck_in_time();
+                vehicle_id = par.getVehicle_id();
+                check_in_shift_id = par.getCheck_in_shift_id();
+            }
+        }
+        
+        for (Vehicle vel: viewmain.vehicles) { 
+            if (vel.getVehicle_id() == vehicle_id) { 
+                vehicle_type_id = vel.getVehicle_type_id();
+            }
+        }
+        
+        
+        LocalDate start_date = start_date_time.toLocalDate();
+        LocalTime start_time = start_date_time.toLocalTime();
+                
+        String sql = "EXEC GET_DATE_TIME";
+        try (
+                Connection con = OpenConnection.getConnection();
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                end_date_time = rs.getTimestamp("CurrentDateTime").toLocalDateTime();
+                end_date = end_date_time.toLocalDate();
+                end_time = end_date_time.toLocalTime();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        for (TimeFrame tf : viewmain.listTimeFrames) {
+            if 
+                (
+                    (tf.getTime_start().isBefore(end_time) || tf.getTime_start().equals(end_time)) &&
+                    (tf.getTime_end().isAfter(end_time) || tf.getTime_end().equals(end_time)) &&
+                    tf.isIs_active() == true
+                )
+            { 
+                id_end_time = tf.getTime_frame_id();
+            }
+            
+            if 
+                (
+                    (tf.getTime_start().isBefore(start_time) || tf.getTime_start().equals(start_time)) &&
+                    (tf.getTime_end().isAfter(start_time) || tf.getTime_end().equals(start_time)) &&
+                    tf.isIs_active() == true
+                )
+            { 
+                id_start_time = tf.getTime_frame_id();
+            }
+        }
+        
+        dateDistance = ChronoUnit.DAYS.between(start_date, end_date);
+        int sumAmountOfDay = 0;
+        if (dateDistance > 0) {
+            for (TimeFrame tf : viewmain.listTimeFrames) {
+                int id = tf.getTime_frame_id();
+
+                if (tf.isIs_active()) { 
+                    int money = 0;
+                    for (SessionFee sf: viewmain.listSessionFees) { 
+                        if (sf.getVehicle_type_id() == vehicle_type_id && sf.getTime_frame_id() == id && sf.isIs_active()) {
+                            money = sf.getAmount();
+                        }
+                    }
+
+                    sumAmountOfDay += money;
+
+                    if  (id_start_time <= id){ 
+                        amount += money;
+                    }
+
+                    if (id_end_time >= id) {
+                        amount += money;
+                    }
+                }
+            }
+            amount += (dateDistance - 1) * sumAmountOfDay;
+        }
+        else { 
+            for (TimeFrame tf : viewmain.listTimeFrames) {
+                int id = tf.getTime_frame_id();
+
+                if (tf.isIs_active()) { 
+                    int money = 0;
+                    for (SessionFee sf: viewmain.listSessionFees) { 
+                        if (sf.getVehicle_type_id() == vehicle_type_id && sf.getTime_frame_id() == id && sf.isIs_active()) {
+                            money = sf.getAmount();
+                        }
+                    }
+                    
+                    if (id_start_time <= id && id_end_time >= id) { 
+                        amount += money;
+                    }
+                }
+            }
+        }
+        
+        System.out.println(" " + vehicle_id + " " + vehicle_type_id + " " + dateDistance + " " + amount + " " + sumAmountOfDay);
+        System.out.println(start_date_time + ": " + id_start_time);
+        System.out.println(end_date_time + ": " + id_end_time);
+        
+        int parking_session_id = Integer.parseInt(txt_parking_session_id.getText().toString().trim());
+        int card_id = Integer.parseInt(txt_card_id.getText().toString().trim());
+        boolean is_service;
+        if (cb_is_service.isSelected()) { 
+            is_service = true;
+        }
+        else { 
+            is_service = false;
+        }
+        ParkingSession par = new ParkingSession(parking_session_id, card_id, is_service, start_date_time, null, check_in_shift_id, -1, vehicle_id, amount);
+        ParkingSessionDAO.getInstance().update(par);
+        resetFields();
+        resetBtn();
+        initTable();
+        loadData();
+        fillTable();
+//        System.out.println(par.getParking_session_id() + " " + par.getAmount());
+    }//GEN-LAST:event_btn_updateActionPerformed
+
+    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+        // TODO add your handling code here:
+        int parking_session_id = Integer.parseInt(txt_parking_session_id.getText().toString().trim());
+        ParkingSessionDAO.getInstance().delete(parking_session_id);
+        resetFields();
+        resetBtn();
+        initTable();
+        loadData();
+        fillTable();
+    }//GEN-LAST:event_btn_deleteActionPerformed
+
+    private void btn_mac_dinh_giaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mac_dinh_giaActionPerformed
+        // TODO add your handling code here:
+        loadData();
+        initTable();
+        fillTable();
+        resetFields();
+    }//GEN-LAST:event_btn_mac_dinh_giaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_bo_loc;
-    private javax.swing.JButton btn_chon_building;
-    private javax.swing.JButton btn_chon_ca_truc_ra;
-    private javax.swing.JButton btn_chon_ca_truc_vao;
+    private javax.swing.JButton btn_card_id;
     private javax.swing.JButton btn_delete;
     private javax.swing.JButton btn_giam;
-    private javax.swing.JButton btn_giam_the;
+    private javax.swing.JButton btn_giam_gia;
     private javax.swing.JButton btn_insert;
     private javax.swing.JButton btn_loc;
+    private javax.swing.JButton btn_mac_dinh_gia;
     private javax.swing.JButton btn_reset;
     private javax.swing.JButton btn_tang;
-    private javax.swing.JButton btn_tang_the;
+    private javax.swing.JButton btn_tang_gia;
     private javax.swing.JButton btn_tat_ca;
-    private javax.swing.JButton btn_tat_ca_the;
     private javax.swing.JButton btn_tim_kiem;
     private javax.swing.JButton btn_update;
+    private javax.swing.JButton btn_vehicle;
+    private javax.swing.JCheckBox cb_is_service;
+    private javax.swing.JCheckBox cb_not_service;
     private javax.swing.JComboBox<String> cob_nam_bat_dau;
     private javax.swing.JComboBox<String> cob_nam_ket_thuc;
     private javax.swing.JComboBox<String> cob_ngay_bat_dau;
@@ -766,12 +1932,11 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
     private javax.swing.JScrollPane sc_pariking_session;
     private javax.swing.JTable tbl_parking_session;
     private javax.swing.JTextField txt_amount;
-    private javax.swing.JTextField txt_building_id;
+    private javax.swing.JTextField txt_card_id;
     private javax.swing.JTextField txt_check_in_shift_id;
     private javax.swing.JTextField txt_check_in_time;
     private javax.swing.JTextField txt_check_out_shift_id;
     private javax.swing.JTextField txt_check_out_time;
-    private javax.swing.JTextField txt_is_service;
     private javax.swing.JTextField txt_parking_session_id;
     private javax.swing.JTextField txt_tim_kiem;
     private javax.swing.JTextField txt_tin_nhan;

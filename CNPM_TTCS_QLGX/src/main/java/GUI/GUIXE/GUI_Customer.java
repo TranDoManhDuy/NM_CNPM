@@ -43,6 +43,7 @@ public class GUI_Customer extends javax.swing.JPanel {
     private String[] sDay, sMonth, sYear;
     private LogSelection logSelection;
     private int choooseIndexBuilding = 0;
+    private boolean isUpdating = false;
     
     
     
@@ -72,7 +73,7 @@ public class GUI_Customer extends javax.swing.JPanel {
         addDocumentListeners();
     }
     
-    protected void loadData() {
+    private void loadData() {
         try {
             this.data = CustomerDAO.getInstance().getAllCustomer();
             this.customers = (ArrayList<Customer>) data.get("customers");
@@ -92,26 +93,16 @@ public class GUI_Customer extends javax.swing.JPanel {
     }
     
     public void fillTable() {
-        try {
-            int count = -1;
-            String crBuildingName = "";
-            for (Customer cus : this.customers) { 
-                try {
-                    count += 1;
-                    crBuildingName = this.buildingNames.get(count);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-                tblModel.addRow(new String[] {  String.valueOf(cus.getCustomer_id()), crBuildingName, cus.getFull_name(), cus.getSsn(), 
-                                                String.valueOf(cus.getDate_of_birth()), cus.getGender(),
-                                                cus.getPhone_number(), cus.getAddress(), cus.getNationality(), String.valueOf(cus.isIs_active())
-                });
-            }
+        int count = -1;
+        String crBuildingName = "";
+        for (Customer cus : this.customers) { 
+            count += 1;
+            crBuildingName = this.buildingNames.get(count);
+            tblModel.addRow(new String[] {  String.valueOf(cus.getCustomer_id()), crBuildingName, cus.getFull_name(), cus.getSsn(), 
+                                            String.valueOf(cus.getDate_of_birth()), cus.getGender(),
+                                            cus.getPhone_number(), cus.getAddress(), cus.getNationality(), String.valueOf(cus.isIs_active())
+            });
         }
-        catch (Exception e) { 
-                e.printStackTrace();
-            }
         tblModel.fireTableDataChanged();
     }
     
@@ -210,7 +201,6 @@ public class GUI_Customer extends javax.swing.JPanel {
         txt_building_id.getDocument().addDocumentListener(docListener);
         txt_full_name.getDocument().addDocumentListener(docListener);
         txt_ssn.getDocument().addDocumentListener(docListener);
-//        txtDate_of_birth.getDocument().addDocumentListener(docListener);
         txt_phone_number.getDocument().addDocumentListener(docListener);
         txt_address.getDocument().addDocumentListener(docListener);
         Txt_nationality.getDocument().addDocumentListener(docListener);
@@ -1011,10 +1001,13 @@ public class GUI_Customer extends javax.swing.JPanel {
 
     private void cob_namActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_namActionPerformed
         // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        
         int day = Integer.parseInt(cob_ngay.getSelectedItem().toString());
         int month = Integer.parseInt(cob_thang.getSelectedItem().toString());
         int year = Integer.parseInt(cob_nam.getSelectedItem().toString());
-        System.out.println(day + " " + month + " " + year);
+        System.out.println("Nam " + day + " " + month + " " + year);
         
         sDay = Library.Library.getDay(month, year);
         sMonth = Library.Library.getMonth(day, year);
@@ -1033,6 +1026,7 @@ public class GUI_Customer extends javax.swing.JPanel {
             cob_ngay.setSelectedIndex(dayIndex);
             cob_thang.setSelectedIndex(monthIndex);
         }
+        isUpdating = false;
     }//GEN-LAST:event_cob_namActionPerformed
 
     private void btn_tim_kiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tim_kiemActionPerformed
@@ -1067,13 +1061,17 @@ public class GUI_Customer extends javax.swing.JPanel {
 
     private void cob_ngayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_ngayActionPerformed
         // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        
         int day = Integer.parseInt(cob_ngay.getSelectedItem().toString());
         int month = Integer.parseInt(cob_thang.getSelectedItem().toString());
         int year = Integer.parseInt(cob_nam.getSelectedItem().toString());
-//        System.out.println(day + " " + month + " " + year);
         
+        System.out.println("Ngay " + day + " " + month + " " + year);
         sMonth = Library.Library.getMonth(day, year);
         sYear = Library.Library.getYear(day, month);
+        
         cob_thang.setModel(new javax.swing.DefaultComboBoxModel<>(sMonth));
         cob_nam.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
         
@@ -1088,18 +1086,22 @@ public class GUI_Customer extends javax.swing.JPanel {
             cob_thang.setSelectedIndex(monthIndex);
             cob_nam.setSelectedIndex(yearIndex);
         }
+        isUpdating = false;
     }//GEN-LAST:event_cob_ngayActionPerformed
 
     private void cob_thangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_thangActionPerformed
         // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        
         int day = Integer.parseInt(cob_ngay.getSelectedItem().toString());
         int month = Integer.parseInt(cob_thang.getSelectedItem().toString());
         int year = Integer.parseInt(cob_nam.getSelectedItem().toString());
         
-        sDay = Library.Library.getDay(month, year);
         sYear = Library.Library.getYear(day, month);
+        sDay = Library.Library.getDay(month, year);
         
-//        System.out.println(day + " " + month + " " + year);
+        System.out.println("Thang " + day + " " + month + " " + year);
         cob_ngay.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
         cob_nam.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
         
@@ -1114,6 +1116,7 @@ public class GUI_Customer extends javax.swing.JPanel {
             cob_ngay.setSelectedIndex(dayIndex);
             cob_nam.setSelectedIndex(yearIndex);
         }
+        isUpdating = false;
     }//GEN-LAST:event_cob_thangActionPerformed
 
     private void btn_chonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonActionPerformed
