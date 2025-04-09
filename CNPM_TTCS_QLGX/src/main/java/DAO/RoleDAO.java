@@ -1,6 +1,6 @@
 package DAO;
 
-import Model.Permission;
+import Model.Role;
 import java.util.ArrayList;
 import DatabaseHelper.OpenConnection;
 import java.sql.Connection;
@@ -8,15 +8,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class PermissionsDAO implements InterfaceDAO.InterfaceDAO<Permission> {
-    public static PermissionsDAO getInstance() {
-        return new PermissionsDAO();
+public class RoleDAO implements InterfaceDAO.InterfaceDAO<Role> {
+    public static RoleDAO getInstance() {
+        return new RoleDAO();
     }
     
     @Override
-    public ArrayList<Permission> getList() {
-        ArrayList<Permission> list_permission = new ArrayList<>();
-        String sql = "EXEC getlist_permission";
+    public ArrayList<Role> getList() {
+        ArrayList<Role> list_role = new ArrayList<>();
+        String sql = "EXEC getlist_role";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -24,28 +24,26 @@ public class PermissionsDAO implements InterfaceDAO.InterfaceDAO<Permission> {
             ResultSet result = stmt.executeQuery(sql);
         ) {
             while (result.next()) {
-                int permission_id = result.getInt("permission_id");
-                String permission_name = result.getString("permission_name");
-                String permission_desc = result.getString("permission_desc");
-                Permission permission = new Permission(permission_id, permission_name, permission_desc);
-                list_permission.add(permission);
+                int role_id = result.getInt("role_id");
+                String role_name = result.getString("role_name");
+                Role role = new Role(role_id, role_name);
+                list_role.add(role);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         
-        return list_permission;
+        return list_role;
     }
     
     @Override
-    public boolean insert(Permission permission) {
-        String sql = "EXEC insert_permission @permission_name = ?, @permission_desc = ?";
+    public boolean insert(Role role) {
+        String sql = "EXEC insert_role @role_name = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
-            ptmt.setString(1, permission.getPermissionName());
-            ptmt.setString(2, permission.getPermissionDesc());
+            ptmt.setString(1, role.getRoleName());
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,15 +52,14 @@ public class PermissionsDAO implements InterfaceDAO.InterfaceDAO<Permission> {
     }
     
     @Override
-    public boolean update(Permission permission) {
-        String sql = "EXEC update_permission @permission_id = ?, @permission_name = ?, @permission_desc = ?";
+    public boolean update(Role role) {
+        String sql = "EXEC update_role @role_id = ?, @role_name = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
-            ptmt.setInt(1, permission.getPermissionId());
-            ptmt.setString(2, permission.getPermissionName());
-            ptmt.setString(3, permission.getPermissionDesc());
+            ptmt.setInt(1, role.getRoleId());
+            ptmt.setString(2, role.getRoleName());
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,8 +68,8 @@ public class PermissionsDAO implements InterfaceDAO.InterfaceDAO<Permission> {
     }
     
     @Override
-    public Permission findbyID(int id) {
-        String sql = "EXEC findbyID_permission @permission_id = ?";
+    public Role findbyID(int id) {
+        String sql = "EXEC findbyID_role @role_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -81,10 +78,9 @@ public class PermissionsDAO implements InterfaceDAO.InterfaceDAO<Permission> {
             ResultSet result = ptmt.executeQuery();
             
             if (result.next()) {
-                int permission_id = result.getInt("permission_id");
-                String permission_name = result.getString("permission_name");
-                String permission_desc = result.getString("permission_desc");
-                return new Permission(permission_id, permission_name, permission_desc);
+                int role_id = result.getInt("role_id");
+                String role_name = result.getString("role_name");
+                return new Role(role_id, role_name);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,7 +90,7 @@ public class PermissionsDAO implements InterfaceDAO.InterfaceDAO<Permission> {
     
     @Override
     public boolean delete(int id) {
-        String sql = "EXEC delete_permission @permission_id = ?";
+        String sql = "EXEC delete_role @role_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);

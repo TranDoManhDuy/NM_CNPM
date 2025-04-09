@@ -1,6 +1,6 @@
 package DAO;
 
-import Model.Accounts;
+import Model.Account;
 import java.util.ArrayList;
 import DatabaseHelper.OpenConnection;
 import java.sql.Connection;
@@ -8,14 +8,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class AccountsDAO {
-    public static AccountsDAO getInstance() {
-        return new AccountsDAO();
+public class AccountDAO implements InterfaceDAO.InterfaceDAO<Account> {
+    public static AccountDAO getInstance() {
+        return new AccountDAO();
     }
-
-    public ArrayList<Accounts> getListAccounts() {
-        ArrayList<Accounts> list_accounts = new ArrayList<>();
-        String sql = "SELECT * FROM accounts";
+    @Override
+    public ArrayList<Account> getList() {
+        ArrayList<Account> list_accounts = new ArrayList<>();
+        String sql = "EXEC getlist_account";
         try (
                 Connection conn = OpenConnection.getConnection();
                 Statement stmt = conn.createStatement();
@@ -23,20 +23,20 @@ public class AccountsDAO {
         ) {
             while (result.next()) {
                 int account_number = result.getInt("account_number");
-                String password = result.getString("password");
+//                String password = result.getString("password");
                 boolean is_active = result.getBoolean("is_active");
-                String staff_id = result.getString("staff_id");
+                int role_id = result.getInt("role_id");
                 
-                list_accounts.add(new Accounts(account_number, password, is_active, staff_id));
+                list_accounts.add(new Account(account_number, is_active, role_id));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return list_accounts;
     }
-    
-    public boolean insert(Accounts acc) {
-        String sql = "INSERT INTO accounts (account_number, password, is_active, staff_id) VALUES (?, ?, ?, ?)";
+    @Override
+    public boolean insert(Account acc) {
+        String sql = "EXEC insert_account @account_number = ?, @password = ?, @is_active = ?, @role_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -44,7 +44,7 @@ public class AccountsDAO {
             ptmt.setInt(1, acc.getAccountNumber());
             ptmt.setString(2, acc.getPassword());
             ptmt.setBoolean(3, acc.isActive());
-            ptmt.setString(4, acc.getStaffId());
+            ptmt.setInt(4, acc.getRoleId());
             
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -52,17 +52,17 @@ public class AccountsDAO {
         }
         return false;
     }
-    
-    public boolean update(Accounts acc) {
-        String sql = "UPDATE accounts SET password = ?, is_active = ?, staff_id = ? WHERE account_number = ?";
+    @Override
+    public boolean update(Account acc) {
+        String sql = "EXEC update_account @is_active = ?, @role_id = ?, @account_number = ?" ;
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
-            ptmt.setString(1, acc.getPassword());
-            ptmt.setBoolean(2, acc.isActive());
-            ptmt.setString(3, acc.getStaffId());
-            ptmt.setInt(4, acc.getAccountNumber());
+            
+            ptmt.setBoolean(1, acc.isActive());
+            ptmt.setInt(2, acc.getRoleId());
+            ptmt.setInt(3, acc.getAccountNumber());
             
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -70,38 +70,37 @@ public class AccountsDAO {
         }
         return false;
     }
-    
-    public Accounts findById(int account_number) {
-        String sql = "SELECT * FROM accounts WHERE account_number = ?";
+    @Override
+    public Account findbyID(int id) {
+        String sql = "EXEC findbyAN_account @account_number = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
-            ptmt.setInt(1, account_number);
+            ptmt.setInt(1, id);
             ResultSet rs = ptmt.executeQuery();
             
             if (rs.next()) {
-                Accounts acc = new Accounts();
-                acc.setAccountNumber(rs.getInt("account_number"));
-                acc.setPassword(rs.getString("password"));
-                acc.setActive(rs.getBoolean("is_active"));
-                acc.setStaffId(rs.getString("staff_id"));
+                int account_number = rs.getInt("account_number");
+                String password = rs.getString("password");
+                boolean is_active = rs.getBoolean("is_active");
+                int role_id = rs.getInt("role_id");
                 
-                return acc;
+                return new Account(account_number, password, is_active, role_id);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-    
-    public boolean delete(int account_number) {
-        String sql = "DELETE FROM accounts WHERE account_number = ?";
+    @Override
+    public boolean delete(int id) {
+        String sql = "EXEC delete_account @account_number = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
-            ptmt.setInt(1, account_number);
+            ptmt.setInt(1, id);
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();

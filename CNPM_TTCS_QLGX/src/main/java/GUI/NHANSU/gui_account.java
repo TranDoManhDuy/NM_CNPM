@@ -4,19 +4,116 @@
  */
 package GUI.NHANSU;
 
+import Annotation.LogConfirm;
+import Annotation.LogMessage;
+import DAO.AccountDAO;
+import DatabaseHelper.OpenConnection;
+import GUI.ViewMain;
+import Model.Account;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.security.MessageDigest;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
 /**
  *
  * @author eramisme
  */
 public class gui_account extends javax.swing.JPanel {
 
-    /**
-     * Creates new form gui_account
-     */
-    public gui_account() {
-        initComponents();
-    }
+    private DefaultTableModel tableModel;
+    private ViewMain viewmain;
+    private LogConfirm logConfirm;
+    private LogMessage logMessage;
+    private boolean isUpdating = false;
 
+    /**
+     * Creates new form gui_staff
+     */
+    public gui_account(ViewMain viewmain) {
+        this.viewmain = viewmain;
+        this.logConfirm = logConfirm;
+        this.logMessage = logMessage;
+        initComponents();   
+        combobox_Trangthai.removeAllItems();
+        tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+        }
+        };
+        initTable();
+        fillTable();
+    }    
+    public void initTable() {
+        String[] header = new String[] {"Số tài khoản", "Vai trò", "Trạng thái"};
+        tableModel.setColumnIdentifiers(header);
+        Table_Account.setModel(tableModel);
+    }
+    
+    public void fillTable() {
+    String sql = "EXEC Account_render";
+    try (
+        Connection conn = OpenConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery(sql);
+    ) {
+        tableModel.setRowCount(0); 
+        while (result.next()) {
+            int account_number = result.getInt("account_number");
+            String role_name = result.getString("role_name");
+                switch (role_name) {
+                case "Manager Staff In":
+                    role_name = "Quản lý nhân viên vào";
+                    break;
+                case "Manager Staff Out":
+                    role_name = "Quản lý nhân viên ra";
+                    break;
+                case "Staff In":
+                    role_name = "Nhân viên vào";
+                    break;
+                case "Staff Out":
+                    role_name = "Nhân viên ra";
+                    break;
+            }
+            boolean is_active = result.getBoolean("is_active");           
+
+            tableModel.addRow(new Object[]{
+                account_number,
+                role_name,
+                is_active ? "Hoạt động" : "Không hoạt động",                
+            });
+        }
+        tableModel.fireTableDataChanged();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    
+    Table_Account.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            int selectedRow = Table_Account.getSelectedRow();
+            if (selectedRow >= 0) {
+                int accountNumber = Integer.parseInt(Table_Account.getValueAt(selectedRow, 0).toString());
+                txt_Taikhoan.setText(String.valueOf(accountNumber));
+                txt_Matkhau.setText("");
+                txt_Matkhau.setEnabled(false);
+                txt_Vaitro.setText(Table_Account.getValueAt(selectedRow, 1).toString());
+                combobox_Trangthai.setSelectedItem(Table_Account.getValueAt(selectedRow, 2).toString());                
+            }
+        }
+        
+    });
+
+
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -31,85 +128,87 @@ public class gui_account extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        txt_Vaitro = new javax.swing.JTextField();
+        txt_Taikhoan = new javax.swing.JTextField();
+        txt_Matkhau = new javax.swing.JTextField();
+        btnLammoiTT = new javax.swing.JButton();
         jLabel15 = new javax.swing.JLabel();
-        jComboBox4 = new javax.swing.JComboBox<>();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        combobox_Trangthai = new javax.swing.JComboBox<>();
+        btnHuy = new javax.swing.JButton();
+        btnLuu = new javax.swing.JButton();
         Panel_TKCN = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        jTextFieldSearch = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        txt_Timkiem = new javax.swing.JTextField();
+        btnLammoi = new javax.swing.JButton();
+        btnTim = new javax.swing.JButton();
         Panel_DS = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        Table_Account = new javax.swing.JTable();
+        Combobox_Trangthai = new javax.swing.JComboBox<>();
         Panel_TKCN1 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
-        jButton9 = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
+        btnThem = new javax.swing.JButton();
+        btnXoa = new javax.swing.JButton();
+        btnCapnhat = new javax.swing.JButton();
 
-        setBackground(new java.awt.Color(255, 255, 255));
+        setBackground(new java.awt.Color(204, 255, 255));
 
         Panel_TT.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setText("THÔNG TIN TÀI KHOẢN");
 
-        jLabel2.setText("ID Nhân viên");
+        jLabel2.setText("Vai trò");
 
         jLabel3.setText("Số tài khoản");
 
         jLabel4.setText("Mật khẩu");
 
-        jTextField1.setEditable(false);
-        jTextField1.setBackground(new java.awt.Color(255, 255, 255));
-
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        txt_Matkhau.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                txt_MatkhauActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Làm mới");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnLammoiTT.setText("Làm mới");
+        btnLammoiTT.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                btnLammoiTTMouseClicked(evt);
             }
         });
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnLammoiTT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnLammoiTTActionPerformed(evt);
             }
         });
 
         jLabel15.setText("Trạng thái");
 
-        jButton3.setText("Hủy");
-        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+        combobox_Trangthai.setEditable(true);
+        combobox_Trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hoạt động", "Không hoạt động", " ", " " }));
+
+        btnHuy.setText("Hủy");
+        btnHuy.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton3MouseClicked(evt);
+                btnHuyMouseClicked(evt);
             }
         });
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnHuy.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnHuyActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Lưu");
-        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnLuu.setText("Lưu");
+        btnLuu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton4MouseClicked(evt);
+                btnLuuMouseClicked(evt);
             }
         });
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnLuu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnLuuActionPerformed(evt);
             }
         });
 
@@ -126,19 +225,19 @@ public class gui_account extends javax.swing.JPanel {
                             .addComponent(jLabel4)
                             .addComponent(jLabel2)
                             .addComponent(jLabel15))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
                         .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField2)
-                            .addComponent(jTextField3)
-                            .addComponent(jTextField1)
-                            .addComponent(jComboBox4, 0, 238, Short.MAX_VALUE)))
+                            .addComponent(txt_Taikhoan)
+                            .addComponent(txt_Matkhau)
+                            .addComponent(txt_Vaitro)
+                            .addComponent(combobox_Trangthai, 0, 238, Short.MAX_VALUE)))
                     .addGroup(Panel_TTLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton4)
+                        .addComponent(btnLuu)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton3)
+                        .addComponent(btnHuy)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1)))
+                        .addComponent(btnLammoiTT)))
                 .addGap(20, 20, 20))
             .addGroup(Panel_TTLayout.createSequentialGroup()
                 .addContainerGap()
@@ -148,30 +247,29 @@ public class gui_account extends javax.swing.JPanel {
         Panel_TTLayout.setVerticalGroup(
             Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Panel_TTLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(24, 24, 24)
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_Taikhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addGap(18, 18, 18)
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_Matkhau, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_Vaitro, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combobox_Trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel15))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14))
+                    .addComponent(btnLammoiTT, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnHuy, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnLuu, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         Panel_TKCN.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -179,22 +277,29 @@ public class gui_account extends javax.swing.JPanel {
         jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel10.setText("TÌM KIẾM");
 
-        jTextFieldSearch.setToolTipText("");
-        jTextFieldSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+        txt_Timkiem.setToolTipText("");
+        txt_Timkiem.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTextFieldSearchKeyPressed(evt);
+                txt_TimkiemKeyPressed(evt);
             }
         });
 
-        jButton2.setText("Làm mới");
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnLammoi.setText("Làm mới");
+        btnLammoi.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton2MouseClicked(evt);
+                btnLammoiMouseClicked(evt);
             }
         });
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnLammoi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnLammoiActionPerformed(evt);
+            }
+        });
+
+        btnTim.setText("Tìm");
+        btnTim.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTimActionPerformed(evt);
             }
         });
 
@@ -207,11 +312,13 @@ public class gui_account extends javax.swing.JPanel {
                 .addGroup(Panel_TKCNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(Panel_TKCNLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(jTextFieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2))
+                        .addComponent(txt_Timkiem, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnTim)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnLammoi))
                     .addComponent(jLabel10))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         Panel_TKCNLayout.setVerticalGroup(
             Panel_TKCNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -220,8 +327,9 @@ public class gui_account extends javax.swing.JPanel {
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(Panel_TKCNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_Timkiem, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnLammoi, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnTim, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(17, 17, 17))
         );
 
@@ -230,7 +338,7 @@ public class gui_account extends javax.swing.JPanel {
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel11.setText("DANH SÁCH TÀI KHOẢN");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        Table_Account.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -238,14 +346,14 @@ public class gui_account extends javax.swing.JPanel {
                 {null, null, null}
             },
             new String [] {
-                "Mã nhân viên", "Số tài khoản", "Trạng thái"
+                "Số tài khoản", "Vai trò", "Trạng thái"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, true
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -256,7 +364,14 @@ public class gui_account extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(Table_Account);
+
+        Combobox_Trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tất cả", "Hoạt động", "Không hoạt động" }));
+        Combobox_Trangthai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Combobox_TrangthaiActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout Panel_DSLayout = new javax.swing.GroupLayout(Panel_DS);
         Panel_DS.setLayout(Panel_DSLayout);
@@ -267,16 +382,20 @@ public class gui_account extends javax.swing.JPanel {
                 .addGroup(Panel_DSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(Panel_DSLayout.createSequentialGroup()
                         .addComponent(jLabel11)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Combobox_Trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE))
                 .addContainerGap())
         );
         Panel_DSLayout.setVerticalGroup(
             Panel_DSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Panel_DSLayout.createSequentialGroup()
-                .addComponent(jLabel11)
-                .addGap(3, 3, 3)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+                .addContainerGap()
+                .addGroup(Panel_DSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Combobox_Trangthai, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(jLabel11))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -285,42 +404,42 @@ public class gui_account extends javax.swing.JPanel {
         jLabel17.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel17.setText("CHỨC NĂNG");
 
-        jButton9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jButton9.setText("Thêm");
-        jButton9.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnThem.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnThem.setText("Thêm");
+        btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton9MouseClicked(evt);
+                btnThemMouseClicked(evt);
             }
         });
-        jButton9.addActionListener(new java.awt.event.ActionListener() {
+        btnThem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton9ActionPerformed(evt);
+                btnThemActionPerformed(evt);
             }
         });
 
-        jButton10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jButton10.setText("Xóa");
-        jButton10.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnXoa.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnXoa.setText("Xóa");
+        btnXoa.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton10MouseClicked(evt);
+                btnXoaMouseClicked(evt);
             }
         });
-        jButton10.addActionListener(new java.awt.event.ActionListener() {
+        btnXoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton10ActionPerformed(evt);
+                btnXoaActionPerformed(evt);
             }
         });
 
-        jButton11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jButton11.setText("Cập nhật");
-        jButton11.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnCapnhat.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnCapnhat.setText("Sửa");
+        btnCapnhat.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton11MouseClicked(evt);
+                btnCapnhatMouseClicked(evt);
             }
         });
-        jButton11.addActionListener(new java.awt.event.ActionListener() {
+        btnCapnhat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton11ActionPerformed(evt);
+                btnCapnhatActionPerformed(evt);
             }
         });
 
@@ -334,12 +453,12 @@ public class gui_account extends javax.swing.JPanel {
                 .addContainerGap(365, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_TKCN1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton11)
-                .addGap(49, 49, 49))
+                .addComponent(btnCapnhat, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37))
         );
         Panel_TKCN1Layout.setVerticalGroup(
             Panel_TKCN1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -348,9 +467,9 @@ public class gui_account extends javax.swing.JPanel {
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(Panel_TKCN1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton11)
-                    .addComponent(jButton9))
+                    .addComponent(btnXoa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCapnhat)
+                    .addComponent(btnThem))
                 .addContainerGap())
         );
 
@@ -384,87 +503,378 @@ public class gui_account extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void btnLammoiTTMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLammoiTTMouseClicked
 //        resetAllValue();
-    }//GEN-LAST:event_jButton1MouseClicked
+    }//GEN-LAST:event_btnLammoiTTMouseClicked
 
-    private void jTextFieldSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldSearchKeyPressed
-//        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-//        TableRowSorter<DefaultTableModel> tr = new TableRowSorter<DefaultTableModel>(model);
-//        jTable1.setRowSorter(tr);
-//        tr.setRowFilter(RowFilter.regexFilter("(?iu)" + jTextFieldSearch.getText().trim()));
-    }//GEN-LAST:event_jTextFieldSearchKeyPressed
+    private void txt_TimkiemKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_TimkiemKeyPressed
 
-    private void jButton10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton10MouseClicked
+    }//GEN-LAST:event_txt_TimkiemKeyPressed
+
+    private void btnXoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnXoaMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton10MouseClicked
+    }//GEN-LAST:event_btnXoaMouseClicked
 
-    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+    private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton10ActionPerformed
+        int selectedRow = Table_Account.getSelectedRow();
+        if (selectedRow == -1) {
+            log_message("Vui lòng chọn tài khoản!");
+            return;
+        }
 
-    private void jButton11MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton11MouseClicked
+        String trangThai = Table_Account.getValueAt(selectedRow, 2).toString().trim();
+        if (trangThai.equalsIgnoreCase("Hoạt động")) {
+            log_message("Không thể xóa");
+            return;
+        }
+        int account_number = Integer.parseInt(Table_Account.getValueAt(selectedRow, 0).toString());
+
+        logConfirm = new LogConfirm("Xác nhận xóa?") {
+            @Override
+            public void action() {
+                setVisible(false);
+                viewmain.setEnabled(true);
+                if (AccountDAO.getInstance().delete(account_number)) {
+                    log_message("Xóa thành công!");
+                    loadTable();
+                    ResetThongTin();
+                } else {
+                    log_message("Xóa thất bại!");
+                }
+            }
+
+            @Override
+            public void reject() {
+                setVisible(false);
+                viewmain.setEnabled(true);
+            }
+        };
+        logConfirm.setLocationRelativeTo(null);
+        logConfirm.setVisible(true);
+    }//GEN-LAST:event_btnXoaActionPerformed
+
+    private void btnLammoiTTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLammoiTTActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton11MouseClicked
+        ResetThongTin();
+        Table_Account.clearSelection();
+    }//GEN-LAST:event_btnLammoiTTActionPerformed
 
-    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+    private void btnLammoiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLammoiMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton11ActionPerformed
+    }//GEN-LAST:event_btnLammoiMouseClicked
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnLammoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLammoiActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        txt_Timkiem.setText("");
+        SearchFilter();
+    }//GEN-LAST:event_btnLammoiActionPerformed
 
-    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+    private void txt_MatkhauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_MatkhauActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2MouseClicked
+    }//GEN-LAST:event_txt_MatkhauActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+           int max = 0;
+           for (int i = 0; i < Table_Account.getRowCount(); i++) {
+               Object value = Table_Account.getValueAt(i, 0);
+               if (value != null) {
+                   String str = value.toString().trim();
+                   if (!str.isEmpty() && str.matches("\\d+")) {
+                       int soTK = Integer.parseInt(str);
+                       if (soTK > max) {
+                           max = soTK;
+                       }
+                   }
+               }
+           }
+           int soTaiKhoanMoi = max + 1;
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+           txt_Taikhoan.setText(String.valueOf(soTaiKhoanMoi));
+           txt_Taikhoan.setEnabled(false);
+
+           txt_Matkhau.setText("");
+           txt_Vaitro.setText("Nhân viên");
+           combobox_Trangthai.setSelectedItem("Hoạt động");
+
+           txt_Matkhau.setEditable(true);
+           txt_Vaitro.setEditable(true);
+           combobox_Trangthai.setEnabled(false);
+
+           txt_Matkhau.requestFocus();
+           
+           btnCapnhat.setEnabled(false);
+           btnXoa.setEnabled(false);
+    }//GEN-LAST:event_btnThemActionPerformed
+
+    private void btnThemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnThemMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_btnThemMouseClicked
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+    private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton9ActionPerformed
+        SearchFilter();     
+    }//GEN-LAST:event_btnTimActionPerformed
 
-    private void jButton9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton9MouseClicked
+    private void btnCapnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapnhatActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton9MouseClicked
+        int selectedRow = Table_Account.getSelectedRow();        
+        String roleText = txt_Vaitro.getText().trim();
 
-    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+        if (roleText.equals("Quản lý nhân viên vào") || roleText.equals("Quản lý nhân viên ra")) {
+            log_message("Không được cập nhật");
+            return;
+        }
+        
+               
+        combobox_Trangthai.removeAllItems();
+        combobox_Trangthai.addItem("Hoạt động");
+        combobox_Trangthai.addItem("Không hoạt động");
+        
+        txt_Taikhoan.setText(Table_Account.getValueAt(selectedRow, 0).toString());         
+        txt_Vaitro.setText(Table_Account.getValueAt(selectedRow, 1).toString());          
+        String status = Table_Account.getValueAt(selectedRow, 2).toString().trim();      
+        combobox_Trangthai.setSelectedItem(status);
+        
+        txt_Matkhau.setEnabled(false);
+        txt_Vaitro.requestFocus();
+        isUpdating = true;
+        btnThem.setEnabled(false);
+        btnXoa.setEnabled(false);
+        
+    }//GEN-LAST:event_btnCapnhatActionPerformed
+
+    private void btnCapnhatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCapnhatMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3MouseClicked
+    }//GEN-LAST:event_btnCapnhatMouseClicked
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+        log_comfirm("Bạn có muốn hủy không?");
+        txt_Taikhoan.setText("");
+        txt_Matkhau.setText("");
+        txt_Vaitro.setText("");
+        combobox_Trangthai.setSelectedIndex(-1);
+        btnCapnhat.setEnabled(true);
+        btnThem.setEnabled(true);
+        btnXoa.setEnabled(true);
+    }//GEN-LAST:event_btnHuyActionPerformed
 
-    private void jButton4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MouseClicked
+    private void btnHuyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHuyMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4MouseClicked
+    }//GEN-LAST:event_btnHuyMouseClicked
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btnLuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLuuActionPerformed
+        String accountNumText = txt_Taikhoan.getText().trim();
+        String password = txt_Matkhau.getText().trim();
+        String roleText = txt_Vaitro.getText().trim();
+        String statusText = combobox_Trangthai.getSelectedItem().toString().trim();
+
+        if (accountNumText.isEmpty() || roleText.isEmpty() || statusText.isEmpty()) {
+            log_message("Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
+
+        int accountNum = Integer.parseInt(accountNumText);
+        boolean isActive = statusText.equals("Hoạt động");
+
+        int roleId = switch (roleText) {
+            case "Quản lý nhân viên ra" -> 1;
+            case "Nhân viên ra" -> 2;
+            case "Quản lý nhân viên vào" -> 3;
+            case "Nhân viên vào" -> 4;
+            default -> 0;
+        };
+        if (roleId == 0) {
+            log_message("Vai trò không hợp lệ!");
+            return;
+        }
+
+        Account acc;
+        if (isUpdating) {
+            // Sửa
+            acc = new Account(accountNum, null, isActive, roleId); // không cần mật khẩu
+            boolean success = AccountDAO.getInstance().update(acc);
+            if (success) {
+                log_message("Cập nhật thành công!");
+                txt_Taikhoan.setEnabled(true);
+                combobox_Trangthai.setEditable(true);
+                btnThem.setEnabled(true);
+                btnXoa.setEnabled(true);
+            } else {
+                log_message("Cập nhật thất bại!");
+            }
+            isUpdating = false;
+        } else {
+            // Thêm 
+            if (password.isEmpty()) {
+                log_message("Vui lòng nhập mật khẩu!");
+                return;
+            }
+            String hashedPassword = HashUtil.toSHA256(password);
+            acc = new Account(accountNum, hashedPassword, isActive, roleId);
+            boolean success = AccountDAO.getInstance().insert(acc);
+            if (success) {
+                log_message("Thêm thành công!");
+                txt_Taikhoan.setEnabled(true);
+                combobox_Trangthai.setEnabled(true);
+                btnCapnhat.setEnabled(true);
+                btnXoa.setEnabled(true);
+            } else {
+                log_message("Thêm thất bại!");
+            }
+        }
+        loadTable();
+        ResetThongTin();
+    }//GEN-LAST:event_btnLuuActionPerformed
+
+    private void btnLuuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLuuMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_btnLuuMouseClicked
 
+    private void Combobox_TrangthaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Combobox_TrangthaiActionPerformed
+        // TODO add your handling code here:
+        SearchFilter();
+    }//GEN-LAST:event_Combobox_TrangthaiActionPerformed
+
+        private void SearchFilter() {
+        String keyword = txt_Timkiem.getText().trim(); 
+        String selectedViTri = Combobox_Trangthai.getSelectedItem().toString(); 
+
+        DefaultTableModel model = (DefaultTableModel) Table_Account.getModel();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        Table_Account.setRowSorter(sorter);
+
+        List<RowFilter<Object, Object>> filters = new ArrayList<>();
+
+        if (!keyword.isEmpty()) {
+            RowFilter<Object, Object> keywordFilter = RowFilter.regexFilter("(?i)" + keyword, 0);
+            filters.add(keywordFilter);
+        }
+
+        if (!selectedViTri.equalsIgnoreCase("Tất cả")) {
+            RowFilter<Object, Object> viTriFilter = RowFilter.regexFilter("(?i)^" + selectedViTri + "$", 2); 
+            filters.add(viTriFilter);
+        }
+
+        if (filters.isEmpty()) {
+            sorter.setRowFilter(null); 
+        } else {
+            sorter.setRowFilter(RowFilter.andFilter(filters)); 
+        }
+    }
+    
+    private void log_message(String message) {
+    this.viewmain.setEnabled(false);
+    this.logMessage = new LogMessage(message) {
+        @Override
+        public void action() {
+            this.setVisible(false);
+            viewmain.setEnabled(true);
+            viewmain.requestFocus();
+        }
+    };
+    logMessage.setLocationRelativeTo(null);
+    this.logMessage.setVisible(true);
+}
+    
+    private void log_comfirm(String message) {
+        this.viewmain.setEnabled(false);
+
+        this.logConfirm = new LogConfirm(message) {
+        @Override
+        public void action() {
+            this.setVisible(false);
+            viewmain.setEnabled(true);
+            viewmain.requestFocus();
+            ResetThongTin(); 
+            btnThem.setEnabled(true);
+            btnCapnhat.setEnabled(true);
+            btnXoa.setEnabled(true);
+        }
+
+        @Override
+        public void reject() {
+            this.setVisible(false);
+            viewmain.setEnabled(true);
+            viewmain.requestFocus();
+        }
+    };
+    logConfirm.setLocationRelativeTo(null);
+    this.logConfirm.setVisible(true);
+    }
+    
+    private void loadTable() {
+        DefaultTableModel model = (DefaultTableModel) Table_Account.getModel();
+        model.setRowCount(0); 
+
+        ArrayList<Account> accountList = AccountDAO.getInstance().getList();
+        for (Account account : accountList) {
+            String roleName = getRoleName(account.getRoleId());
+            String status = account.isActive() ? "Hoạt động" : "Không hoạt động";
+
+            model.addRow(new Object[] {
+                account.getAccountNumber(),
+                roleName,
+                status
+            });
+        }
+    }
+
+    public class HashUtil {
+    public static String toSHA256(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = md.digest(input.getBytes("UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi mã hóa SHA-256", e);
+        }
+    }
+}
+    
+    private String getRoleName(int roleId) {
+        return switch (roleId) {
+            case 1 -> "Quản lý nhân viên ra";
+            case 2 -> "Nhân viên ra";
+            case 3 -> "Quản lý nhân viên vào";
+            case 4 -> "Nhân viên vào";
+            default -> "";
+        };
+    }
+    
+    private void ResetThongTin(){
+        txt_Taikhoan.setText("");
+        txt_Matkhau.setEnabled(false);
+        txt_Vaitro.setText("");
+        combobox_Trangthai.setSelectedIndex(-1);
+    }
+    
+    
+
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> Combobox_Trangthai;
     private javax.swing.JPanel Panel_DS;
     private javax.swing.JPanel Panel_TKCN;
     private javax.swing.JPanel Panel_TKCN1;
     private javax.swing.JPanel Panel_TT;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton9;
-    private javax.swing.JComboBox<String> jComboBox4;
+    private javax.swing.JTable Table_Account;
+    private javax.swing.JButton btnCapnhat;
+    private javax.swing.JButton btnHuy;
+    private javax.swing.JButton btnLammoi;
+    private javax.swing.JButton btnLammoiTT;
+    private javax.swing.JButton btnLuu;
+    private javax.swing.JButton btnThem;
+    private javax.swing.JButton btnTim;
+    private javax.swing.JButton btnXoa;
+    private javax.swing.JComboBox<String> combobox_Trangthai;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -474,10 +884,9 @@ public class gui_account extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextFieldSearch;
+    private javax.swing.JTextField txt_Matkhau;
+    private javax.swing.JTextField txt_Taikhoan;
+    private javax.swing.JTextField txt_Timkiem;
+    private javax.swing.JTextField txt_Vaitro;
     // End of variables declaration//GEN-END:variables
 }

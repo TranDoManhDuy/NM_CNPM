@@ -43,6 +43,12 @@ import Model.TimeFrame;
 import Model.Vehicle;
 import Model.VehicleType;
 import Model.VisitorParkingCards;
+import GUI.NHANSU.gui_account;
+import GUI.NHANSU.gui_manager;
+import GUI.NHANSU.gui_permission;
+import GUI.NHANSU.gui_position;
+import GUI.NHANSU.gui_role;
+import GUI.NHANSU.gui_staff;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
@@ -92,6 +98,10 @@ public class ViewMain extends javax.swing.JFrame {
         GUI_DICHVU();
         GUI_GUIXE();
         GUI_CATRUC();
+//        GUI_DICHVU();
+//        GUI_GUIXE();
+//        GUI_CATRUC();
+        GUI_NHANSU();
     }
     public void addComponent(JPanel father, JPanel child) {
         father.setLayout(new GridBagLayout());
@@ -148,6 +158,23 @@ public class ViewMain extends javax.swing.JFrame {
         addComponent(panel_toanha, b);
         addComponent(panel_nhiemvu, t);
     }
+    
+    public void GUI_NHANSU() {
+        // init component
+        gui_staff staff_gui = new gui_staff(this);
+        gui_account account_gui = new gui_account(this);
+        gui_role role_gui = new gui_role(this);
+        gui_permission permission_gui = new gui_permission(this);
+//        gui_manager manager_gui = new gui_manager(this);
+        gui_position position_gui = new gui_position(this);
+        // add component
+        addComponent(panel_nhanvien, staff_gui);
+        addComponent(panel_taikhoan, account_gui);
+        addComponent(panel_vaitro, role_gui);
+        addComponent(panel_quyen, permission_gui);
+//        addComponent(panel_quanli, manager_gui);
+        addComponent(panel_vitri, position_gui);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -172,7 +199,7 @@ public class ViewMain extends javax.swing.JFrame {
         panel_vaitro = new javax.swing.JPanel();
         panel_quyen = new javax.swing.JPanel();
         panel_quanli = new javax.swing.JPanel();
-        panel_ = new javax.swing.JPanel();
+        panel_vitri = new javax.swing.JPanel();
         jPanel18 = new javax.swing.JPanel();
         jPanel19 = new javax.swing.JPanel();
         jPanel20 = new javax.swing.JPanel();
@@ -323,18 +350,18 @@ public class ViewMain extends javax.swing.JFrame {
 
         jTabbedPane3.addTab("Quản lí", panel_quanli);
 
-        javax.swing.GroupLayout panel_Layout = new javax.swing.GroupLayout(panel_);
-        panel_.setLayout(panel_Layout);
-        panel_Layout.setHorizontalGroup(
-            panel_Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout panel_vitriLayout = new javax.swing.GroupLayout(panel_vitri);
+        panel_vitri.setLayout(panel_vitriLayout);
+        panel_vitriLayout.setHorizontalGroup(
+            panel_vitriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
-        panel_Layout.setVerticalGroup(
-            panel_Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panel_vitriLayout.setVerticalGroup(
+            panel_vitriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane3.addTab("tab6", panel_);
+        jTabbedPane3.addTab("tab6", panel_vitri);
 
         javax.swing.GroupLayout jPanel18Layout = new javax.swing.GroupLayout(jPanel18);
         jPanel18.setLayout(jPanel18Layout);
@@ -875,7 +902,6 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JTabbedPane panelDichVu;
-    private javax.swing.JPanel panel_;
     private javax.swing.JPanel panel_catruc;
     private javax.swing.JPanel panel_dangki;
     private javax.swing.JPanel panel_giadichvuThang;
@@ -898,5 +924,6 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JPanel panel_thongkedoanhthu;
     private javax.swing.JPanel panel_toanha;
     private javax.swing.JPanel panel_vaitro;
+    private javax.swing.JPanel panel_vitri;
     // End of variables declaration//GEN-END:variables
 }

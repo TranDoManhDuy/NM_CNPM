@@ -7,7 +7,13 @@ public class Account {
     private int roleId;
 
     public Account() {}
-
+    
+    public Account(int accountNumber, boolean isActive, int roleId) {
+        this.accountNumber = accountNumber;
+        this.isActive = isActive;
+        this.roleId = roleId;
+    }
+    
     public Account(int accountNumber, String password, boolean isActive, int roleId) {
         this.accountNumber = accountNumber;
         this.password = password;
