@@ -14,7 +14,6 @@ import Model.ResidentCard;
 import Model.SessionFee;
 import Model.TimeFrame;
 import Model.Vehicle;
-import Model.VehicleType;
 import Model.VisitorParkingCards;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +25,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -140,13 +139,6 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             });
         }
         tblModel.fireTableDataChanged();
-//        LocalDateTime s1 = LocalDateTime.of(2025, 3, 7, 8, 0);
-//        LocalTime s2 = LocalTime.of(13, 40);
-//        ParkingSession par = new ParkingSession(106, 2, false, s1, null, 2, -1, 5, -1);
-//        ParkingSessionDAO.getInstance().insert(par);
-//        ParkingSessionDAO.getInstance().update(par);
-//        System.out.println(ParkingSessionDAO.getInstance().findbyID(106).getCheck_in_shift_id());
-//        ParkingSessionDAO.getInstance().delete(106);
     }  
     
     private void resetFields() { 

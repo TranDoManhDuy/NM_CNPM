@@ -29,7 +29,7 @@ public class CustomerDAO implements InterfaceDAO<Customer> {
     public Map<String, ArrayList<?>> getAllCustomer() {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         ArrayList<Customer> lstCus = new ArrayList<>();
-        ArrayList<String> lstName = new ArrayList<>();
+        ArrayList<String> lst_building_name = new ArrayList<>();
         String sql = "EXEC GET_ALL_CUSTOMERS";
         try (
                 Connection con = OpenConnection.getConnection();
@@ -49,7 +49,7 @@ public class CustomerDAO implements InterfaceDAO<Customer> {
                 boolean is_active = rs.getBoolean("is_active");
                 Customer newCus = new Customer(customer_id, full_name, ssn, date_of_birth, gender, phone_number, address, building_id, nationality, is_active);
                 lstCus.add(newCus);
-                lstName.add(building_name);
+                lst_building_name.add(building_name);
             }
         }
         catch (Exception e) { 
@@ -57,7 +57,7 @@ public class CustomerDAO implements InterfaceDAO<Customer> {
         }
         Map<String, ArrayList<?>> result = new HashMap<>();
         result.put("customers", lstCus);
-        result.put("building_names", lstName);
+        result.put("building_names", lst_building_name);
         return result;
     }
     

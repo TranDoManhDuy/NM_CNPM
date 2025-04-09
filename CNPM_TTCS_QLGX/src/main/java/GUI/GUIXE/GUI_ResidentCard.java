@@ -4,12 +4,22 @@
  */
 package GUI.GUIXE;
 
-import DAO.CustomerDAO;
+import Annotation.LogSelection;
 import DAO.ResidentCardDAO;
 import GUI.ViewMain;
+import Model.Buildings;
+import Model.Customer;
 import Model.ResidentCard;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -24,15 +34,29 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
             return false;
         }
     };
+    private Map<String, ArrayList<?>> data;
+    private ArrayList<ResidentCard> residents;
+    private ArrayList<String> building_names;
+    private ArrayList<String> full_names;
+    private LogSelection logSelection;
+    private int chooseCustomerId = -1;
+    
+    
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_ResidentCard(ViewMain viewmain) {
+    public GUI_ResidentCard(ViewMain viewmain, LogSelection logSelection) {
         this.viewmain = viewmain;
-        initComponents(); 
+        this.logSelection = logSelection;
+        
+        initComponents();
         initTable();
+        resetFields();
+        loadData();
         fillTable();
-//        addDocumentListeners();
+        fillComboBoxActive();
+        fillComboBoxBuildings();
+        addDocumentListeners();
     }
     
     public void initTable() { 
@@ -40,40 +64,111 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         tblModel.setColumnIdentifiers(header);
         tblModel.setRowCount(0);
         tbl_resident_card.setModel(tblModel);
-//        btn_insert.setEnabled(false);
+    }
+    
+    public void loadData() { 
+        try {
+            this.data =  ResidentCardDAO.getInstance().getAllData();
+            this.residents = (ArrayList<ResidentCard>) data.get("customers");
+            this.building_names = (ArrayList<String>) data.get("building_names");
+            this.full_names = (ArrayList<String>) data.get("full_names");
+        }
+        catch (Exception e) { 
+            e.printStackTrace();
+        }
     }
     
     public void fillTable() {
-        try {
-            Map<String, ArrayList<?>> data =  ResidentCardDAO.getInstance().getAllData();
-            ArrayList<ResidentCard> residents = (ArrayList<ResidentCard>) data.get("customers");
-            ArrayList<String> building_names = (ArrayList<String>) data.get("building_names");
-            ArrayList<String> full_names = (ArrayList<String>) data.get("full_names");
-            int count = -1;
-            String crBuilding_name = "";
-            String crFull_name = "";
-            for (ResidentCard res : residents) { 
-                try {
-                    count += 1;
-                    crBuilding_name = building_names.get(count);
-                    crFull_name = full_names.get(count);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-                tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, String.valueOf(res.isIs_active())} );
-            }
+        int count = -1;
+        String crBuilding_name = "";
+        String crFull_name = "";
+        for (ResidentCard res : residents) {
+            count += 1;
+            crBuilding_name = building_names.get(count);
+            crFull_name = full_names.get(count);
+            tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, String.valueOf(res.isIs_active())} );
         }
-        catch (Exception e) { 
-                e.printStackTrace();
-            }
         tblModel.fireTableDataChanged();
-//        ResidentCard resident = new ResidentCard(13, true);
-//        ResidentCardDAO.getInstance().insert(resident);
 //        ResidentCard resident = new ResidentCard(104, 2, true);
 //        ResidentCardDAO.getInstance().update(resident);
 //        System.out.println(ResidentCardDAO.getInstance().findbyID(105).getCustomer_id());
 //        ResidentCardDAO.getInstance().delete(105);
+    }
+    
+    private void fillComboBoxActive() { 
+        String[] items = { "None", "Còn", "Mất" };
+        cob_con_mat.setModel(new DefaultComboBoxModel<>(items));
+    }
+    
+    private void fillComboBoxBuildings() { 
+        List<String> lstBuildings = new ArrayList<>();
+        lstBuildings.add("None");
+        for (Buildings b: viewmain.buildings) {
+            lstBuildings.add(b.getBuilding_name());
+        }
+        String[] buildings = lstBuildings.toArray(new String[0]);
+        cob_toa_nha.setModel(new DefaultComboBoxModel<>(buildings));
+    }
+    
+    public void resetFields() { 
+        txt_building_id.setText("");
+        txt_customer_id.setText("");
+        txt_pk_resident_card.setText("");
+        
+        tbl_resident_card.clearSelection();
+        cob_con_mat.setSelectedIndex(0);
+        cob_con_mat.setEnabled(false);
+        btn_chon_customer.setEnabled(true);
+        
+        btn_update.setEnabled(false);
+        btn_delete.setEnabled(false);
+        btnInsert.setEnabled(false);
+        
+        chooseCustomerId = -1;
+    }
+    
+    public void reloadData() { 
+        initTable();
+        loadData();
+        resetFields();
+        fillTable();
+    }
+    
+    private void showUpdate() { 
+        cob_con_mat.setEnabled(true);
+        btn_chon_customer.setEnabled(false);
+        
+        btn_update.setEnabled(true);
+        btn_delete.setEnabled(true);
+        btnInsert.setEnabled(false);
+    }
+    
+    private void checkBtnInsert() {
+        boolean isFilled = !txt_customer_id.getText().trim().isEmpty();
+
+//        System.out.println(isFilled);
+        btnInsert.setEnabled(isFilled);
+    }
+    
+    private void addDocumentListeners() {
+        DocumentListener docListener = new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                checkBtnInsert();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                checkBtnInsert();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                checkBtnInsert();
+            }
+        };
+        
+        txt_customer_id.getDocument().addDocumentListener(docListener);
     }
     
     @SuppressWarnings("unchecked")
@@ -104,7 +199,6 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         btn_delete = new javax.swing.JButton();
         btn_reset = new javax.swing.JButton();
         btn_chon_customer = new javax.swing.JButton();
-        btn_chon_building = new javax.swing.JButton();
         cob_con_mat = new javax.swing.JComboBox<>();
         JL_Title = new javax.swing.JLabel();
         JL_MaTheCuDan = new javax.swing.JLabel();
@@ -123,6 +217,11 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
 
         btn_tim_kiem.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_tim_kiem.setText("Tìm");
+        btn_tim_kiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tim_kiemActionPerformed(evt);
+            }
+        });
 
         btn_con.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_con.setText("Còn");
@@ -143,9 +242,19 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
 
         btn_tat_ca.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_tat_ca.setText("Tất cả");
+        btn_tat_ca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tat_caActionPerformed(evt);
+            }
+        });
 
         btn_sap_xep.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_sap_xep.setText("Sắp Xếp");
+        btn_sap_xep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_sap_xepActionPerformed(evt);
+            }
+        });
 
         cob_toa_nha.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cob_toa_nha.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -289,9 +398,21 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
 
         btn_update.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_update.setText("Cập Nhật");
+        btn_update.setEnabled(false);
+        btn_update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_updateActionPerformed(evt);
+            }
+        });
 
         btn_delete.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_delete.setText("Xóa");
+        btn_delete.setEnabled(false);
+        btn_delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_deleteActionPerformed(evt);
+            }
+        });
 
         btn_reset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_reset.setText("Reset");
@@ -308,12 +429,16 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
 
         btn_chon_customer.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_chon_customer.setText("Chọn");
-
-        btn_chon_building.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_chon_building.setText("Chọn");
+        btn_chon_customer.setEnabled(false);
+        btn_chon_customer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_chon_customerActionPerformed(evt);
+            }
+        });
 
         cob_con_mat.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cob_con_mat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Còn", "Mất" }));
+        cob_con_mat.setEnabled(false);
 
         JL_Title.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         JL_Title.setText("Thông Tin Thẻ");
@@ -337,41 +462,36 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(JL_building, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_building_id, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_chon_building, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(txt_building_id))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(JL_Title, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(JL_MaTheCuDan, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(JL_MaKhachHang, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txt_pk_resident_card, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_reset, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(JL_Title, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(JL_MaTheCuDan, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(JL_MaKhachHang, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txt_customer_id, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txt_pk_resident_card, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(btn_reset, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(txt_customer_id, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btn_chon_customer, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(JL_IsActive, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cob_con_mat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(82, 82, 82))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(44, 44, 44)
-                                .addComponent(btnInsert, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_update, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_delete)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(btn_chon_customer, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(JL_IsActive, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cob_con_mat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(82, 82, 82))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(44, 44, 44)
+                        .addComponent(btnInsert, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_update, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_delete)))
                 .addGap(0, 22, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -393,9 +513,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
                     .addComponent(JL_MaKhachHang))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txt_building_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_chon_building))
+                    .addComponent(txt_building_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(JL_building))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -406,7 +524,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
                     .addComponent(btnInsert)
                     .addComponent(btn_update)
                     .addComponent(btn_delete))
-                .addContainerGap(133, Short.MAX_VALUE))
+                .addContainerGap(134, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -433,6 +551,30 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
 
     private void tbl_resident_cardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_resident_cardMouseClicked
         // TODO add your handling code here:
+        int selectedRow = tbl_resident_card.getSelectedRow();
+        // Kiểm tra xem có hàng nào được chọn không
+        if (selectedRow != -1) {
+            // Lấy dữ liệu từ bảng và gán vào các biến
+            int residentCardId = Integer.parseInt(tbl_resident_card.getValueAt(selectedRow, 0).toString());
+            String customer = tbl_resident_card.getValueAt(selectedRow, 1).toString();
+            String building = tbl_resident_card.getValueAt(selectedRow, 2).toString();
+            boolean isActive = Boolean.parseBoolean(tbl_resident_card.getValueAt(selectedRow, 3).toString());
+            
+            // Hiển thị dữ liệu lên các ô nhập liệu
+            txt_pk_resident_card.setText(String.valueOf(residentCardId));
+            txt_customer_id.setText(customer);
+            txt_building_id.setText(building);
+            if (isActive) { 
+                cob_con_mat.setSelectedIndex(1);
+            }
+            else { 
+                cob_con_mat.setSelectedIndex(2);
+            }
+            
+            this.chooseCustomerId = this.residents.get(selectedRow).getCustomer_id();
+            showUpdate();
+        }
+        
     }//GEN-LAST:event_tbl_resident_cardMouseClicked
 
     private void btnInsertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInsertMouseClicked
@@ -441,6 +583,14 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
 
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
         // TODO add your handling code here:
+        ResidentCard resident = new ResidentCard(chooseCustomerId, true);
+        ResidentCardDAO.getInstance().insert(resident);
+        
+        System.out.println(resident.getCustomer_id());
+        resetFields();
+        initTable(); 
+        loadData();
+        fillTable();
     }//GEN-LAST:event_btnInsertActionPerformed
 
     private void btn_resetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_resetMouseClicked
@@ -449,6 +599,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
 
     private void btn_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_resetActionPerformed
         // TODO add your handling code here:
+        resetFields();
     }//GEN-LAST:event_btn_resetActionPerformed
 
     private void txt_tin_nhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tin_nhanActionPerformed
@@ -461,11 +612,175 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
 
     private void btn_conActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_conActionPerformed
         // TODO add your handling code here:
+        initTable();
+        int count = -1;
+        String crBuilding_name = "";
+        String crFull_name = "";
+        for (ResidentCard res : residents) {
+            if (res.isIs_active()) {
+                count += 1;
+                crBuilding_name = building_names.get(count);
+                crFull_name = full_names.get(count);
+                tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, String.valueOf(res.isIs_active())} );
+            }
+        }
+        tblModel.fireTableDataChanged();
+        resetFields();
     }//GEN-LAST:event_btn_conActionPerformed
 
     private void btn_matActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_matActionPerformed
         // TODO add your handling code here:
+        initTable();
+        int count = -1;
+        String crBuilding_name = "";
+        String crFull_name = "";
+        for (ResidentCard res : residents) {
+            if (!res.isIs_active()) {
+                count += 1;
+                crBuilding_name = building_names.get(count);
+                crFull_name = full_names.get(count);
+                tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, String.valueOf(res.isIs_active())} );
+            }
+        }
+        tblModel.fireTableDataChanged();
+        resetFields();
     }//GEN-LAST:event_btn_matActionPerformed
+
+    private void btn_tim_kiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tim_kiemActionPerformed
+        // TODO add your handling code here:
+        initTable();
+        int count = -1;
+        String crBuilding_name = "";
+        String crFull_name = "";
+        for (ResidentCard res : residents) {
+            if (Library.Library.StringOnString(txt_tim_kiem.getText().toString().trim(), String.valueOf(res.getPk_resident_card()))) {
+                count += 1;
+                crBuilding_name = building_names.get(count);
+                crFull_name = full_names.get(count);
+                tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, String.valueOf(res.isIs_active())} );
+            }
+        }
+        tblModel.fireTableDataChanged();
+        cob_toa_nha.setSelectedIndex(0);
+        resetFields();
+    }//GEN-LAST:event_btn_tim_kiemActionPerformed
+
+    private void btn_tat_caActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tat_caActionPerformed
+        // TODO add your handling code here:
+        initTable();
+        resetFields();
+        fillTable();
+    }//GEN-LAST:event_btn_tat_caActionPerformed
+
+    private void btn_sap_xepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_sap_xepActionPerformed
+        // TODO add your handling code here:
+        String buildingName = cob_toa_nha.getSelectedItem().toString().trim();
+        txt_tim_kiem.setText("");
+        if (buildingName == "None") {
+            initTable();
+            resetFields();
+            fillTable();
+            return;
+        }
+//        System.out.println(buildingName);
+        initTable();
+        int count = -1;
+        String crBuilding_name = "";
+        String crFull_name = "";
+        for (ResidentCard res : residents) {
+            count += 1;
+            crBuilding_name = building_names.get(count).trim();
+            if (crBuilding_name.equals(buildingName)) {
+                crFull_name = full_names.get(count);
+                tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, String.valueOf(res.isIs_active())} );
+            }
+        }
+        tblModel.fireTableDataChanged();
+        resetFields();
+    }//GEN-LAST:event_btn_sap_xepActionPerformed
+
+    private void btn_chon_customerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chon_customerActionPerformed
+        // TODO add your handling code here:
+        this.viewmain.setEnabled(false);
+        this.logSelection = new LogSelection() {
+            @Override
+            public void initContent() {
+                this.label_property.setText("Mã Định Danh Các Tòa Nhà");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                String[] header = new String[] {"ID KH", "ID Tòa Nhà", "Họ Tên", "Căn Cước", "Ngày Sinh", "Giới Tính", "Điện Thoại", "Thường Trú", "Quốc Tịch", "Cư Dân"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table.rowAtPoint(e.getPoint());
+                        txt_customer_id.setText((String) table.getValueAt(row, 2));
+                        chooseCustomerId = Integer.parseInt((String)table.getValueAt(row, 0));
+                        logSelection.setVisible(false);
+                        viewmain.setEnabled(true);
+                        viewmain.requestFocus();
+                    }
+                });
+                for (Customer c : viewmain.lstCustomer) {
+                    if (c.isIs_active()) {
+                        tableModel.addRow(new String[] {String.valueOf(c.getCustomer_id()), String.valueOf(c.getBuilding_id()), 
+                                                        c.getFull_name(), c.getSsn(), String.valueOf(c.getDate_of_birth()), 
+                                                        c.getGender(), c.getPhone_number(), c.getAddress(), c.getNationality(), String.valueOf(c.isIs_active())
+                        });
+                    }
+                }
+                this.tableModel.fireTableDataChanged();
+                this.btn_loc.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    }
+                });
+            }
+            @Override
+            public void back() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
+    }//GEN-LAST:event_btn_chon_customerActionPerformed
+
+    private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
+        // TODO add your handling code here:
+        
+        int residentCardId = Integer.parseInt(txt_pk_resident_card.getText().toString().trim());
+        
+        boolean isActive = true;
+        if (cob_con_mat.getSelectedIndex() == 2) { 
+            isActive = false;
+        }
+        
+        ResidentCard resident = new ResidentCard(residentCardId, chooseCustomerId, isActive);
+        ResidentCardDAO.getInstance().update(resident);
+//        System.out.println(resident.getCustomer_id() + " " + resident.isIs_active());
+        resetFields();
+        initTable(); 
+        loadData();
+        fillTable();
+    }//GEN-LAST:event_btn_updateActionPerformed
+
+    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+        // TODO add your handling code here:
+        int residentCardId = Integer.parseInt(txt_pk_resident_card.getText().toString().trim());
+        ResidentCardDAO.getInstance().delete(residentCardId);
+        resetFields();
+        initTable(); 
+        loadData();
+        fillTable();
+    }//GEN-LAST:event_btn_deleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -475,7 +790,6 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
     private javax.swing.JLabel JL_Title;
     private javax.swing.JLabel JL_building;
     private javax.swing.JButton btnInsert;
-    private javax.swing.JButton btn_chon_building;
     private javax.swing.JButton btn_chon_customer;
     private javax.swing.JButton btn_con;
     private javax.swing.JButton btn_delete;

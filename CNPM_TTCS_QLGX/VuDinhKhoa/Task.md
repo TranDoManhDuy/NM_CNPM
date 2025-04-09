@@ -92,3 +92,6 @@
 # 28-03-2025
 - > Login Server.
 - > Combine: Store Procedure + View.
+# (02&03)-04-2025: 
+- > Load Data + Edit Dao. 
+- > Trigger. 
