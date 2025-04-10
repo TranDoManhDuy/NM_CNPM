@@ -103,6 +103,7 @@ public class ViewMain extends javax.swing.JFrame {
 //        GUI_CATRUC();
         GUI_NHANSU();
     }
+    
     public void addComponent(JPanel father, JPanel child) {
         father.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -136,11 +137,11 @@ public class ViewMain extends javax.swing.JFrame {
     
     public void GUI_GUIXE() 
     {
-        GUI_Customer gui_customer = new GUI_Customer(this, logSelection);
-        GUI_ResidentCard gui_resident_card = new GUI_ResidentCard(this, logSelection);
-        GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(this, logSelection, gui_resident_card);
-        GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(this, logSelection);
         GUI_Vehicle gui_vehicle = new GUI_Vehicle(this, logSelection);
+        GUI_ResidentCard gui_resident_card = new GUI_ResidentCard(this, logSelection);
+        GUI_Customer gui_customer = new GUI_Customer(this, logSelection, gui_resident_card);
+        GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(this, logSelection, gui_vehicle);
+        GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(this, logSelection, gui_resident_card, gui_parking_session);
         addComponent(panel_khachhang, gui_customer);
         addComponent(panel_mat_the_cd, gui_lost_resident_card);
         addComponent(panel_guixe, gui_parking_session);

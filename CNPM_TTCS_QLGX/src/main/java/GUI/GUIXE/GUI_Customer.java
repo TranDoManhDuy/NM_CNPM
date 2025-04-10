@@ -44,15 +44,16 @@ public class GUI_Customer extends javax.swing.JPanel {
     private LogSelection logSelection;
     private int choooseIndexBuilding = 0;
     private boolean isUpdating = false;
-    
+    private GUI_ResidentCard gui_resident_card;
     
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_Customer(ViewMain viewmain, LogSelection logSelection) {
+    public GUI_Customer(ViewMain viewmain, LogSelection logSelection, GUI_ResidentCard gui_resident_card) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
+        this.gui_resident_card = gui_resident_card;
         
         initComponents(); 
         resetFields();
@@ -71,6 +72,16 @@ public class GUI_Customer extends javax.swing.JPanel {
         
         txt_tin_nhan.setText("Đang hiển thị danh sách tất cả các khách hàng");
         addDocumentListeners();
+    }
+    
+    private void loadDayMonthYear() { 
+        sDay = Library.Library.getDay(0, 0);
+        sMonth = Library.Library.getMonth(0, 0);
+        sYear = Library.Library.getYear(0, 0);
+        
+        cob_ngay.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
+        cob_thang.setModel(new javax.swing.DefaultComboBoxModel<>(sMonth));
+        cob_nam.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
     }
     
     private void loadData() {
@@ -795,7 +806,17 @@ public class GUI_Customer extends javax.swing.JPanel {
             String address = tblCustomer.getValueAt(selectedRow, 7).toString();
             String nationality = tblCustomer.getValueAt(selectedRow, 8).toString();
             boolean isActive = Boolean.parseBoolean(tblCustomer.getValueAt(selectedRow, 9).toString());
-
+   
+            this.isUpdating = true;
+            int year = 0;
+            if (dob.getYear() > 2000) { 
+                year = dob.getYear() - 2000;
+            }
+            else {
+                year = dob.getYear() - 1900;
+            }
+            int yearIndex= Arrays.asList(sYear).indexOf(String.format("%02d", year));
+//            System.out.println(yearIndex);
             // Hiển thị dữ liệu lên các ô nhập liệu
             txt_customer_id.setText(String.valueOf(customerId));
             txt_building_id.setText(buildingName);
@@ -803,13 +824,14 @@ public class GUI_Customer extends javax.swing.JPanel {
             txt_ssn.setText(ssn);
             cob_ngay.setSelectedIndex( dob.getDayOfMonth() );
             cob_thang.setSelectedIndex( dob.getMonthValue() );
-            cob_nam.setSelectedIndex( dob.getYear() - 1950 );
+            cob_nam.setSelectedIndex(yearIndex);
+            this.isUpdating = false;
             txt_phone_number.setText(phoneNumber);
             txt_address.setText(address);
             Txt_nationality.setText(nationality);
             
             // Nếu cần xử lý giới tính hoặc trạng thái, có thể cập nhật thêm
-            cb_is_active.setSelected(isActive); // Giả sử có JCheckBox hiển thị trạng thái
+            cb_is_active.setSelected(isActive);
             if (gender.equals("M")) {
                 cb_gender_F.setSelected(false);
                 cb_gender_M.setSelected(true);
@@ -875,6 +897,7 @@ public class GUI_Customer extends javax.swing.JPanel {
             initTable();
             loadData();
             fillTable();
+            this.gui_resident_card.reloadData();
         }
         catch (Exception e) { 
             e.printStackTrace();

@@ -6,6 +6,8 @@ package GUI.GUIXE;
 
 import Annotation.LogSelection;
 import DAO.LostResidentCardDAO;
+import DAO.ParkingSessionDAO;
+import DAO.ResidentCardDAO;
 import GUI.ViewMain;
 import Model.LostResidentCard;
 import Model.ParkingSession;
@@ -39,14 +41,16 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
     private int chooseParkingSession = -1; 
     private int chooseResidentCard = -1;
     private GUI_ResidentCard gui_resident_card;
+    private GUI_ParkingSession gui_parking_session;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_LostResidentCard(ViewMain viewmain, LogSelection logSelection, GUI_ResidentCard gui_resident_card) {
+    public GUI_LostResidentCard(ViewMain viewmain, LogSelection logSelection, GUI_ResidentCard gui_resident_card, GUI_ParkingSession gui_parking_session) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
         this.gui_resident_card = gui_resident_card;
+        this.gui_parking_session = gui_parking_session;
         
         initComponents();
         initTable();
@@ -90,14 +94,6 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
         tblModel.fireTableDataChanged();
     }
     
-    private void resetFields() { 
-        txt_lost_resident_card.setText("");
-        txt_resident_id.setText("");
-        txt_parking_session_id.setText("");
-        txt_customer_name.setText("");
-        
-        tbl_lost_resident_card.clearSelection();
-    }
     
     private void setActive() { 
         txt_lost_resident_card.setEnabled(false);
@@ -108,6 +104,16 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
         btn_chon_ma_gui_xe.setEnabled(true);
         btn_chon_ma_the.setEnabled(true);
         btn_delete.setEnabled(false);
+    }
+    
+    private void resetFields() { 
+        txt_lost_resident_card.setText("");
+        txt_resident_id.setText("");
+        txt_parking_session_id.setText("");
+        txt_customer_name.setText("");
+        
+        tbl_lost_resident_card.clearSelection();
+        this.setActive();
     }
     
     private void checkBtnInsert() {
@@ -552,13 +558,15 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
     private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
         // TODO add your handling code here:
         LostResidentCard lre = new LostResidentCard(chooseResidentCard, chooseParkingSession);
-//        System.out.println(lre.getPk_resident_card() + " " + lre.getParking_session_id());
         LostResidentCardDAO.getInstance().insert(lre);
         initTable();
         loadData();
         fillTable();
         resetFields();
         this.gui_resident_card.reloadData();
+        viewmain.resident_cards = ResidentCardDAO.getInstance().getList();
+        this.gui_parking_session.reloadData();
+        viewmain.parking_sessions = ParkingSessionDAO.getInstance().getList();
     }//GEN-LAST:event_btn_insertActionPerformed
 
     private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked

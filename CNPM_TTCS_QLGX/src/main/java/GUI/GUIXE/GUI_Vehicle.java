@@ -135,9 +135,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
          // Kiểm tra nếu tất cả các trường không rỗng
         boolean isFilled =  txt_vehicle_id.getText().trim().isEmpty() &&
                             !txt_identification_code.getText().trim().isEmpty() &&
-                            !txt_vehicle_type.getText().trim().isEmpty() &&
-                            !txt_vehicle_name.getText().trim().isEmpty() &&
-                            !txt_vehicle_color.getText().trim().isEmpty();
+                            !txt_vehicle_type.getText().trim().isEmpty();
 
 //        System.out.println(isFilled);
         btn_insert.setEnabled(isFilled);
@@ -164,8 +162,13 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         txt_vehicle_id.getDocument().addDocumentListener(docListener);
         txt_identification_code.getDocument().addDocumentListener(docListener);
         txt_vehicle_type.getDocument().addDocumentListener(docListener);
-        txt_vehicle_name.getDocument().addDocumentListener(docListener);
-        txt_vehicle_color.getDocument().addDocumentListener(docListener);
+    }
+    
+    public void reloadData() { 
+        initTable();
+        loadData();
+        resetFields();
+        fillTable();
     }
     
     @SuppressWarnings("unchecked")
@@ -179,7 +182,6 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         txt_tim_kiem = new javax.swing.JTextField();
         btn_tim_kiem = new javax.swing.JButton();
-        btn_sap_xep = new javax.swing.JButton();
         cob_loai_phuong_tien = new javax.swing.JComboBox<>();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
@@ -242,9 +244,6 @@ public class GUI_Vehicle extends javax.swing.JPanel {
             }
         });
 
-        btn_sap_xep.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_sap_xep.setText("Sắp Xếp");
-
         cob_loai_phuong_tien.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cob_loai_phuong_tien.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cob_loai_phuong_tien.addActionListener(new java.awt.event.ActionListener() {
@@ -273,9 +272,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
                     .addComponent(cob_loai_phuong_tien, 0, 228, Short.MAX_VALUE)
                     .addComponent(txt_tim_kiem))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btn_sap_xep, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                    .addComponent(btn_tim_kiem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(btn_tim_kiem, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -289,9 +286,8 @@ public class GUI_Vehicle extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
-                    .addComponent(cob_loai_phuong_tien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_sap_xep))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cob_loai_phuong_tien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -709,7 +705,6 @@ public class GUI_Vehicle extends javax.swing.JPanel {
     private javax.swing.JButton btn_chon_vehicle_type;
     private javax.swing.JButton btn_insert;
     private javax.swing.JButton btn_reset;
-    private javax.swing.JButton btn_sap_xep;
     private javax.swing.JButton btn_tim_kiem;
     private javax.swing.JButton btn_update;
     private javax.swing.JButton btn_xoa;
