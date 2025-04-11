@@ -71,14 +71,14 @@ public class gui_shift_work extends javax.swing.JPanel {
         jButton3.setEnabled(false);
     }
     
-    private void initTable() {
+    public void initTable() {
         String[] header = new String[] {"ID ca trực", "Tên loại ca trực", "Tên tòa nhà", "Mã nhân viên" ,"Tên nhân viên", "Tên nhiệm vụ", "Ngày trực"};
         tableModel.setColumnIdentifiers(header);
         jTable1.setModel(tableModel);
         jTable1.setEnabled(false);
     }
     
-    private void fillTable(){
+    public void fillTable(){
         tableModel.setRowCount(0);
         String sql = "SELECT * FROM SHIFTWORKS";
         dataGlobal.updateArrShiftWorks();
@@ -103,14 +103,14 @@ public class gui_shift_work extends javax.swing.JPanel {
   
     
     public void insertShiftWork(){
-        LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1); 
+        LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex()); 
         int stID = Integer.parseInt(jTextField2.getText());
         int bID = Integer.parseInt(jTextField3.getText());
         int sID = Integer.parseInt(jTextField4.getText());
         int tID = Integer.parseInt(jTextField5.getText());
         ShiftWorks a = new ShiftWorks( stID, bID, sID, tID, shiftDate);
         boolean r = ShiftWorksDAO.getInstance().insert(a);
-        if(!r){
+        if(r == false){
             viewMain.setEnabled(false);
             this.message = new LogMessage("Không thể thêm"){
                 @Override
@@ -1044,7 +1044,14 @@ public class gui_shift_work extends javax.swing.JPanel {
                         System.out.println("CLICK");
                     }
                 });
+                this.btn_boloc.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.out.println("CLICK");
+                    }
+                });
             }
+            
             @Override
             public void back() {
                 this.setVisible(false);

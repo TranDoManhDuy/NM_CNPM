@@ -41,8 +41,52 @@ public class VisitorParkingCardsDAO {
         return list;
     }
     
-    public boolean insert() {
-        String sql = "CALL InsertVisitorParkingCard()";
+    public List<VisitorParkingCards> getEmptyCards() {
+        List<VisitorParkingCards> list = new ArrayList<>();
+        String sql = "{CALL GetEmptyVisitorParkingCards()}";
+        
+        try (
+            Connection conn = OpenConnection.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+            ResultSet rs = stmt.executeQuery();
+        ) {
+            while (rs.next()) {
+                VisitorParkingCards card = new VisitorParkingCards(
+                    rs.getInt("visitor_parking_card_id"),
+                    rs.getBoolean("is_active")
+                );
+                list.add(card);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    public List<VisitorParkingCards> getNonEmptyCards() {
+        List<VisitorParkingCards> list = new ArrayList<>();
+        String sql = "{CALL GetNonEmptyVisitorParkingCards()}";
+        
+        try (
+            Connection conn = OpenConnection.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+            ResultSet rs = stmt.executeQuery();
+        ) {
+            while (rs.next()) {
+                VisitorParkingCards card = new VisitorParkingCards(
+                    rs.getInt("visitor_parking_card_id"),
+                    rs.getBoolean("is_active")
+                );
+                list.add(card);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    public boolean insertVisitorParkingCard() {
+        String sql = "{CALL InsertVisitorParkingCard()}";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -55,15 +99,14 @@ public class VisitorParkingCardsDAO {
         return false;
     }
     
-    public boolean update(VisitorParkingCards card) {
-        String sql = "CALL UpdateVisitorParkingCard(?, ?)";
+    public boolean update(int visitor_parking_card_id) {
+        String sql = "{CALL UpdateVisitorParkingCard(?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
             CallableStatement ptmt = conn.prepareCall(sql);
         ) {
-            ptmt.setInt(1, card.getVisitor_parking_card_id());
-            ptmt.setBoolean(2, card.isIs_active());
+            ptmt.setInt(1, visitor_parking_card_id);
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,7 +115,7 @@ public class VisitorParkingCardsDAO {
     }
 
     public boolean delete(int visitor_parking_card_id) {
-        String sql = "CALL DeleteVisitorParkingCard(?)";
+        String sql = "{CALL DeleteVisitorParkingCard(?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -87,7 +130,7 @@ public class VisitorParkingCardsDAO {
     }
 
     public VisitorParkingCards findById(int visitor_parking_card_id) {
-        String sql = "CALL FindVisitorParkingCardByID(?)";
+        String sql = "{CALL FindVisitorParkingCardByID(?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();

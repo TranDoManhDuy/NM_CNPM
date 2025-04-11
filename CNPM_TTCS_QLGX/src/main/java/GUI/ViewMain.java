@@ -65,12 +65,18 @@ import DAO.TimeFrameDAO;
 import DAO.VehicleDAO;
 import DAO.VehicleTypeDAO;
 import DAO.VisitorParkingCardsDAO;
+import GUI.GUIXE.GUI_LostVisitorParkingCard;
+import GUI.GUIXE.GUI_VisitorParkingCard;
 import Model.SessionFee;
+import Model.ShiftTypes;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 public class ViewMain extends javax.swing.JFrame {
     LogConfirm logComfirm = new LogConfirm("nothing");
     LogMessage logMessage = new LogMessage("Nothing");
     LogSelection logSelection = new LogSelection();
-    DataGlobal dataglocal = new DataGlobal();public List<Buildings> buildings = new ArrayList<>();
+    DataGlobal dataglocal = new DataGlobal();
+    public List<Buildings> buildings = new ArrayList<>();
     public ArrayList<VehicleType> vehicle_types = new ArrayList<>();
     public List<VisitorParkingCards> visitor_parking_cards = new ArrayList<>();
     public ArrayList<ResidentCard> resident_cards = new ArrayList<>();
@@ -135,7 +141,9 @@ public class ViewMain extends javax.swing.JFrame {
     }
     
     public void GUI_GUIXE() 
-    {
+    {   
+        GUI_LostVisitorParkingCard gui_LostVisitorParkingCard = new GUI_LostVisitorParkingCard(this);
+        GUI_VisitorParkingCard gui_visitorParkingCard = new GUI_VisitorParkingCard(this);
         GUI_Customer gui_customer = new GUI_Customer(this, logSelection);
         GUI_ResidentCard gui_resident_card = new GUI_ResidentCard(this, logSelection);
         GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(this, logSelection, gui_resident_card);
@@ -146,6 +154,8 @@ public class ViewMain extends javax.swing.JFrame {
         addComponent(panel_guixe, gui_parking_session);
         addComponent(panel_the_cu_dan, gui_resident_card);
         addComponent(panel_ptien, gui_vehicle);
+        addComponent(panel_mat_the, gui_LostVisitorParkingCard);
+        addComponent(panel_the_xe, gui_visitorParkingCard);
     }
     
     public void GUI_CATRUC(){
@@ -157,6 +167,38 @@ public class ViewMain extends javax.swing.JFrame {
         addComponent(panel_catruc, sw);
         addComponent(panel_toanha, b);
         addComponent(panel_nhiemvu, t);
+        
+        panelCaTruc.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int selectedIndex = panelCaTruc.getSelectedIndex();
+                String tabTitle = panelCaTruc.getTitleAt(selectedIndex);
+                // Hoặc xử lý riêng từng tab
+                switch (selectedIndex) {
+                    case 0:
+                        System.out.println("Cập nhật giao diện Loại ca trực");
+                        dataglocal.updateArrShiftTypes();
+                        st.fillTable(dataglocal.getArrayShiftTypes());
+                        break;
+                    case 1:
+                        System.out.println("Cập nhật giao diện Ca trực");
+                        dataglocal.updateArrShiftWorks();
+                        sw.fillTable();
+                        break;
+                    case 2:
+                        System.out.println("Cập nhật giao diện nhiệm vụ");
+                        dataglocal.updateArrtasks();
+                        t.fillTable(dataglocal.getArrayTasks());
+                        break;
+                    case 3:
+                        System.out.println("Cập nhật giao diện Tòa nhà");
+                        dataglocal.updateArrBuildings();
+                        b.fillTable(dataglocal.getArrayBuildings());
+                        break;
+                    // thêm các case khác tương ứng tab
+                }
+            }
+        });
     }
     
     public void GUI_NHANSU() {
@@ -175,6 +217,8 @@ public class ViewMain extends javax.swing.JFrame {
 //        addComponent(panel_quanli, manager_gui);
         addComponent(panel_vitri, position_gui);
     }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -206,7 +250,7 @@ public class ViewMain extends javax.swing.JFrame {
         CaTruc = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
-        jTabbedPane4 = new javax.swing.JTabbedPane();
+        panelCaTruc = new javax.swing.JTabbedPane();
         panel_loaicatruc = new javax.swing.JPanel();
         panel_catruc = new javax.swing.JPanel();
         panel_nhiemvu = new javax.swing.JPanel();
@@ -221,8 +265,8 @@ public class ViewMain extends javax.swing.JFrame {
         panel_mat_the_cd = new javax.swing.JPanel();
         panel_ptien = new javax.swing.JPanel();
         panel_khachhang = new javax.swing.JPanel();
-        jPanel11 = new javax.swing.JPanel();
-        jPanel12 = new javax.swing.JPanel();
+        panel_mat_the = new javax.swing.JPanel();
+        panel_the_xe = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
         jPanel14 = new javax.swing.JPanel();
         DichVu = new javax.swing.JPanel();
@@ -437,7 +481,7 @@ public class ViewMain extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane4.addTab("Loại ca trực", panel_loaicatruc);
+        panelCaTruc.addTab("Loại ca trực", panel_loaicatruc);
 
         javax.swing.GroupLayout panel_catrucLayout = new javax.swing.GroupLayout(panel_catruc);
         panel_catruc.setLayout(panel_catrucLayout);
@@ -450,7 +494,7 @@ public class ViewMain extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane4.addTab("Ca trực", panel_catruc);
+        panelCaTruc.addTab("Ca trực", panel_catruc);
 
         javax.swing.GroupLayout panel_nhiemvuLayout = new javax.swing.GroupLayout(panel_nhiemvu);
         panel_nhiemvu.setLayout(panel_nhiemvuLayout);
@@ -463,7 +507,7 @@ public class ViewMain extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane4.addTab("Nhiệm vụ", panel_nhiemvu);
+        panelCaTruc.addTab("Nhiệm vụ", panel_nhiemvu);
 
         javax.swing.GroupLayout panel_toanhaLayout = new javax.swing.GroupLayout(panel_toanha);
         panel_toanha.setLayout(panel_toanhaLayout);
@@ -476,7 +520,7 @@ public class ViewMain extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane4.addTab("Tòa nhà", panel_toanha);
+        panelCaTruc.addTab("Tòa nhà", panel_toanha);
 
         javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
         jPanel17.setLayout(jPanel17Layout);
@@ -489,7 +533,7 @@ public class ViewMain extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane4.addTab("tab5", jPanel17);
+        panelCaTruc.addTab("tab5", jPanel17);
 
         javax.swing.GroupLayout jPanel21Layout = new javax.swing.GroupLayout(jPanel21);
         jPanel21.setLayout(jPanel21Layout);
@@ -502,17 +546,17 @@ public class ViewMain extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane4.addTab("tab6", jPanel21);
+        panelCaTruc.addTab("tab6", jPanel21);
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1203, Short.MAX_VALUE)
+            .addComponent(panelCaTruc, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1203, Short.MAX_VALUE)
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+            .addComponent(panelCaTruc, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -604,31 +648,31 @@ public class ViewMain extends javax.swing.JFrame {
 
         jTabbedPane2.addTab("Khách hàng", panel_khachhang);
 
-        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
-        jPanel11.setLayout(jPanel11Layout);
-        jPanel11Layout.setHorizontalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout panel_mat_theLayout = new javax.swing.GroupLayout(panel_mat_the);
+        panel_mat_the.setLayout(panel_mat_theLayout);
+        panel_mat_theLayout.setHorizontalGroup(
+            panel_mat_theLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 1203, Short.MAX_VALUE)
         );
-        jPanel11Layout.setVerticalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panel_mat_theLayout.setVerticalGroup(
+            panel_mat_theLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 453, Short.MAX_VALUE)
         );
 
-        jTabbedPane2.addTab("tab6", jPanel11);
+        jTabbedPane2.addTab("Mất thẻ xe", panel_mat_the);
 
-        javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
-        jPanel12.setLayout(jPanel12Layout);
-        jPanel12Layout.setHorizontalGroup(
-            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout panel_the_xeLayout = new javax.swing.GroupLayout(panel_the_xe);
+        panel_the_xe.setLayout(panel_the_xeLayout);
+        panel_the_xeLayout.setHorizontalGroup(
+            panel_the_xeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 1203, Short.MAX_VALUE)
         );
-        jPanel12Layout.setVerticalGroup(
-            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panel_the_xeLayout.setVerticalGroup(
+            panel_the_xeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 453, Short.MAX_VALUE)
         );
 
-        jTabbedPane2.addTab("tab7", jPanel12);
+        jTabbedPane2.addTab("Thẻ xe", panel_the_xe);
 
         javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
         jPanel13.setLayout(jPanel13Layout);
@@ -881,8 +925,6 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel11;
-    private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel17;
@@ -900,7 +942,7 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;
-    private javax.swing.JTabbedPane jTabbedPane4;
+    private javax.swing.JTabbedPane panelCaTruc;
     private javax.swing.JTabbedPane panelDichVu;
     private javax.swing.JPanel panel_catruc;
     private javax.swing.JPanel panel_dangki;
@@ -912,6 +954,7 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JPanel panel_loaicatruc;
     private javax.swing.JPanel panel_loaidichvu;
     private javax.swing.JPanel panel_loaiphuongtien;
+    private javax.swing.JPanel panel_mat_the;
     private javax.swing.JPanel panel_mat_the_cd;
     private javax.swing.JPanel panel_nhanvien;
     private javax.swing.JPanel panel_nhiemvu;
@@ -921,6 +964,7 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JPanel panel_taikhoan;
     private javax.swing.JPanel panel_thanhtoan;
     private javax.swing.JPanel panel_the_cu_dan;
+    private javax.swing.JPanel panel_the_xe;
     private javax.swing.JPanel panel_thongkedoanhthu;
     private javax.swing.JPanel panel_toanha;
     private javax.swing.JPanel panel_vaitro;

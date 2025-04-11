@@ -53,9 +53,9 @@ public class gui_shift_type extends javax.swing.JPanel {
         jTable1.setRowHeight(25);
     }
     
-    public void fillTable(List<ShiftTypes> ListShiftTypes){
+    public void fillTable(List<ShiftTypes> listShiftTypes){
         tableModel.setRowCount(0);
-        for (ShiftTypes lct : ListShiftTypes) {
+        for (ShiftTypes lct : listShiftTypes) {
             tableModel.addRow(new String[] {String.valueOf(lct.getShift_type_id()),lct.getShift_type_name(),String.valueOf(lct.getStart_time()), String.valueOf(lct.getEnd_time())});
         }
         tableModel.fireTableDataChanged();

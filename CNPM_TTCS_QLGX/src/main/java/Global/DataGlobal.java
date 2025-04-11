@@ -6,6 +6,7 @@ package Global;
 
 import DAO.BuildingsDAO;
 import DAO.CustomerDAO;
+import DAO.LostVisitorParkingCardsDAO;
 import DAO.RegisatrationDAO;
 import DAO.ServiceFeeDAO;
 import DAO.TypeServiceDAO;
@@ -15,13 +16,16 @@ import DAO.ShiftTypesDAO;
 import DAO.ShiftWorksDAO;
 import DAO.TasksDAO;
 import DAO.VehicleDAO;
+import DAO.VisitorParkingCardsDAO;
 import Model.Buildings;
 import Model.Customer;
+import Model.LostVisitorParkingCards;
 import Model.Regisatration;
 import Model.ShiftTypes;
 import Model.ShiftWorks;
 import Model.Tasks;
 import Model.Vehicle;
+import Model.VisitorParkingCards;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -61,7 +65,8 @@ public class DataGlobal {
     private List<ShiftWorks> arrShiftWorks = new ArrayList<>();
     private List<Tasks> arrTask = new ArrayList<>();
     private List<Buildings> arrBuildings = new ArrayList<>();
-    
+    private List<VisitorParkingCards> arrVisitorParkingCards = new ArrayList<>();
+    private List<LostVisitorParkingCards> arrLostVisitorParkingCards = new ArrayList<>();
     
     public ArrayList<Regisatration> getArrayRegistration() {
         return arrRegistration;
@@ -163,6 +168,28 @@ public class DataGlobal {
     public void updateArrtasks(){
         try {
             arrTask = TasksDAO.getInstance().getAllTasks();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("LOI KET NOI");
+        }
+    }
+    public List<VisitorParkingCards> getArrayVisitorParkingCards(){
+        return arrVisitorParkingCards;
+    }
+    public void updateArrayVisitorParkingCardses(){
+        try {
+            arrVisitorParkingCards = VisitorParkingCardsDAO.getInstance().getAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("LOI KET NOI");
+        }
+    }
+    public List<LostVisitorParkingCards> getArrayLostVisitorParkingCardses(){
+        return arrLostVisitorParkingCards;
+    }
+    public void updateArrayLostVisitorParkingCardses(){
+        try {
+            arrLostVisitorParkingCards = LostVisitorParkingCardsDAO.getInstance().getAll();
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("LOI KET NOI");
