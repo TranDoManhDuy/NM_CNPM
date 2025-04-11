@@ -110,7 +110,7 @@ public final class gui_serviceType extends javax.swing.JPanel {
         table_loaidichvu.setRowHeight(30);
         txt_ngayapdung.setText(String.valueOf(LocalDate.now()));
     }
-    public void initTable() {
+    private void initTable() {
         String[] header = new String[] {"ID dịch vụ", "Tên dịch vụ", "Phí dịch vụ/tháng (%)",  "Loại xe", "Số tháng", "Hệ số", "Trạng thái"};
         tableModel.setColumnIdentifiers(header);
         table_loaidichvu.setModel(tableModel);
@@ -303,6 +303,8 @@ public final class gui_serviceType extends javax.swing.JPanel {
         txt_ngayapdung.setFocusable(false);
 
         jLabel5.setText("ID phí DV tháng");
+
+        txt_idPhidichvu.setFocusable(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -642,9 +644,32 @@ public final class gui_serviceType extends javax.swing.JPanel {
         dataGlobal.updateArrServiceType_render();
         fillTable();
     }//GEN-LAST:event_btn_xoaActionPerformed
-
+    private void logError(String rs) {
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+    }
     private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
         // TODO add your handling code here:
+        if (txt_tendichvu.getText().length() <= 5) {
+            logError("Tên dịch vụ phải dài hơn 5 kí tự");
+            return;
+        }
+        if (txt_idPhidichvu.getText().equals("")) {
+            logError("Phải chọn một đơn vị dịch vụ");
+            return;
+        }
+        if (txt_heso.getText().equals("")) {
+            logError("Phải điền hệ số thanh toán");
+            return;
+        }
         String ServiceTypeName = txt_tendichvu.getText();
         int idServiceFee = Integer.parseInt(txt_idPhidichvu.getText());
         int monthUnit = Integer.parseInt((String) combo_sothang.getSelectedItem());
@@ -764,19 +789,18 @@ public final class gui_serviceType extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_tendichvuKeyReleased
     private String lastHeso = "";
     private void txt_hesoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_hesoKeyReleased
-//        // TODO add your handling code here:
-//        if (Library.Library.isNumber(txt_heso.getText())) {
-//            this.lastHeso = txt_heso.getText();
-//        }
-//        else {
-//            txt_heso.setText(this.lastHeso);
-//        }
-//        if(txt_heso.getText().equals("")) {
-//            return;
-//        }
-//        if (Float.parseFloat(txt_heso.getText()) > 100) {
-//            txt_heso.setText(String.valueOf(Float.parseFloat(txt_heso.getText()) / 10));
-//        }
+        if (Library.Library.isNumber(txt_heso.getText())) {
+            this.lastHeso = txt_heso.getText();
+        }
+        else {
+            txt_heso.setText(this.lastHeso);
+        }
+        if(txt_heso.getText().equals("")) {
+            return;
+        }
+        if (Float.parseFloat(txt_heso.getText()) > 100) {
+            txt_heso.setText(String.valueOf(Float.parseFloat(txt_heso.getText()) / 10));
+        }
     }//GEN-LAST:event_txt_hesoKeyReleased
     private String lasttimkiem = "";
     private void txt_timkiemKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_timkiemKeyReleased
@@ -790,6 +814,18 @@ public final class gui_serviceType extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_timkiemKeyReleased
 
     private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
+        if (txt_tendichvu.getText().length() <= 5) {
+            logError("Tên dịch vụ phải dài hơn 5 kí tự");
+            return;
+        }
+        if (txt_idPhidichvu.getText().equals("")) {
+            logError("Phải chọn một đơn vị dịch vụ");
+            return;
+        }
+        if (txt_heso.getText().equals("")) {
+            logError("Phải điền hệ số thanh toán");
+            return;
+        }
         int serviceTypeID = Integer.parseInt(txt_idloaidichvu.getText());
         String ServiceTypeName = txt_tendichvu.getText();
         int idServiceFee = Integer.parseInt(txt_idPhidichvu.getText());

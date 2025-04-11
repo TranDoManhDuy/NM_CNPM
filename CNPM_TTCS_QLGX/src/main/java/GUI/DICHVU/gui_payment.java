@@ -143,7 +143,7 @@ public class gui_payment extends javax.swing.JPanel {
         table_thanhtoan.setModel(tableModel);
     }
     
-    private void fillTable() {
+    public void fillTable() {
         tableModel.setRowCount(0);
         for (ArrayList<String> payment : this.dataglobal.getArrPayment_render()) {
             tableModel.addRow(new String[] {payment.get(0), payment.get(1),payment.get(2),payment.get(3),payment.get(4), payment.get(5)});
@@ -769,9 +769,28 @@ public class gui_payment extends javax.swing.JPanel {
         this.dataglobal.updateArrPaymentRender();
         fillTable();
     }//GEN-LAST:event_btn_xoaActionPerformed
-
+    private void logError(String rs) {
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+    }
     private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
         // TODO add your handling code here:
+        if (txt_iddangki.getText().equals("")) {
+            logError("Phải chọn đăng kí để thanh toán");
+            return;
+        }
+        if (txt_idloaidichvu.getText().equals("")) {
+            logError("Phải chọn loại dịch vụ");
+            return;
+        }
         int id_registration = Integer.parseInt(txt_iddangki.getText());
         int id_serviceType = Integer.parseInt(txt_idloaidichvu.getText());
         Payment payment = new Payment(1, id_registration , LocalDate.now(), false, id_serviceType);

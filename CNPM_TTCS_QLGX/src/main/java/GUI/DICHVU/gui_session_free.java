@@ -93,8 +93,8 @@ public class gui_session_free extends javax.swing.JPanel {
             }
         });
         
-        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Còn hạn", "Hết hạn", ""}));
-        combo_trangthai.setSelectedIndex(2);
+        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Còn hạn", "Hết hạn"}));
+        combo_trangthai.setSelectedIndex(0);
         combo_trangthai.setEnabled(false);
         txt_ngaybanhanh.setText(String.valueOf(LocalDate.now()));
         table_gialuot.setRowHeight(30);
@@ -104,7 +104,7 @@ public class gui_session_free extends javax.swing.JPanel {
         tableModel.setColumnIdentifiers(header);
         table_gialuot.setModel(tableModel);
     }
-    private void fillTable() {
+    public void fillTable() {
         tableModel.setRowCount(0);
         for (ArrayList<String> dataRow : this.dataglobal.getArrSessionFee_render()) {
             tableModel.addRow(new String[] {dataRow.get(0), dataRow.get(2), dataRow.get(4), dataRow.get(5), Library.Library.formatCurrency(Float.parseFloat(dataRow.get(6))) + " VNĐ", dataRow.get(7), dataRow.get(8)});
@@ -527,8 +527,38 @@ public class gui_session_free extends javax.swing.JPanel {
                     .addContainerGap(29, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
-
+    private void logError(String rs) {
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+    }
     private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
+        if (txt_idloaiphuongtien.getText().equals("")) {
+            logError("Phải chọn loại phương tiện");
+            return;
+        }
+        if (txt_idkhungthoigian.getText().equals("")) {
+            logError("Phải chọn khung thời gian");
+            return;
+        }
+        if (txt_giatien1tieng.getText().equals("")) {
+            logError("Phải nhập giá tiền");
+            return;
+        }
+        try {
+            int x = Integer.parseInt(txt_giatien1tieng.getText());
+        } catch (Exception e) {
+            logError("Nhập đúng định dạng chữ số");
+            return;
+        }
+        
         if (txt_idloaiphuongtien.getText().equals("")) {
             this.viewmain.setEnabled(false);
             this.logMessage = new LogMessage("Hãy chọn loại phương tiện") {
@@ -665,7 +695,7 @@ public class gui_session_free extends javax.swing.JPanel {
         txt_gioketthuc.setText("");
         txt_giatien1tieng.setText("");
         txt_ngaybanhanh.setText(String.valueOf(LocalDate.now()));
-        combo_trangthai.setSelectedIndex(2);
+        combo_trangthai.setSelectedIndex(0);
         combo_trangthai.setEnabled(false);
         
         btn_them.setEnabled(true);
@@ -918,6 +948,24 @@ public class gui_session_free extends javax.swing.JPanel {
     }
     private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
         // TODO add your handling code here:
+        if (txt_idloaiphuongtien.getText().equals("")) {
+            logError("Phải chọn loại phương tiện");
+            return;
+        }
+        if (txt_idkhungthoigian.getText().equals("")) {
+            logError("Phải chọn khung thời gian");
+            return;
+        }
+        if (txt_giatien1tieng.getText().equals("")) {
+            logError("Phải nhập giá tiền");
+            return;
+        }
+        try {
+            int x = Integer.parseInt(txt_giatien1tieng.getText());
+        } catch (Exception e) {
+            logError("Nhập đúng định dạng chữ số");
+            return;
+        }
         this.viewmain.setEnabled(false);
         this.cursorBreak = false;
 

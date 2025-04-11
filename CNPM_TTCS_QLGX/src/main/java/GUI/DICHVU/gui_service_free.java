@@ -91,7 +91,7 @@ public final class gui_service_free extends javax.swing.JPanel {
         initTable();
         fillTable();
     }
-    public void initTable() {
+    private void initTable() {
         String[] header = new String[] {"ID", "Tên loại xe", "Tổng giá tiền/1 tháng", "Ngày ban hành" ,"Trạng thái"};
         tableModel.setColumnIdentifiers(header);
         table_phidichvu.setModel(tableModel);
@@ -476,7 +476,18 @@ public final class gui_service_free extends javax.swing.JPanel {
                 .addGap(21, 21, 21))
         );
     }// </editor-fold>//GEN-END:initComponents
-
+    private void logError(String rs) {
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+    }
     private void btn_chonloaixeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonloaixeActionPerformed
         // TODO add your handling code here:
         this.viewmain.setEnabled(false);
@@ -587,9 +598,23 @@ public final class gui_service_free extends javax.swing.JPanel {
         dataGlobal.updateArrServiceFee_render();
         fillTable();
     }//GEN-LAST:event_btn_xoaActionPerformed
-
+    
     private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
         // TODO add your handling code here:
+        if (txt_idloaixe.getText().equals("")) {
+            logError("Phải chọn loại phương tiện");
+            return;
+        }
+        if (txt_tonggiatien.getText().equals("")) {
+            logError("Phải điền giá tiền");
+            return;
+        }
+        try {
+            int x = Integer.parseInt(txt_tonggiatien.getText());
+        } catch (Exception e) {
+            logError("Phải nhập đúng định dạng là số");
+            return;
+        }
         ServiceFee service_fee = new ServiceFee(1, LocalDate.now(), Integer.parseInt(txt_idloaixe.getText()), (int) Float.parseFloat(txt_tonggiatien.getText()), true);
         String rs = ServiceFeeDAO.getInstance().insert(service_fee);
         this.viewmain.setEnabled(false);
@@ -600,7 +625,7 @@ public final class gui_service_free extends javax.swing.JPanel {
                 viewmain.setEnabled(true);
             }
         };
-
+        
         this.logMessage.setVisible(true);
         dataGlobal.updateArrServiceFee_render();
         fillTable();
@@ -683,7 +708,20 @@ public final class gui_service_free extends javax.swing.JPanel {
     }//GEN-LAST:event_btn_timkiemActionPerformed
 
     private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
-        // TODO add your handling code here:
+        if (txt_idloaixe.getText().equals("")) {
+            logError("Phải chọn loại phương tiện");
+            return;
+        }
+        if (txt_tonggiatien.getText().equals("")) {
+            logError("Phải điền giá tiền");
+            return;
+        }
+        try {
+            int x = Integer.parseInt(txt_tonggiatien.getText());
+        } catch (Exception e) {
+            logError("Phải nhập đúng định dạng là số");
+            return;
+        }    // TODO add your handling code here:
         boolean state;
         if (combo_trangthai.getSelectedIndex() == 0) {
             state = true;

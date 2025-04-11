@@ -85,7 +85,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         tableModel.setColumnIdentifiers(header);
         table_loaiphuongtien.setModel(tableModel);
     }
-    private void fillTable() {
+    public void fillTable() {
         tableModel.setRowCount(0);
         for (VehicleType vt : this.dataglobal.getArrVehicleType()) {
             String trangthai;
@@ -480,9 +480,24 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         worker.execute();
         worker = null;
     }//GEN-LAST:event_btn_xoaActionPerformed
-
+    private void logError(String rs) {
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+    }
     private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
         // TODO add your handling code here:
+        if (txt_tenloaiphuongtien.getText().length() <= 3) {
+            logError("Tên loại phương tiện phải độ dài > 3");
+            return;
+        }
         VehicleType vehicle_type = new VehicleType();
         vehicle_type.setIsPermission((combo_trangthai.getSelectedIndex() == 0));
         vehicle_type.setVehicle_type_name(txt_tenloaiphuongtien.getText());
@@ -609,6 +624,10 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         fillTable();
     }
     private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
+        if (txt_tenloaiphuongtien.getText().length() <= 3) {
+            logError("Tên loại phương tiện phải độ dài > 3");
+            return;
+        }
         if (!Library.Library.isValidString(txt_tenloaiphuongtien.getText()) || txt_tenloaiphuongtien.getText().length() < 3) {
             this.viewmain.setEnabled(false);
             this.logMessage = new LogMessage("Tên chỉ gồm chữ cái, chữ số và độ dài >= 3") {

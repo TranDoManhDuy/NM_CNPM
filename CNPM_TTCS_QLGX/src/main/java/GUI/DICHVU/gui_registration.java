@@ -146,7 +146,7 @@ public class gui_registration extends javax.swing.JPanel {
         tableModel.setColumnIdentifiers(header);
         table_dangki.setModel(tableModel);
     }
-    private void fillTable() {
+    public void fillTable() {
         tableModel.setRowCount(0);
         for (ArrayList<String> arr : this.dataglobal.getArrRegistration_render()) {
             tableModel.addRow(new String[] {arr.get(0), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});

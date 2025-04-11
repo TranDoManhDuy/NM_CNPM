@@ -66,6 +66,8 @@ import DAO.VehicleDAO;
 import DAO.VehicleTypeDAO;
 import DAO.VisitorParkingCardsDAO;
 import Model.SessionFee;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 public class ViewMain extends javax.swing.JFrame {
     LogConfirm logComfirm = new LogConfirm("nothing");
     LogMessage logMessage = new LogMessage("Nothing");
@@ -130,6 +132,53 @@ public class ViewMain extends javax.swing.JFrame {
             addComponent(panel_gialuot, session_fee_gui);
             addComponent(panel_thongkedoanhthu, statictical_gui);
         }
+        panelDichVu.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int selectedIndex = panelDichVu.getSelectedIndex();
+                String tabTitle = panelDichVu.getTitleAt(selectedIndex);
+                // Hoặc xử lý riêng từng tab
+                switch (selectedIndex) {
+                    case 0:
+                        System.out.println("Cập nhật giao diện Registration");
+                        dataglocal.updateArrRegistrationRender();
+                        dataglocal.updateArrRegistration();
+                        registration_gui.fillTable();
+                        break;
+                    case 1:
+                        System.out.println("Cập nhật giao diện Thanh toán");
+                        dataglocal.updateArrPaymentRender();
+                        payment_gui.fillTable();
+                        break;
+                    case 2:
+                        System.out.println("Cập nhật giao diện loại dịch vụ");
+                        dataglocal.updateArrServiceType_render();
+                        service_type_gui.fillTable();
+                        break;
+                    case 3:
+                        System.out.println("Cập nhật giao diện giá dịch vụ tháng");
+                        dataglocal.updateArrServiceFee_render();
+                        service_free_gui.fillTable();
+                        break;
+                    case 4: 
+                        System.out.println("Cập nhật giao diện giá lượt");
+                        dataglocal.updateArrSessionFeeRender();
+                        session_fee_gui.fillTable();
+                        break;
+                    case 5:
+                        System.out.println("Cập nhật giao diện loại phương tiện");
+                        dataglocal.updateArrVehicleType();
+                        vehicle_type_gui.fillTable();
+                        break;
+                    case 6: 
+                        System.out.println("Cập nhật giao diện các các khung thời gian");
+                        dataglocal.updateArrTimeFrameToRender();
+                        time_frame_gui.fillTable();
+                        break;
+                    // thêm các case khác tương ứng tab
+                }
+            }
+        });
     }
     
     public void GUI_GUIXE() 

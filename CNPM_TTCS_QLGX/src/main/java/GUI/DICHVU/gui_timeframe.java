@@ -79,7 +79,7 @@ public class gui_timeframe extends javax.swing.JPanel {
         combo_phutKetthuc2.setModel(new javax.swing.DefaultComboBoxModel<>(minutes));
         combo_phutKetthuc3.setModel(new javax.swing.DefaultComboBoxModel<>(minutes));
     }
-    private void fillTable() {
+    public void fillTable() {
         containerPanel.removeAll();
         for (TimeFrameToRender tf : this.dataglobal.getArrTimeFrameToRender()) {
             LocalDate decision_date = tf.getDecision_date();

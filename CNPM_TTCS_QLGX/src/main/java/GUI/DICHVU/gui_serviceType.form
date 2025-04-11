@@ -416,6 +416,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txt_idPhidichvu">
+          <Properties>
+            <Property name="focusable" type="boolean" value="false"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
