@@ -6,22 +6,29 @@ package Global;
 
 import DAO.BuildingsDAO;
 import DAO.CustomerDAO;
+import DAO.PaymentDAO;
 import DAO.RegisatrationDAO;
 import DAO.ServiceFeeDAO;
+import DAO.SessionFeeDAO;
 import DAO.TypeServiceDAO;
 import DAO.VehicleDAO;
 import DatabaseHelper.OpenConnection;
 import DAO.ShiftTypesDAO;
 import DAO.ShiftWorksDAO;
 import DAO.TasksDAO;
+import DAO.TimeFrameDAO;
 import DAO.VehicleDAO;
+import DAO.VehicleTypeDAO;
 import Model.Buildings;
 import Model.Customer;
+import Model.Payment;
 import Model.Regisatration;
 import Model.ShiftTypes;
 import Model.ShiftWorks;
 import Model.Tasks;
+import Model.TimeFrameToRender;
 import Model.Vehicle;
+import Model.VehicleType;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -43,6 +50,46 @@ public class DataGlobal {
     private ArrayList<Vehicle> arrVehicle = new ArrayList<>();
     private ArrayList<ArrayList<String>> arrServiceFee_render = new ArrayList<>();
     private ArrayList<ArrayList<String>> arrServiceType_render = new ArrayList<>();
+    private ArrayList<ArrayList<String>> arrPayment_render = new ArrayList<>();
+    private ArrayList<ArrayList<String>> arrRegistration_render = new ArrayList<>();
+    private ArrayList<ArrayList<String>> arrSessionFee_render = new ArrayList<>();
+    private ArrayList<VehicleType> arrVehicleType = new ArrayList<>();
+    private ArrayList<TimeFrameToRender> arrTimeFrameToRender = new ArrayList<>();
+    
+    public void updateArrTimeFrameToRender() {
+        this.arrTimeFrameToRender = TimeFrameDAO.getInstance().getTimeFrameToRender();
+    }
+    public ArrayList<TimeFrameToRender> getArrTimeFrameToRender() {
+        return this.arrTimeFrameToRender;
+    }
+    
+    public void updateArrVehicleType() {
+        this.arrVehicleType = VehicleTypeDAO.getInstance().getList();
+    }
+    public ArrayList<VehicleType> getArrVehicleType() {
+        return this.arrVehicleType;
+    }
+    
+    public void updateArrSessionFeeRender() {
+        this.arrSessionFee_render = SessionFeeDAO.getInstance().getSessionFeeRender();
+    }
+    public ArrayList<ArrayList<String>> getArrSessionFee_render() {
+        return this.arrSessionFee_render;
+    }
+    
+    public void updateArrRegistrationRender() {
+        this.arrRegistration_render = RegisatrationDAO.getInstance().getArrRegistrationRender();
+    }
+    public ArrayList<ArrayList<String>> getArrRegistration_render() {
+        return this.arrRegistration_render;
+    }
+    
+    public void updateArrPaymentRender() {
+        this.arrPayment_render = PaymentDAO.getInstance().getPaymentRender();
+    }
+    public ArrayList<ArrayList<String>> getArrPayment_render() {
+        return this.arrPayment_render;
+    }
     
     public void updateArrServiceType_render() {
         this.arrServiceType_render = TypeServiceDAO.getInstance().getArrServiceTypeRender();
@@ -57,6 +104,7 @@ public class DataGlobal {
     public ArrayList<ArrayList<String>> getArrServiceFee_render() {
         return this.arrServiceFee_render;
     }
+    
     private List<ShiftTypes> arrShiftTypes = new ArrayList<>();
     private List<ShiftWorks> arrShiftWorks = new ArrayList<>();
     private List<Tasks> arrTask = new ArrayList<>();

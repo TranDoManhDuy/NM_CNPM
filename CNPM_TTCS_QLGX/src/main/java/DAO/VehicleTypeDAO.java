@@ -71,6 +71,7 @@ public class VehicleTypeDAO {
                 return "Cập nhật phương tiện thành công";
             }
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return "Lỗi: " + e.getMessage();
         }
         return "Cập nhật phương tiện thành công";

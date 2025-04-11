@@ -13,11 +13,13 @@ import DAO.RegisatrationDAO;
 import DAO.TypeServiceDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.Customer;
 import Model.Payment;
 import Model.Regisatration;
 import Model.TypeService;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
@@ -27,7 +29,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.table.DefaultTableModel;
-
 /**
  *
  * @author manhh
@@ -39,15 +40,20 @@ public class gui_payment extends javax.swing.JPanel {
     private LogMessage logMessage;
     private LogSelection logSelection;
     private boolean cursorBreak = false;
-    private ArrayList<ArrayList<String>> dataPayment = new ArrayList<>();
+    private DataGlobal dataglobal;
     /**
      * Creates new form gui_payment
+     * @param viewmain
+     * @param logConfirm
+     * @param logMessage
+     * @param logSelection
      */
-    public gui_payment(ViewMain viewmain, LogConfirm logConfirm, LogMessage logMessage, LogSelection logSelection) {
+    public gui_payment(ViewMain viewmain, LogConfirm logConfirm, LogMessage logMessage, LogSelection logSelection, DataGlobal dataglobal) {
         this.viewmain = viewmain;
         this.logConfirm = logConfirm;
         this.logMessage = logMessage;
         this.logSelection = logSelection;
+        this.dataglobal = dataglobal;
         
         tableModel = new DefaultTableModel() {
             @Override
@@ -57,11 +63,11 @@ public class gui_payment extends javax.swing.JPanel {
         };
         initComponents();
         txt_ngaylendon.setText(String.valueOf(LocalDate.now()));
-        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Đã hoàn tất", "Chưa hoàn tất" , ""}));
-        combo_trangthai.setSelectedIndex(2);
+        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Đã hoàn tất", "Chưa hoàn tất"}));
+        combo_trangthai.setSelectedIndex(1);
         
         initTable();
-        loadData();
+        this.dataglobal.updateArrPaymentRender();
         fillTable();
         
         comboDayStart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"
@@ -97,11 +103,20 @@ public class gui_payment extends javax.swing.JPanel {
                 combo_trangthai.setEnabled(true);
                 
                 int row = table_thanhtoan.rowAtPoint(e.getPoint());
+                ArrayList<String> dataToShow = new ArrayList<>();
+                for (ArrayList<String> data : dataglobal.getArrPayment_render()) {
+                    if (data.get(0).equals((String) table_thanhtoan.getValueAt(row, 0))) {
+                        dataToShow = data;
+                        break;
+                    }
+                }
+                
                 txt_idthanhtoan.setText((String) table_thanhtoan.getValueAt(row, 0));
                 txt_iddangki.setText((String) table_thanhtoan.getValueAt(row, 1));
                 txt_tenkhachhang.setText((String) table_thanhtoan.getValueAt(row, 2));
                 txt_ngaylendon.setText((String) table_thanhtoan.getValueAt(row, 3));
-                txt_loaidichvu.setText((String) table_thanhtoan.getValueAt(row, 4));
+                txt_tendichvu.setText((String) table_thanhtoan.getValueAt(row, 4));
+                txt_idloaidichvu.setText(dataToShow.get(6));
                 if (((String) table_thanhtoan.getValueAt(row, 5)).equals("Đã hoàn tất")) {
                     combo_trangthai.setSelectedIndex(0);
                 }
@@ -130,40 +145,11 @@ public class gui_payment extends javax.swing.JPanel {
     
     private void fillTable() {
         tableModel.setRowCount(0);
-        for (ArrayList<String> payment : this.dataPayment) {
+        for (ArrayList<String> payment : this.dataglobal.getArrPayment_render()) {
             tableModel.addRow(new String[] {payment.get(0), payment.get(1),payment.get(2),payment.get(3),payment.get(4), payment.get(5)});
         }
         tableModel.fireTableDataChanged();
         txt_tinnhan.setText("Đang hiển thị danh sách tất cả các thanh toán");
-    }
-    private void loadData() {
-        String sql = "EXEC Payment_render";
-        try (
-            Connection conn = OpenConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-        ) {
-            while (rs.next()) {
-                int payment_id = rs.getInt("payment_id");
-                int registration_id = rs.getInt("registration_id");
-                String customer_name = rs.getString("full_name");
-                LocalDate extension_time = rs.getDate("extension_time").toLocalDate();
-                String type_service_name = rs.getString("service_name");
-                boolean payment_state = rs.getBoolean("payment_state");
-                String trangthai = payment_state ? "Đã hoàn tất" : "Chưa hoàn tất";
-                ArrayList<String> registration_data = new ArrayList<>(Arrays.asList(
-                        String.valueOf(payment_id),
-                        String.valueOf(registration_id),
-                        customer_name,
-                        String.valueOf(extension_time),
-                        type_service_name,
-                        trangthai
-                ));
-                this.dataPayment.add(registration_data);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -186,7 +172,7 @@ public class gui_payment extends javax.swing.JPanel {
         btn_capnhat = new javax.swing.JButton();
         btn_xoa = new javax.swing.JButton();
         txt_iddangki = new javax.swing.JTextField();
-        txt_loaidichvu = new javax.swing.JTextField();
+        txt_idloaidichvu = new javax.swing.JTextField();
         inforDetail = new javax.swing.JLabel();
         txt_ngaylendon = new javax.swing.JTextField();
         combo_trangthai = new javax.swing.JComboBox<>();
@@ -197,6 +183,8 @@ public class gui_payment extends javax.swing.JPanel {
         btn_chondichvu = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
         txt_idthanhtoan = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        txt_tendichvu = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         txt_timkiem = new javax.swing.JTextField();
         btn_timkiem = new javax.swing.JButton();
@@ -254,7 +242,7 @@ public class gui_payment extends javax.swing.JPanel {
 
         label_ngaydangki.setText("Ngày lên đơn");
 
-        label_tenloaidichvu.setText("Tên loại dịch vụ");
+        label_tenloaidichvu.setText("ID loại dịch vụ");
 
         label_trangthai.setText("Trạng thái");
 
@@ -284,11 +272,11 @@ public class gui_payment extends javax.swing.JPanel {
             }
         });
 
-        txt_loaidichvu.setDisabledTextColor(new java.awt.Color(153, 153, 153));
-        txt_loaidichvu.setEnabled(false);
-        txt_loaidichvu.addActionListener(new java.awt.event.ActionListener() {
+        txt_idloaidichvu.setDisabledTextColor(new java.awt.Color(153, 153, 153));
+        txt_idloaidichvu.setEnabled(false);
+        txt_idloaidichvu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_loaidichvuActionPerformed(evt);
+                txt_idloaidichvuActionPerformed(evt);
             }
         });
 
@@ -325,59 +313,69 @@ public class gui_payment extends javax.swing.JPanel {
         });
 
         btn_chondichvu.setText("Chọn dịch vụ");
+        btn_chondichvu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_chondichvuActionPerformed(evt);
+            }
+        });
 
         jLabel10.setText("ID thanh toán");
 
         txt_idthanhtoan.setDisabledTextColor(new java.awt.Color(153, 153, 153));
         txt_idthanhtoan.setEnabled(false);
 
+        jLabel11.setText("Tên loại dịch vụ");
+
+        txt_tendichvu.setEnabled(false);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(18, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(5, 5, 5)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_chondichvu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                    .addComponent(label_trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
-                                    .addComponent(combo_trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                                    .addComponent(label_ngaydangki)
-                                                    .addGap(0, 0, Short.MAX_VALUE))
-                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                                    .addGap(0, 0, Short.MAX_VALUE)
-                                                    .addComponent(label_tenkhachhang, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                            .addGap(18, 18, 18))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                            .addGap(0, 0, Short.MAX_VALUE)
-                                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addGap(27, 27, 27))
-                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                                    .addComponent(label_tenloaidichvu, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addGap(32, 32, 32)))))
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(txt_tenkhachhang)
-                                        .addComponent(txt_ngaylendon)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                            .addComponent(txt_iddangki, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(btn_chondangki))
-                                        .addComponent(txt_loaidichvu)
-                                        .addComponent(txt_idthanhtoan)))
-                                .addComponent(label_khachhang, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(22, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(27, 27, 27)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txt_tenkhachhang)
+                                    .addComponent(txt_ngaylendon)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(txt_iddangki, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_chondangki))
+                                    .addComponent(txt_idthanhtoan)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(txt_idloaidichvu)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_chondichvu, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(label_khachhang, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(label_trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                                .addComponent(label_ngaydangki)
+                                                .addGap(0, 0, Short.MAX_VALUE))
+                                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jLabel11)
+                                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addComponent(label_tenloaidichvu, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(label_tenkhachhang, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                        .addGap(16, 16, 16)))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(combo_trangthai, 0, 189, Short.MAX_VALUE)
+                                    .addComponent(txt_tendichvu))))
+                        .addGap(22, 22, 22))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(btn_them)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -386,7 +384,7 @@ public class gui_payment extends javax.swing.JPanel {
                         .addComponent(btn_xoa)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_datlai)
-                        .addGap(0, 17, Short.MAX_VALUE))))
+                        .addGap(0, 18, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(inforDetail)
@@ -417,9 +415,12 @@ public class gui_payment extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(label_tenloaidichvu)
-                    .addComponent(txt_loaidichvu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_idloaidichvu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_chondichvu))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btn_chondichvu)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(txt_tendichvu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(combo_trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -656,7 +657,7 @@ public class gui_payment extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 279, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 277, Short.MAX_VALUE)
                                 .addComponent(btn_tailai))
                             .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(12, 12, 12)))
@@ -693,14 +694,14 @@ public class gui_payment extends javax.swing.JPanel {
         // TODO add your handling code here:
         int index = 0;
         tableModel.setRowCount(0);
-        for (ArrayList<String> arr : this.dataPayment) {
+        for (ArrayList<String> arr : this.dataglobal.getArrPayment_render()) {
             if (arr.get(5).equals("Chưa hoàn tất")) {
                 tableModel.addRow(new String[] {arr.get(0), arr.get(1), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
                 ++index;
             }
         }
         txt_tinnhan.setText("Đang hiển thị danh sách các thanh toán chưa hoàn tất thanh toán");
-        if (index == this.dataPayment.size()) {
+        if (index == this.dataglobal.getArrPayment_render().size()) {
             txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đơn thanh toán");
         }
     }//GEN-LAST:event_btn_chuathanhtoanActionPerformed
@@ -709,14 +710,14 @@ public class gui_payment extends javax.swing.JPanel {
         // TODO add your handling code here:
         int index = 0;
         tableModel.setRowCount(0);
-        for (ArrayList<String> arr : this.dataPayment) {
+        for (ArrayList<String> arr : this.dataglobal.getArrPayment_render()) {
             if (arr.get(5).equals("Đã hoàn tất")) {
                 tableModel.addRow(new String[] {arr.get(0), arr.get(1), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
                 ++index;
             }
         }
         txt_tinnhan.setText("Đang hiển thị danh sách các thanh toán đã hoàn tất thanh toán");
-        if (index == this.dataPayment.size()) {
+        if (index == this.dataglobal.getArrPayment_render().size()) {
             txt_tinnhan.setText("Đang hiển thị danh sách tất cả các thanh toán");
         }
     }//GEN-LAST:event_btn_dathanhtoanActionPerformed
@@ -730,22 +731,23 @@ public class gui_payment extends javax.swing.JPanel {
         btn_capnhat.setEnabled(false);
         btn_xoa.setEnabled(false);
         combo_trangthai.setEnabled(false);
-        combo_trangthai.setSelectedIndex(2);
+        combo_trangthai.setSelectedIndex(1);
         
         txt_idthanhtoan.setText("");
         txt_iddangki.setText("");
-        txt_loaidichvu.setText("");
+        txt_idloaidichvu.setText("");
         txt_tenkhachhang.setText("");
-        txt_ngaylendon.setText(String.valueOf(LocalDate.now()));        
+        txt_ngaylendon.setText(String.valueOf(LocalDate.now()));    
+        txt_tendichvu.setText("");
     }//GEN-LAST:event_btn_datlaiActionPerformed
 
     private void combo_trangthaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_trangthaiActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_combo_trangthaiActionPerformed
 
-    private void txt_loaidichvuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_loaidichvuActionPerformed
+    private void txt_idloaidichvuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_idloaidichvuActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txt_loaidichvuActionPerformed
+    }//GEN-LAST:event_txt_idloaidichvuActionPerformed
 
     private void txt_iddangkiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_iddangkiActionPerformed
         // TODO add your handling code here:
@@ -753,10 +755,39 @@ public class gui_payment extends javax.swing.JPanel {
 
     private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
         // TODO add your handling code here:
+        String rs = PaymentDAO.getInstance().delete(Integer.parseInt(txt_idthanhtoan.getText()));
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+        this.dataglobal.updateArrPaymentRender();
+        fillTable();
     }//GEN-LAST:event_btn_xoaActionPerformed
 
     private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
         // TODO add your handling code here:
+        int id_registration = Integer.parseInt(txt_iddangki.getText());
+        int id_serviceType = Integer.parseInt(txt_idloaidichvu.getText());
+        Payment payment = new Payment(1, id_registration , LocalDate.now(), false, id_serviceType);
+        String rs = PaymentDAO.getInstance().insert(payment);
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+        this.dataglobal.updateArrPaymentRender();
+        fillTable();
     }//GEN-LAST:event_btn_themActionPerformed
 
     private void btn_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_locActionPerformed
@@ -765,7 +796,7 @@ public class gui_payment extends javax.swing.JPanel {
         LocalDate dateStart = LocalDate.parse(comboYearStart.getSelectedItem() + "-" + comboMonthStart.getSelectedItem() + "-" + comboDayStart.getSelectedItem());
         LocalDate dateEnd = LocalDate.parse(comboYearEnd.getSelectedItem() + "-" + comboMonthEnd.getSelectedItem() + "-" + comboDayEnd.getSelectedItem());
         tableModel.setRowCount(0);
-        for (ArrayList<String> arr : this.dataPayment) {
+        for (ArrayList<String> arr : this.dataglobal.getArrPayment_render()) {
             LocalDate dateofArr = LocalDate.parse(arr.get(3));
             if (dateStart.isBefore(dateofArr.plusDays(1)) && dateEnd.isAfter(dateofArr.minusDays(1))) {
                 ++index;
@@ -774,7 +805,7 @@ public class gui_payment extends javax.swing.JPanel {
         }
         tableModel.fireTableDataChanged();
         txt_tinnhan.setText("Đang hiển thị danh sách các thanh toán đã lọc theo thời gian");
-        if (index == this.dataPayment.size()) {
+        if (index == this.dataglobal.getArrPayment_render().size()) {
             txt_tinnhan.setText("Đang hiển thị danh sách tất cả các thanh toán");
         }
     }//GEN-LAST:event_btn_locActionPerformed
@@ -788,14 +819,14 @@ public class gui_payment extends javax.swing.JPanel {
         // TODO add your handling code here:
         int index = 0;
         tableModel.setRowCount(0);
-        for (ArrayList<String> arr : this.dataPayment) {
+        for (ArrayList<String> arr : this.dataglobal.getArrPayment_render()) {
             if (Library.Library.StringOnString(txt_timkiem.getText(), arr.get(2))) {
                 tableModel.addRow(new String[] {arr.get(0), arr.get(1), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
                 ++index;
             }
         }
         txt_tinnhan.setText("Đang hiển thị danh sách các thanh toán đã lọc theo tên khách hàng");
-        if (index == this.dataPayment.size()) {
+        if (index == this.dataglobal.getArrPayment_render().size()) {
             txt_tinnhan.setText("Đang hiển thị danh sách tất cả các thanh toán");
         }
     }//GEN-LAST:event_btn_timkiemActionPerformed
@@ -851,10 +882,12 @@ public class gui_payment extends javax.swing.JPanel {
                     }
                 });
                 gui_registration tmp = new gui_registration();
-                ArrayList<ArrayList<String>> tmpDataRegistrationSelect = tmp.shareDataregistration();
+                ArrayList<ArrayList<String>> tmpDataRegistrationSelect = dataglobal.getArrRegistration_render();
 
                 for (ArrayList<String> rs : tmpDataRegistrationSelect) {
-                    this.tableModel.addRow(new String[] {rs.get(0), rs.get(2), rs.get(3), rs.get(4), rs.get(5)});
+                    if (!rs.get(5).equals("Bi huy")) {
+                        this.tableModel.addRow(new String[] {rs.get(0), rs.get(2), rs.get(3), rs.get(4), rs.get(5)});
+                    }
                 }
                 
                 this.tableModel.fireTableDataChanged();
@@ -889,9 +922,74 @@ public class gui_payment extends javax.swing.JPanel {
 
     private void btn_tailaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tailaiActionPerformed
         // TODO add your handling code here:
-        loadData();
+        this.dataglobal.updateArrPaymentRender();
         fillTable();
     }//GEN-LAST:event_btn_tailaiActionPerformed
+
+    private void btn_chondichvuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chondichvuActionPerformed
+        // TODO add your handling code here:
+        this.viewmain.setEnabled(false);
+        this.logSelection = new LogSelection() {
+            @Override
+            public void initContent() {
+                this.label_property.setText("Tên loại dịch vụ");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                // khoi tao cac thanh phan bang o day
+                String[] header = new String[] {"ID loại dịch vụ", "Tên dịch vụ", "Tên loại xe", "Số tháng", "Tổng chi phí"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table.rowAtPoint(e.getPoint());
+                        // hien thi cai xe dc chọn
+                        txt_idloaidichvu.setText((String) table.getValueAt(row, 0));
+                        txt_tendichvu.setText((String) table.getValueAt(row, 1));
+                        logSelection.setVisible(false);
+                        viewmain.setEnabled(true);
+                        viewmain.requestFocus();
+                    }
+                });
+                ArrayList<ArrayList<String>> arrServiceType = dataglobal.getArrServiceType_render();
+                
+                for (ArrayList<String> service_type : arrServiceType) {
+                    String id_loaidichvu = service_type.get(0);
+                    String tenLoaidichvu = service_type.get(1);
+                    String loaiPT = service_type.get(4);
+                    String soThang = service_type.get(5);
+                    String soTien1Thang = service_type.get(2);
+                    String heso = service_type.get(6);
+                    
+                    float tongsotien = Float.parseFloat(soThang) * Float.parseFloat(soTien1Thang) * Float.parseFloat(heso) / 100;
+                    if (service_type.get(7).equals("Còn hạn")) {
+                        this.tableModel.addRow(new String[] {id_loaidichvu, tenLoaidichvu, loaiPT, soThang, String.valueOf(tongsotien) + " VNĐ"});
+                    }
+                }
+                this.tableModel.fireTableDataChanged();
+                
+                this.btn_loc.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        
+                    }
+                });
+            }
+            @Override
+            public void back() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
+    }//GEN-LAST:event_btn_chondichvuActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -918,6 +1016,7 @@ public class gui_payment extends javax.swing.JPanel {
     private javax.swing.JLabel inforDetail;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -938,9 +1037,10 @@ public class gui_payment extends javax.swing.JPanel {
     private javax.swing.JLabel label_trangthai;
     private javax.swing.JTable table_thanhtoan;
     private javax.swing.JTextField txt_iddangki;
+    private javax.swing.JTextField txt_idloaidichvu;
     private javax.swing.JTextField txt_idthanhtoan;
-    private javax.swing.JTextField txt_loaidichvu;
     private javax.swing.JTextField txt_ngaylendon;
+    private javax.swing.JTextField txt_tendichvu;
     private javax.swing.JTextField txt_tenkhachhang;
     private javax.swing.JTextField txt_timkiem;
     private javax.swing.JTextField txt_tinnhan;

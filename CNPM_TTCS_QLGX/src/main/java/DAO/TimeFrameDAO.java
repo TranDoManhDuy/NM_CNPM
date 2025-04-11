@@ -6,6 +6,7 @@ package DAO;
 
 import DatabaseHelper.OpenConnection;
 import Model.TimeFrame;
+import Model.TimeFrameToRender;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -22,6 +23,39 @@ import java.util.ArrayList;
 public class TimeFrameDAO {
     public static TimeFrameDAO getInstance() {
         return new TimeFrameDAO();
+    }
+    public  ArrayList<TimeFrameToRender> getTimeFrameToRender() {
+        ArrayList<TimeFrameToRender> dataTimeframe = new ArrayList<>();
+        String sql = "EXEC timeframe_render";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+        ) {
+            while (rs.next()) {
+                LocalDate decision_date = rs.getDate("decision_date").toLocalDate();
+                LocalTime TS1 = rs.getTime("TS1").toLocalTime();
+                LocalTime TS2 = rs.getTime("TS2").toLocalTime();
+                LocalTime TS3 = rs.getTime("TS3").toLocalTime();
+                LocalTime TE1 = rs.getTime("TE1").toLocalTime();
+                LocalTime TE2 = rs.getTime("TE2").toLocalTime();
+                LocalTime TE3 = rs.getTime("TE3").toLocalTime();
+                boolean isActive = rs.getBoolean("is_active");
+                int T1_id = rs.getInt("T1_id");
+                int T2_id = rs.getInt("T2_id");
+                int T3_id = rs.getInt("T3_id");
+                
+                TimeFrameToRender timeframetorender = new TimeFrameToRender(decision_date, TS1, TS2, TS3, TE1, TE2, TE3, isActive);
+                timeframetorender.setT1_id(T1_id);
+                timeframetorender.setT2_id(T2_id);
+                timeframetorender.setT3_id(T3_id);
+                
+                dataTimeframe.add(timeframetorender);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataTimeframe;
     }
     public String insert_timeframe_container(LocalDate decision_date, LocalTime TS1, LocalTime TS2, LocalTime TS3, LocalTime TE1, LocalTime TE2, LocalTime TE3, boolean isActive) {
         String sql = "EXEC insert_time_frame_container "+

@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 /**
  *
  * @author manhh
@@ -21,6 +22,50 @@ public class RegisatrationDAO {
     public static RegisatrationDAO getInstance() {
         return new RegisatrationDAO();
     }
+    
+    public ArrayList<ArrayList<String>> getArrRegistrationRender() {
+        ArrayList<ArrayList<String>> dataRegistration = new ArrayList<>();
+        String sql = "EXEC Registration_render";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+        ) {
+            int index = 0;
+            dataRegistration = new ArrayList<>();
+            while (rs.next()) {
+                int registration_id = rs.getInt("registration_id");
+                int customer_id = rs.getInt("customer_id");
+                String full_name = rs.getString("full_name");
+                LocalDate registration_date = rs.getDate("registration_date").toLocalDate();
+                String identification_code = rs.getString("identification_code");
+                String state = rs.getString("state");
+                String trangthai = "";
+                if (state.equals("A")) {
+                    trangthai = "San sang gia han";
+                }
+                else {
+                    if (state.equals("B")) {
+                        trangthai = "Dang con han";
+                    }
+                    else {trangthai = "Bi huy";}
+                }
+                ArrayList<String> registration_data = new ArrayList<>(Arrays.asList(
+                        String.valueOf(registration_id), 
+                        String.valueOf(customer_id), 
+                        full_name,
+                        String.valueOf(registration_date),
+                        identification_code,
+                        trangthai
+                        ));
+                dataRegistration.add(registration_data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataRegistration;
+    }
+    
     public ArrayList<Regisatration> getList() {
         ArrayList<Regisatration> listRegistration = new ArrayList<>();
         String sql = "EXEC getlist_registration";
@@ -60,7 +105,6 @@ public class RegisatrationDAO {
                 return "Thêm thành công";
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage() + "");
             return "Lỗi: " + e.getMessage();
         }
         return "Thêm thành công";

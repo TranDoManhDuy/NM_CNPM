@@ -13,16 +13,50 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
  * @author manhh
  */
-public class PaymentDAO implements InterfaceDAO.InterfaceDAO<Payment>{
+public class PaymentDAO {
     public static PaymentDAO getInstance() {
         return new PaymentDAO();
     }
-     @Override
+    public ArrayList<ArrayList<String>> getPaymentRender() {
+        ArrayList<ArrayList<String>> dataPayment = new ArrayList<>();
+        String sql = "EXEC Payment_render";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+        ) {
+            while (rs.next()) {
+                int payment_id = rs.getInt("payment_id");
+                int registration_id = rs.getInt("registration_id");
+                String customer_name = rs.getString("full_name");
+                LocalDate extension_time = rs.getDate("extension_time").toLocalDate();
+                String type_service_id = String.valueOf(rs.getInt("type_service_id"));
+                String type_service_name = rs.getString("service_name");
+                boolean payment_state = rs.getBoolean("payment_state");
+                String trangthai = payment_state ? "Đã hoàn tất" : "Chưa hoàn tất";
+                ArrayList<String> payment_data = new ArrayList<>(Arrays.asList(
+                        String.valueOf(payment_id),
+                        String.valueOf(registration_id),
+                        customer_name,
+                        String.valueOf(extension_time),
+                        type_service_name,
+                        trangthai,
+                        type_service_id
+                ));
+                dataPayment.add(payment_data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataPayment;
+    }
+    
     public ArrayList<Payment> getList() {
         ArrayList<Payment> listPayments = new ArrayList<>();
         String sql = "EXEC getlist_payments";
@@ -46,8 +80,7 @@ public class PaymentDAO implements InterfaceDAO.InterfaceDAO<Payment>{
         }
         return listPayments;
     }
-    @Override
-    public boolean insert(Payment payment) {
+    public String insert(Payment payment) {
         String sql = "EXEC insert_payment @registration_id = ?, @extension_time = ?, @payment_state = ?, @service_type_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
@@ -58,14 +91,16 @@ public class PaymentDAO implements InterfaceDAO.InterfaceDAO<Payment>{
             ptmt.setBoolean(3, payment.isPayment_state());
             ptmt.setInt(4, payment.getService_type_id());
             
-            return ptmt.executeUpdate() > 0;
+            if (ptmt.executeUpdate() >= 0) {
+                return "Thêm đơn thanh toán thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Thêm đơn thanh toán thành công";
     }
-    @Override
-    public boolean update(Payment payment) {
+    public String update(Payment payment) {
         String sql = "EXEC update_payment @registration_id = ?, @extension_time = ?, @payment_state = ?, @service_type_id = ?, @payment_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
@@ -77,14 +112,16 @@ public class PaymentDAO implements InterfaceDAO.InterfaceDAO<Payment>{
             ptmt.setInt(4, payment.getService_type_id());
             ptmt.setInt(5, payment.getPayment_id());
             
-            return ptmt.executeUpdate() > 0;
+            if (ptmt.executeUpdate() >= 0) {
+                return "Cập nhật thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Cập nhật thành công";
     }
     
-    @Override
     public Payment findbyID(int id) {
         String sql = "EXEC findbyID_payment @payment_id = ?";
         try (
@@ -108,19 +145,22 @@ public class PaymentDAO implements InterfaceDAO.InterfaceDAO<Payment>{
         }
         return null;
     }
-    @Override
-    public boolean delete(int id) {
+  
+    public String delete(int id) {
         String sql = "EXEC delete_payment @payment_id = ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
             ptmt.setInt(1, id);
-            return ptmt.executeUpdate() > 0;
+            if (ptmt.executeUpdate() >= 0) {
+                return "Xoá thành công";
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return "Lỗi: " + e.getMessage();
         }
-        return false;
+        return "Xoá thành công";
     }
     public static void main(String[] args) {
         ArrayList<Payment> list = PaymentDAO.getInstance().getList();

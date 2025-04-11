@@ -70,7 +70,8 @@ public class ViewMain extends javax.swing.JFrame {
     LogConfirm logComfirm = new LogConfirm("nothing");
     LogMessage logMessage = new LogMessage("Nothing");
     LogSelection logSelection = new LogSelection();
-    DataGlobal dataglocal = new DataGlobal();public List<Buildings> buildings = new ArrayList<>();
+    DataGlobal dataglocal = new DataGlobal();
+    public List<Buildings> buildings = new ArrayList<>();
     public ArrayList<VehicleType> vehicle_types = new ArrayList<>();
     public List<VisitorParkingCards> visitor_parking_cards = new ArrayList<>();
     public ArrayList<ResidentCard> resident_cards = new ArrayList<>();
@@ -98,9 +99,6 @@ public class ViewMain extends javax.swing.JFrame {
         GUI_DICHVU();
         GUI_GUIXE();
         GUI_CATRUC();
-//        GUI_DICHVU();
-//        GUI_GUIXE();
-//        GUI_CATRUC();
         GUI_NHANSU();
     }
     public void addComponent(JPanel father, JPanel child) {
@@ -113,13 +111,13 @@ public class ViewMain extends javax.swing.JFrame {
     }
     public void GUI_DICHVU() {
         // init component
-        gui_registration registration_gui = new gui_registration(this, logComfirm, logMessage, logSelection);
-        gui_payment payment_gui = new gui_payment(this, logComfirm, logMessage, logSelection);
+        gui_registration registration_gui = new gui_registration(this, logComfirm, logMessage, logSelection, dataglocal);
+        gui_payment payment_gui = new gui_payment(this, logComfirm, logMessage, logSelection, dataglocal);
         gui_serviceType service_type_gui = new gui_serviceType(this, logComfirm, logMessage, logSelection, dataglocal);
         gui_service_free service_free_gui = new gui_service_free(this, logComfirm, logMessage, logSelection, dataglocal);
-        gui_vehicle_type vehicle_type_gui = new gui_vehicle_type(this, logComfirm, logMessage, logSelection);
-        gui_timeframe time_frame_gui = new gui_timeframe(this, logComfirm, logMessage);
-        gui_session_free session_fee_gui = new gui_session_free(this, logComfirm, logMessage, logSelection);
+        gui_vehicle_type vehicle_type_gui = new gui_vehicle_type(this, logComfirm, logMessage, logSelection, dataglocal);
+        gui_timeframe time_frame_gui = new gui_timeframe(this, logComfirm, logMessage, dataglocal);
+        gui_session_free session_fee_gui = new gui_session_free(this, logComfirm, logMessage, logSelection, dataglocal);
         gui_statictical statictical_gui = new gui_statictical();
         // add component
         if (Global.Global_variable.role_name.equals("staff")) {

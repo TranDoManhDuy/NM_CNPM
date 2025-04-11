@@ -111,7 +111,7 @@ public final class gui_serviceType extends javax.swing.JPanel {
         txt_ngayapdung.setText(String.valueOf(LocalDate.now()));
     }
     public void initTable() {
-        String[] header = new String[] {"ID dịch vụ", "Tên dịch vụ", "Phí dịch vụ/tháng",  "Loại xe", "Số tháng", "Hệ số", "Trạng thái"};
+        String[] header = new String[] {"ID dịch vụ", "Tên dịch vụ", "Phí dịch vụ/tháng (%)",  "Loại xe", "Số tháng", "Hệ số", "Trạng thái"};
         tableModel.setColumnIdentifiers(header);
         table_loaidichvu.setModel(tableModel);
     }
@@ -121,7 +121,7 @@ public final class gui_serviceType extends javax.swing.JPanel {
             tableModel.addRow(new String[] {
                 dataRow.get(0),
                 dataRow.get(1),
-                dataRow.get(2),
+                dataRow.get(2) + " VNĐ",
                 dataRow.get(4),
                 dataRow.get(5),
                 dataRow.get(6),
@@ -605,6 +605,7 @@ public final class gui_serviceType extends javax.swing.JPanel {
         txt_heso.setText("");
         txt_ngayapdung.setText(String.valueOf(LocalDate.now()));
         combo_trangthai.setSelectedIndex(0);
+        txt_idPhidichvu.setText("");
         
         combo_trangthai.setEnabled(false);
         btn_them.setEnabled(true);
@@ -763,19 +764,19 @@ public final class gui_serviceType extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_tendichvuKeyReleased
     private String lastHeso = "";
     private void txt_hesoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_hesoKeyReleased
-        // TODO add your handling code here:
-        if (Library.Library.isNumber(txt_heso.getText())) {
-            this.lastHeso = txt_heso.getText();
-        }
-        else {
-            txt_heso.setText(this.lastHeso);
-        }
-        if(txt_heso.getText().equals("")) {
-            return;
-        }
-        if (Integer.parseInt(txt_heso.getText()) > 100) {
-            txt_heso.setText(String.valueOf(Integer.parseInt(txt_heso.getText()) / 10));
-        }
+//        // TODO add your handling code here:
+//        if (Library.Library.isNumber(txt_heso.getText())) {
+//            this.lastHeso = txt_heso.getText();
+//        }
+//        else {
+//            txt_heso.setText(this.lastHeso);
+//        }
+//        if(txt_heso.getText().equals("")) {
+//            return;
+//        }
+//        if (Float.parseFloat(txt_heso.getText()) > 100) {
+//            txt_heso.setText(String.valueOf(Float.parseFloat(txt_heso.getText()) / 10));
+//        }
     }//GEN-LAST:event_txt_hesoKeyReleased
     private String lasttimkiem = "";
     private void txt_timkiemKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_timkiemKeyReleased

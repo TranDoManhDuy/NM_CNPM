@@ -12,6 +12,7 @@ import DAO.TimeFrameDAO;
 import DAO.VehicleTypeDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.SessionFee;
 import Model.TimeFrame;
 import Model.VehicleType;
@@ -37,17 +38,18 @@ public class gui_session_free extends javax.swing.JPanel {
     private LogMessage logMessage;
     private LogSelection logSelection;
     private boolean cursorBreak = false;
-    private ArrayList<ArrayList<String>> dataSessionFee = new ArrayList<>();
+    private DataGlobal dataglobal;
     /**
      * Creates new form gui_session_free
      */
     private String lastAmout = "";
     public gui_session_free() {}
-    public gui_session_free(ViewMain viewmain, LogConfirm logConfirm, LogMessage logMessage, LogSelection logSelection) {
+    public gui_session_free(ViewMain viewmain, LogConfirm logConfirm, LogMessage logMessage, LogSelection logSelection, DataGlobal dataglobal) {
         this.viewmain = viewmain;
         this.logConfirm = logConfirm;
         this.logMessage = logMessage;
         this.logSelection = logSelection;
+        this.dataglobal = dataglobal;
         
         tableModel = new DefaultTableModel() {
             @Override
@@ -57,16 +59,16 @@ public class gui_session_free extends javax.swing.JPanel {
         };
         initComponents();
         initTable();
-        loadData();
+        dataglobal.updateArrSessionFeeRender();
         fillTable();
         table_gialuot.addMouseListener(new MouseAdapter()
         {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int row = table_gialuot.rowAtPoint(e.getPoint());
-                ArrayList<String> dataRow = dataSessionFee.get(row);
+                ArrayList<String> dataRow = dataglobal.getArrSessionFee_render().get(row);
                 int index = 0;
-                for (ArrayList<String> rs : dataSessionFee) {
+                for (ArrayList<String> rs : dataglobal.getArrSessionFee_render()) {
                     if (rs.get(0).equals(tableModel.getValueAt(row, 0))) {
                         dataRow = rs;
                         break;
@@ -104,54 +106,10 @@ public class gui_session_free extends javax.swing.JPanel {
     }
     private void fillTable() {
         tableModel.setRowCount(0);
-        for (ArrayList<String> dataRow : this.dataSessionFee) {
+        for (ArrayList<String> dataRow : this.dataglobal.getArrSessionFee_render()) {
             tableModel.addRow(new String[] {dataRow.get(0), dataRow.get(2), dataRow.get(4), dataRow.get(5), Library.Library.formatCurrency(Float.parseFloat(dataRow.get(6))) + " VNĐ", dataRow.get(7), dataRow.get(8)});
         }
         txt_tinnhan.setText("Hiển thị tất cả các mức giá theo lượt của từng loại xe ở các khung giờ");
-    }
-    private void loadData() {
-        this.dataSessionFee.clear();
-        String sql = "EXEC SessionFee_render";
-        try (
-            Connection conn = OpenConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-        )   {
-                while (rs.next()) {
-                    int session_fee_id = rs.getInt("session_fee_id");
-                    int vehicle_type_id = rs.getInt("vehicle_type_id");
-                    String vehicle_type_name = rs.getString("vehicle_type_name");
-                    int time_frame_id = rs.getInt("time_frame_id");
-                    LocalTime time_start = rs.getTime("time_start").toLocalTime();
-                    LocalTime time_end = rs.getTime("time_end").toLocalTime();
-                    double amount = rs.getDouble("amount");
-                    LocalDate decision_date = rs.getDate("decision_date").toLocalDate();
-                    boolean is_active = rs.getBoolean("is_active");
-                    
-                    ArrayList<String> dataRow = new ArrayList<>();
-                    
-                    dataRow.add(String.valueOf(session_fee_id));
-                    dataRow.add(String.valueOf(vehicle_type_id));
-                    dataRow.add(vehicle_type_name);
-                    dataRow.add(String.valueOf(time_frame_id));
-                    dataRow.add(String.valueOf(time_start));
-                    dataRow.add(String.valueOf(time_end));
-                    dataRow.add(String.valueOf(amount));
-                    dataRow.add(String.valueOf(decision_date));
-                    
-                    if (is_active) {
-                        dataRow.add("Còn hạn");
-                    }
-                    else {
-                        dataRow.add("Hết hạn");
-                    }
-                    
-                    this.dataSessionFee.add(dataRow);
-                }
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -625,7 +583,7 @@ public class gui_session_free extends javax.swing.JPanel {
             }
         };
         this.logMessage.setVisible(true);
-        loadData();
+        this.dataglobal.updateArrSessionFeeRender();
         fillTable();
     }//GEN-LAST:event_btn_themActionPerformed
     private void processDelete() {
@@ -642,7 +600,7 @@ public class gui_session_free extends javax.swing.JPanel {
                 }
             };
         this.logMessage.setVisible(true);
-        loadData();
+        this.dataglobal.updateArrSessionFeeRender();
         fillTable();
     }
     private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
@@ -817,14 +775,14 @@ public class gui_session_free extends javax.swing.JPanel {
         // TODO add your handling code here:
         int index = 0;
         tableModel.setRowCount(0);
-        for (ArrayList<String> dataRow : this.dataSessionFee) {
+        for (ArrayList<String> dataRow : this.dataglobal.getArrSessionFee_render()) {
             if (dataRow.get(8).equals("Còn hạn")) {
                 tableModel.addRow(new String[] {dataRow.get(0), dataRow.get(2), dataRow.get(4), dataRow.get(5), dataRow.get(6), dataRow.get(7), dataRow.get(8)});
                 index++;
             }
         }
         txt_tinnhan.setText("Hiển thị các mức giá theo lượt của từng loại xe ở các khung giờ còn hạn");
-        if (index == this.dataSessionFee.size()) {
+        if (index == this.dataglobal.getArrSessionFee_render().size()) {
             txt_tinnhan.setText("Hiển thị tất cả các mức giá theo lượt của từng loại xe ở các khung giờ");
         }
     }//GEN-LAST:event_btn_conhieulucActionPerformed
@@ -833,14 +791,14 @@ public class gui_session_free extends javax.swing.JPanel {
         // TODO add your handling code here:
         int index = 0;
         tableModel.setRowCount(0);
-        for (ArrayList<String> dataRow : this.dataSessionFee) {
+        for (ArrayList<String> dataRow : this.dataglobal.getArrSessionFee_render()) {
             if (!dataRow.get(8).equals("Còn hạn")) {
                 tableModel.addRow(new String[] {dataRow.get(0), dataRow.get(2), dataRow.get(4), dataRow.get(5), Library.Library.formatCurrency(Float.parseFloat(dataRow.get(6))) + " VNĐ", dataRow.get(7), dataRow.get(8)});
                 index++;
             }
         }
         txt_tinnhan.setText("Hiển thị các mức giá theo lượt của từng loại xe ở các khung giờ hết hạn");
-        if (index == this.dataSessionFee.size()) {
+        if (index == this.dataglobal.getArrSessionFee_render().size()) {
             txt_tinnhan.setText("Hiển thị tất cả các mức giá theo lượt của từng loại xe ở các khung giờ");
         }
     }//GEN-LAST:event_btn_hethieulucActionPerformed
@@ -853,14 +811,14 @@ public class gui_session_free extends javax.swing.JPanel {
         // TODO add your handling code here:
         int index = 0;
         tableModel.setRowCount(0);
-        for (ArrayList<String> dataRow : this.dataSessionFee) {
+        for (ArrayList<String> dataRow : this.dataglobal.getArrSessionFee_render()) {
             if (Library.Library.StringOnString(txt_timkiem.getText(), dataRow.get(2))) {
                 tableModel.addRow(new String[] {dataRow.get(0), dataRow.get(2), dataRow.get(4), dataRow.get(5), Library.Library.formatCurrency(Float.parseFloat(dataRow.get(6))) + " VNĐ", dataRow.get(7), dataRow.get(8)});
                 index++;
             }
         }
         txt_tinnhan.setText("Hiển thị các mức giá theo lượt của từng loại xe ở các khung giờ lọc theo tên");
-        if (index == this.dataSessionFee.size()) {
+        if (index == this.dataglobal.getArrSessionFee_render().size()) {
             txt_tinnhan.setText("Hiển thị tất cả các mức giá theo lượt của từng loại xe ở các khung giờ");
         }
     }//GEN-LAST:event_btn_timkiemActionPerformed
@@ -955,7 +913,7 @@ public class gui_session_free extends javax.swing.JPanel {
                 }
             };
         this.logMessage.setVisible(true);
-        loadData();
+        this.dataglobal.updateArrSessionFeeRender();
         fillTable();
     }
     private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
@@ -1015,7 +973,7 @@ public class gui_session_free extends javax.swing.JPanel {
 
     private void btn_tailaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tailaiActionPerformed
         // TODO add your handling code here:
-        loadData();
+        this.dataglobal.updateArrSessionFeeRender();
         fillTable();
     }//GEN-LAST:event_btn_tailaiActionPerformed
 

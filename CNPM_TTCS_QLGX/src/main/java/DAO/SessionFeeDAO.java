@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 /**
  *
@@ -22,6 +23,52 @@ public class SessionFeeDAO {
         return new SessionFeeDAO();
     }
     
+    public ArrayList<ArrayList<String>> getSessionFeeRender() {
+        ArrayList<ArrayList<String>> dataSessionFee = new ArrayList<>();
+        String sql = "EXEC SessionFee_render";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+        )   {
+                while (rs.next()) {
+                    int session_fee_id = rs.getInt("session_fee_id");
+                    int vehicle_type_id = rs.getInt("vehicle_type_id");
+                    String vehicle_type_name = rs.getString("vehicle_type_name");
+                    int time_frame_id = rs.getInt("time_frame_id");
+                    LocalTime time_start = rs.getTime("time_start").toLocalTime();
+                    LocalTime time_end = rs.getTime("time_end").toLocalTime();
+                    double amount = rs.getDouble("amount");
+                    LocalDate decision_date = rs.getDate("decision_date").toLocalDate();
+                    boolean is_active = rs.getBoolean("is_active");
+                    
+                    ArrayList<String> dataRow = new ArrayList<>();
+                    
+                    dataRow.add(String.valueOf(session_fee_id));
+                    dataRow.add(String.valueOf(vehicle_type_id));
+                    dataRow.add(vehicle_type_name);
+                    dataRow.add(String.valueOf(time_frame_id));
+                    dataRow.add(String.valueOf(time_start));
+                    dataRow.add(String.valueOf(time_end));
+                    dataRow.add(String.valueOf(amount));
+                    dataRow.add(String.valueOf(decision_date));
+                    
+                    if (is_active) {
+                        dataRow.add("Còn hạn");
+                    }
+                    else {
+                        dataRow.add("Hết hạn");
+                    }
+                    
+                    dataSessionFee.add(dataRow);
+                }
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        return dataSessionFee;
+    }
+            
     public ArrayList<SessionFee> getList() {
         ArrayList<SessionFee> listSessionFees = new ArrayList<>();
         String sql = "EXEC getlist_session_fees";

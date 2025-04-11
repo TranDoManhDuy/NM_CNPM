@@ -7,6 +7,7 @@ import DAO.RegisatrationDAO;
 import DAO.VehicleDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.Customer;
 import Model.Regisatration;
 import Model.Vehicle;
@@ -40,23 +41,24 @@ public class gui_registration extends javax.swing.JPanel {
     private LogMessage logMessage;
     private LogSelection logSelection;
     private boolean cursorBreak = false;
-    private ArrayList<ArrayList<String>> dataRegistration = new ArrayList<>();
+    private DataGlobal dataglobal;
     /**
      * Creates new form registration
      * @return 
      */
     public ArrayList<ArrayList<String>> shareDataregistration() {
-        loadData();
-        return this.dataRegistration.stream()
+        dataglobal.updateArrRegistrationRender();
+        return this.dataglobal.getArrRegistration_render().stream()
                 .map(sublist -> new ArrayList<>(sublist))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
     public gui_registration() {}
-    public gui_registration(ViewMain viewmain, LogConfirm logConfirm, LogMessage logMessage, LogSelection logSelection) {
+    public gui_registration(ViewMain viewmain, LogConfirm logConfirm, LogMessage logMessage, LogSelection logSelection, DataGlobal dataglobal) {
         this.viewmain = viewmain;
         this.logConfirm = logConfirm;
         this.logMessage = logMessage;
         this.logSelection = logSelection;
+        this.dataglobal = dataglobal;
         
         initComponents();
         combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "San sang gia han", "Dang con han", "Bi huy"}));
@@ -70,7 +72,7 @@ public class gui_registration extends javax.swing.JPanel {
             }
         };
         initTable();
-        loadData();
+        this.dataglobal.updateArrRegistrationRender();
         fillTable();
         
         combo_ngaybatdau.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"
@@ -110,7 +112,7 @@ public class gui_registration extends javax.swing.JPanel {
                 
                 int row = table_dangki.rowAtPoint(e.getPoint());
                 
-                ArrayList <String> rs_view = dataRegistration.get(row);
+                ArrayList <String> rs_view = dataglobal.getArrRegistration_render().get(row);
                 
                 txt_iddangki.setText(rs_view.get(0));
                 txt_id_khachhang.setText(rs_view.get(1));
@@ -146,51 +148,11 @@ public class gui_registration extends javax.swing.JPanel {
     }
     private void fillTable() {
         tableModel.setRowCount(0);
-        for (ArrayList<String> arr : this.dataRegistration) {
+        for (ArrayList<String> arr : this.dataglobal.getArrRegistration_render()) {
             tableModel.addRow(new String[] {arr.get(0), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
         }
         tableModel.fireTableDataChanged();
         txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
-    }
-    private void loadData() {
-        String sql = "EXEC Registration_render";
-        try (
-            Connection conn = OpenConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-        ) {
-            int index = 0;
-            this.dataRegistration = new ArrayList<>();
-            while (rs.next()) {
-                int registration_id = rs.getInt("registration_id");
-                int customer_id = rs.getInt("customer_id");
-                String full_name = rs.getString("full_name");
-                LocalDate registration_date = rs.getDate("registration_date").toLocalDate();
-                String identification_code = rs.getString("identification_code");
-                String state = rs.getString("state");
-                String trangthai = "";
-                if (state.equals("A")) {
-                    trangthai = "San sang gia han";
-                }
-                else {
-                    if (state.equals("B")) {
-                        trangthai = "Dang con han";
-                    }
-                    else {trangthai = "Bi huy";}
-                }
-                ArrayList<String> registration_data = new ArrayList<>(Arrays.asList(
-                        String.valueOf(registration_id), 
-                        String.valueOf(customer_id), 
-                        full_name,
-                        String.valueOf(registration_date),
-                        identification_code,
-                        trangthai
-                        ));
-                this.dataRegistration.add(registration_data);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -753,7 +715,7 @@ public class gui_registration extends javax.swing.JPanel {
                 }
             };
         this.logMessage.setVisible(true);
-        loadData();
+        this.dataglobal.updateArrRegistrationRender();
         fillTable();
     }
     private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
@@ -881,7 +843,7 @@ public class gui_registration extends javax.swing.JPanel {
             }
         };
         this.logMessage.setVisible(true);
-        loadData();
+        this.dataglobal.updateArrRegistrationRender();
         fillTable();
     }//GEN-LAST:event_btn_themActionPerformed
 
@@ -916,7 +878,9 @@ public class gui_registration extends javax.swing.JPanel {
                 });
                 ArrayList<Customer> arrCustomer = CustomerDAO.getInstance().getList();
                 for (Customer customer : arrCustomer) {
-                    this.tableModel.addRow(new String[] {String.valueOf(customer.getCustomer_id()), customer.getFull_name(), customer.getSsn(), customer.getPhone_number()});
+                    if (customer.isIs_active()) {
+                        this.tableModel.addRow(new String[] {String.valueOf(customer.getCustomer_id()), customer.getFull_name(), customer.getSsn(), customer.getPhone_number()});
+                    }
                 }
                 this.tableModel.fireTableDataChanged();
                 
@@ -1033,7 +997,7 @@ public class gui_registration extends javax.swing.JPanel {
             }
         };
         this.logSelection.initContent();
-        this.logSelection.setVisible(true);
+    this.logSelection.setVisible(true);
     }//GEN-LAST:event_btn_chonphuongtienActionPerformed
 
     private void txt_timkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_timkiemActionPerformed
@@ -1044,14 +1008,14 @@ public class gui_registration extends javax.swing.JPanel {
         // TODO add your handling code here:
         tableModel.setRowCount(0);
         int index = 0;
-        for (ArrayList<String> arr : this.dataRegistration) {
+        for (ArrayList<String> arr : this.dataglobal.getArrRegistration_render()) {
             if (arr.get(5).equals("Dang con han")) {
                 tableModel.addRow(new String[] {arr.get(0), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
             }
         }
         tableModel.fireTableDataChanged();
         txt_tinnhan.setText("Đang hiển thị danh sách các đăng kí đã lọc theo trạng thái");
-        if (index == this.dataRegistration.size()) {
+        if (index == this.dataglobal.getArrRegistration_render().size()) {
             txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
         }
     }//GEN-LAST:event_btn_conhanActionPerformed
@@ -1060,14 +1024,14 @@ public class gui_registration extends javax.swing.JPanel {
         // TODO add your handling code here:
         tableModel.setRowCount(0);
         int index = 0;
-        for (ArrayList<String> arr : this.dataRegistration) {
+        for (ArrayList<String> arr : this.dataglobal.getArrRegistration_render()) {
             if (arr.get(5).equals("San sang gia han")) {
                 tableModel.addRow(new String[] {arr.get(0), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
             }
         }
         tableModel.fireTableDataChanged();
         txt_tinnhan.setText("Đang hiển thị danh sách các đăng kí đã lọc theo trạng thái");
-        if (index == this.dataRegistration.size()) {
+        if (index == this.dataglobal.getArrRegistration_render().size()) {
             txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
         }
     }//GEN-LAST:event_btn_hethanActionPerformed
@@ -1086,7 +1050,7 @@ public class gui_registration extends javax.swing.JPanel {
         LocalDate dateStart = LocalDate.parse(combo_nambatdau.getSelectedItem() + "-" + combo_thangbatdau.getSelectedItem() + "-" + combo_ngaybatdau.getSelectedItem());
         LocalDate dateEnd = LocalDate.parse(combo_namketthuc.getSelectedItem() + "-" + combo_thangketthuc.getSelectedItem() + "-" + combo_ngayketthuc.getSelectedItem());
         tableModel.setRowCount(0);
-        for (ArrayList<String> arr : this.dataRegistration) {
+        for (ArrayList<String> arr : this.dataglobal.getArrRegistration_render()) {
             LocalDate dateofArr = LocalDate.parse(arr.get(3));
             if (dateStart.isBefore(dateofArr.plusDays(1)) && dateEnd.isAfter(dateofArr.minusDays(1))) {
                 ++index;
@@ -1095,7 +1059,7 @@ public class gui_registration extends javax.swing.JPanel {
         }
         tableModel.fireTableDataChanged();
         txt_tinnhan.setText("Đang hiển thị danh sách các đăng kí đã lọc theo thời gian");
-        if (index == this.dataRegistration.size()) {
+        if (index == this.dataglobal.getArrRegistration_render().size()) {
             txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
         }
     }//GEN-LAST:event_btn_locActionPerformed
@@ -1108,14 +1072,14 @@ public class gui_registration extends javax.swing.JPanel {
     private void btn_timkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_timkiemActionPerformed
         int index = 0;
         tableModel.setRowCount(0);
-        for (ArrayList<String> arr : this.dataRegistration) { 
+        for (ArrayList<String> arr : this.dataglobal.getArrRegistration_render()) { 
             if (Library.Library.StringOnString(txt_timkiem.getText(), arr.get(2))) {
                 tableModel.addRow(new String[] {arr.get(0), arr.get(2), arr.get(3), arr.get(4), arr.get(5)});
                 ++index;
             }
         }
         txt_tinnhan.setText("Đang hiển thị danh sách các đăng kí đã lọc theo tên");
-        if (index == this.dataRegistration.size()) {
+        if (index == this.dataglobal.getArrRegistration_render().size()) {
             txt_tinnhan.setText("Đang hiển thị danh sách tất cả các đăng kí");
         }
     }//GEN-LAST:event_btn_timkiemActionPerformed
@@ -1162,7 +1126,7 @@ public class gui_registration extends javax.swing.JPanel {
         };
 
         this.logMessage.setVisible(true);
-        loadData();
+        this.dataglobal.updateArrRegistrationRender();
         fillTable();
 }
     private void btn_tatcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tatcaActionPerformed
@@ -1172,6 +1136,26 @@ public class gui_registration extends javax.swing.JPanel {
     private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
         this.viewmain.setEnabled(false);
         this.cursorBreak = false;
+        
+        String idDangki = txt_iddangki.getText();
+        String idKhachhang = txt_id_khachhang.getText();
+        String idPhuongtien = txt_phuongtien.getText();
+        System.out.println(idDangki + "-" + idKhachhang + "-" + idPhuongtien);
+        for (ArrayList<String> datacheck : this.dataglobal.getArrRegistration_render()) {
+            if (!idDangki.equals(datacheck.get(0)) && idKhachhang.equals(datacheck.get(1)) && idPhuongtien.equals(datacheck.get(4))) {
+                this.viewmain.setEnabled(false);
+                this.logMessage = new LogMessage("Trùng lặp khách hàng và phương tiện") {
+                    @Override
+                    public void action() {
+                        this.setVisible(false);
+                        viewmain.setEnabled(true);
+                        viewmain.requestFocus();
+                    }
+                };
+                this.logMessage.setVisible(true);
+                return;
+            }
+        }
         
         this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật?") {
             @Override
@@ -1232,7 +1216,7 @@ public class gui_registration extends javax.swing.JPanel {
 
     private void btn_tailaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tailaiActionPerformed
         // TODO add your handling code here:
-        loadData();
+        this.dataglobal.updateArrRegistrationRender();
         fillTable();
     }//GEN-LAST:event_btn_tailaiActionPerformed
 

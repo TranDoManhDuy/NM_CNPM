@@ -14,7 +14,6 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 /**
  *
  * @author manhh
@@ -23,6 +22,7 @@ public class TypeServiceDAO {
     public static TypeServiceDAO getInstance() {
         return new TypeServiceDAO();
     }
+    
     public ArrayList<ArrayList<String>> getArrServiceTypeRender() {
         ArrayList<ArrayList<String>> arrServiceTypeRender = new ArrayList<>();
         String sql = "EXEC ServiceType_render";
@@ -32,6 +32,7 @@ public class TypeServiceDAO {
             ResultSet rs = stmt.executeQuery(sql);
         ) {
             while (rs.next()) {
+                
                 int type_service_id = rs.getInt("type_service_id");
                 String service_name = rs.getString("service_name");
                 int service_fee_id = rs.getInt("service_fee_id");
@@ -83,7 +84,7 @@ public class TypeServiceDAO {
                 int month_unit = rs.getInt("month_unit");
                 String service_name = rs.getString("service_name");
                 LocalDate decision_date = rs.getDate("decision_date").toLocalDate();
-                float payment_coefficient = rs.getInt("payment_coefficient");
+                float payment_coefficient = rs.getFloat("payment_coefficient");
                 boolean is_active = rs.getBoolean("is_active");
                 
                 TypeService typeService = new TypeService(type_service_id, service_fee_id, month_unit, service_name,decision_date, payment_coefficient, is_active);
@@ -100,19 +101,17 @@ public class TypeServiceDAO {
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
-            System.out.println(typeService.getPayment_coefficient());
             ptmt.setInt(1, typeService.getService_fee_id());
             ptmt.setInt(2, typeService.getMonth_unit());
             ptmt.setString(3, typeService.getService_name());
             ptmt.setDate(4, Date.valueOf(typeService.getDecision_date()));
-            ptmt.setFloat(5, typeService.getPayment_coefficient());
+            ptmt.setFloat(5, (float) typeService.getPayment_coefficient());
             ptmt.setBoolean(6, typeService.isIs_active());
             
             if (ptmt.executeUpdate() >= 0) {
                 return "Thêm loại dịch vụ thành công";
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return "Lỗi: " + e.getMessage();
         }
         return "Thêm loại dịch vụ thành công";
@@ -128,7 +127,7 @@ public class TypeServiceDAO {
             ptmt.setInt(2, typeService.getMonth_unit());
             ptmt.setString(3, typeService.getService_name());
             ptmt.setDate(4, Date.valueOf(typeService.getDecision_date()));
-            ptmt.setFloat(5, typeService.getPayment_coefficient());
+            ptmt.setFloat(5, (float) typeService.getPayment_coefficient());
             ptmt.setBoolean(6, typeService.isIs_active());
             ptmt.setInt(7, typeService.getType_service_id());
             
@@ -136,7 +135,6 @@ public class TypeServiceDAO {
                 return "Cập nhật thành công";
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return "Lỗi: " + e.getMessage();
         }
         return "Cập nhật thành công";
@@ -157,7 +155,7 @@ public class TypeServiceDAO {
                 int month_unit = rs.getInt("month_unit");
                 String service_name = rs.getString("service_name");
                 LocalDate decision_date = rs.getDate("decision_date").toLocalDate();
-                float payment_coefficient = rs.getInt("payment_coefficient");
+                float payment_coefficient = rs.getFloat("payment_coefficient");
                 boolean is_active = rs.getBoolean("is_active");
                 return new TypeService(type_service_id, service_fee_id, month_unit, service_name, decision_date , payment_coefficient, is_active);
             }

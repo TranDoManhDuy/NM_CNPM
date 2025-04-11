@@ -9,6 +9,7 @@ import Annotation.LogMessage;
 import DAO.TimeFrameDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.TimeFrameToRender;
 import java.awt.Frame;
 import java.sql.Connection;
@@ -30,23 +31,24 @@ public class gui_timeframe extends javax.swing.JPanel {
     private ViewMain viewmain;
     private LogConfirm logConfirm;
     private LogMessage logMessage;
+    private DataGlobal dataglobal;
     
     private boolean cursorBreak = false;
-    private ArrayList<TimeFrameToRender> dataTimeframe = new ArrayList<>();
     /**
      * Creates new form gui_timeframe
      */
-    public gui_timeframe(ViewMain viewMain, LogConfirm logConfirm, LogMessage logMessage) {
+    public gui_timeframe(ViewMain viewMain, LogConfirm logConfirm, LogMessage logMessage, DataGlobal dataglobal) {
         this.viewmain = viewMain;
         this.logConfirm = logConfirm;
         this.logMessage = logMessage;
+        this.dataglobal = dataglobal;
         
         initComponents();
         scroll_table.getVerticalScrollBar().setUnitIncrement(20);
         txt_ngaybanhanh_rendermain.setText(String.valueOf(LocalDate.now()));
         containerPanel = new JPanel();
         containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
-        loadData();
+        dataglobal.updateArrTimeFrameToRender();
         fillTable();
         scroll_table.setViewportView(containerPanel);
         
@@ -79,7 +81,7 @@ public class gui_timeframe extends javax.swing.JPanel {
     }
     private void fillTable() {
         containerPanel.removeAll();
-        for (TimeFrameToRender tf : this.dataTimeframe) {
+        for (TimeFrameToRender tf : this.dataglobal.getArrTimeFrameToRender()) {
             LocalDate decision_date = tf.getDecision_date();
             LocalTime TS1 = tf.getTS1();
             LocalTime TS2 = tf.getTS2();
@@ -119,38 +121,6 @@ public class gui_timeframe extends javax.swing.JPanel {
             
             containerPanel.add(timeframeDetail_gui);
             txt_tinnhan.setText("Đang hiển thị tất cả các khung thời gian");
-        }
-    }
-    private void loadData() {
-        String sql = "EXEC timeframe_render";
-        this.dataTimeframe.clear();
-        try (
-            Connection conn = OpenConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-        ) {
-            while (rs.next()) {
-                LocalDate decision_date = rs.getDate("decision_date").toLocalDate();
-                LocalTime TS1 = rs.getTime("TS1").toLocalTime();
-                LocalTime TS2 = rs.getTime("TS2").toLocalTime();
-                LocalTime TS3 = rs.getTime("TS3").toLocalTime();
-                LocalTime TE1 = rs.getTime("TE1").toLocalTime();
-                LocalTime TE2 = rs.getTime("TE2").toLocalTime();
-                LocalTime TE3 = rs.getTime("TE3").toLocalTime();
-                boolean isActive = rs.getBoolean("is_active");
-                int T1_id = rs.getInt("T1_id");
-                int T2_id = rs.getInt("T2_id");
-                int T3_id = rs.getInt("T3_id");
-                
-                TimeFrameToRender timeframetorender = new TimeFrameToRender(decision_date, TS1, TS2, TS3, TE1, TE2, TE3, isActive);
-                timeframetorender.setT1_id(T1_id);
-                timeframetorender.setT2_id(T2_id);
-                timeframetorender.setT3_id(T3_id);
-                
-                this.dataTimeframe.add(timeframetorender);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
     /**
@@ -752,7 +722,7 @@ public class gui_timeframe extends javax.swing.JPanel {
                         viewmain.requestFocus();
                     }
                 };
-                loadData();
+                dataglobal.updateArrTimeFrameToRender();
                 fillTable();
                 revalidate();
                 repaint();
@@ -769,7 +739,7 @@ public class gui_timeframe extends javax.swing.JPanel {
     private void btn_conhieulucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_conhieulucActionPerformed
         // TODO add your handling code here:
         containerPanel.removeAll();
-        for (TimeFrameToRender tf : this.dataTimeframe) {
+        for (TimeFrameToRender tf : this.dataglobal.getArrTimeFrameToRender()) {
             LocalDate decision_date = tf.getDecision_date();
             LocalTime TS1 = tf.getTS1();
             LocalTime TS2 = tf.getTS2();
@@ -819,7 +789,7 @@ public class gui_timeframe extends javax.swing.JPanel {
     private void btn_hethieulucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hethieulucActionPerformed
         // TODO add your handling code here:
         containerPanel.removeAll();
-        for (TimeFrameToRender tf : this.dataTimeframe) {
+        for (TimeFrameToRender tf : this.dataglobal.getArrTimeFrameToRender()) {
             LocalDate decision_date = tf.getDecision_date();
             LocalTime TS1 = tf.getTS1();
             LocalTime TS2 = tf.getTS2();
@@ -895,7 +865,7 @@ public class gui_timeframe extends javax.swing.JPanel {
 
     private void btn_tatcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tatcaActionPerformed
         // TODO add your handling code here:
-        loadData();
+        this.dataglobal.updateArrTimeFrameToRender();
         fillTable();
         this.revalidate();
         this.repaint();
@@ -939,7 +909,7 @@ public class gui_timeframe extends javax.swing.JPanel {
                 viewmain.requestFocus();
             }
         };
-        loadData();
+        this.dataglobal.updateArrTimeFrameToRender();
         fillTable();
         revalidate();
         repaint();
@@ -948,7 +918,7 @@ public class gui_timeframe extends javax.swing.JPanel {
 
     private void btn_tailaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tailaiActionPerformed
         // TODO add your handling code here:
-        loadData();
+        this.dataglobal.updateArrTimeFrameToRender();
         fillTable();
     }//GEN-LAST:event_btn_tailaiActionPerformed
 

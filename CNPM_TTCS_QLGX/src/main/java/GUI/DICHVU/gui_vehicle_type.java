@@ -9,6 +9,7 @@ import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.VehicleTypeDAO;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.VehicleType;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,16 +27,17 @@ public class gui_vehicle_type extends javax.swing.JPanel {
     private LogMessage logMessage;
     private LogSelection logSelection;
     private boolean cursorBreak = false;
-    private ArrayList<VehicleType> dataVehicleType = new ArrayList<>();
+    private DataGlobal dataglobal;
     /**
      * Creates new form gui_vehicle_type
      */
     public gui_vehicle_type() {}
-    public gui_vehicle_type(ViewMain viewmain, LogConfirm logConfirm, LogMessage logMessage, LogSelection logSelection) {
+    public gui_vehicle_type(ViewMain viewmain, LogConfirm logConfirm, LogMessage logMessage, LogSelection logSelection, DataGlobal dataglobal) {
         this.viewmain = viewmain;
         this.logConfirm = logConfirm;
         this.logMessage = logMessage;
         this.logSelection = logSelection;
+        this.dataglobal = dataglobal;
         
         initComponents();
         tableModel = new DefaultTableModel() {
@@ -58,7 +60,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                 
                 VehicleType vehicleType = new VehicleType();
                 
-                for (VehicleType i : dataVehicleType) {
+                for (VehicleType i : dataglobal.getArrVehicleType()) {
                     if (i.getVehicle_type_id() == Integer.parseInt((String) table_loaiphuongtien.getValueAt(row, 0))) {
                         vehicleType = i;
                         break;
@@ -73,7 +75,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
             }
         });
         initTable();
-        loadData();
+        dataglobal.updateArrVehicleType();
         fillTable();
         combo_trangthai.setSelectedIndex(0);
         table_loaiphuongtien.setRowHeight(30);
@@ -85,7 +87,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
     }
     private void fillTable() {
         tableModel.setRowCount(0);
-        for (VehicleType vt : this.dataVehicleType) {
+        for (VehicleType vt : this.dataglobal.getArrVehicleType()) {
             String trangthai;
             if (vt.isIsPermission() == true) {
                 trangthai = "Được phép";
@@ -97,9 +99,6 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         }
         tableModel.fireTableDataChanged();
         txt_tinnhan.setText("Đang hiển thị toàn bộ danh sách các loại phương tiện");
-    }
-    private void loadData() {
-        this.dataVehicleType = VehicleTypeDAO.getInstance().getList();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -434,7 +433,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                 }
             };
         this.logMessage.setVisible(true);
-        loadData();
+        dataglobal.updateArrVehicleType();
         fillTable();
     }
     private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
@@ -500,7 +499,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                 }
             };
         this.logMessage.setVisible(true);
-        loadData();
+        dataglobal.updateArrVehicleType();
         fillTable();
     }//GEN-LAST:event_btn_themActionPerformed
 
@@ -513,7 +512,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         tableModel.setRowCount(0);
         
         int index = 0;
-        for (VehicleType vt : this.dataVehicleType) {
+        for (VehicleType vt : this.dataglobal.getArrVehicleType()) {
             String trangthai;
             if (vt.isIsPermission() == true) {
                 trangthai = "Được phép";
@@ -528,7 +527,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         }
         tableModel.fireTableDataChanged();
         txt_tinnhan.setText("Đang hiển thị danh sách các loại phương tiện được cho phép");
-        if (index == this.dataVehicleType.size()) {
+        if (index == this.dataglobal.getArrVehicleType().size()) {
             txt_tinnhan.setText("Đang hiển thị toàn bộ danh sách các loại phương tiện");
         }
     }//GEN-LAST:event_btn_conchophepActionPerformed
@@ -538,7 +537,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         tableModel.setRowCount(0);
         
         int index = 0;
-        for (VehicleType vt : this.dataVehicleType) {
+        for (VehicleType vt : this.dataglobal.getArrVehicleType()) {
             String trangthai;
             if (vt.isIsPermission() == true) {
                 trangthai = "Được phép";
@@ -553,7 +552,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         }
         tableModel.fireTableDataChanged();
         txt_tinnhan.setText("Đang hiển thị danh sách các loại phương tiện không còn được cho phép");
-        if (index == this.dataVehicleType.size()) {
+        if (index == this.dataglobal.getArrVehicleType().size()) {
             txt_tinnhan.setText("Đang hiển thị toàn bộ danh sách các loại phương tiện");
         }
     }//GEN-LAST:event_btn_khongconchophepActionPerformed
@@ -563,7 +562,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         tableModel.setRowCount(0);
         
         int index = 0;
-        for (VehicleType vt : this.dataVehicleType) {
+        for (VehicleType vt : this.dataglobal.getArrVehicleType()) {
             String trangthai;
             if (vt.isIsPermission() == true) {
                 trangthai = "Được phép";
@@ -578,7 +577,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         }
         tableModel.fireTableDataChanged();
         txt_tinnhan.setText("Đang hiển thị danh sách các loại phương tiện lọc theo tên");
-        if (index == this.dataVehicleType.size()) {
+        if (index == this.dataglobal.getArrVehicleType().size()) {
             txt_tinnhan.setText("Đang hiển thị toàn bộ danh sách các loại phương tiện");
         }
     }//GEN-LAST:event_btn_timkiemActionPerformed
@@ -606,7 +605,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                 }
             };
         this.logMessage.setVisible(true);
-        loadData();
+        dataglobal.updateArrVehicleType();
         fillTable();
     }
     private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
@@ -690,7 +689,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
 
     private void btn_tailaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tailaiActionPerformed
         // TODO add your handling code here:
-        loadData();
+        this.dataglobal.updateArrVehicleType();
         fillTable();
     }//GEN-LAST:event_btn_tailaiActionPerformed
 
