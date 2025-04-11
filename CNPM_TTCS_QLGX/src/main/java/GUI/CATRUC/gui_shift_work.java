@@ -101,61 +101,58 @@ public class gui_shift_work extends javax.swing.JPanel {
         }
     }
   
+    public void callLogMessage(String messageText){
+        viewMain.setEnabled(false);
+            this.message = new LogMessage(messageText){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.setVisible(false);
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    }
     
     public void insertShiftWork(){
-        LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex()); 
-        int stID = Integer.parseInt(jTextField2.getText());
-        int bID = Integer.parseInt(jTextField3.getText());
-        int sID = Integer.parseInt(jTextField4.getText());
-        int tID = Integer.parseInt(jTextField5.getText());
-        ShiftWorks a = new ShiftWorks( stID, bID, sID, tID, shiftDate);
-        boolean r = ShiftWorksDAO.getInstance().insert(a);
-        if(r == false){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Không thể thêm"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }else{
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            fillTable();
+        try{
+            LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1);
+            int stID = Integer.parseInt(jTextField2.getText());
+            int bID = Integer.parseInt(jTextField3.getText());
+            int sID = Integer.parseInt(jTextField4.getText());
+            int tID = Integer.parseInt(jTextField5.getText());
+            ShiftWorks a = new ShiftWorks( stID, bID, sID, tID, shiftDate);
+            boolean r = ShiftWorksDAO.getInstance().insert(a);
+            if(r == false){
+                callLogMessage("Lỗi khi thêm");
+            }else{
+                viewMain.setEnabled(true);
+                viewMain.requestFocus();
+                fillTable();
+            }
+        }catch(Exception e){
+            callLogMessage("Ngày không hợp lệ");
         }
+        
     }
     public void updateShiftWork(){
-        LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1); 
-        int shID = Integer.parseInt(jTextField1.getText());
-        int stID = Integer.parseInt(jTextField2.getText());
-        int bID = Integer.parseInt(jTextField3.getText());
-        int sID = Integer.parseInt(jTextField4.getText());
-        int tID = Integer.parseInt(jTextField5.getText());
-        ShiftWorks a = new ShiftWorks(shID, stID, bID, sID, tID, shiftDate);
-        boolean r = ShiftWorksDAO.getInstance().update(a);
-        if(!r){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Lỗi cập nhật"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }else{
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            fillTable();
-        }
+            LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1);
+            int shID = Integer.parseInt(jTextField1.getText());
+            int stID = Integer.parseInt(jTextField2.getText());
+            int bID = Integer.parseInt(jTextField3.getText());
+            int sID = Integer.parseInt(jTextField4.getText());
+            int tID = Integer.parseInt(jTextField5.getText());
+            ShiftWorks a = new ShiftWorks(shID, stID, bID, sID, tID, shiftDate);
+            boolean r = ShiftWorksDAO.getInstance().update(a);
+            if(!r){
+                callLogMessage("Lỗi cập nhật");
+            }else{
+                viewMain.setEnabled(true);
+                viewMain.requestFocus();
+                fillTable();
+            } 
     }
     public void deleteShiftWork(){
         int t = Integer.parseInt(jTextField1.getText());
@@ -799,14 +796,18 @@ public class gui_shift_work extends javax.swing.JPanel {
         if(jComboBox6.getSelectedIndex() == 0 || jComboBox5.getSelectedIndex() == 0 || jComboBox4.getSelectedIndex() == 0){
             shiftDate = null;
         }else{
-            shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex());
+            try{
+            shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex());}
+            catch(Exception e){
+                shiftDate = null;
+            }
         }
         if(shiftDate == null || jTextField2.getText() == null||jTextField2.getText().isEmpty()
                              || jTextField3.getText() == null||jTextField3.getText().isEmpty()
                              || jTextField4.getText() == null||jTextField4.getText().isEmpty()
                              || jTextField5.getText() == null||jTextField5.getText().isEmpty()){
             viewMain.setEnabled(false);
-            this.message = new LogMessage("Không để trống thông tin"){
+            this.message = new LogMessage("Thông tin không hợp lệ"){
                 @Override
                 public void action() {
                     viewMain.setEnabled(true);
