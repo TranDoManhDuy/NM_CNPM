@@ -32,6 +32,8 @@ public class LogMessage extends javax.swing.JFrame implements doAction {
             @Override
             public void windowClosing(WindowEvent e) {}
         });
+        txt_area.setLineWrap(true);
+        txt_area.setWrapStyleWord(true);
     }
     
     public void action() {}
@@ -48,7 +50,8 @@ public class LogMessage extends javax.swing.JFrame implements doAction {
 
         jButton1 = new javax.swing.JButton();
         btnOK = new javax.swing.JButton();
-        txt_area = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txt_area = new javax.swing.JTextArea();
 
         jButton1.setText("jButton1");
 
@@ -61,24 +64,27 @@ public class LogMessage extends javax.swing.JFrame implements doAction {
             }
         });
 
-        txt_area.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        txt_area.setColumns(20);
+        txt_area.setRows(5);
+        txt_area.setFocusable(false);
+        jScrollPane1.setViewportView(txt_area);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
+                .addContainerGap(21, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnOK)
-                    .addComponent(txt_area, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnOK))
                 .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addComponent(txt_area, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnOK)
                 .addContainerGap())
@@ -98,6 +104,7 @@ public class LogMessage extends javax.swing.JFrame implements doAction {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnOK;
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel txt_area;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea txt_area;
     // End of variables declaration//GEN-END:variables
 }
