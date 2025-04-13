@@ -68,6 +68,7 @@ import DAO.VisitorParkingCardsDAO;
 import GUI.GUIXE.GUI_LostVisitorParkingCard;
 import GUI.GUIXE.GUI_VisitorParkingCard;
 import GUI.NHANSU.gui_listmanager;
+import GUI.NHANSU.gui_profile;
 
 import Model.SessionFee;
 import Model.ShiftTypes;
@@ -255,7 +256,7 @@ public class ViewMain extends javax.swing.JFrame {
         gui_permission permission_gui = new gui_permission(this);
         gui_manager manager_gui = new gui_manager(this);
         gui_listmanager listmanager_gui = new gui_listmanager(this);
-        
+//        gui_profile profile = new gui_profile();
         // add component
         addComponent(panel_nhanvien, staff_gui);
         addComponent(panel_taikhoan, account_gui);
@@ -263,7 +264,7 @@ public class ViewMain extends javax.swing.JFrame {
         addComponent(panel_quyen, permission_gui);
         addComponent(panel_quanli, manager_gui);
         addComponent(panel_vitri, listmanager_gui);
-       
+//        addComponent(panel_profile, profile);
     }
     
     
@@ -292,7 +293,7 @@ public class ViewMain extends javax.swing.JFrame {
         panel_quyen = new javax.swing.JPanel();
         panel_quanli = new javax.swing.JPanel();
         panel_vitri = new javax.swing.JPanel();
-        jPanel18 = new javax.swing.JPanel();
+        panel_profile = new javax.swing.JPanel();
         jPanel19 = new javax.swing.JPanel();
         jPanel20 = new javax.swing.JPanel();
         CaTruc = new javax.swing.JPanel();
@@ -453,20 +454,20 @@ public class ViewMain extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane3.addTab("tab6", panel_vitri);
+        jTabbedPane3.addTab("Vị trí", panel_vitri);
 
-        javax.swing.GroupLayout jPanel18Layout = new javax.swing.GroupLayout(jPanel18);
-        jPanel18.setLayout(jPanel18Layout);
-        jPanel18Layout.setHorizontalGroup(
-            jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout panel_profileLayout = new javax.swing.GroupLayout(panel_profile);
+        panel_profile.setLayout(panel_profileLayout);
+        panel_profileLayout.setHorizontalGroup(
+            panel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
-        jPanel18Layout.setVerticalGroup(
-            jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panel_profileLayout.setVerticalGroup(
+            panel_profileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane3.addTab("tab7", jPanel18);
+        jTabbedPane3.addTab("Profile", panel_profile);
 
         javax.swing.GroupLayout jPanel19Layout = new javax.swing.GroupLayout(jPanel19);
         jPanel19.setLayout(jPanel19Layout);
@@ -976,7 +977,6 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel17;
-    private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel20;
@@ -1006,6 +1006,7 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JPanel panel_mat_the_cd;
     private javax.swing.JPanel panel_nhanvien;
     private javax.swing.JPanel panel_nhiemvu;
+    private javax.swing.JPanel panel_profile;
     private javax.swing.JPanel panel_ptien;
     private javax.swing.JPanel panel_quanli;
     private javax.swing.JPanel panel_quyen;
