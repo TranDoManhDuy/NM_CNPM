@@ -124,14 +124,9 @@ public class gui_shift_work extends javax.swing.JPanel {
             int sID = Integer.parseInt(jTextField4.getText());
             int tID = Integer.parseInt(jTextField5.getText());
             ShiftWorks a = new ShiftWorks( stID, bID, sID, tID, shiftDate);
-            boolean r = ShiftWorksDAO.getInstance().insert(a);
-            if(r == false){
-                callLogMessage("Lỗi khi thêm");
-            }else{
-                viewMain.setEnabled(true);
-                viewMain.requestFocus();
-                fillTable();
-            }
+            String r = ShiftWorksDAO.getInstance().insert(a);
+            callLogMessage(r);
+            fillTable();
         }catch(Exception e){
             callLogMessage("Ngày không hợp lệ");
         }
@@ -145,37 +140,15 @@ public class gui_shift_work extends javax.swing.JPanel {
             int sID = Integer.parseInt(jTextField4.getText());
             int tID = Integer.parseInt(jTextField5.getText());
             ShiftWorks a = new ShiftWorks(shID, stID, bID, sID, tID, shiftDate);
-            boolean r = ShiftWorksDAO.getInstance().update(a);
-            if(!r){
-                callLogMessage("Lỗi cập nhật");
-            }else{
-                viewMain.setEnabled(true);
-                viewMain.requestFocus();
-                fillTable();
-            } 
+            String r = ShiftWorksDAO.getInstance().update(a);
+            callLogMessage(r);
+            fillTable();
     }
     public void deleteShiftWork(){
         int t = Integer.parseInt(jTextField1.getText());
-        boolean r = ShiftWorksDAO.getInstance().delete(t);
-        if(!r){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Không thể xóa"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }
-        else{
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
+        String r = ShiftWorksDAO.getInstance().delete(t);
+        callLogMessage(r);
             fillTable();
-        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -712,24 +685,17 @@ public class gui_shift_work extends javax.swing.JPanel {
         if(jComboBox6.getSelectedIndex() == 0 || jComboBox5.getSelectedIndex() == 0 || jComboBox4.getSelectedIndex() == 0){
             shiftDate = null;
         }else{
-            shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex());
+            try{
+                shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex());
+            }catch(Exception e){
+                shiftDate = null;
+            }
         }
         if( shiftDate == null || jTextField2.getText().trim().isEmpty()
                             || jTextField3.getText().trim().isEmpty()
                             || jTextField4.getText().trim().isEmpty()
                             || jTextField5.getText().trim().isEmpty()){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Không để trống thông tin"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            callLogMessage("Thông tin không hợp lệ");
         }else{
             this.confirm = new LogConfirm("Xác nhận cập nhật"){
                 @Override
@@ -806,18 +772,7 @@ public class gui_shift_work extends javax.swing.JPanel {
                              || jTextField3.getText() == null||jTextField3.getText().isEmpty()
                              || jTextField4.getText() == null||jTextField4.getText().isEmpty()
                              || jTextField5.getText() == null||jTextField5.getText().isEmpty()){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Thông tin không hợp lệ"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            callLogMessage("Thông tin không hợp lệ");
         }else{
             this.confirm = new LogConfirm("Xác nhận thêm"){
                 @Override

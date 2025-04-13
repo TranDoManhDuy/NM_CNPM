@@ -42,7 +42,7 @@ public class TasksDAO {
         return list;
     }
 
-    public boolean insert(Tasks task) {
+    public String insert(Tasks task) {
         String sql = "{CALL InsertTask(?, ?)}";
         
         try (
@@ -52,14 +52,19 @@ public class TasksDAO {
             ptmt.setString(1, task.getTask_name());
             ptmt.setString(2, task.getTask_desc());
 
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate() ;
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Thêm thành công";
     }
 
-    public boolean update(Tasks task) {
+    public String update(Tasks task) {
         String sql = "{CALL UpdateTask(?, ?, ?)}";
         
         try (
@@ -69,14 +74,19 @@ public class TasksDAO {
             ptmt.setString(2, task.getTask_name());
             ptmt.setString(3, task.getTask_desc());
             
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Cập nhật thành công";
     }
 
-    public boolean delete(int task_id) {
+    public String delete(int task_id) {
         String sql = "{CALL DeleteTask(?)}";
         
         try (
@@ -84,11 +94,16 @@ public class TasksDAO {
             CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, task_id);
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Xóa thành công";
     }
 
     public Tasks findById(int task_id) {

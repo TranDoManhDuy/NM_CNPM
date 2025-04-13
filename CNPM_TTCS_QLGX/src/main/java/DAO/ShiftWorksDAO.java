@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import DatabaseHelper.OpenConnection;
 import java.sql.*;
 import java.util.List;
+import java.sql.SQLException;
 /**
  *
  * @author HP
@@ -20,7 +21,17 @@ public class ShiftWorksDAO {
     public static ShiftWorksDAO getInstance() {
         return new ShiftWorksDAO();
     }
-
+    
+    static String extractForeignKeyName(String errorMessage) {
+        String keyword = "FOREIGN KEY constraint";
+        int startIndex = errorMessage.indexOf('"');
+        int endIndex = errorMessage.indexOf('"', startIndex + 1);
+        if (startIndex != -1 && endIndex != -1) {
+            return errorMessage.substring(startIndex + 1, endIndex);
+        }
+        return "Unknown";
+    }
+    
     public List<ShiftWorks> getAllShiftWorks() {
         List<ShiftWorks> list = new ArrayList<>();
         String sql = "{CALL GetAllShiftWorks()}";
@@ -47,7 +58,7 @@ public class ShiftWorksDAO {
         return list;
     }
 
-    public boolean insert(ShiftWorks shift) {
+    public String insert(ShiftWorks shift) {
         String sql = "{CALL InsertShiftWorks(?, ?, ?, ?, ?)}";
         
         try (
@@ -60,14 +71,32 @@ public class ShiftWorksDAO {
             ptmt.setInt(4, shift.getTask_id());
             ptmt.setDate(5, Date.valueOf(shift.getShift_date()));
 
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 547){
+                String foreignKey = extractForeignKeyName(e.getMessage());
+                switch (foreignKey) {
+                    case "FK__shift_wor__build__2739D489":
+                        return "Mã tòa nhà không tồn tại";
+                    case "FK__shift_wor__shift__2645B050":
+                        return "Mã loại ca trực không tồn tại";
+                    case "FK__shift_wor__staff__2A164134":
+                        return "Nhân viên không tồn tại";
+                    case "FK__shift_wor__task___25518C17":
+                        return "Mã nhiệm vụ không tồn tại";
+                }
+            }
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Thêm thành công";
     }
 
-    public boolean update(ShiftWorks shift) {
+    public String update(ShiftWorks shift) {
         String sql = "{CALL UpdateShiftWorks(?, ?, ?, ?, ?, ?)}";
         
         try (
@@ -80,15 +109,32 @@ public class ShiftWorksDAO {
             ptmt.setInt(4, shift.getTask_id());
             ptmt.setDate(5, Date.valueOf(shift.getShift_date()));
             ptmt.setInt(6, shift.getShift_work_id());
-
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 547){
+                String foreignKey = extractForeignKeyName(e.getMessage());
+                switch (foreignKey) {
+                    case "FK__shift_wor__build__2739D489":
+                        return "Mã tòa nhà không tồn tại";
+                    case "FK__shift_wor__shift__2645B050":
+                        return "Mã loại ca trực không tồn tại";
+                    case "[FK__shift_wor__staff__2A164134]":
+                        return "Nhân viên không tồn tại";
+                    case "[FK__shift_wor__task___25518C17]":
+                        return "Mã nhiệm vụ không tồn tại";
+                }
+            }
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Cập nhật thành công";
     }
 
-    public boolean delete(int shift_work_id) {
+    public String delete(int shift_work_id) {
         String sql = "{CALL DeleteShiftWorks(?)}";
         
         try (
@@ -96,11 +142,11 @@ public class ShiftWorksDAO {
             CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, shift_work_id);
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            return e.getMessage();
         }
-        return false;
+        return "Xoá thành công";
     }
 
     public ShiftWorks findByID(int shift_work_id) {

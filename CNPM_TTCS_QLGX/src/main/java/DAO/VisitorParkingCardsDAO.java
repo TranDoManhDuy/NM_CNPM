@@ -85,21 +85,26 @@ public class VisitorParkingCardsDAO {
         return list;
     }
     
-    public boolean insertVisitorParkingCard() {
+    public String insertVisitorParkingCard() {
         String sql = "{CALL InsertVisitorParkingCard()}";
         
         try (
             Connection conn = OpenConnection.getConnection();
             CallableStatement ptmt = conn.prepareCall(sql);
         ) {
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Thêm thành công";
     }
     
-    public boolean update(int visitor_parking_card_id) {
+    public String update(int visitor_parking_card_id) {
         String sql = "{CALL UpdateVisitorParkingCard(?)}";
         
         try (
@@ -107,14 +112,19 @@ public class VisitorParkingCardsDAO {
             CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, visitor_parking_card_id);
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Cập nhật thành công";
     }
 
-    public boolean delete(int visitor_parking_card_id) {
+    public String delete(int visitor_parking_card_id) {
         String sql = "{CALL DeleteVisitorParkingCard(?)}";
         
         try (
@@ -122,11 +132,16 @@ public class VisitorParkingCardsDAO {
             CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, visitor_parking_card_id);
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Xóa thành công";
     }
 
     public VisitorParkingCards findById(int visitor_parking_card_id) {

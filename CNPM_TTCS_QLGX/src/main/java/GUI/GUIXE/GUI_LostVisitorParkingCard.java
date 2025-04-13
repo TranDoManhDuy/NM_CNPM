@@ -82,53 +82,36 @@ public class GUI_LostVisitorParkingCard extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
+    
+    public void callLogMessage(String messageText){
+        viewMain.setEnabled(false);
+            this.message = new LogMessage(messageText){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.setVisible(false);
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    }
+    
     public void updateLostVisitorParkingCard(){
         int lID = Integer.parseInt(jTextField1.getText());
         int sID = Integer.parseInt(jTextField2.getText());
         LostVisitorParkingCards a = new LostVisitorParkingCards(lID, sID);
-        boolean r = LostVisitorParkingCardsDAO.getInstance().update(a);
-        if(!r){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Lỗi cập nhật"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }else{
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            fillTable();
-        }
+        String r = LostVisitorParkingCardsDAO.getInstance().update(a);
+        callLogMessage(r);
+        fillTable();
     }
     
     public void deleteLostVisitorParkingCard(){
         int t = Integer.parseInt(jTextField1.getText());
-        boolean r = LostVisitorParkingCardsDAO.getInstance().delete(t);
-        if(!r){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Không thể xóa"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }
-        else{
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            fillTable();
-        }
+        String r = LostVisitorParkingCardsDAO.getInstance().delete(t);
+        callLogMessage(r);
+        fillTable();
     }
     /** 
      * This method is called from within the constructor to initialize the form.
@@ -422,18 +405,7 @@ public class GUI_LostVisitorParkingCard extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
        if( jTextField2.getText().trim().isEmpty()){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Không để trống thông tin"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            callLogMessage("Không để trống thông tin");
         }else{
             this.confirm = new LogConfirm("Xác nhận cập nhật"){
                 @Override
@@ -458,18 +430,7 @@ public class GUI_LostVisitorParkingCard extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         if( jTextField2.getText().trim().isEmpty()){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Không để trống thông tin"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            callLogMessage("Không để trống thông tin");
         }else{
             this.confirm = new LogConfirm("Xác nhận xoá"){
                 @Override
@@ -581,26 +542,9 @@ public class GUI_LostVisitorParkingCard extends javax.swing.JPanel {
                         }
                     int x = Integer.parseInt(this.jTextField1.getText().trim());
                     LostVisitorParkingCards a = new LostVisitorParkingCards(x);
-                    boolean r = LostVisitorParkingCardsDAO.getInstance().insert(a);
-                    if(r){
-                        fillTable();
-                        viewMain.setEnabled(true);
-                        viewMain.requestFocus();
-                        this.setVisible(false);
-                    }else{
-                        this.setEnabled(false);
-                        message = new LogMessage("Thêm thất bại"){
-                            @Override
-                            public void action() {
-                                newLostVPC.setEnabled(true);
-                                newLostVPC.requestFocus();
-                                this.setVisible(false);
-                            }
-                        };
-                        message.setLocationRelativeTo(null);
-                        message.setVisible(true);
-                        message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);   
-                        }
+                    String r = LostVisitorParkingCardsDAO.getInstance().insert(a);
+                    callLogMessage(r);
+                    fillTable();
                     }
             @Override
                 public void reject() {

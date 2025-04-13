@@ -83,6 +83,21 @@ public class GUI_VisitorParkingCard extends javax.swing.JPanel {
         }
     }
     
+    public void callLogMessage(String messageText){
+        viewMain.setEnabled(false);
+            this.message = new LogMessage(messageText){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.setVisible(false);
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    }
+    
     private void applyFilter() {
     List<VisitorParkingCards> list;
 
@@ -301,21 +316,15 @@ public class GUI_VisitorParkingCard extends javax.swing.JPanel {
         if(x.matches("\\d+")){
             int a = Integer.parseInt(x);
             for(int i = 0; i < a; i++){
-                VisitorParkingCardsDAO.getInstance().insertVisitorParkingCard();
+                String r = VisitorParkingCardsDAO.getInstance().insertVisitorParkingCard();
+                if( r != "Thêm thành công"){
+                    callLogMessage(r);
+                    return;
+                }
             }
             applyFilter();
         }else{
-            message = new LogMessage("Số lượng không hợp lệ"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ
+            callLogMessage("Số lượng không hợp lệ");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -337,33 +346,11 @@ public class GUI_VisitorParkingCard extends javax.swing.JPanel {
         String x = jTextField2.getText().trim();
         if(x.matches("\\d+")){
             int a = Integer.parseInt(x);
-            boolean r = VisitorParkingCardsDAO.getInstance().update(a);
+            String r = VisitorParkingCardsDAO.getInstance().update(a);
             applyFilter();
-            if (r == false){
-                message = new LogMessage("Cập nhật thất bại"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ
-            }
+            callLogMessage(r);
         }else{
-            message = new LogMessage("lỗi nhập thông tin"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ
+            callLogMessage("lỗi nhập thông tin");
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -386,33 +373,11 @@ public class GUI_VisitorParkingCard extends javax.swing.JPanel {
                String x = jTextField2.getText().trim();
         if(x.matches("\\d+")){
             int a = Integer.parseInt(x);
-            boolean r = VisitorParkingCardsDAO.getInstance().delete(a);
+            String r = VisitorParkingCardsDAO.getInstance().delete(a);
             applyFilter();
-            if (r == false){
-                message = new LogMessage("Xóa thất bại"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ
-            }
+            callLogMessage(r);
         }else{
-            message = new LogMessage("lỗi nhập thông tin"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ
+            callLogMessage("lỗi nhập thông tin");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 

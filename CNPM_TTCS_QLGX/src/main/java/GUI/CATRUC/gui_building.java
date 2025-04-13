@@ -30,7 +30,8 @@ public class gui_building extends javax.swing.JPanel {
     private DataGlobal dataGlobal = new DataGlobal();
     private DefaultTableModel tableModel;
     private ViewMain viewMain;
-    
+    private LogConfirm confirm;
+    private LogMessage message;
     public gui_building(ViewMain viewMain) {
         tableModel = new DefaultTableModel(){
             @Override
@@ -65,78 +66,40 @@ public class gui_building extends javax.swing.JPanel {
         
     }
     
-    public void deleteBuilding(){
-        int t = Integer.parseInt(jTextField2.getText());
-        boolean r = BuildingsDAO.getInstance().delete(t);
-        if(r == false){
-            viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Không thể xóa"){
+    public void callLogMessage(String messageText){
+        viewMain.setEnabled(false);
+            this.message = new LogMessage(messageText){
                 @Override
                 public void action() {
                     viewMain.setEnabled(true);
                     viewMain.requestFocus();
-                    this.dispose();
+                    this.setVisible(false);
                 }
             };
             message.setLocationRelativeTo(null);
             message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ
-        }
-        else{
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            dataGlobal.updateArrBuildings();
-            fillTable(dataGlobal.getArrayBuildings());
-        }
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    }
+    
+    public void deleteBuilding(){
+        int t = Integer.parseInt(jTextField2.getText());
+        String r = BuildingsDAO.getInstance().delete(t);
+        callLogMessage(r);
+        fillTable(dataGlobal.getArrayBuildings());
     }
     
     public void updateBuilding(){
         Buildings a = new Buildings(Integer.parseInt(jTextField2.getText()),jTextField3.getText(), jTextArea1.getText());
-        boolean r = BuildingsDAO.getInstance().update(a);
-        if(!r){
-            viewMain.setEnabled(false);
-        LogMessage message = new LogMessage("Lỗi cập nhật"){
-            @Override
-            public void action() {
-                viewMain.setEnabled(true);
-                viewMain.requestFocus();
-                this.dispose();
-            }
-        };
-        message.setLocationRelativeTo(null);
-        message.setVisible(true);
-        message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ
-        }
-        else{
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            dataGlobal.updateArrBuildings();
-            fillTable(dataGlobal.getArrayBuildings());
-        }
+        String r = BuildingsDAO.getInstance().update(a);
+        callLogMessage(r);
+        fillTable(dataGlobal.getArrayBuildings());
     }
     
     public void insertBuilding(){
         Buildings b = new Buildings(jTextField3.getText(), jTextArea1.getText());
-        boolean r = BuildingsDAO.getInstance().insert(b);
-        if(!r){
-            viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Thêm thất bại"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ
-        }else{
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            dataGlobal.updateArrBuildings();
-            fillTable(dataGlobal.getArrayBuildings());
-        }
+        String r = BuildingsDAO.getInstance().insert(b);
+        callLogMessage(r);
+        fillTable(dataGlobal.getArrayBuildings());
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -373,17 +336,17 @@ public class gui_building extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-         LogConfirm confirm = new LogConfirm("Xác nhận xóa"){
+         this.confirm = new LogConfirm("Xác nhận xóa"){
             @Override
             public void action() {
                 deleteBuilding();
-                this.dispose();
+                this.setVisible(false);
                 }
             @Override
             public void reject() {
                 viewMain.setEnabled(true);
                 viewMain.requestFocus();
-                this.dispose();
+                this.setVisible(false);
             }
         };
         viewMain.setEnabled(false);
@@ -395,17 +358,17 @@ public class gui_building extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if(!jTextField3.getText().isEmpty()){
-            LogConfirm confirm = new LogConfirm("Xác nhận cập nhật"){
+            confirm = new LogConfirm("Xác nhận cập nhật"){
                 @Override
                 public void action() {
                     updateBuilding();
-                    this.dispose();
+                    this.setVisible(false);
                 }
                 @Override
                 public void reject() {
                     viewMain.setEnabled(true);
                     viewMain.requestFocus();
-                    this.dispose();
+                    this.setVisible(false);
                 }
 
             };
@@ -415,35 +378,23 @@ public class gui_building extends javax.swing.JPanel {
             confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             confirm.setLocationRelativeTo(null);
         }else{
-           viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Không được để trống tên"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ 
+            callLogMessage("Không được để trống tên toà nhà");
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if(!jTextField3.getText().isEmpty()){
-            LogConfirm confirm;
-            confirm = new LogConfirm("Xác nhận thêm"){
+            this.confirm = new LogConfirm("Xác nhận thêm"){
                 @Override
                 public void action() {
                     insertBuilding();
-                    this.dispose();
+                    this.setVisible(false);
                 }
                 @Override
                 public void reject() {
                     viewMain.setEnabled(true);
                     viewMain.requestFocus();
-                    this.dispose();
+                    this.setVisible(false);
                 }
 
             };
@@ -453,18 +404,7 @@ public class gui_building extends javax.swing.JPanel {
             confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             confirm.setLocationRelativeTo(null);
         }else{
-           viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Không được để trống tên tòa nhà"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);// chặn đóng cửa sổ 
+            callLogMessage("Không được để trống tên tòa nhà");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
