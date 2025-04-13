@@ -965,18 +965,17 @@ public class gui_shift_work extends javax.swing.JPanel {
         this.logSelection = new LogSelection(){
             @Override
             public void initContent() {
-                this.label_logname.setText("Danh sách nhân viên");
                 this.tableModel = new DefaultTableModel() {
                     @Override
                     public boolean isCellEditable(int row, int column) {
                         return false;
-                    };
+                    }
                 };
                 // khoi tao cac thanh phan bang o day
                 String[] header = new String[] {"ID nhân viên", "Tên nhân viên", "Số CCCD", "Số điện thoại"};
-                this.tableModel.setColumnIdentifiers(header);
-                this.table.setModel(tableModel);
-                this.table.addMouseListener(new MouseAdapter()
+                logSelection.tableModel.setColumnIdentifiers(header);
+                logSelection.table.setModel(logSelection.tableModel);
+                logSelection.table.addMouseListener(new MouseAdapter()
                 {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -988,23 +987,15 @@ public class gui_shift_work extends javax.swing.JPanel {
                         viewMain.requestFocus();
                     }
                 });
-                
-                ArrayList<Staff> arrStaff = StaffDAO.getInstance().getList();
-                for (Staff s : arrStaff) {
-                    this.tableModel.addRow(new String[] {String.valueOf(s.getStaffId()), s.getFullName(), s.getSsn(), s.getPhoneNumber()});
-                }
+                loadStaffList();
                 this.tableModel.fireTableDataChanged();
-                this.btn_loc.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        System.out.println("CLICK");
-                    }
+                this.btn_sapxep.setVisible(false);
+                this.btn_boloc.addActionListener((ActionEvent e) -> {
+                    filterStaff();
                 });
-                this.btn_boloc.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        System.out.println("CLICK");
-                    }
+                
+                this.btn_sapxep.addActionListener((ActionEvent e) -> {
+                    loadStaffList();
                 });
             }
             
@@ -1014,11 +1005,48 @@ public class gui_shift_work extends javax.swing.JPanel {
                 viewMain.setEnabled(true);
                 viewMain.requestFocus();
             }
-        };
+            private void loadStaffList() {
+                tableModel.setRowCount(0);
+                ArrayList<Staff> arrStaff = StaffDAO.getInstance().getList();
+                if (arrStaff != null && !arrStaff.isEmpty()) {
+                    for (Staff s : arrStaff) {
+                        this.tableModel.addRow(new String[]{
+                            String.valueOf(s.getStaffId()), s.getFullName(), s.getSsn(), s.getPhoneNumber()
+                        });
+                    }
+                }
+                else{tableModel.setRowCount(0);}
+            }
+    
+            private void filterStaff(){
+                String sql = "{CALL FillStaffInShiftWork(?)}";
+                try (
+                    Connection conn = OpenConnection.getConnection();
+                    CallableStatement stmt = conn.prepareCall(sql);
+                ) {
+                    stmt.setString(1, logSelection.txt_property.getText().trim());
+                    try(ResultSet rs = stmt.executeQuery()){
+                        tableModel.setRowCount(0);
+                        while (rs.next()) {
+                            logSelection.tableModel.addRow(new String[]{
+                                rs.getString("StaffId"), rs.getString("FullName"),
+                                rs.getString("SSN"), rs.getString("PhoneNumber")
+                                });        
+                        }
+                    }
+                    logSelection.tableModel.fireTableDataChanged();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        };     
         this.logSelection.initContent();
+        this.logSelection.setLocationRelativeTo(null);
         this.logSelection.setVisible(true);
+        
     }//GEN-LAST:event_jButton7ActionPerformed
     
+   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
