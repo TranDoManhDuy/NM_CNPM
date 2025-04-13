@@ -255,6 +255,11 @@ public class gui_payment extends javax.swing.JPanel {
 
         btn_capnhat.setText("Cập nhật");
         btn_capnhat.setEnabled(false);
+        btn_capnhat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_capnhatActionPerformed(evt);
+            }
+        });
 
         btn_xoa.setText("Xóa");
         btn_xoa.setEnabled(false);
@@ -756,16 +761,7 @@ public class gui_payment extends javax.swing.JPanel {
     private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
         // TODO add your handling code here:
         String rs = PaymentDAO.getInstance().delete(Integer.parseInt(txt_idthanhtoan.getText()));
-        this.viewmain.setEnabled(false);
-        this.logMessage = new LogMessage(rs) {
-            @Override
-            public void action() {
-                this.setVisible(false);
-                viewmain.setEnabled(true);
-                viewmain.requestFocus();
-            }
-        };
-        this.logMessage.setVisible(true);
+        logError(rs);
         this.dataglobal.updateArrPaymentRender();
         fillTable();
     }//GEN-LAST:event_btn_xoaActionPerformed
@@ -795,16 +791,7 @@ public class gui_payment extends javax.swing.JPanel {
         int id_serviceType = Integer.parseInt(txt_idloaidichvu.getText());
         Payment payment = new Payment(1, id_registration , LocalDate.now(), false, id_serviceType);
         String rs = PaymentDAO.getInstance().insert(payment);
-        this.viewmain.setEnabled(false);
-        this.logMessage = new LogMessage(rs) {
-            @Override
-            public void action() {
-                this.setVisible(false);
-                viewmain.setEnabled(true);
-                viewmain.requestFocus();
-            }
-        };
-        this.logMessage.setVisible(true);
+        logError(rs);
         this.dataglobal.updateArrPaymentRender();
         fillTable();
     }//GEN-LAST:event_btn_themActionPerformed
@@ -1009,6 +996,24 @@ public class gui_payment extends javax.swing.JPanel {
         this.logSelection.initContent();
         this.logSelection.setVisible(true);
     }//GEN-LAST:event_btn_chondichvuActionPerformed
+
+    private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
+        // TODO add your handling code here:
+        int id_thanhtoan = Integer.parseInt(txt_idthanhtoan.getText());
+        int id_dangki = Integer.parseInt(txt_iddangki.getText());
+        LocalDate extension_time = LocalDate.parse(txt_ngaylendon.getText());
+        String trangthai = (String) combo_trangthai.getSelectedItem();
+        boolean state = false;
+        if (trangthai.equals("Đã hoàn tất")) {
+            state = true;
+        }
+        int serviceTypeId = Integer.parseInt(txt_idloaidichvu.getText());
+        Payment payment = new Payment(id_thanhtoan, id_dangki, extension_time, state, serviceTypeId);
+        String rs = PaymentDAO.getInstance().update(payment);
+        logError(rs);
+        dataglobal.updateArrPaymentRender();
+        fillTable();
+    }//GEN-LAST:event_btn_capnhatActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
