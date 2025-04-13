@@ -43,8 +43,8 @@ public class ShiftTypesDAO {
         }
         return list;
     }
-
-    public boolean insert(ShiftTypes shiftType) {
+    
+    public String insert(ShiftTypes shiftType) {
         String sql = "{CALL InsertShiftTypes(?, ?, ?)}";
         
         try (
@@ -55,14 +55,19 @@ public class ShiftTypesDAO {
             ptmt.setTime(2, Time.valueOf(shiftType.getStart_time()));
             ptmt.setTime(3, Time.valueOf(shiftType.getEnd_time()));
 
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Thêm thành công";
     }
 
-    public boolean update(ShiftTypes shiftType) {
+    public String update(ShiftTypes shiftType) {
         String sql = "{CALL UpdateShiftTypes(?, ?, ?, ?)}";
         
         try (
@@ -73,14 +78,19 @@ public class ShiftTypesDAO {
             ptmt.setString(2, shiftType.getShift_type_name());
             ptmt.setTime(3, Time.valueOf(shiftType.getStart_time()));
             ptmt.setTime(4, Time.valueOf(shiftType.getEnd_time()));
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Cập nhật thành công";
     }
 
-    public boolean delete(int shift_type_id) {
+    public String delete(int shift_type_id) {
         String sql = "{CALL DeleteShiftTypes(?)}";
         
         try (
@@ -88,11 +98,16 @@ public class ShiftTypesDAO {
             CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, shift_type_id);
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Thêm thành công";
     }
 
     public ShiftTypes findByID(int shift_type_id) {

@@ -38,7 +38,7 @@ public class BuildingsDAO {
         return listBuildings;
     }
     
-    public boolean insert(Buildings bd){
+    public String insert(Buildings bd){
         String sql = "{CALL InsertBulding(?, ?)}";
         try(
             Connection conn = OpenConnection.getConnection();
@@ -47,14 +47,19 @@ public class BuildingsDAO {
             ptmt.setString(1, bd.getBuilding_name());
             ptmt.setString(2, bd.getAddress());
             
-            return ptmt.executeUpdate() > 0;
-        }catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        }catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-    return false;
+        return "Thêm thành công";
     }
     
-    public boolean update(Buildings bd){
+    public String update(Buildings bd){
         String sql = "{CALL UpdateBuilding(?, ?, ?)}";
         try(
             Connection conn = OpenConnection.getConnection();
@@ -64,25 +69,35 @@ public class BuildingsDAO {
             ptmt.setString(2, bd.getBuilding_name());
             ptmt.setString(3, bd.getAddress());
             
-            return ptmt.executeUpdate() > 0;
-        }catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        }catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-    return false;
+        return "Cập nhật thành công";
     }
     
-    public boolean delete(int building_id){
+    public String delete(int building_id){
         String sql = "{CALL DeleteBuilding(?)}";
         try (
             Connection conn = OpenConnection.getConnection();
             CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, building_id);
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Xóa thành công";
     }
     public Buildings findByID( int building_id){
         String sql = "{CALL FindBuildingByID(?)}";

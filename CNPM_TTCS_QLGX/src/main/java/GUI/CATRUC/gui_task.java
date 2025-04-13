@@ -31,6 +31,8 @@ public class gui_task extends javax.swing.JPanel {
 //    private List<Tasks> listTasks = new ArrayList<>();
     private DataGlobal dataGlobal = new DataGlobal();
     private ViewMain viewMain;
+    private LogConfirm confirm;
+    private LogMessage message;
     public gui_task(ViewMain viewMain) {
         this.viewMain = viewMain;
         tableModel = new DefaultTableModel(){
@@ -64,75 +66,40 @@ public class gui_task extends javax.swing.JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void insertTask(){
-        Tasks t = new Tasks(jTextField2.getText(), jTextArea1.getText());
-        boolean r = TasksDAO.getInstance().insert(t);
-        if(r){
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            dataGlobal.updateArrtasks();
-            fillTable(dataGlobal.getArrayTasks());
-        }
-        else{
-            viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Không thể thêm"){
+    public void callLogMessage(String messageText){
+        viewMain.setEnabled(false);
+            this.message = new LogMessage(messageText){
                 @Override
                 public void action() {
                     viewMain.setEnabled(true);
                     viewMain.requestFocus();
-                    this.dispose();
+                    this.setVisible(false);
                 }
             };
             message.setLocationRelativeTo(null);
             message.setVisible(true);
             message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }
+    }
+    
+    public void insertTask(){
+        Tasks t = new Tasks(jTextField2.getText(), jTextArea1.getText());
+        String r = TasksDAO.getInstance().insert(t);
+        callLogMessage(r);
+        fillTable(dataGlobal.getArrayTasks());
     }
     
     public void updateTask(){
         Tasks a = new Tasks(Integer.parseInt(jTextField1.getText()),jTextField2.getText(), jTextArea1.getText());
-        boolean r = TasksDAO.getInstance().update(a);
-        if(r){
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            dataGlobal.updateArrtasks();
-            fillTable(dataGlobal.getArrayTasks());
-        }else{
-            LogMessage message = new LogMessage("Không thể cập nhật"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }
+        String r = TasksDAO.getInstance().update(a);
+        callLogMessage(r);
+        fillTable(dataGlobal.getArrayTasks());
     }
     
     public void deleteTask(){
         int t = Integer.parseInt(jTextField1.getText());
-        boolean r = TasksDAO.getInstance().delete(t);
-        if(r){
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            dataGlobal.updateArrtasks();
-            fillTable(dataGlobal.getArrayTasks());
-        }else{
-            LogMessage message = new LogMessage("Không thể xoá"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }
+        String r = TasksDAO.getInstance().delete(t);
+        callLogMessage(r);
+        fillTable(dataGlobal.getArrayTasks());
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -381,20 +348,10 @@ public class gui_task extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if(jTextField2.getText().isEmpty()){
-           LogMessage message = new LogMessage("Không được để trống tên"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            callLogMessage("Không được để trống tên");
         }
         else{
-            LogConfirm confirm = new LogConfirm("Xác nhận cập nhật"){
+            confirm = new LogConfirm("Xác nhận cập nhật"){
                 @Override
                 public void action() {
                     updateTask();
@@ -417,7 +374,7 @@ public class gui_task extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        LogConfirm confirm = new LogConfirm("Xác nhận xóa"){
+        confirm = new LogConfirm("Xác nhận xóa"){
             @Override
             public void action() {
                 deleteTask();
@@ -439,20 +396,10 @@ public class gui_task extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if(jTextField2.getText().isEmpty()){
-            LogMessage message = new LogMessage("Không được để trống tên nhiệm vụ"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            callLogMessage("Không được để trống tên");
         }
         else{
-            LogConfirm confirm = new LogConfirm("Xác nhận thêm"){
+            confirm = new LogConfirm("Xác nhận thêm"){
                 @Override
                 public void action() {
                     insertTask();

@@ -39,7 +39,7 @@ public class LostVisitorParkingCardsDAO {
         return list;
     }
 
-    public boolean insert(LostVisitorParkingCards lostCard) {
+    public String insert(LostVisitorParkingCards lostCard) {
         String sql = "{CALL InsertLostVisitorParkingCard(?)}";
 
         try (
@@ -48,14 +48,19 @@ public class LostVisitorParkingCardsDAO {
         ) {
             ptmt.setInt(1, lostCard.getParking_session_id());
 
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Thêm thành công";
     }
 
-    public boolean update(LostVisitorParkingCards lostCard) {
+    public String update(LostVisitorParkingCards lostCard) {
         String sql = "{CALL UpdateLostVisitorParkingCard(?,?)}";
 
         try (
@@ -64,14 +69,19 @@ public class LostVisitorParkingCardsDAO {
         ) {
             ptmt.setInt(1, lostCard.getLost_visitor_parking_card_id());
             ptmt.setInt(2, lostCard.getParking_session_id());
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Cập nhật thành công";
     }
 
-    public boolean delete(int lost_visitor_parking_card_id) {
+    public String delete(int lost_visitor_parking_card_id) {
         String sql = "{CALL  DeleteLostVisitorParkingCard(?)}";
 
         try (
@@ -79,11 +89,16 @@ public class LostVisitorParkingCardsDAO {
             CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, lost_visitor_parking_card_id);
-            return ptmt.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            ptmt.executeUpdate();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Lỗi không biết";    
+                    }
         }
-        return false;
+        return "Xóa thành công";
     }
 
     public LostVisitorParkingCards findById(int lost_visitor_parking_card_id) {

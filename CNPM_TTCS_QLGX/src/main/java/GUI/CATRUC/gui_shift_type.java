@@ -25,9 +25,10 @@ public class gui_shift_type extends javax.swing.JPanel {
      * Creates new form gui_shift_type
      */
     private DefaultTableModel tableModel;
-//    private List<ShiftTypes> ListShiftTypes = new ArrayList<>();
     private DataGlobal dataGlobal = new DataGlobal();
     private ViewMain viewMain;
+    private LogConfirm confirm;
+    private LogMessage message;
     public gui_shift_type(ViewMain viewMain) {
         this.viewMain = viewMain;
         tableModel = new DefaultTableModel(){
@@ -53,12 +54,27 @@ public class gui_shift_type extends javax.swing.JPanel {
         jTable1.setRowHeight(25);
     }
     
-    public void fillTable(List<ShiftTypes> ListShiftTypes){
+    public void fillTable(List<ShiftTypes> listShiftTypes){
         tableModel.setRowCount(0);
-        for (ShiftTypes lct : ListShiftTypes) {
+        for (ShiftTypes lct : listShiftTypes) {
             tableModel.addRow(new String[] {String.valueOf(lct.getShift_type_id()),lct.getShift_type_name(),String.valueOf(lct.getStart_time()), String.valueOf(lct.getEnd_time())});
         }
         tableModel.fireTableDataChanged();
+    }
+    
+    public void callLogMessage(String messageText){
+        viewMain.setEnabled(false);
+            this.message = new LogMessage(messageText){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.setVisible(false);
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     }
     
     public void insertShiftType(){
@@ -68,27 +84,9 @@ public class gui_shift_type extends javax.swing.JPanel {
         a.setShift_type_name(jTextField2.getText());
         a.setStart_time(start);
         a.setEnd_time(end);
-        boolean r = ShiftTypesDAO.getInstance().insert(a);
-        if(r){
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            dataGlobal.updateArrShiftTypes();     
-            fillTable(dataGlobal.getArrayShiftTypes());
-        }
-        else{
-            viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Không thể thêm"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }
+        String r = ShiftTypesDAO.getInstance().insert(a);
+        callLogMessage(r);
+        fillTable(dataGlobal.getArrayShiftTypes());
     }
     
     public void updateShiftType(){
@@ -99,47 +97,15 @@ public class gui_shift_type extends javax.swing.JPanel {
         a.setShift_type_name(jTextField2.getText());
         a.setStart_time(start);
         a.setEnd_time(end);
-        boolean r = ShiftTypesDAO.getInstance().update(a);
-        if(r){
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            dataGlobal.updateArrShiftTypes();     
-            fillTable(dataGlobal.getArrayShiftTypes());
-        }else{
-            LogMessage message = new LogMessage("Không thể cập nhật"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }
+        String r = ShiftTypesDAO.getInstance().update(a);
+        callLogMessage(r);
+        fillTable(dataGlobal.getArrayShiftTypes());
     }
     
     public void deleteShiftType(){
-        boolean r = ShiftTypesDAO.getInstance().delete(Integer.parseInt(jTextField1.getText()));
-        if(r){
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
-            dataGlobal.updateArrShiftTypes();     
-            fillTable(dataGlobal.getArrayShiftTypes());
-        }else{
-            LogMessage message = new LogMessage("Không thể xoá"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }
+        String r = ShiftTypesDAO.getInstance().delete(Integer.parseInt(jTextField1.getText()));
+        callLogMessage(r);
+        fillTable(dataGlobal.getArrayShiftTypes());
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -340,7 +306,7 @@ public class gui_shift_type extends javax.swing.JPanel {
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(46, 46, 46)
+                .addGap(40, 40, 40)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
@@ -416,20 +382,10 @@ public class gui_shift_type extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if(jTextField2.getText() == null||jTextField2.getText().isEmpty()){
-            LogMessage message = new LogMessage("Không được để trống tên"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            callLogMessage("Không được để trống tên");
         }
         else{
-            LogConfirm confirm = new LogConfirm("Xác nhận thêm"){
+            confirm = new LogConfirm("Xác nhận thêm"){
                 @Override
                 public void action() {
                     insertShiftType();
@@ -500,7 +456,7 @@ public class gui_shift_type extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        LogConfirm confirm = new LogConfirm("Xác nhận xoá"){
+        confirm = new LogConfirm("Xác nhận xoá"){
                 @Override
                 public void action() {
                     deleteShiftType();
@@ -527,21 +483,10 @@ public class gui_shift_type extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if(jTextField2.getText() == null||jTextField2.getText().isEmpty()){
-            viewMain.setEnabled(false);
-            LogMessage message = new LogMessage("Không được để trống tên ca loại trực"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            callLogMessage("Không được để trống tên ca loại trực");
         }
         else{
-            LogConfirm confirm = new LogConfirm("Xác nhận cập nhật"){
+            confirm = new LogConfirm("Xác nhận cập nhật"){
                 @Override
                 public void action() {
                     updateShiftType();

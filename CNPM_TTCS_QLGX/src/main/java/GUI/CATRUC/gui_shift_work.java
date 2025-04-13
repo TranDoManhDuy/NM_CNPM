@@ -71,14 +71,14 @@ public class gui_shift_work extends javax.swing.JPanel {
         jButton3.setEnabled(false);
     }
     
-    private void initTable() {
+    public void initTable() {
         String[] header = new String[] {"ID ca trực", "Tên loại ca trực", "Tên tòa nhà", "Mã nhân viên" ,"Tên nhân viên", "Tên nhiệm vụ", "Ngày trực"};
         tableModel.setColumnIdentifiers(header);
         jTable1.setModel(tableModel);
         jTable1.setEnabled(false);
     }
     
-    private void fillTable(){
+    public void fillTable(){
         tableModel.setRowCount(0);
         String sql = "SELECT * FROM SHIFTWORKS";
         dataGlobal.updateArrShiftWorks();
@@ -101,84 +101,54 @@ public class gui_shift_work extends javax.swing.JPanel {
         }
     }
   
+    public void callLogMessage(String messageText){
+        viewMain.setEnabled(false);
+            this.message = new LogMessage(messageText){
+                @Override
+                public void action() {
+                    viewMain.setEnabled(true);
+                    viewMain.requestFocus();
+                    this.setVisible(false);
+                }
+            };
+            message.setLocationRelativeTo(null);
+            message.setVisible(true);
+            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    }
     
     public void insertShiftWork(){
-        LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1); 
-        int stID = Integer.parseInt(jTextField2.getText());
-        int bID = Integer.parseInt(jTextField3.getText());
-        int sID = Integer.parseInt(jTextField4.getText());
-        int tID = Integer.parseInt(jTextField5.getText());
-        ShiftWorks a = new ShiftWorks( stID, bID, sID, tID, shiftDate);
-        boolean r = ShiftWorksDAO.getInstance().insert(a);
-        if(!r){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Không thể thêm"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }else{
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
+        try{
+            LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1);
+            int stID = Integer.parseInt(jTextField2.getText());
+            int bID = Integer.parseInt(jTextField3.getText());
+            int sID = Integer.parseInt(jTextField4.getText());
+            int tID = Integer.parseInt(jTextField5.getText());
+            ShiftWorks a = new ShiftWorks( stID, bID, sID, tID, shiftDate);
+            String r = ShiftWorksDAO.getInstance().insert(a);
+            callLogMessage(r);
             fillTable();
+        }catch(Exception e){
+            callLogMessage("Ngày không hợp lệ");
         }
+        
     }
     public void updateShiftWork(){
-        LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1); 
-        int shID = Integer.parseInt(jTextField1.getText());
-        int stID = Integer.parseInt(jTextField2.getText());
-        int bID = Integer.parseInt(jTextField3.getText());
-        int sID = Integer.parseInt(jTextField4.getText());
-        int tID = Integer.parseInt(jTextField5.getText());
-        ShiftWorks a = new ShiftWorks(shID, stID, bID, sID, tID, shiftDate);
-        boolean r = ShiftWorksDAO.getInstance().update(a);
-        if(!r){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Lỗi cập nhật"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }else{
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
+            LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1);
+            int shID = Integer.parseInt(jTextField1.getText());
+            int stID = Integer.parseInt(jTextField2.getText());
+            int bID = Integer.parseInt(jTextField3.getText());
+            int sID = Integer.parseInt(jTextField4.getText());
+            int tID = Integer.parseInt(jTextField5.getText());
+            ShiftWorks a = new ShiftWorks(shID, stID, bID, sID, tID, shiftDate);
+            String r = ShiftWorksDAO.getInstance().update(a);
+            callLogMessage(r);
             fillTable();
-        }
     }
     public void deleteShiftWork(){
         int t = Integer.parseInt(jTextField1.getText());
-        boolean r = ShiftWorksDAO.getInstance().delete(t);
-        if(!r){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Không thể xóa"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        }
-        else{
-            viewMain.setEnabled(true);
-            viewMain.requestFocus();
+        String r = ShiftWorksDAO.getInstance().delete(t);
+        callLogMessage(r);
             fillTable();
-        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -715,24 +685,17 @@ public class gui_shift_work extends javax.swing.JPanel {
         if(jComboBox6.getSelectedIndex() == 0 || jComboBox5.getSelectedIndex() == 0 || jComboBox4.getSelectedIndex() == 0){
             shiftDate = null;
         }else{
-            shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex());
+            try{
+                shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex());
+            }catch(Exception e){
+                shiftDate = null;
+            }
         }
         if( shiftDate == null || jTextField2.getText().trim().isEmpty()
                             || jTextField3.getText().trim().isEmpty()
                             || jTextField4.getText().trim().isEmpty()
                             || jTextField5.getText().trim().isEmpty()){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Không để trống thông tin"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            callLogMessage("Thông tin không hợp lệ");
         }else{
             this.confirm = new LogConfirm("Xác nhận cập nhật"){
                 @Override
@@ -799,24 +762,17 @@ public class gui_shift_work extends javax.swing.JPanel {
         if(jComboBox6.getSelectedIndex() == 0 || jComboBox5.getSelectedIndex() == 0 || jComboBox4.getSelectedIndex() == 0){
             shiftDate = null;
         }else{
-            shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex());
+            try{
+            shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex());}
+            catch(Exception e){
+                shiftDate = null;
+            }
         }
         if(shiftDate == null || jTextField2.getText() == null||jTextField2.getText().isEmpty()
                              || jTextField3.getText() == null||jTextField3.getText().isEmpty()
                              || jTextField4.getText() == null||jTextField4.getText().isEmpty()
                              || jTextField5.getText() == null||jTextField5.getText().isEmpty()){
-            viewMain.setEnabled(false);
-            this.message = new LogMessage("Không để trống thông tin"){
-                @Override
-                public void action() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
-            };
-            message.setLocationRelativeTo(null);
-            message.setVisible(true);
-            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            callLogMessage("Thông tin không hợp lệ");
         }else{
             this.confirm = new LogConfirm("Xác nhận thêm"){
                 @Override
@@ -1009,18 +965,17 @@ public class gui_shift_work extends javax.swing.JPanel {
         this.logSelection = new LogSelection(){
             @Override
             public void initContent() {
-                this.label_logname.setText("Danh sách nhân viên");
                 this.tableModel = new DefaultTableModel() {
                     @Override
                     public boolean isCellEditable(int row, int column) {
                         return false;
-                    };
+                    }
                 };
                 // khoi tao cac thanh phan bang o day
                 String[] header = new String[] {"ID nhân viên", "Tên nhân viên", "Số CCCD", "Số điện thoại"};
-                this.tableModel.setColumnIdentifiers(header);
-                this.table.setModel(tableModel);
-                this.table.addMouseListener(new MouseAdapter()
+                logSelection.tableModel.setColumnIdentifiers(header);
+                logSelection.table.setModel(logSelection.tableModel);
+                logSelection.table.addMouseListener(new MouseAdapter()
                 {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -1032,30 +987,66 @@ public class gui_shift_work extends javax.swing.JPanel {
                         viewMain.requestFocus();
                     }
                 });
-                
-                ArrayList<Staff> arrStaff = StaffDAO.getInstance().getList();
-                for (Staff s : arrStaff) {
-                    this.tableModel.addRow(new String[] {String.valueOf(s.getStaffId()), s.getFullName(), s.getSsn(), s.getPhoneNumber()});
-                }
+                loadStaffList();
                 this.tableModel.fireTableDataChanged();
-                this.btn_loc.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        System.out.println("CLICK");
-                    }
+                this.btn_sapxep.setVisible(false);
+                this.btn_boloc.addActionListener((ActionEvent e) -> {
+                    filterStaff();
+                });
+                
+                this.btn_sapxep.addActionListener((ActionEvent e) -> {
+                    loadStaffList();
                 });
             }
+            
             @Override
             public void back() {
                 this.setVisible(false);
                 viewMain.setEnabled(true);
                 viewMain.requestFocus();
             }
-        };
+            private void loadStaffList() {
+                tableModel.setRowCount(0);
+                ArrayList<Staff> arrStaff = StaffDAO.getInstance().getList();
+                if (arrStaff != null && !arrStaff.isEmpty()) {
+                    for (Staff s : arrStaff) {
+                        this.tableModel.addRow(new String[]{
+                            String.valueOf(s.getStaffId()), s.getFullName(), s.getSsn(), s.getPhoneNumber()
+                        });
+                    }
+                }
+                else{tableModel.setRowCount(0);}
+            }
+    
+            private void filterStaff(){
+                String sql = "{CALL FillStaffInShiftWork(?)}";
+                try (
+                    Connection conn = OpenConnection.getConnection();
+                    CallableStatement stmt = conn.prepareCall(sql);
+                ) {
+                    stmt.setString(1, logSelection.txt_property.getText().trim());
+                    try(ResultSet rs = stmt.executeQuery()){
+                        tableModel.setRowCount(0);
+                        while (rs.next()) {
+                            logSelection.tableModel.addRow(new String[]{
+                                rs.getString("StaffId"), rs.getString("FullName"),
+                                rs.getString("SSN"), rs.getString("PhoneNumber")
+                                });        
+                        }
+                    }
+                    logSelection.tableModel.fireTableDataChanged();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        };     
         this.logSelection.initContent();
+        this.logSelection.setLocationRelativeTo(null);
         this.logSelection.setVisible(true);
+        
     }//GEN-LAST:event_jButton7ActionPerformed
     
+   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

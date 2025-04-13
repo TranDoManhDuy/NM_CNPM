@@ -3,10 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Global;
-
+import Model.VehicleType;
+import Model.VisitorParkingCards;
 import DAO.BuildingsDAO;
 import DAO.CustomerDAO;
 import DAO.PaymentDAO;
+import DAO.LostVisitorParkingCardsDAO;
 import DAO.RegisatrationDAO;
 import DAO.ServiceFeeDAO;
 import DAO.SessionFeeDAO;
@@ -22,6 +24,10 @@ import DAO.VehicleTypeDAO;
 import Model.Buildings;
 import Model.Customer;
 import Model.Payment;
+import DAO.VisitorParkingCardsDAO;
+import Model.Buildings;
+import Model.Customer;
+import Model.LostVisitorParkingCards;
 import Model.Regisatration;
 import Model.ShiftTypes;
 import Model.ShiftWorks;
@@ -29,6 +35,7 @@ import Model.Tasks;
 import Model.TimeFrameToRender;
 import Model.Vehicle;
 import Model.VehicleType;
+import Model.VisitorParkingCards;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -109,7 +116,8 @@ public class DataGlobal {
     private List<ShiftWorks> arrShiftWorks = new ArrayList<>();
     private List<Tasks> arrTask = new ArrayList<>();
     private List<Buildings> arrBuildings = new ArrayList<>();
-    
+    private List<VisitorParkingCards> arrVisitorParkingCards = new ArrayList<>();
+    private List<LostVisitorParkingCards> arrLostVisitorParkingCards = new ArrayList<>();
     
     public ArrayList<Regisatration> getArrayRegistration() {
         return arrRegistration;
@@ -211,6 +219,28 @@ public class DataGlobal {
     public void updateArrtasks(){
         try {
             arrTask = TasksDAO.getInstance().getAllTasks();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("LOI KET NOI");
+        }
+    }
+    public List<VisitorParkingCards> getArrayVisitorParkingCards(){
+        return arrVisitorParkingCards;
+    }
+    public void updateArrayVisitorParkingCardses(){
+        try {
+            arrVisitorParkingCards = VisitorParkingCardsDAO.getInstance().getAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("LOI KET NOI");
+        }
+    }
+    public List<LostVisitorParkingCards> getArrayLostVisitorParkingCardses(){
+        return arrLostVisitorParkingCards;
+    }
+    public void updateArrayLostVisitorParkingCardses(){
+        try {
+            arrLostVisitorParkingCards = LostVisitorParkingCardsDAO.getInstance().getAll();
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("LOI KET NOI");
