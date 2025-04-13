@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -821,11 +822,30 @@ public class gui_staff extends javax.swing.JPanel {
         LocalDate dob;
         try {
             dob = LocalDate.parse(dobText);
+
+            LocalDate now = LocalDate.now();
+
+            // Kiểm tra nếu ngày sinh trong tương lai
+            if (dob.isAfter(now)) {
+                log_message("Ngày sinh không được lớn hơn ngày hiện tại.");
+                return;
+            }
+
+            // Kiểm tra đủ 18 tuổi
+            Period age = Period.between(dob, now);
+            if (age.getYears() < 18 || 
+               (age.getYears() == 18 && now.getDayOfYear() < dob.plusYears(18).getDayOfYear())) {
+                log_message("Phải đủ 18 tuổi trở lên.");
+                return;
+            }
+
         } catch (Exception e) {
             log_message("Ngày sinh không đúng định dạng yyyy-MM-dd.");
             return;
         }
 
+        
+        
         int accountNumber;
         try {
             accountNumber = Integer.parseInt(accNumText);

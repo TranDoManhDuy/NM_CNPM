@@ -1,15 +1,18 @@
 package GUI.NHANSU;
 
 import DAO.ManagerDAO;
+import DAO.SupervisorDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Model.Manager;
+import Model.Supervisor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
@@ -102,9 +105,7 @@ public class gui_manager extends javax.swing.JPanel {
         txtQuanly = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         txtTenquanly = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnLammoi = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         txtNhanvien = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -182,24 +183,10 @@ public class gui_manager extends javax.swing.JPanel {
 
         jLabel2.setText("Họ tên quản lý");
 
-        jButton1.setText("Làm mới");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnLammoi.setText("Làm mới");
+        btnLammoi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("Hủy");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jButton3.setText("Lưu");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnLammoiActionPerformed(evt);
             }
         });
 
@@ -218,12 +205,8 @@ public class gui_manager extends javax.swing.JPanel {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtQuanly, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(0, 97, Short.MAX_VALUE)
-                                .addComponent(jButton3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton1)))
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnLammoi)))
                         .addGap(36, 36, 36))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -256,10 +239,7 @@ public class gui_manager extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtTennhanvien, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btnLammoi, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -269,6 +249,11 @@ public class gui_manager extends javax.swing.JPanel {
         jLabel13.setText("CHỨC NĂNG");
 
         btnXoa.setText("XÓA");
+        btnXoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXoaActionPerformed(evt);
+            }
+        });
 
         btnThem.setText("THÊM");
         btnThem.addActionListener(new java.awt.event.ActionListener() {
@@ -332,8 +317,8 @@ public class gui_manager extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
+                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnTim)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnLammoiTK, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -343,12 +328,14 @@ public class gui_manager extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnTim, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnLammoiTK, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnTim, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnLammoiTK, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jTextField4))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -431,23 +418,67 @@ public class gui_manager extends javax.swing.JPanel {
 
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
         // TODO add your handling code here:
+         try {
+        int managerId = Integer.parseInt(txtQuanly.getText().trim());
+        int staffId = Integer.parseInt(txtNhanvien.getText().trim());
+
+        if (managerId == staffId) {
+            JOptionPane.showMessageDialog(this, "Không thể tự giám sát chính mình.");
+            return;
+        }
+
+        Supervisor s = new Supervisor(managerId, staffId);
+        SupervisorDAO dao = new SupervisorDAO();
+
+        boolean success = dao.insert(s);
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Thêm giám sát viên thành công.");
+            loadTable();  // cập nhật lại bảng sau khi thêm
+        }
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng ID (số nguyên).", "Lỗi nhập", JOptionPane.ERROR_MESSAGE);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Lỗi hệ thống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_btnThemActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnLammoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLammoiActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+        ResetThongTin();
+    }//GEN-LAST:event_btnLammoiActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+        try {
+        int managerId = Integer.parseInt(txtQuanly.getText().trim());
+        int staffId = Integer.parseInt(txtNhanvien.getText().trim());
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Bạn có chắc muốn xóa mối quan hệ giám sát này?",
+            "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            SupervisorDAO dao = new SupervisorDAO();
+            if (dao.delete(managerId, staffId)) {
+                JOptionPane.showMessageDialog(this, "Xóa thành công.");
+                loadTable();
+                
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy hoặc không thể xóa.");
+            }
+        }
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "ID phải là số nguyên.", "Lỗi định dạng", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnXoaActionPerformed
 
     public void loadTable() {
+        
+     Table_Supervisor.setModel(tableModel);
     // Câu lệnh SQL gọi stored procedure hoặc truy vấn với JOIN để lấy thông tin nhân viên và quản lý
-    String sql = "EXEC Manager_render";  // Hoặc câu lệnh SQL thay thế tùy theo yêu cầu
+    String sql = "EXEC Supervisor_render";  // Hoặc câu lệnh SQL thay thế tùy theo yêu cầu
 
     try (
         // Mở kết nối cơ sở dữ liệu
@@ -489,6 +520,13 @@ public class gui_manager extends javax.swing.JPanel {
         e.printStackTrace();
     }
 }
+    
+    private void ResetThongTin(){
+        txtQuanly.setText("");
+        txtTenquanly.setText("");
+        txtNhanvien.setText("");
+        txtTennhanvien.setText("");
+    }
 
     
 
@@ -497,13 +535,11 @@ public class gui_manager extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel_DS;
     private javax.swing.JTable Table_Supervisor;
+    private javax.swing.JButton btnLammoi;
     private javax.swing.JButton btnLammoiTK;
     private javax.swing.JButton btnThem;
     private javax.swing.JButton btnTim;
     private javax.swing.JButton btnXoa;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;

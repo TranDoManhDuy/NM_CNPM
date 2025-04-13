@@ -65,6 +65,7 @@ import DAO.TimeFrameDAO;
 import DAO.VehicleDAO;
 import DAO.VehicleTypeDAO;
 import DAO.VisitorParkingCardsDAO;
+import GUI.NHANSU.gui_listmanager;
 
 import Model.SessionFee;
 public class ViewMain extends javax.swing.JFrame {
@@ -167,7 +168,7 @@ public class ViewMain extends javax.swing.JFrame {
         gui_role role_gui = new gui_role(this);
         gui_permission permission_gui = new gui_permission(this);
         gui_manager manager_gui = new gui_manager(this);
-        gui_position position_gui = new gui_position(this);
+        gui_listmanager listmanager_gui = new gui_listmanager(this);
         
         // add component
         addComponent(panel_nhanvien, staff_gui);
@@ -175,7 +176,7 @@ public class ViewMain extends javax.swing.JFrame {
         addComponent(panel_vaitro, role_gui);
         addComponent(panel_quyen, permission_gui);
         addComponent(panel_quanli, manager_gui);
-        addComponent(panel_vitri, position_gui);
+        addComponent(panel_vitri, listmanager_gui);
        
     }
     /**
