@@ -59,12 +59,14 @@ import javax.swing.JPanel;
  * @author manhh
  */
 import DAO.BuildingsDAO;
+import DAO.RegisatrationDAO;
 import DAO.ResidentCardDAO;
 import DAO.SessionFeeDAO;
 import DAO.TimeFrameDAO;
 import DAO.VehicleDAO;
 import DAO.VehicleTypeDAO;
 import DAO.VisitorParkingCardsDAO;
+import Model.Regisatration;
 import Model.SessionFee;
 public class ViewMain extends javax.swing.JFrame {
     LogConfirm logComfirm = new LogConfirm("nothing");
@@ -79,6 +81,7 @@ public class ViewMain extends javax.swing.JFrame {
     public ArrayList<SessionFee> listSessionFees = new ArrayList<>();
     public ArrayList<Customer> lstCustomer = new ArrayList<>();
     public ArrayList<ParkingSession> parking_sessions;
+    public ArrayList<Regisatration> registration;
     
     /**
      * Creates new form ViewMain
@@ -94,6 +97,7 @@ public class ViewMain extends javax.swing.JFrame {
         this.listSessionFees = SessionFeeDAO.getInstance().getList();
         this.lstCustomer = CustomerDAO.getInstance().getList();
         this.parking_sessions = ParkingSessionDAO.getInstance().getList();
+        this.registration = RegisatrationDAO.getInstance().getList();
         initComponents();
         GUI_DICHVU();
         GUI_GUIXE();

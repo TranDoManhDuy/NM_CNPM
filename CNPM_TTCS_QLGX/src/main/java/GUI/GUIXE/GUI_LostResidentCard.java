@@ -104,7 +104,7 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
         txt_parking_session_id.setEnabled(false);
         txt_customer_name.setEnabled(false);
         
-        btn_chon_ma_gui_xe.setEnabled(true);
+        btn_chon_ma_gui_xe.setEnabled(false);
         btn_chon_ma_the.setEnabled(true);
         btn_delete.setEnabled(false);
     }
@@ -123,7 +123,8 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
         boolean isFilled =      !txt_parking_session_id.getText().trim().isEmpty() && 
                                 !txt_resident_id.getText().trim().isEmpty();
 
-//        System.out.println(isFilled);
+        btn_chon_ma_gui_xe.setEnabled(!txt_resident_id.getText().trim().isEmpty());
+        System.out.println(txt_resident_id.getText());
         btn_insert.setEnabled(isFilled);
     }
     
@@ -817,6 +818,7 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
                 });
                 for (ParkingSession par: viewmain.parking_sessions) {
                     if (par.isIs_service() && (txt_resident_id.getText().toString().trim().equals("") || par.getCard_id() == Integer.parseInt(txt_resident_id.getText().toString().trim()))) {
+                        tableModel.setRowCount(0);
                         String dt_start = "null";
                         String dt_end = "null";
 
@@ -832,6 +834,7 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
                                                         String.valueOf(par.getCheck_in_shift_id()), String.valueOf(par.getCheck_out_shift_id()),
                                                         String.valueOf(par.getVehicle_id()), String.valueOf(par.getAmount())
                         });
+                        
                     }
                 }
                 this.tableModel.fireTableDataChanged();
