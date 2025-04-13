@@ -59,6 +59,7 @@ import javax.swing.JPanel;
  * @author manhh
  */
 import DAO.BuildingsDAO;
+import DAO.RegisatrationDAO;
 import DAO.ResidentCardDAO;
 import DAO.SessionFeeDAO;
 import DAO.TimeFrameDAO;
@@ -70,6 +71,7 @@ import GUI.GUIXE.GUI_VisitorParkingCard;
 import GUI.NHANSU.gui_listmanager;
 import GUI.NHANSU.gui_profile;
 
+import Model.Regisatration;
 import Model.SessionFee;
 import Model.ShiftTypes;
 import javax.swing.event.ChangeEvent;
@@ -88,6 +90,7 @@ public class ViewMain extends javax.swing.JFrame {
     public ArrayList<SessionFee> listSessionFees = new ArrayList<>();
     public ArrayList<Customer> lstCustomer = new ArrayList<>();
     public ArrayList<ParkingSession> parking_sessions;
+    public ArrayList<Regisatration> registration;
     
     /**
      * Creates new form ViewMain
@@ -103,6 +106,7 @@ public class ViewMain extends javax.swing.JFrame {
         this.listSessionFees = SessionFeeDAO.getInstance().getList();
         this.lstCustomer = CustomerDAO.getInstance().getList();
         this.parking_sessions = ParkingSessionDAO.getInstance().getList();
+        this.registration = RegisatrationDAO.getInstance().getList();
         initComponents();
         GUI_DICHVU();
         GUI_GUIXE();

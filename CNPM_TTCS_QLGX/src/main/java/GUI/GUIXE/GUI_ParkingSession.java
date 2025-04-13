@@ -8,12 +8,12 @@ import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.ParkingSessionDAO;
 import DAO.VehicleDAO;
-import DAO.VehicleTypeDAO;
 import DAO.VisitorParkingCardsDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import javax.swing.table.DefaultTableModel;
 import Model.ParkingSession;
+import Model.Regisatration;
 import Model.ResidentCard;
 import Model.SessionFee;
 import Model.TimeFrame;
@@ -1781,6 +1781,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                         }
                     });
                     for (ResidentCard re : viewmain.resident_cards) {
+                        if (re.isIs_active())
                         tableModel.addRow(new String[] {String.valueOf(re.getPk_resident_card()), String.valueOf(re.getCustomer_id()),
                                                         String.valueOf(re.isIs_active())});
                     }
@@ -1827,6 +1828,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                         }
                     });
                     for (VisitorParkingCards vc : viewmain.visitor_parking_cards) {
+                        if (vc.isIs_active())
                         tableModel.addRow(new String[] {String.valueOf(vc.getVisitor_parking_card_id()),
                                                         String.valueOf(vc.isIs_active())});
                     }
@@ -1901,10 +1903,16 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                     }
                 });
                 for (Vehicle vel : viewmain.vehicles) {
-                    tableModel.addRow(new String[] {String.valueOf(vel.getVehicle_id()), vel.getIdentification_code(), 
+                    int typeId = vel.getVehicle_type_id();
+                    for (VehicleType vt: viewmain.vehicle_types) { 
+                        if (vt.isIsPermission() && vt.getVehicle_type_id() == typeId) { 
+                            tableModel.addRow(new String[] {String.valueOf(vel.getVehicle_id()), vel.getIdentification_code(), 
                                                     String.valueOf(vel.getVehicle_type_id()), vel.getVehicle_name(), 
                                                     vel.getVehicle_color()
-                    });
+                            });
+                            break;
+                        }
+                    }
                 }
                 this.tableModel.fireTableDataChanged();
                 this.btn_loc.addActionListener(new ActionListener() {
@@ -1936,15 +1944,18 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         int amount = 0;
         long dateDistance = 0;
         int check_in_shift_id = -1;
-        boolean is_service;
+        boolean is_service = false;
         int parking_session_id = Integer.parseInt(txt_parking_session_id.getText().toString().trim());
         int card_id = Integer.parseInt(txt_card_id.getText().toString().trim());
+        boolean checkCal = false;
         
         for (ParkingSession par: this.parking_sessions) { 
             if (par.getParking_session_id() == parking_session_id) { 
                 start_date_time = par.getCheck_in_time();
                 vehicle_id = par.getVehicle_id();
                 check_in_shift_id = par.getCheck_in_shift_id();
+                is_service = par.isIs_service();
+                card_id = par.getCard_id();
             }
         }
         
@@ -1971,80 +1982,108 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             e.printStackTrace();
         }
         
-        for (TimeFrame tf : viewmain.listTimeFrames) {
-            if 
-                (
-                    (tf.getTime_start().isBefore(end_time) || tf.getTime_start().equals(end_time)) &&
-                    (tf.getTime_end().isAfter(end_time) || tf.getTime_end().equals(end_time)) &&
-                    tf.isIs_active() == true
-                )
-            { 
-                id_end_time = tf.getTime_frame_id();
+        int customerId = -1;
+        LocalDate date_service = null;
+        if (is_service) {
+            for (ResidentCard re: viewmain.resident_cards) { 
+                if (re.getPk_resident_card() == card_id) { 
+                    customerId = re.getCustomer_id();
+                }
             }
+            for (Regisatration re : viewmain.registration) 
+                if (re.getCustomer_id() == customerId && re.getVehicle_id() == vehicle_id) { 
+                    date_service = re.getRegistration_date();
+                    break;
+                }
             
-            if 
-                (
-                    (tf.getTime_start().isBefore(start_time) || tf.getTime_start().equals(start_time)) &&
-                    (tf.getTime_end().isAfter(start_time) || tf.getTime_end().equals(start_time)) &&
-                    tf.isIs_active() == true
-                )
-            { 
-                id_start_time = tf.getTime_frame_id();
+            if (LocalDate.now().isAfter(date_service)) {
+                start_date = date_service.plusDays(1);
+                start_time = LocalTime.of(0, 0);
+                checkCal = true;
             }
         }
+        else {
+            checkCal = true;
+        }
         
-        dateDistance = ChronoUnit.DAYS.between(start_date, end_date);
-        int sumAmountOfDay = 0;
-        if (dateDistance > 0) {
+        if (checkCal) {
+//            System.out.println(end_time);        
             for (TimeFrame tf : viewmain.listTimeFrames) {
-                int id = tf.getTime_frame_id();
+                if 
+                    (
+                        (tf.getTime_start().isBefore(end_time) || tf.getTime_start().equals(end_time)) &&
+                        (tf.getTime_end().isAfter(end_time) || tf.getTime_end().equals(end_time)) &&
+                        tf.isIs_active() == true
+                    )
+                { 
+                    id_end_time = tf.getTime_frame_id();
+                }
 
-                if (tf.isIs_active()) { 
-                    int money = 0;
-                    for (SessionFee sf: viewmain.listSessionFees) { 
-                        if (sf.getVehicle_type_id() == vehicle_type_id && sf.getTime_frame_id() == id && sf.isIs_active()) {
-                            money = sf.getAmount();
+                if 
+                    (
+                        (tf.getTime_start().isBefore(start_time) || tf.getTime_start().equals(start_time)) &&
+                        (tf.getTime_end().isAfter(start_time) || tf.getTime_end().equals(start_time)) &&
+                        tf.isIs_active() == true
+                    )
+                { 
+                    id_start_time = tf.getTime_frame_id();
+                }
+            }
+
+            dateDistance = ChronoUnit.DAYS.between(start_date, end_date);
+//            System.out.println(id_start_time + " " + id_end_time + " " + dateDistance);   
+            int sumAmountOfDay = 0;
+            if (dateDistance > 0) {
+                for (TimeFrame tf : viewmain.listTimeFrames) {
+                    int id = tf.getTime_frame_id();
+
+                    if (tf.isIs_active()) { 
+                        int money = 0;
+                        for (SessionFee sf: viewmain.listSessionFees) { 
+                            if (sf.getVehicle_type_id() == vehicle_type_id && sf.getTime_frame_id() == id && sf.isIs_active()) {
+                                money = sf.getAmount();
+//                                System.out.println(money);
+                            }
+                        }
+
+                        sumAmountOfDay += money;
+
+                        if  (id_start_time <= id){ 
+                            amount += money;
+                        }
+
+                        if (id_end_time >= id) {
+                            amount += money;
                         }
                     }
+                }
+                amount += (dateDistance - 1) * sumAmountOfDay;
+            }
+            else { 
+                amount = 0;
+                for (TimeFrame tf : viewmain.listTimeFrames) {
+                    int id = tf.getTime_frame_id();
 
-                    sumAmountOfDay += money;
+                    if (tf.isIs_active()) { 
+                        int money = 0;
+                        for (SessionFee sf: viewmain.listSessionFees) { 
+                            if (sf.getVehicle_type_id() == vehicle_type_id && sf.getTime_frame_id() == id && sf.isIs_active()) {
+                                money = sf.getAmount();
+//                                System.out.println("Chua qua ngay: " + money);
+                            }
+                        }
 
-                    if  (id_start_time <= id){ 
-                        amount += money;
-                    }
-
-                    if (id_end_time >= id) {
-                        amount += money;
+                        if (id_start_time <= id && id_end_time >= id) { 
+                            amount += money;
+                        }
                     }
                 }
             }
-            amount += (dateDistance - 1) * sumAmountOfDay;
+//            System.out.println(card_id + " " + customerId + " " + String.valueOf(date_service) + " " + start_date + " " + start_time + " " + amount);
         }
-        else { 
-            for (TimeFrame tf : viewmain.listTimeFrames) {
-                int id = tf.getTime_frame_id();
+//        System.out.println(amount + " " + parking_session_id + " " + card_id + " " + is_service);
+//        System.out.println(start_date_time + " " + check_in_shift_id + " " + vehicle_id);
 
-                if (tf.isIs_active()) { 
-                    int money = 0;
-                    for (SessionFee sf: viewmain.listSessionFees) { 
-                        if (sf.getVehicle_type_id() == vehicle_type_id && sf.getTime_frame_id() == id && sf.isIs_active()) {
-                            money = sf.getAmount();
-                        }
-                    }
-                    
-                    if (id_start_time <= id && id_end_time >= id) { 
-                        amount += money;
-                    }
-                }
-            }
-        }
-        
-        if (cb_is_service.isSelected()) { 
-            is_service = true;
-        }
-        else { 
-            is_service = false;
-        }
         ParkingSession par = new ParkingSession(parking_session_id, card_id, is_service, start_date_time, null, check_in_shift_id, -1, vehicle_id, amount);
 //        System.out.println(par.getParking_session_id() + " " + par.getCard_id() + " " + par.isIs_service() + " " + par.getCheck_in_time() + " " + " " +  par.getCheck_in_shift_id() + " " + par.getAmount());
         String check = ParkingSessionDAO.getInstance().update(par);
@@ -2055,6 +2094,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             loadData();
             fillTable();
             viewmain.visitor_parking_cards = VisitorParkingCardsDAO.getInstance().getAll();
+            
         }
         else { 
             this.SetLog(GetError(check));
