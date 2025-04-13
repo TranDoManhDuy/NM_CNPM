@@ -4,8 +4,12 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.ParkingSessionDAO;
+import DAO.VehicleDAO;
+import DAO.VehicleTypeDAO;
+import DAO.VisitorParkingCardsDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import javax.swing.table.DefaultTableModel;
@@ -14,6 +18,7 @@ import Model.ResidentCard;
 import Model.SessionFee;
 import Model.TimeFrame;
 import Model.Vehicle;
+import Model.VehicleType;
 import Model.VisitorParkingCards;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,7 +30,6 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,15 +57,20 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
     private String[] s1Day, s1Month, s1Year;
     private boolean isUpdating = false;
     private LogSelection logSelection;
-    private int chooseCardId = 0;
-    private int chooseVehicleId = 0;
-    
-    
+    private int chooseCardId = -1;
+    private int chooseVehicleId = -1;
+    private int choooseIndexVehicleType = -1;
+    private GUI_Vehicle gui_vehicle;
+    private LogMessage logMessage;
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_ParkingSession(ViewMain viewmain, LogSelection logSelection) {
+    public GUI_ParkingSession(ViewMain viewmain, LogSelection logSelection, LogMessage logMessage, GUI_Vehicle gui_vehicle) {
         this.viewmain = viewmain;
+        this.logSelection = logSelection;
+        this.gui_vehicle = gui_vehicle;
+        this.logMessage = logMessage;
+        
         initComponents();
         resetFields();
         resetBtn();
@@ -141,6 +150,17 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         tblModel.fireTableDataChanged();
     }  
     
+    private void resetFieldService() { 
+        txt_ma_nhan_dang_xe.setText("");
+        txt_vehicle_type.setText("");
+        txt_card_id.setText("");
+        txt_vehicle.setText("");
+        btn_vehicle_type.setEnabled(false);
+        choooseIndexVehicleType = -1;
+        chooseCardId = -1;
+        chooseVehicleId = -1;
+    }
+    
     private void resetFields() { 
         txt_parking_session_id.setText("");
         txt_card_id.setText("");
@@ -152,6 +172,8 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         txt_check_out_shift_id.setText("");            
         txt_vehicle.setText("");
         txt_amount.setText("");
+        txt_ma_nhan_dang_xe.setText("");
+        txt_vehicle_type.setText("");
         tbl_parking_session.clearSelection();
         
         txt_parking_session_id.setEnabled(false);
@@ -163,35 +185,47 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         txt_check_out_shift_id.setEnabled(false);
         txt_vehicle.setEnabled(false);
         txt_amount.setEnabled(false);
+        txt_ma_nhan_dang_xe.setEnabled(false);
+        txt_vehicle_type.setEnabled(false);
+    }
+    
+    private void ShowNotInsert() { 
+        btn_card_id.setEnabled(false);
+        txt_ma_nhan_dang_xe.setEnabled(false);
+        btn_vehicle_type.setEnabled(false);
+        cb_is_service.setEnabled(false);
+        cb_not_service.setEnabled(false);
+        btn_vehicle.setEnabled(false);
+        btn_insert.setEnabled(false);
     }
     
     private void showUpdate() { 
-        cb_is_service.setEnabled(false);
-        cb_not_service.setEnabled(false);
-        btn_vehicle.setEnabled(false);
+        this.ShowNotInsert();
         btn_update.setEnabled(true);
         btn_delete.setEnabled(false);
-        btn_insert.setEnabled(false);
     }
     
     private void showDelete() { 
-        cb_is_service.setEnabled(false);
-        cb_not_service.setEnabled(false);
-        btn_vehicle.setEnabled(false);
+        this.ShowNotInsert();
         btn_update.setEnabled(false);
         btn_delete.setEnabled(true);
-        btn_insert.setEnabled(false);
     }
     
     private void resetBtn() {
         btn_loc.setEnabled(false);
         btn_bo_loc.setEnabled(false);
-        
         btn_card_id.setEnabled(false);
-        btn_vehicle.setEnabled(true);
-        
+        btn_vehicle.setEnabled(false);
         btn_delete.setEnabled(false);
         btn_update.setEnabled(false);
+        btn_vehicle_type.setEnabled(false);
+    }
+    
+    public void reloadData() { 
+        initTable();
+        loadData();
+        resetFields();
+        fillTable();
     }
     
     private void checkDayMonthYearSort() {
@@ -201,8 +235,6 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                                     !cob_thang_ket_thuc.getSelectedItem().toString().equals("-1") &&
                                     !cob_nam_bat_dau.getSelectedItem().toString().equals("-1") &&
                                     !cob_nam_ket_thuc.getSelectedItem().toString().equals("-1");
-
-//        System.out.println(isDateSelected);
         btn_loc.setEnabled(isDateSelected);
     }
     
@@ -213,7 +245,6 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                 checkDayMonthYearSort();
             }
         };
-        
         cob_ngay_bat_dau.addActionListener(comboListener);
         cob_thang_bat_dau.addActionListener(comboListener);
         cob_nam_bat_dau.addActionListener(comboListener);
@@ -223,15 +254,45 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
     }
     
     private void checkTurnOnButtonCardId () { 
+        btn_vehicle.setEnabled(cb_is_service.isSelected());
+        txt_ma_nhan_dang_xe.setEnabled(cb_not_service.isSelected());
+        btn_vehicle_type.setEnabled(cb_not_service.isSelected());
         btn_card_id.setEnabled(cb_is_service.isSelected() || cb_not_service.isSelected());
     }
     
     private void checkBtnInsert() {
+        
+        if (cb_not_service.isSelected()) {
+            boolean checkVehicleId = false;
+            
+            int vehicleTypeId = -1;
+            for (Vehicle vel: viewmain.vehicles) { 
+                    if (vel.getIdentification_code().equals(txt_ma_nhan_dang_xe.getText().toString().trim())) {
+                        checkVehicleId = true;
+                        chooseVehicleId = vel.getVehicle_id();
+                    }
+                }
+            if (checkVehicleId) { 
+                btn_vehicle_type.setEnabled(false);
+            }
+            else {
+                btn_vehicle_type.setEnabled(true);
+                chooseVehicleId = -1;
+            }
+        }
+        
         boolean isFilled =      !txt_card_id.getText().trim().isEmpty() && 
-                                !txt_vehicle.getText().trim().isEmpty();
+                                (
+                                    !txt_vehicle.getText().trim().isEmpty() ||
+                                    (
+                                        !txt_ma_nhan_dang_xe.getText().trim().isEmpty() &&
+                                        (
+                                            !txt_vehicle_type.getText().trim().isEmpty() ||
+                                            !btn_vehicle_type.isEnabled()
+                                        )
+                                    )
+                                );
         boolean isButton =      (cb_is_service.isSelected() || cb_not_service.isSelected());
-
-        System.out.println(isFilled + " " + isButton);
         btn_insert.setEnabled(isFilled && isButton);
     }
     
@@ -241,9 +302,9 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             public void actionPerformed(ActionEvent e) {
                 checkTurnOnButtonCardId();
                 checkBtnInsert();
+                resetFieldService();
             }
         };
-
         cb_is_service.addActionListener(checkboxListener);
         cb_not_service.addActionListener(checkboxListener); 
     }
@@ -265,9 +326,58 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                 checkBtnInsert();
             }
         };
-        
         txt_card_id.getDocument().addDocumentListener(docListener);
         txt_vehicle.getDocument().addDocumentListener(docListener);
+        txt_ma_nhan_dang_xe.getDocument().addDocumentListener(docListener);
+        txt_vehicle_type.getDocument().addDocumentListener(docListener);
+    }
+    
+    private void SetLog(String s) { 
+        this.logMessage = new LogMessage(s) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+        return;
+    }
+    
+    private String GetError(String s) { 
+        int index = 0; 
+        String sError = "";
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\"') {
+                index += 1;
+                if (index == 2) {
+                    return sError;
+                } 
+                else {
+                    continue;
+                }
+            }
+            if (index == 1) { 
+                sError = sError + s.charAt(i);
+            }
+        }
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\'') {
+                index += 1;
+                if (index == 2) {
+                    return sError;
+                } 
+                else {
+                    continue;
+                }
+            }
+            if (index == 1) { 
+                sError = sError + s.charAt(i);
+            }
+        }
+        return s;
     }
     
     /**
@@ -319,6 +429,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         btn_reset = new javax.swing.JButton();
         btn_card_id = new javax.swing.JButton();
         btn_vehicle = new javax.swing.JButton();
+        btn_vehicle_type = new javax.swing.JButton();
         txt_parking_session_id = new javax.swing.JTextField();
         txt_check_in_time = new javax.swing.JTextField();
         txt_check_out_time = new javax.swing.JTextField();
@@ -327,6 +438,8 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         txt_card_id = new javax.swing.JTextField();
         txt_check_in_shift_id = new javax.swing.JTextField();
         txt_check_out_shift_id = new javax.swing.JTextField();
+        txt_ma_nhan_dang_xe = new javax.swing.JTextField();
+        txt_vehicle_type = new javax.swing.JTextField();
         cb_is_service = new javax.swing.JCheckBox();
         cb_not_service = new javax.swing.JCheckBox();
         jL_title = new javax.swing.JLabel();
@@ -339,6 +452,8 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         jL_check_out_shift_d = new javax.swing.JLabel();
         jL_vehicle_id = new javax.swing.JLabel();
         jL_amount = new javax.swing.JLabel();
+        jL_amount1 = new javax.swing.JLabel();
+        jL_amount2 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(153, 255, 255));
 
@@ -663,7 +778,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                 .addGap(5, 5, 5)
                 .addComponent(txt_tin_nhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sc_pariking_session, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(sc_pariking_session, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -685,7 +800,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         });
 
         btn_update.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_update.setText("Cập Nhật");
+        btn_update.setText("Ra Xe");
         btn_update.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_updateActionPerformed(evt);
@@ -729,6 +844,15 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             }
         });
 
+        btn_vehicle_type.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_vehicle_type.setText("Chọn");
+        btn_vehicle_type.setEnabled(false);
+        btn_vehicle_type.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_vehicle_typeActionPerformed(evt);
+            }
+        });
+
         txt_parking_session_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txt_parking_session_id.setEnabled(false);
 
@@ -751,6 +875,12 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
 
         txt_check_out_shift_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txt_check_out_shift_id.setEnabled(false);
+
+        txt_ma_nhan_dang_xe.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_ma_nhan_dang_xe.setEnabled(false);
+
+        txt_vehicle_type.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_vehicle_type.setEnabled(false);
 
         cb_is_service.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cb_is_service.setText("Có");
@@ -800,61 +930,82 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         jL_amount.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jL_amount.setText("Giá Tiền");
 
+        jL_amount1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jL_amount1.setText("Nhận dạng xe");
+
+        jL_amount2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jL_amount2.setText("Loai Xe");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jL_amount, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jL_amount1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_amount, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jL_title, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(64, 64, 64)
-                        .addComponent(btn_reset))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jL_parking_session_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jL_card_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jL_is_service, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jL_check_in_time, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jL_check_out_time, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jL_vehicle_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jL_check_out_shift_d, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jL_check_in_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_ma_nhan_dang_xe, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(txt_card_id, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_card_id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addComponent(jL_amount, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txt_amount, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                    .addComponent(jL_title, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(64, 64, 64)
+                                    .addComponent(btn_reset))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jL_parking_session_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jL_card_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jL_is_service, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jL_check_in_time, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jL_check_out_time, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jL_vehicle_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jL_check_out_shift_d, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jL_check_in_shift_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                            .addComponent(txt_card_id, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(btn_card_id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(txt_check_out_time)
+                                                .addComponent(txt_check_in_time)
+                                                .addComponent(txt_parking_session_id)
+                                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                                    .addComponent(cb_is_service)
+                                                    .addGap(18, 18, 18)
+                                                    .addComponent(cb_not_service))
+                                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                                    .addComponent(txt_vehicle, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(btn_vehicle, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(txt_check_in_shift_id)
+                                                .addComponent(txt_check_out_shift_id))
+                                            .addGap(0, 0, Short.MAX_VALUE)))))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txt_check_out_time)
-                                    .addComponent(txt_check_in_time)
-                                    .addComponent(txt_parking_session_id)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(cb_is_service)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(cb_not_service))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(txt_vehicle, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btn_vehicle, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(txt_check_in_shift_id)
-                                    .addComponent(txt_check_out_shift_id))
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(41, 41, 41)
-                        .addComponent(btn_insert, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_update, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_delete)))
-                .addGap(0, 21, Short.MAX_VALUE))
+                                .addComponent(jL_amount2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txt_vehicle_type, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_vehicle_type, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 22, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn_insert, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_update, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_delete)
+                .addGap(44, 44, 44))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -903,12 +1054,21 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jL_amount)
                     .addComponent(txt_amount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jL_amount1)
+                    .addComponent(txt_ma_nhan_dang_xe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jL_amount2)
+                    .addComponent(txt_vehicle_type, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_vehicle_type))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_insert)
                     .addComponent(btn_update)
                     .addComponent(btn_delete))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -920,7 +1080,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -929,7 +1089,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -990,16 +1150,61 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         else if (cb_not_service.isSelected()) { 
             isService = false;
         }
+        int shift_work_id = -1;
+        String sql = "EXEC GET_SHIFT_WORK_ID";
+        try (
+                Connection con = OpenConnection.getConnection();
+                Statement  st  = con.createStatement();
+                ResultSet  rs  = st.executeQuery(sql);) {
+                while (rs.next()) {
+                    shift_work_id = rs.getInt("ShiftWorkId");
+                }
+        }
+        catch (Exception e) { 
+            e.printStackTrace();
+            return;
+        }
         LocalDateTime now = LocalDateTime.now();
+        if (shift_work_id != -1 && cb_is_service.isSelected() == false && btn_vehicle_type.isEnabled()) { 
+            String vehicle_identification = txt_ma_nhan_dang_xe.getText().toString().trim();
+            
+            Vehicle newVehicle = new Vehicle(vehicle_identification, choooseIndexVehicleType, "", "");
+            String check = VehicleDAO.getInstance().insert(newVehicle);
+            System.out.println(check);
+            if (!check.equals("Thêm Thành Công") && !check.equals("Đã có sẵn xe, nên không cần thêm!")) {
+                SetLog(GetError(check));
+                return;
+            }
+            this.choooseIndexVehicleType = -1;
+            viewmain.vehicles = VehicleDAO.getInstance().getList();
+            for (Vehicle vel : viewmain.vehicles) {
+                if (vel.getIdentification_code().equals(vehicle_identification)) {
+                    chooseVehicleId = vel.getVehicle_id();
+                }
+            }
+        }
         
+        System.out.println(chooseVehicleId);
         ParkingSession par = new ParkingSession(chooseCardId, isService, now, chooseVehicleId);
-        ParkingSessionDAO.getInstance().insert(par);
-        resetFields();
-        resetBtn();
-        initTable();
-        loadData();
-        fillTable();
-//        System.out.println(par.getCard_id() + " " + par.getCheck_in_time() + " " + par.getVehicle_id());
+        String check = ParkingSessionDAO.getInstance().insert(par);
+        if (check.equals("Thêm Thành Công")) {
+            resetFields();
+            resetBtn();
+            initTable();
+            loadData();
+            fillTable();
+            viewmain.parking_sessions = ParkingSessionDAO.getInstance().getList();
+            if (isService == false) {
+                viewmain.visitor_parking_cards = VisitorParkingCardsDAO.getInstance().getAll();
+            }
+            this.gui_vehicle.reloadData();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_insertActionPerformed
 
     private void btn_resetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_resetMouseClicked
@@ -1020,7 +1225,6 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         int day = Integer.parseInt(cob_ngay_bat_dau.getSelectedItem().toString());
         int month = Integer.parseInt(cob_thang_bat_dau.getSelectedItem().toString());
         int year = Integer.parseInt(cob_nam_bat_dau.getSelectedItem().toString());
-//        System.out.println(day + " " + month + " " + year);
         
         sMonth = Library.Library.getMonth(day, year);
         sYear = Library.Library.getYear(day, month);
@@ -1053,8 +1257,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         
         for (int i = 0; i < n - 1; i++) {
             for (int j = i + 1; j < n; j++) {
-                if (this.parking_sessions.get(i).getCheck_in_time().compareTo(this.parking_sessions.get(j).getCheck_in_time()) > 0) { 
-                    // Hoán đổi vị trí trong lstCustomer
+                if (this.parking_sessions.get(i).getCheck_in_time().compareTo(this.parking_sessions.get(j).getCheck_in_time()) > 0) {
                     ParkingSession tempParkingSession = this.parking_sessions.get(i);
                     this.parking_sessions.set(i, this.parking_sessions.get(j));
                     this.parking_sessions.set(j, tempParkingSession);
@@ -1073,7 +1276,6 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         int count = -1;
         String crCheck_in_shift_type_name = "";
         String crCheck_out_shift_type_name = "";
-        
         
         for (ParkingSession par: parking_sessions) { 
             count += 1;
@@ -1571,7 +1773,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                         @Override
                         public void mouseClicked(MouseEvent e) {
                             int row = table.rowAtPoint(e.getPoint());
-                            txt_card_id.setText((String) table.getValueAt(row, 1));
+                            txt_card_id.setText((String) table.getValueAt(row, 0));
                             chooseCardId = Integer.parseInt((String)table.getValueAt(row, 0));
                             logSelection.setVisible(false);
                             viewmain.setEnabled(true);
@@ -1617,7 +1819,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                         @Override
                         public void mouseClicked(MouseEvent e) {
                             int row = table.rowAtPoint(e.getPoint());
-                            txt_card_id.setText((String) table.getValueAt(row, 1));
+                            txt_card_id.setText((String) table.getValueAt(row, 0));
                             chooseCardId = Integer.parseInt((String)table.getValueAt(row, 0));
                             logSelection.setVisible(false);
                             viewmain.setEnabled(true);
@@ -1651,24 +1853,22 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
     private void cb_is_serviceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_is_serviceActionPerformed
         // TODO add your handling code here:
         if (cb_is_service.isSelected()) { 
-                cb_is_service.setSelected(true);
-                cb_not_service.setSelected(false);
-            }
-        else { 
-            cb_is_service.setSelected(false);
-            cb_not_service.setSelected(true);
+            cb_is_service.setSelected(true);
+            cb_not_service.setSelected(false);
+            btn_vehicle.setEnabled(true);
+            txt_ma_nhan_dang_xe.setEnabled(false);
+            btn_vehicle_type.setEnabled(false);
         }
     }//GEN-LAST:event_cb_is_serviceActionPerformed
 
     private void cb_not_serviceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_not_serviceActionPerformed
         // TODO add your handling code here:
-        if (cb_not_service.isSelected() == false) { 
-                cb_is_service.setSelected(true);
-                cb_not_service.setSelected(false);
-            }
-        else { 
+        if (cb_not_service.isSelected()) { 
             cb_is_service.setSelected(false);
             cb_not_service.setSelected(true);
+            btn_vehicle.setEnabled(false);
+            txt_ma_nhan_dang_xe.setEnabled(true);
+            btn_vehicle_type.setEnabled(true);
         }
     }//GEN-LAST:event_cb_not_serviceActionPerformed
 
@@ -1736,25 +1936,26 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         int amount = 0;
         long dateDistance = 0;
         int check_in_shift_id = -1;
-
-        int pk_id = Integer.parseInt(txt_parking_session_id.getText().toString().trim());
+        boolean is_service;
+        int parking_session_id = Integer.parseInt(txt_parking_session_id.getText().toString().trim());
+        int card_id = Integer.parseInt(txt_card_id.getText().toString().trim());
+        
         for (ParkingSession par: this.parking_sessions) { 
-            if (par.getParking_session_id() == pk_id) { 
+            if (par.getParking_session_id() == parking_session_id) { 
                 start_date_time = par.getCheck_in_time();
                 vehicle_id = par.getVehicle_id();
                 check_in_shift_id = par.getCheck_in_shift_id();
             }
         }
         
+        LocalDate start_date = start_date_time.toLocalDate();
+        LocalTime start_time = start_date_time.toLocalTime();
+        
         for (Vehicle vel: viewmain.vehicles) { 
             if (vel.getVehicle_id() == vehicle_id) { 
                 vehicle_type_id = vel.getVehicle_type_id();
             }
         }
-        
-        
-        LocalDate start_date = start_date_time.toLocalDate();
-        LocalTime start_time = start_date_time.toLocalTime();
                 
         String sql = "EXEC GET_DATE_TIME";
         try (
@@ -1838,13 +2039,6 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             }
         }
         
-        System.out.println(" " + vehicle_id + " " + vehicle_type_id + " " + dateDistance + " " + amount + " " + sumAmountOfDay);
-        System.out.println(start_date_time + ": " + id_start_time);
-        System.out.println(end_date_time + ": " + id_end_time);
-        
-        int parking_session_id = Integer.parseInt(txt_parking_session_id.getText().toString().trim());
-        int card_id = Integer.parseInt(txt_card_id.getText().toString().trim());
-        boolean is_service;
         if (cb_is_service.isSelected()) { 
             is_service = true;
         }
@@ -1852,24 +2046,43 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             is_service = false;
         }
         ParkingSession par = new ParkingSession(parking_session_id, card_id, is_service, start_date_time, null, check_in_shift_id, -1, vehicle_id, amount);
-        ParkingSessionDAO.getInstance().update(par);
-        resetFields();
-        resetBtn();
-        initTable();
-        loadData();
-        fillTable();
-//        System.out.println(par.getParking_session_id() + " " + par.getAmount());
+//        System.out.println(par.getParking_session_id() + " " + par.getCard_id() + " " + par.isIs_service() + " " + par.getCheck_in_time() + " " + " " +  par.getCheck_in_shift_id() + " " + par.getAmount());
+        String check = ParkingSessionDAO.getInstance().update(par);
+        if (check.equals("Cập Nhật Thành Công")) {
+            resetFields();
+            resetBtn();
+            initTable();
+            loadData();
+            fillTable();
+            viewmain.visitor_parking_cards = VisitorParkingCardsDAO.getInstance().getAll();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_updateActionPerformed
 
     private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
         // TODO add your handling code here:
         int parking_session_id = Integer.parseInt(txt_parking_session_id.getText().toString().trim());
-        ParkingSessionDAO.getInstance().delete(parking_session_id);
-        resetFields();
-        resetBtn();
-        initTable();
-        loadData();
-        fillTable();
+//        System.out.println(parking_session_id);
+        String check = ParkingSessionDAO.getInstance().delete(parking_session_id);
+//        System.out.println(check);
+        if (check.equals("Xóa Thành Công")) {
+            resetFields();
+            resetBtn();
+            initTable();
+            loadData();
+            fillTable();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_deleteActionPerformed
 
     private void btn_mac_dinh_giaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mac_dinh_giaActionPerformed
@@ -1879,6 +2092,58 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         fillTable();
         resetFields();
     }//GEN-LAST:event_btn_mac_dinh_giaActionPerformed
+
+    private void btn_vehicle_typeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_vehicle_typeActionPerformed
+        // TODO add your handling code here:
+        this.viewmain.setEnabled(false);
+        this.logSelection = new LogSelection() {
+            @Override
+            public void initContent() {
+                this.label_property.setText("Mã Định Danh Các Loại Phương Tiện");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                String[] header = new String[] {"ID Loại Phương Tiện", "Tên Loại Phương Tiện", "Còn cho phép"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table.rowAtPoint(e.getPoint());
+                        txt_vehicle_type.setText((String) table.getValueAt(row, 1));
+                        choooseIndexVehicleType = Integer.parseInt((String)table.getValueAt(row, 0));
+//                        System.out.println(choooseIndexVehicleType);
+                        logSelection.setVisible(false);
+                        viewmain.setEnabled(true);
+                        viewmain.requestFocus();
+                    }
+                });
+                for (VehicleType vt : viewmain.vehicle_types) {
+                    if (vt.isIsPermission()) {
+                        tableModel.addRow(new String[] {String.valueOf(vt.getVehicle_type_id()), vt.getVehicle_type_name(), String.valueOf(vt.isIsPermission())}); 
+                    }
+                }
+                this.tableModel.fireTableDataChanged();
+                this.btn_loc.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    }
+                });
+            }
+            @Override
+            public void back() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
+    }//GEN-LAST:event_btn_vehicle_typeActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1897,6 +2162,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
     private javax.swing.JButton btn_tim_kiem;
     private javax.swing.JButton btn_update;
     private javax.swing.JButton btn_vehicle;
+    private javax.swing.JButton btn_vehicle_type;
     private javax.swing.JCheckBox cb_is_service;
     private javax.swing.JCheckBox cb_not_service;
     private javax.swing.JComboBox<String> cob_nam_bat_dau;
@@ -1906,6 +2172,8 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> cob_thang_bat_dau;
     private javax.swing.JComboBox<String> cob_thang_ket_thuc;
     private javax.swing.JLabel jL_amount;
+    private javax.swing.JLabel jL_amount1;
+    private javax.swing.JLabel jL_amount2;
     private javax.swing.JLabel jL_card_id;
     private javax.swing.JLabel jL_check_in_shift_id;
     private javax.swing.JLabel jL_check_in_time;
@@ -1938,9 +2206,11 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
     private javax.swing.JTextField txt_check_in_time;
     private javax.swing.JTextField txt_check_out_shift_id;
     private javax.swing.JTextField txt_check_out_time;
+    private javax.swing.JTextField txt_ma_nhan_dang_xe;
     private javax.swing.JTextField txt_parking_session_id;
     private javax.swing.JTextField txt_tim_kiem;
     private javax.swing.JTextField txt_tin_nhan;
     private javax.swing.JTextField txt_vehicle;
+    private javax.swing.JTextField txt_vehicle_type;
     // End of variables declaration//GEN-END:variables
 }

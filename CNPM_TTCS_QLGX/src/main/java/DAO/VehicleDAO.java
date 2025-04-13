@@ -10,12 +10,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VehicleDAO implements InterfaceDAO<Vehicle> {
+public class VehicleDAO{
     public static VehicleDAO getInstance() {
         return new VehicleDAO();
     }
 
-    @Override
     public ArrayList<Vehicle> getList() {
         ArrayList<Vehicle> lstVehicle = new ArrayList<>();
         String sql = "EXEC GET_ALL_VEHICLES";
@@ -71,8 +70,7 @@ public class VehicleDAO implements InterfaceDAO<Vehicle> {
         return result;
     }
 
-    @Override
-    public boolean insert(Vehicle vehicle) {
+    public String insert(Vehicle vehicle) {
         String sql = "EXEC INSERT_VEHICLE @identification_code = ?, @vehicle_type_id = ?, @vehicle_name = ?, @vehicle_color = ?";
         try (
                 Connection con = OpenConnection.getConnection();
@@ -82,15 +80,17 @@ public class VehicleDAO implements InterfaceDAO<Vehicle> {
             ps.setInt(2, vehicle.getVehicle_type_id());
             ps.setString(3, vehicle.getVehicle_name());
             ps.setString(4, vehicle.getVehicle_color());
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (ps.executeUpdate() > 0) { 
+                return "Thêm Thành Công";
+            }
         }
-        return false;
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Thêm Thành Công";
     }
 
-    @Override
-    public boolean update(Vehicle vehicle) {
+    public String update(Vehicle vehicle) {
         String sql = "EXEC UPDATE_VEHICLE @identification_code = ?, @vehicle_type_id = ?, @vehicle_name = ?, @vehicle_color = ?, @vehicle_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
@@ -101,29 +101,33 @@ public class VehicleDAO implements InterfaceDAO<Vehicle> {
             ps.setString(3, vehicle.getVehicle_name());
             ps.setString(4, vehicle.getVehicle_color());
             ps.setInt(5, vehicle.getVehicle_id());
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (ps.executeUpdate() > 0) { 
+                return "Cập Nhật Thành Công";
+            }
         }
-        return false;
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Cập Nhật Thành Công";
     }
 
-    @Override
-    public boolean delete(int id) {
+    public String delete(int id) {
         String sql = "EXEC DELETE_VEHICLE @vehicle_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)
         ) {
             ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (ps.executeUpdate() > 0) { 
+                return "Xóa Thành Công";
+            }
         }
-        return false;
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Xóa Thành Công";
     }
 
-    @Override
     public Vehicle findbyID(int id) {
         String sql = "EXEC GET_VEHICLE_BY_ID @vehicle_id = ?";
         try (

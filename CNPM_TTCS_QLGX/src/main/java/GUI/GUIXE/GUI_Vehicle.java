@@ -4,6 +4,7 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.VehicleDAO;
 import GUI.ViewMain;
@@ -37,13 +38,15 @@ public class GUI_Vehicle extends javax.swing.JPanel {
     ArrayList<String> vehicle_type_names;
     private LogSelection logSelection;
     private int choooseIndexVehicleType = 0;
+    private LogMessage logMessage;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_Vehicle(ViewMain viewmain, LogSelection logSelection) {
+    public GUI_Vehicle(ViewMain viewmain, LogSelection logSelection, LogMessage logMessage) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
+        this.logMessage = logMessage;
         
         initComponents(); 
         initTable();
@@ -135,9 +138,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
          // Kiểm tra nếu tất cả các trường không rỗng
         boolean isFilled =  txt_vehicle_id.getText().trim().isEmpty() &&
                             !txt_identification_code.getText().trim().isEmpty() &&
-                            !txt_vehicle_type.getText().trim().isEmpty() &&
-                            !txt_vehicle_name.getText().trim().isEmpty() &&
-                            !txt_vehicle_color.getText().trim().isEmpty();
+                            !txt_vehicle_type.getText().trim().isEmpty();
 
 //        System.out.println(isFilled);
         btn_insert.setEnabled(isFilled);
@@ -164,8 +165,61 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         txt_vehicle_id.getDocument().addDocumentListener(docListener);
         txt_identification_code.getDocument().addDocumentListener(docListener);
         txt_vehicle_type.getDocument().addDocumentListener(docListener);
-        txt_vehicle_name.getDocument().addDocumentListener(docListener);
-        txt_vehicle_color.getDocument().addDocumentListener(docListener);
+    }
+    
+    public void reloadData() { 
+        initTable();
+        loadData();
+        resetFields();
+        fillTable();
+    }
+    
+    private void SetLog(String s) { 
+        this.logMessage = new LogMessage(s) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+        return;
+    }
+    
+    private String GetError(String s) { 
+        int index = 0; 
+        String sError = "";
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\"') {
+                index += 1;
+                if (index == 2) {
+                    return sError;
+                } 
+                else {
+                    continue;
+                }
+            }
+            if (index == 1) { 
+                sError = sError + s.charAt(i);
+            }
+        }
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\'') {
+                index += 1;
+                if (index == 2) {
+                    return sError;
+                } 
+                else {
+                    continue;
+                }
+            }
+            if (index == 1) { 
+                sError = sError + s.charAt(i);
+            }
+        }
+        return s;
     }
     
     @SuppressWarnings("unchecked")
@@ -179,7 +233,6 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         txt_tim_kiem = new javax.swing.JTextField();
         btn_tim_kiem = new javax.swing.JButton();
-        btn_sap_xep = new javax.swing.JButton();
         cob_loai_phuong_tien = new javax.swing.JComboBox<>();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
@@ -242,9 +295,6 @@ public class GUI_Vehicle extends javax.swing.JPanel {
             }
         });
 
-        btn_sap_xep.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_sap_xep.setText("Sắp Xếp");
-
         cob_loai_phuong_tien.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cob_loai_phuong_tien.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cob_loai_phuong_tien.addActionListener(new java.awt.event.ActionListener() {
@@ -273,9 +323,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
                     .addComponent(cob_loai_phuong_tien, 0, 228, Short.MAX_VALUE)
                     .addComponent(txt_tim_kiem))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btn_sap_xep, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                    .addComponent(btn_tim_kiem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(btn_tim_kiem, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -289,9 +337,8 @@ public class GUI_Vehicle extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
-                    .addComponent(cob_loai_phuong_tien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_sap_xep))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cob_loai_phuong_tien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -530,12 +577,21 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         String vehicleColor = txt_vehicle_color.getText().toString().trim();
         
         Vehicle vel = new Vehicle(vehicleIden, vehicleTypeId, vehicleName, vehicleColor); 
-        VehicleDAO.getInstance().insert(vel);
-        initTable();
-        resetActive();
-        resetFields();
-        loadData();
-        fillTable();
+        String check = "";
+        check = VehicleDAO.getInstance().insert(vel);
+        if (check.equals("Thêm Thành Công")) {
+            initTable();
+            resetActive();
+            resetFields();
+            loadData();
+            fillTable();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_insertMouseClicked
 
     private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
@@ -641,7 +697,8 @@ public class GUI_Vehicle extends javax.swing.JPanel {
                     }
                 });
                 for (VehicleType vt : viewmain.vehicle_types) {
-                    tableModel.addRow(new String[] {String.valueOf(vt.getVehicle_type_id()), vt.getVehicle_type_name(), String.valueOf(vt.isIsPermission())});
+                    if (vt.isIsPermission())
+                        tableModel.addRow(new String[] {String.valueOf(vt.getVehicle_type_id()), vt.getVehicle_type_name(), String.valueOf(vt.isIsPermission())});
                 }
                 this.tableModel.fireTableDataChanged();
                 this.btn_loc.addActionListener(new ActionListener() {
@@ -677,25 +734,40 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         String vehicleName = txt_vehicle_name.getText().toString().trim();
         String vehicleColor = txt_vehicle_color.getText().toString().trim();
         
-        Vehicle vel = new Vehicle(vehicleId, vehicleIden, vehicleTypeId, vehicleName, vehicleColor); 
-//        System.out.println(vel.getVehicle_id() + vehicleIden + vehicleTypeId + vehicleName + vehicleColor);
-        VehicleDAO.getInstance().update(vel);
-        initTable();
-        resetActive();
-        resetFields();
-        loadData();
-        fillTable();
+        Vehicle vel = new Vehicle(vehicleId, vehicleIden, vehicleTypeId, vehicleName, vehicleColor);
+        String check = VehicleDAO.getInstance().update(vel);
+        if (check.equals("Cập Nhật Thành Công")) {
+            initTable();
+            resetActive();
+            resetFields();
+            loadData();
+            fillTable();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_updateMouseClicked
 
     private void btn_xoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_xoaMouseClicked
         // TODO add your handling code here:
         int vehicleId = Integer.parseInt(txt_vehicle_id.getText().toString().trim());
-        VehicleDAO.getInstance().delete(vehicleId);
-        initTable();
-        resetActive();
-        resetFields();
-        loadData();
-        fillTable();
+        String check = VehicleDAO.getInstance().delete(vehicleId);
+        if (check.equals("Xóa Thành Công")) {
+            initTable();
+            resetActive();
+            resetFields();
+            loadData();
+            fillTable();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_xoaMouseClicked
 
 
@@ -709,7 +781,6 @@ public class GUI_Vehicle extends javax.swing.JPanel {
     private javax.swing.JButton btn_chon_vehicle_type;
     private javax.swing.JButton btn_insert;
     private javax.swing.JButton btn_reset;
-    private javax.swing.JButton btn_sap_xep;
     private javax.swing.JButton btn_tim_kiem;
     private javax.swing.JButton btn_update;
     private javax.swing.JButton btn_xoa;

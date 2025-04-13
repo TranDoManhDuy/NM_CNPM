@@ -4,6 +4,7 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.CustomerDAO;
 import DatabaseHelper.OpenConnection;
@@ -14,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -44,15 +44,18 @@ public class GUI_Customer extends javax.swing.JPanel {
     private LogSelection logSelection;
     private int choooseIndexBuilding = 0;
     private boolean isUpdating = false;
-    
+    private GUI_ResidentCard gui_resident_card;
+    private LogMessage logMessage;
     
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_Customer(ViewMain viewmain, LogSelection logSelection) {
+    public GUI_Customer(ViewMain viewmain, LogSelection logSelection, GUI_ResidentCard gui_resident_card, LogMessage logMessage) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
+        this.gui_resident_card = gui_resident_card;
+        this.logMessage = logMessage;
         
         initComponents(); 
         resetFields();
@@ -70,7 +73,17 @@ public class GUI_Customer extends javax.swing.JPanel {
         cob_nam.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
         
         txt_tin_nhan.setText("Đang hiển thị danh sách tất cả các khách hàng");
-        addDocumentListeners();
+        addDocumentListeners();   
+    }
+    
+    private void loadDayMonthYear() { 
+        sDay = Library.Library.getDay(0, 0);
+        sMonth = Library.Library.getMonth(0, 0);
+        sYear = Library.Library.getYear(0, 0);
+        
+        cob_ngay.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
+        cob_thang.setModel(new javax.swing.DefaultComboBoxModel<>(sMonth));
+        cob_nam.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
     }
     
     private void loadData() {
@@ -104,6 +117,54 @@ public class GUI_Customer extends javax.swing.JPanel {
             });
         }
         tblModel.fireTableDataChanged();
+    }
+    
+    private void SetLog(String s) { 
+        this.logMessage = new LogMessage(s) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+        return;
+    }
+    
+    private String GetError(String s) { 
+        int index = 0; 
+        String sError = "";
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\"') {
+                index += 1;
+                if (index == 2) {
+                    return sError;
+                } 
+                else {
+                    continue;
+                }
+            }
+            if (index == 1) { 
+                sError = sError + s.charAt(i);
+            }
+        }
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\'') {
+                index += 1;
+                if (index == 2) {
+                    return sError;
+                } 
+                else {
+                    continue;
+                }
+            }
+            if (index == 1) { 
+                sError = sError + s.charAt(i);
+            }
+        }
+        return s;
     }
     
     private void resetEnable() {
@@ -172,11 +233,9 @@ public class GUI_Customer extends javax.swing.JPanel {
                             !Txt_nationality.getText().trim().isEmpty();
         boolean isGenderSelected = cb_gender_F.isSelected() || cb_gender_M.isSelected() || cb_gender_O.isSelected();
         boolean isResidentSelected = cb_is_active.isSelected();
-        boolean isDateSelected =    !cob_ngay.getSelectedItem().toString().equals("") &&
-                                    !cob_thang.getSelectedItem().toString().equals("") &&
-                                    !cob_nam.getSelectedItem().toString().equals("");
-
-//        System.out.println(isFilled + " " + isGenderSelected + " " + isResidentSelected + " " + isDateSelected);
+        boolean isDateSelected =    cob_ngay.getSelectedIndex() != 0 &&
+                                    cob_thang.getSelectedIndex() != 0 &&
+                                    cob_nam.getSelectedIndex() != 0;
         btn_insert.setEnabled(isFilled && isGenderSelected && isResidentSelected && isDateSelected);
     }
     private void addDocumentListeners() {
@@ -206,6 +265,9 @@ public class GUI_Customer extends javax.swing.JPanel {
         Txt_nationality.getDocument().addDocumentListener(docListener);
         ActionListener actionListener = e -> checkInsertButton();
 
+        cob_ngay.addActionListener(actionListener);
+        cob_thang.addActionListener(actionListener);
+        cob_nam.addActionListener(actionListener);
         cb_is_active.addActionListener(actionListener);
         cb_gender_F.addActionListener(actionListener);
         cb_gender_M.addActionListener(actionListener);
@@ -237,8 +299,6 @@ public class GUI_Customer extends javax.swing.JPanel {
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        btn_VietNam = new javax.swing.JButton();
-        btn_ngoai_quoc = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         txt_customer_id = new javax.swing.JTextField();
         txt_building_id = new javax.swing.JTextField();
@@ -430,20 +490,6 @@ public class GUI_Customer extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btn_VietNam.setText("Việt Nam");
-        btn_VietNam.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_VietNamActionPerformed(evt);
-            }
-        });
-
-        btn_ngoai_quoc.setText("Ngoại Quốc");
-        btn_ngoai_quoc.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_ngoai_quocActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -453,11 +499,7 @@ public class GUI_Customer extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(txt_tin_nhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btn_ngoai_quoc)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_VietNam)
-                        .addGap(32, 32, 32))
+                        .addGap(32, 388, Short.MAX_VALUE))
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(sp_customer))
                 .addContainerGap())
@@ -468,12 +510,9 @@ public class GUI_Customer extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txt_tin_nhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_ngoai_quoc)
-                    .addComponent(btn_VietNam))
+                .addComponent(txt_tin_nhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sp_customer, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
+                .addComponent(sp_customer, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -795,7 +834,17 @@ public class GUI_Customer extends javax.swing.JPanel {
             String address = tblCustomer.getValueAt(selectedRow, 7).toString();
             String nationality = tblCustomer.getValueAt(selectedRow, 8).toString();
             boolean isActive = Boolean.parseBoolean(tblCustomer.getValueAt(selectedRow, 9).toString());
-
+   
+            this.isUpdating = true;
+            int year = 0;
+            if (dob.getYear() > 2000) { 
+                year = dob.getYear() - 2000;
+            }
+            else {
+                year = dob.getYear() - 1900;
+            }
+            int yearIndex= Arrays.asList(sYear).indexOf(String.format("%02d", year));
+//            System.out.println(yearIndex);
             // Hiển thị dữ liệu lên các ô nhập liệu
             txt_customer_id.setText(String.valueOf(customerId));
             txt_building_id.setText(buildingName);
@@ -803,13 +852,14 @@ public class GUI_Customer extends javax.swing.JPanel {
             txt_ssn.setText(ssn);
             cob_ngay.setSelectedIndex( dob.getDayOfMonth() );
             cob_thang.setSelectedIndex( dob.getMonthValue() );
-            cob_nam.setSelectedIndex( dob.getYear() - 1950 );
+            cob_nam.setSelectedIndex(yearIndex);
+            this.isUpdating = false;
             txt_phone_number.setText(phoneNumber);
             txt_address.setText(address);
             Txt_nationality.setText(nationality);
             
             // Nếu cần xử lý giới tính hoặc trạng thái, có thể cập nhật thêm
-            cb_is_active.setSelected(isActive); // Giả sử có JCheckBox hiển thị trạng thái
+            cb_is_active.setSelected(isActive);
             if (gender.equals("M")) {
                 cb_gender_F.setSelected(false);
                 cb_gender_M.setSelected(true);
@@ -831,7 +881,6 @@ public class GUI_Customer extends javax.swing.JPanel {
 
     private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
         // TODO add your handling code here:
-        
     }//GEN-LAST:event_btn_insertActionPerformed
 
     private void btn_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_resetActionPerformed
@@ -846,6 +895,15 @@ public class GUI_Customer extends javax.swing.JPanel {
 
     private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked
         // TODO add your handling code here:
+        if (!Library.Library.isValidSSN(txt_ssn.getText().toString().trim())) { 
+            this.SetLog("Căn cước công dân phải có đúng 13 chữ số!");
+            return;
+        }
+        
+        if (!Library.Library.isValidPhoneNumber(txt_phone_number.getText().toString().trim())) { 
+            this.SetLog("Số điện thoại phải có đúng 10 chữ số!");
+            return;
+        }
         String day = cob_ngay.getSelectedItem().toString();
         String month = cob_thang.getSelectedItem().toString();
         String year = cob_nam.getSelectedItem().toString();
@@ -866,19 +924,21 @@ public class GUI_Customer extends javax.swing.JPanel {
             Txt_nationality.getText().trim(),
             cb_is_active.isSelected()
         );
-//        System.out.println(customer.getFull_name());
-        try {
-            Connection con = OpenConnection.getConnection();
-            CustomerDAO.getInstance().insert(customer);
+        String check = CustomerDAO.getInstance().insert(customer);
+        if (check.equals("Thêm Thành Công")) {
             resetFields();
             resetEnable();
             initTable();
             loadData();
             fillTable();
+            this.gui_resident_card.reloadData();
         }
-        catch (Exception e) { 
-            e.printStackTrace();
+        else { 
+            this.SetLog(GetError(check));
+            return;
         }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_insertMouseClicked
 
     private void txt_tin_nhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tin_nhanActionPerformed
@@ -991,14 +1051,6 @@ public class GUI_Customer extends javax.swing.JPanel {
         resetFields();
     }//GEN-LAST:event_btn_tangActionPerformed
 
-    private void btn_ngoai_quocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ngoai_quocActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_ngoai_quocActionPerformed
-
-    private void btn_VietNamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_VietNamActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_VietNamActionPerformed
-
     private void cob_namActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_namActionPerformed
         // TODO add your handling code here:
         if (isUpdating) return;
@@ -1101,7 +1153,7 @@ public class GUI_Customer extends javax.swing.JPanel {
         sYear = Library.Library.getYear(day, month);
         sDay = Library.Library.getDay(month, year);
         
-        System.out.println("Thang " + day + " " + month + " " + year);
+//        System.out.println("Thang " + day + " " + month + " " + year);
         cob_ngay.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
         cob_nam.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
         
@@ -1170,6 +1222,10 @@ public class GUI_Customer extends javax.swing.JPanel {
 
     private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
         // TODO add your handling code here:
+        if (!Library.Library.isValidPhoneNumber(txt_phone_number.getText().toString().trim())) { 
+            this.SetLog("Số điện thoại phải có đúng 10 chữ số!");
+            return;
+        }
         String day = cob_ngay.getSelectedItem().toString();
         String month = cob_thang.getSelectedItem().toString();
         String year = cob_nam.getSelectedItem().toString();
@@ -1187,7 +1243,6 @@ public class GUI_Customer extends javax.swing.JPanel {
                 choooseIndexBuilding = b.getBuilding_id();
             }
         }
-        
         Customer customer = new Customer(
             Integer.parseInt(txt_customer_id.getText().trim()),
             txt_full_name.getText().trim(),
@@ -1201,36 +1256,38 @@ public class GUI_Customer extends javax.swing.JPanel {
             Txt_nationality.getText().trim(),
             cb_is_active.isSelected()
         );
-//        System.out.println(txt_building_id.getText() +  customer.getBuilding_id());
-        try {
-            Connection con = OpenConnection.getConnection();
-            CustomerDAO.getInstance().update(customer);
+        String check = CustomerDAO.getInstance().update(customer);
+        if (check.equals("Cập Nhật Thành Công")) {
             resetFields();
             resetEnable();
             loadData();
             initTable();
             fillTable();
         }
-        catch (Exception e) { 
-            e.printStackTrace();
+        else { 
+            this.SetLog(GetError(check));
+            return;
         }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_updateActionPerformed
 
     private void btn_deleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_deleteMouseClicked
         // TODO add your handling code here:
-//        System.out.println(txt_customer_id.getText().trim());
-        try {
-            Connection con = OpenConnection.getConnection();
-            CustomerDAO.getInstance().delete(Integer.parseInt(txt_customer_id.getText().trim()));
+        String check = CustomerDAO.getInstance().delete(Integer.parseInt(txt_customer_id.getText().trim()));
+        if (check.equals("Xóa Thành Công")) {
             resetFields();
             resetEnable();
             loadData();
             initTable();
             fillTable();
         }
-        catch (Exception e) { 
-            e.printStackTrace();
+        else { 
+            this.SetLog(GetError(check));
+            return;
         }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_deleteMouseClicked
 
     private void btn_mac_dinhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mac_dinhActionPerformed
@@ -1243,14 +1300,12 @@ public class GUI_Customer extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField Txt_nationality;
-    private javax.swing.JButton btn_VietNam;
     private javax.swing.JButton btn_chon;
     private javax.swing.JButton btn_cu_dan;
     private javax.swing.JButton btn_delete;
     private javax.swing.JButton btn_giam;
     private javax.swing.JButton btn_insert;
     private javax.swing.JButton btn_mac_dinh;
-    private javax.swing.JButton btn_ngoai_quoc;
     private javax.swing.JButton btn_not_cu_dan;
     private javax.swing.JButton btn_reset;
     private javax.swing.JButton btn_tang;

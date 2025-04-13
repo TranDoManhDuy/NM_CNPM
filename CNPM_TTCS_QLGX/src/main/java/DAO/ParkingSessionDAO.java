@@ -1,26 +1,22 @@
 package DAO;
 
 import DatabaseHelper.OpenConnection;
-import InterfaceDAO.InterfaceDAO;
 import Model.ParkingSession;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
+public class ParkingSessionDAO{
     public static ParkingSessionDAO getInstance() {
         return new ParkingSessionDAO();
     }
 
-    @Override
     public ArrayList<ParkingSession> getList() {
         ArrayList<ParkingSession> lstSessions = new ArrayList<>();
         String sql = "EXEC GET_ALL_PARKING_SESSIONS";
@@ -92,8 +88,7 @@ public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
         return result;
     }
 
-    @Override
-    public boolean insert(ParkingSession session) {
+    public String insert(ParkingSession session) {
         String sql = "EXEC INSERT_PARKING_SESSION @card_id = ?, @is_service = ?, @check_in_time = ?, @check_out_time = ?, @check_in_shift_id = ?, @check_out_shift_id = ?, @vehicle_id = ?, @amount = ?";
         try (
                 Connection con = OpenConnection.getConnection();
@@ -125,15 +120,17 @@ public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
             }
 
             
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (ps.executeUpdate() > 0) { 
+                return "Thêm Thành Công";
+            }
         }
-        return false;
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Thêm Thành Công";
     }
 
-    @Override
-    public boolean update(ParkingSession session) {
+    public String update(ParkingSession session) {
         String sql = "EXEC UPDATE_PARKING_SESSION @card_id = ?, @is_service = ?, @check_in_time = ?, @check_out_time = ?, @check_in_shift_id = ?, @check_out_shift_id = ?, @vehicle_id = ?, @amount = ?, @parking_session_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
@@ -165,14 +162,16 @@ public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
             }
             
             ps.setInt(9, session.getParking_session_id());
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (ps.executeUpdate() > 0) { 
+                return "Cập Nhật Thành Công";
+            }
         }
-        return false;
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Cập Nhật Thành Công";
     }
 
-    @Override
     public ParkingSession findbyID(int id) {
         String sql = "EXEC GET_PARKING_SESSION_BY_ID @parking_session_id = ?";
         try (
@@ -200,19 +199,21 @@ public class ParkingSessionDAO implements InterfaceDAO<ParkingSession> {
         }
         return null;
     }
-    
-    @Override
-    public boolean delete(int id) {
+
+    public String delete(int id) {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         String sql = "EXEC DELETE_PARKING_SESSION @parking_session_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+                ps.setInt(1, id);
+            if (ps.executeUpdate() > 0) { 
+                return "Xóa Thành Công";
+            }
         }
-        return false;
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Xóa Thành Công";
     }
 }

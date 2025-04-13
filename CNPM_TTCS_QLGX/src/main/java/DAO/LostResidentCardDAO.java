@@ -1,23 +1,20 @@
 package DAO;
 
 import DatabaseHelper.OpenConnection;
-import InterfaceDAO.InterfaceDAO;
 import Model.LostResidentCard;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LostResidentCardDAO implements InterfaceDAO<LostResidentCard> {
+public class LostResidentCardDAO {
     public static LostResidentCardDAO getInstance() {
         return new LostResidentCardDAO();
     }
 
-    @Override
     public ArrayList<LostResidentCard> getList() {
         ArrayList<LostResidentCard> lstCards = new ArrayList<>();
         String sql = "EXEC GET_ALL_LOST_RESIDENT_CARDS";
@@ -66,23 +63,24 @@ public class LostResidentCardDAO implements InterfaceDAO<LostResidentCard> {
         return result;
     }
 
-    @Override
-    public boolean insert(LostResidentCard card) {
+    public String insert(LostResidentCard card) {
         String sql = "EXEC INSERT_LOST_RESIDENT_CARD @pk_resident_card = ?, @parking_session_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, card.getPk_resident_card());
             ps.setInt(2, card.getParking_session_id());
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (ps.executeUpdate() > 0) { 
+                return "Thêm Thành Công";
+            }
         }
-        return false;
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Thêm Thành Công";
     }
 
-    @Override
-    public boolean update(LostResidentCard card) {
+    public String update(LostResidentCard card) {
         String sql = "EXEC UPDATE_LOST_RESIDENT_CARD @parking_session_id = ?, @pk_resident_card = ?, @lost_resident_card_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
@@ -90,14 +88,16 @@ public class LostResidentCardDAO implements InterfaceDAO<LostResidentCard> {
             ps.setInt(1, card.getParking_session_id());
             ps.setInt(2, card.getPk_resident_card());
             ps.setInt(3, card.getLost_resident_card_id());
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (ps.executeUpdate() > 0) { 
+                return "Cập Nhật Thành Công";
+            }
         }
-        return false;
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Cập Nhật Thành Công";
     }
 
-    @Override
     public LostResidentCard findbyID(int id) {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         String sql = "EXEC GET_LOST_RESIDENT_CARD_BY_ID @lost_resident_card_id = ?";
@@ -120,18 +120,20 @@ public class LostResidentCardDAO implements InterfaceDAO<LostResidentCard> {
         return null;
     }
 
-    @Override
-    public boolean delete(int id) {
+    public String delete(int id) {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         String sql = "EXEC DELETE_LOST_RESIDENT_CARD @lost_resident_card_id = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (ps.executeUpdate() > 0) { 
+                return "Xóa Thành Công";
+            }
         }
-        return false;
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Xóa Thành Công";
     }
 }

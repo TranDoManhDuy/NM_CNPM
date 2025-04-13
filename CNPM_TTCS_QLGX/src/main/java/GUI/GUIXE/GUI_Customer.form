@@ -62,11 +62,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="txt_tin_nhan" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Component id="btn_ngoai_quoc" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btn_VietNam" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                          <EmptySpace min="32" pref="388" max="32767" attributes="0"/>
                       </Group>
                       <Component id="jPanel3" max="32767" attributes="0"/>
                       <Component id="sp_customer" max="32767" attributes="0"/>
@@ -81,13 +77,9 @@
                   <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="txt_tin_nhan" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btn_ngoai_quoc" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btn_VietNam" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="txt_tin_nhan" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="sp_customer" pref="311" max="32767" attributes="0"/>
+                  <Component id="sp_customer" pref="312" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -319,22 +311,6 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JButton" name="btn_VietNam">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Vi&#xea;&#x323;t Nam"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_VietNamActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="btn_ngoai_quoc">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Ngoa&#x323;i Qu&#xf4;&#x301;c"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_ngoai_quocActionPerformed"/>
-          </Events>
-        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel2">
