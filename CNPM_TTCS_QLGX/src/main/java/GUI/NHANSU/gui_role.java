@@ -13,9 +13,11 @@ import Model.Role;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -24,79 +26,89 @@ import javax.swing.table.DefaultTableModel;
  */
 public class gui_role extends javax.swing.JPanel {
 
-    private DefaultTableModel tableModel;
+    private DefaultTableModel tableModelPermissions;
+    private DefaultTableModel tableModelRoles;
     private ViewMain viewmain;
     private LogConfirm logConfirm;
     private LogMessage logMessage;
-    private boolean isUpdating = false;
 
-    /**
-     * Creates new form gui_staff
-     */
     public gui_role(ViewMain viewmain) {
         this.viewmain = viewmain;
-        this.logConfirm = logConfirm;
-        this.logMessage = logMessage;
-        
-        initComponents();       
-        tableModel = new DefaultTableModel() {
+        initComponents();
+        initTables();
+        fillRoleTable();
+        addRoleSelectionListener();
+    }
+
+    private void initTables() {
+        tableModelPermissions = new DefaultTableModel(new Object[]{"ID Quyền", "Tên quyền"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
-        }
-        };
-        initTable();
-        fillTable();
-    }    
-    public void initTable() {
-        String[] header = new String[] {"ID Vai trò", "Tên Vai trò", "Quyền"};
-        tableModel.setColumnIdentifiers(header);
-        Table_Vaitro.setModel(tableModel);
-    }
-    
-    public void fillTable() {
-    String sql = "EXEC Role_render";
-    try (
-        Connection conn = OpenConnection.getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet result = stmt.executeQuery(sql);
-    ) {
-        tableModel.setRowCount(0); 
-        while (result.next()) {
-            int role_id = result.getInt("role_id");
-            String role_name = result.getString("role_name");
-            
-
-            String permissions = "";
-            if (role_name.equalsIgnoreCase("Manager Staff In") || role_name.equalsIgnoreCase("Manager Staff Out")) {
-                permissions= "All permissions without insert and update manager";
-            } else if (role_name.equalsIgnoreCase("Staff In") || role_name.equalsIgnoreCase("Staff Out")) {
-                permissions = "View_accounts, View_shift_types, View_shift_sheets, View_tasks, View_buiding";
-            } 
-            tableModel.addRow(new Object[]{
-                role_id,
-                role_name,
-                permissions
-            });
-        }
-        tableModel.fireTableDataChanged();
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    Table_Vaitro.addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            int selectedRow = Table_Vaitro.getSelectedRow();
-            if (selectedRow >= 0) {
-                txt_Vaitro.setText(Table_Vaitro.getValueAt(selectedRow, 0).toString());
-                txt_Tenvaitro.setText(Table_Vaitro.getValueAt(selectedRow, 1).toString());
-                txt_Quyen.setText(Table_Vaitro.getValueAt(selectedRow, 2).toString());
             }
+        };
+        Table_Quyenvaitro.setModel(tableModelPermissions);
+
+        tableModelRoles = new DefaultTableModel(new Object[]{"ID Vai trò", "Tên vai trò"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        Table_Vaitro.setModel(tableModelRoles);
+    }
+
+    private void fillRoleTable() {
+        tableModelRoles.setRowCount(0);
+        ArrayList<Role> roleList = RoleDAO.getInstance().getList();
+        for (Role role : roleList) {
+            tableModelRoles.addRow(new Object[]{role.getRoleId(), role.getRoleName()});
         }
-        
-    });
-    
-}
+    }
+
+    private void addRoleSelectionListener() {
+        Table_Vaitro.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int selectedRow = Table_Vaitro.getSelectedRow();
+                if (selectedRow >= 0) {
+                    // Lấy dữ liệu từ bảng
+                    String roleId = Table_Vaitro.getValueAt(selectedRow, 0).toString();
+                    String roleName = Table_Vaitro.getValueAt(selectedRow, 1).toString();
+
+                    // Gán vào các ô text bên phải
+                    txt_Vaitro.setText(roleId);
+                    txt_Tenvaitro.setText(roleName);
+
+                    // Load danh sách quyền tương ứng
+                    loadPermissionsByRole(Integer.parseInt(roleId));
+                }
+            }
+        });
+    }
+
+
+    private void loadPermissionsByRole(int roleId) {
+        tableModelPermissions.setRowCount(0);
+
+        String sql = "SELECT p.permission_id, p.permission_name FROM roles_permissions rp " +
+                     "JOIN permissions p ON rp.permission_id = p.permission_id WHERE rp.role_id = ?";
+        try (Connection conn = OpenConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, roleId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int permissionId = rs.getInt("permission_id");
+                String permissionName = rs.getString("permission_name");
+                tableModelPermissions.addRow(new Object[]{permissionId, permissionName});
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log_message("Lỗi khi tải danh sách quyền cho vai trò!");
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -113,14 +125,11 @@ public class gui_role extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         txt_Tenvaitro = new javax.swing.JTextField();
         btnLammoiTT = new javax.swing.JButton();
-        btnHuy = new javax.swing.JButton();
-        btnLuu = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         txt_Quyen = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         btnThem = new javax.swing.JButton();
-        btnSua = new javax.swing.JButton();
         btnXoa = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
@@ -130,6 +139,10 @@ public class gui_role extends javax.swing.JPanel {
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
+        Table_Quyenvaitro = new javax.swing.JTable();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
         Table_Vaitro = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(204, 255, 255));
@@ -149,20 +162,6 @@ public class gui_role extends javax.swing.JPanel {
             }
         });
 
-        btnHuy.setText("Hủy");
-        btnHuy.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHuyActionPerformed(evt);
-            }
-        });
-
-        btnLuu.setText("Lưu");
-        btnLuu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLuuActionPerformed(evt);
-            }
-        });
-
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel4.setText("Quyền");
 
@@ -173,11 +172,7 @@ public class gui_role extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(117, 117, 117)
-                        .addComponent(btnLuu)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnHuy)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(285, 285, 285)
                         .addComponent(btnLammoiTT))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(33, 33, 33)
@@ -205,12 +200,9 @@ public class gui_role extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txt_Quyen)
+                .addComponent(txt_Quyen, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnLuu, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnHuy, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLammoiTT, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btnLammoiTT, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -226,13 +218,6 @@ public class gui_role extends javax.swing.JPanel {
             }
         });
 
-        btnSua.setText("SỬA");
-        btnSua.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSuaActionPerformed(evt);
-            }
-        });
-
         btnXoa.setText("XÓA");
         btnXoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -245,18 +230,15 @@ public class gui_role extends javax.swing.JPanel {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel13))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnSua, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap()
+                .addComponent(jLabel13)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(44, 44, 44)
+                .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(69, 69, 69))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -266,8 +248,7 @@ public class gui_role extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSua, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
@@ -322,24 +303,24 @@ public class gui_role extends javax.swing.JPanel {
         jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel3.setText("DANH SÁCH VAI TRÒ");
+        jLabel3.setText("DANH SÁCH QUYỀN - VAI TRÒ");
 
-        Table_Vaitro.setModel(new javax.swing.table.DefaultTableModel(
+        Table_Quyenvaitro.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
             },
             new String [] {
-                "ID Vai trò", "Tên vai trò", "Quyền"
+                "ID Quyền", "Tên quyền"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, true
+                false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -350,7 +331,7 @@ public class gui_role extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(Table_Vaitro);
+        jScrollPane2.setViewportView(Table_Quyenvaitro);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -371,7 +352,63 @@ public class gui_role extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel5.setText("DANH SÁCH VAI TRÒ");
+
+        Table_Vaitro.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "ID Vai trò", "Tên vai trò"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(Table_Vaitro);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 666, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -381,7 +418,9 @@ public class gui_role extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -397,150 +436,154 @@ public class gui_role extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = Table_Quyenvaitro.getSelectedRow();
+
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(null, "Vui lòng chọn một quyền để xoá!");
+        return;
+    }
+
+    String roleIdText = txt_Vaitro.getText().trim();
+    if (roleIdText.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Không xác định được vai trò!");
+        return;
+    }
+
+    int roleId = Integer.parseInt(roleIdText);
+    int permissionId = (int) Table_Quyenvaitro.getValueAt(selectedRow, 0);
+
+    int confirm = JOptionPane.showConfirmDialog(null,
+            "Bạn có chắc muốn xoá quyền này khỏi vai trò không?",
+            "Xác nhận xoá", JOptionPane.YES_NO_OPTION);
+
+    if (confirm != JOptionPane.YES_OPTION) return;
+
+    String deleteSql = "DELETE FROM roles_permissions WHERE role_id = ? AND permission_id = ?";
+
+    try (Connection conn = OpenConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(deleteSql)) {
+
+        ps.setInt(1, roleId);
+        ps.setInt(2, permissionId);
+
+        int rowsAffected = ps.executeUpdate();
+
+        if (rowsAffected > 0) {
+            JOptionPane.showMessageDialog(null, "Xoá quyền khỏi vai trò thành công!");
+            loadPermissionsByRole(roleId); // load lại bảng
+        } else {
+            JOptionPane.showMessageDialog(null, "Không thể xoá quyền!");
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Lỗi khi xoá quyền khỏi vai trò!");
+    }
+    }//GEN-LAST:event_btnXoaActionPerformed
+
+    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
+        // TODO add your handling code here:
+            String roleIdText = txt_Vaitro.getText().trim();
+            String permissionName = txt_Quyen.getText().trim();
+
+            if (roleIdText.isEmpty() || permissionName.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Vui lòng chọn vai trò và nhập tên quyền!");
+                return;
+            }
+
+            int roleId;
+            try {
+                roleId = Integer.parseInt(roleIdText);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "ID vai trò không hợp lệ!");
+                return;
+            }
+
+            String getPermissionIdSql = "SELECT permission_id FROM permissions WHERE permission_name = ?";
+            String checkSql = "SELECT COUNT(*) FROM roles_permissions WHERE role_id = ? AND permission_id = ?";
+            String insertSql = "INSERT INTO roles_permissions (role_id, permission_id) VALUES (?, ?)";
+
+            try (Connection conn = OpenConnection.getConnection();
+                 PreparedStatement getPermStmt = conn.prepareStatement(getPermissionIdSql);
+                 PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+                 PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+
+                getPermStmt.setString(1, permissionName);
+                ResultSet rsPerm = getPermStmt.executeQuery();
+                if (!rsPerm.next()) {
+                    JOptionPane.showMessageDialog(null, "Tên quyền không tồn tại trong hệ thống!");
+                    return;
+                }
+                int permissionId = rsPerm.getInt("permission_id");
+
+                checkStmt.setInt(1, roleId);
+                checkStmt.setInt(2, permissionId);
+                ResultSet rsCheck = checkStmt.executeQuery();
+                if (rsCheck.next() && rsCheck.getInt(1) > 0) {
+                    JOptionPane.showMessageDialog(null, "Quyền đã tồn tại trong vai trò này!");
+                    return;
+                }
+
+                insertStmt.setInt(1, roleId);
+                insertStmt.setInt(2, permissionId);
+                insertStmt.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Gán quyền thành công!");
+                loadPermissionsByRole(roleId);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Lỗi khi gán quyền cho vai trò!");
+            }
+        
+    }//GEN-LAST:event_btnThemActionPerformed
 
     private void btnLammoiTTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLammoiTTActionPerformed
         // TODO add your handling code here:
         ResetThongTin();
+
+    // Xoá toàn bộ dữ liệu trong bảng quyền - vai trò
+        tableModelPermissions.setRowCount(0);
+
+        // Bỏ chọn hàng đang chọn (nếu có) ở cả hai bảng
+        Table_Quyenvaitro.clearSelection();
         Table_Vaitro.clearSelection();
+        
     }//GEN-LAST:event_btnLammoiTTActionPerformed
-
-    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
-        // TODO add your handling code here:
-        btnSua.setEnabled(false);
-        btnXoa.setEnabled(false);
-        txt_Vaitro.setEnabled(false);
-        txt_Tenvaitro.requestFocus(); // Focus vào ô tên vai trò
-    }//GEN-LAST:event_btnThemActionPerformed
-
-    private void btnLammoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLammoiActionPerformed
-        // TODO add your handling code here:
-        txt_Timkiem.setText(""); // Xoá ô tìm kiếm
-        loadTableVaiTro();
-    }//GEN-LAST:event_btnLammoiActionPerformed
-
-    private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
-        // TODO add your handling code here:
-        log_comfirm("Xác nhận hủy?");
-    }//GEN-LAST:event_btnHuyActionPerformed
-
-    private void btnLuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLuuActionPerformed
-        // TODO add your handling code here:
-        String roleName = txt_Tenvaitro.getText().trim();
-        String permissionName = txt_Quyen.getText().trim();
-
-        if (roleName.isEmpty() || permissionName.isEmpty()) {
-            log_message("Vui lòng điền đầy đủ thông tin!");
-            return;
-        }
-
-        boolean success = false;
-
-        if (isUpdating) {
-            // Sửa
-            int roleId = Integer.parseInt(txt_Vaitro.getText().trim());
-            Role role = new Role(roleId, roleName);
-            success = RoleDAO.getInstance().update(role);
-
-            if (success) {
-                log_message("Cập nhật thành công!");
-                btnThem.setEnabled(true);
-                btnXoa.setEnabled(true);
-            } else {
-                log_message("Cập nhật thất bại!");
-            }
-
-        } else {
-            // Thêm
-            Role role = new Role(roleName); 
-            success = RoleDAO.getInstance().insert(role);
-
-            if (success) {
-                log_message("Thêm thành công!");
-                btnSua.setEnabled(true);
-                btnXoa.setEnabled(true);
-            } else {
-                log_message("Thêm thất bại!");
-            }
-        }
-
-        if (success) {
-              loadTableVaiTro();  
-              ResetThongTin();    
-              isUpdating = false; 
-        }
-    }//GEN-LAST:event_btnLuuActionPerformed
 
     private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimActionPerformed
         // TODO add your handling code here:
         String keyword = txt_Timkiem.getText().trim().toLowerCase();
 
         DefaultTableModel model = (DefaultTableModel) Table_Vaitro.getModel();
-        DefaultTableModel newModel = new DefaultTableModel(new Object[]{"ID Vai trò", "Tên Vai trò", "Quyền"}, 0);
+        DefaultTableModel newModel = new DefaultTableModel(new Object[]{"ID Vai trò", "Tên Vai trò"}, 0);
 
         for (int i = 0; i < model.getRowCount(); i++) {
             String id = model.getValueAt(i, 0).toString().toLowerCase();
             String ten = model.getValueAt(i, 1).toString().toLowerCase();
-            String quyen = model.getValueAt(i, 2).toString().toLowerCase();
 
-            if (id.contains(keyword) || ten.contains(keyword) || quyen.contains(keyword)) {
-                newModel.addRow(new Object[]{model.getValueAt(i, 0), model.getValueAt(i, 1), model.getValueAt(i, 2)});
+
+            if (id.contains(keyword) || ten.contains(keyword)) {
+                newModel.addRow(new Object[]{model.getValueAt(i, 0), model.getValueAt(i, 1)});
             }
         }
 
         Table_Vaitro.setModel(newModel);
     }//GEN-LAST:event_btnTimActionPerformed
 
-    private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
+    private void btnLammoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLammoiActionPerformed
         // TODO add your handling code here:
-        int selectedRow = Table_Vaitro.getSelectedRow();
-        btnThem.setEnabled(false);
-        btnXoa.setEnabled(false);
-                       
-        txt_Vaitro.setText(Table_Vaitro.getValueAt(selectedRow, 0).toString());          
-        txt_Tenvaitro.setText(Table_Vaitro.getValueAt(selectedRow, 1).toString());
-        
-        txt_Vaitro.setEnabled(false);
-        txt_Tenvaitro.requestFocus();
-        isUpdating = true;
-    
-    }//GEN-LAST:event_btnSuaActionPerformed
-
-    private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
-        // TODO add your handling code here:
-        int selectedRow = Table_Vaitro.getSelectedRow();
-        if (selectedRow == -1) {
-            log_message("Vui lòng chọn!");
-            return;
-        }
-     
-        int role_id = Integer.parseInt(Table_Vaitro.getValueAt(selectedRow, 0).toString());
-
-        logConfirm = new LogConfirm("Xác nhận xóa?") {
-            @Override
-            public void action() {
-                setVisible(false);
-                viewmain.setEnabled(true);
-                if (RoleDAO.getInstance().delete(role_id)) {
-                    log_message("Xóa thành công!");
-                    loadTableVaiTro();
-                    ResetThongTin();
-                } else {
-                    log_message("Xóa thất bại!");
-                }
-            }
-
-            @Override
-            public void reject() {
-                setVisible(false);
-                viewmain.setEnabled(true);
-            }
-        };
-        logConfirm.setLocationRelativeTo(null);
-        logConfirm.setVisible(true);
-    }//GEN-LAST:event_btnXoaActionPerformed
+        txt_Timkiem.setText(""); // Xoá ô tìm kiếm
+        loadTableVaiTro();
+    }//GEN-LAST:event_btnLammoiActionPerformed
 
     private void log_message(String message) {
         this.viewmain.setEnabled(false);
@@ -565,7 +608,7 @@ public class gui_role extends javax.swing.JPanel {
             this.setVisible(false);
             viewmain.setEnabled(true);
             viewmain.requestFocus();
-            ResetThongTin(); 
+//            ResetThongTin(); 
         }
         @Override
         public void reject() {
@@ -594,18 +637,14 @@ public class gui_role extends javax.swing.JPanel {
     private void ResetThongTin(){
         txt_Vaitro.setText("");
         txt_Tenvaitro.setText("");
-        btnThem.setEnabled(true);
-        btnXoa.setEnabled(true);
-        btnSua.setEnabled(true);
+        txt_Quyen.setText("");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable Table_Quyenvaitro;
     private javax.swing.JTable Table_Vaitro;
-    private javax.swing.JButton btnHuy;
     private javax.swing.JButton btnLammoi;
     private javax.swing.JButton btnLammoiTT;
-    private javax.swing.JButton btnLuu;
-    private javax.swing.JButton btnSua;
     private javax.swing.JButton btnThem;
     private javax.swing.JButton btnTim;
     private javax.swing.JButton btnXoa;
@@ -615,11 +654,14 @@ public class gui_role extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextField txt_Quyen;
     private javax.swing.JTextField txt_Tenvaitro;
     private javax.swing.JTextField txt_Timkiem;
