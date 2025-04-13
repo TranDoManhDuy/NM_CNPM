@@ -80,8 +80,8 @@
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="txt_Taikhoan" max="32767" attributes="0"/>
                               <Component id="txt_Matkhau" max="32767" attributes="0"/>
-                              <Component id="txt_Vaitro" max="32767" attributes="0"/>
                               <Component id="combobox_Trangthai" alignment="0" pref="238" max="32767" attributes="0"/>
+                              <Component id="combobox_Vaitro" alignment="0" pref="238" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" attributes="0">
@@ -119,7 +119,7 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txt_Vaitro" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="combobox_Vaitro" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -132,7 +132,7 @@
                       <Component id="btnHuy" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
                       <Component id="btnLuu" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="24" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -160,8 +160,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="M&#x1ead;t kh&#x1ea9;u"/>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="txt_Vaitro">
         </Component>
         <Component class="javax.swing.JTextField" name="txt_Taikhoan">
         </Component>
@@ -217,6 +215,23 @@
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnLuuMouseClicked"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLuuActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="combobox_Vaitro">
+          <Properties>
+            <Property name="editable" type="boolean" value="true"/>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="5">
+                <StringItem index="0" value="Manager Staff In"/>
+                <StringItem index="1" value="Manager Staff Out"/>
+                <StringItem index="2" value="Staff In"/>
+                <StringItem index="3" value="Staff Out"/>
+                <StringItem index="4" value=" "/>
+              </StringArray>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

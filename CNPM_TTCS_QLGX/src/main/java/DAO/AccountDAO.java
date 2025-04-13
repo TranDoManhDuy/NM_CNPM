@@ -107,4 +107,19 @@ public class AccountDAO implements InterfaceDAO.InterfaceDAO<Account> {
         }
         return false;
     }
+    
+    public boolean isAccountNumberExists(int accountNumber) {
+        String sql = "SELECT 1 FROM accounts WHERE account_number = ?";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+        ) {
+            ptmt.setInt(1, accountNumber);
+            ResultSet rs = ptmt.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

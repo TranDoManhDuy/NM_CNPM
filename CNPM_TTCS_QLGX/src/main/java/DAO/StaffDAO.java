@@ -150,5 +150,64 @@ public class StaffDAO implements InterfaceDAO.InterfaceDAO<Staff> {
         }
         return false;
     }
+    
+    public boolean isAccountUsedByStaff(int accountNumber) {
+        String sql = "SELECT 1 FROM staff WHERE account_number = ?";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+        ) {
+            ptmt.setInt(1, accountNumber);
+            ResultSet rs = ptmt.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean isSsnExists(String ssn, int excludeStaffId) {
+        String sql = "SELECT 1 FROM staff WHERE ssn = ? AND staff_id <> ?";
+        try (Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql)) {
+            ptmt.setString(1, ssn);
+            ptmt.setInt(2, excludeStaffId);
+            ResultSet rs = ptmt.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isPhoneExists(String phone, int excludeStaffId) {
+        String sql = "SELECT 1 FROM staff WHERE phone_number = ? AND staff_id <> ?";
+        try (Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql)) {
+            ptmt.setString(1, phone);
+            ptmt.setInt(2, excludeStaffId);
+            ResultSet rs = ptmt.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isEmailExists(String email, int excludeStaffId) {
+        String sql = "SELECT 1 FROM staff WHERE email = ? AND staff_id <> ?";
+        try (Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql)) {
+            ptmt.setString(1, email);
+            ptmt.setInt(2, excludeStaffId);
+            ResultSet rs = ptmt.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    
 } 
 

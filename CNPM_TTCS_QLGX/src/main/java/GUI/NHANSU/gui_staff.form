@@ -170,8 +170,8 @@
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="3">
                 <StringItem index="0" value="T&#x1ea5;t c&#x1ea3;"/>
-                <StringItem index="1" value="Qu&#x1ea3;n l&#xfd;"/>
-                <StringItem index="2" value="Nh&#xe2;n vi&#xea;n"/>
+                <StringItem index="1" value="Manager"/>
+                <StringItem index="2" value="Staff"/>
               </StringArray>
             </Property>
           </Properties>
@@ -366,9 +366,9 @@
                                       <Component id="jLabel15" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="32767" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="txt_DiaChi" alignment="1" min="-2" pref="222" max="-2" attributes="0"/>
-                                      <Component id="txt_ViTri" alignment="1" min="-2" pref="222" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="txt_DiaChi" pref="222" max="32767" attributes="0"/>
+                                      <Component id="combobox_Vitri" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -397,8 +397,8 @@
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="txt_CCCD" alignment="0" max="32767" attributes="0"/>
                               <Component id="txt_SDT" alignment="0" pref="222" max="32767" attributes="0"/>
-                              <Component id="txt_VaiTro" alignment="0" pref="222" max="32767" attributes="0"/>
                               <Component id="combobox_TrangThai" alignment="1" max="32767" attributes="0"/>
+                              <Component id="combobox_Vaitro" alignment="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
@@ -465,16 +465,16 @@
                       <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txt_Email" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                       <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txt_VaiTro" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="combobox_Vaitro" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel15" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel16" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txt_ViTri" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                       <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txt_TaiKhoan" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                       <Component id="combobox_TrangThai" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="combobox_Vitri" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -606,14 +606,10 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_LammoiTTActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="txt_VaiTro">
-        </Component>
         <Component class="javax.swing.JLabel" name="jLabel16">
           <Properties>
             <Property name="text" type="java.lang.String" value="S&#x1ed1; t&#xe0;i kho&#x1ea3;n"/>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="txt_ViTri">
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel17">
           <Properties>
@@ -629,6 +625,36 @@
               <StringArray count="2">
                 <StringItem index="0" value="C&#xf2;n l&#xe0;m vi&#x1ec7;c"/>
                 <StringItem index="1" value="Ngh&#x1ec9; vi&#x1ec7;c"/>
+              </StringArray>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="combobox_Vaitro">
+          <Properties>
+            <Property name="editable" type="boolean" value="true"/>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="4">
+                <StringItem index="0" value="Manager Staff In"/>
+                <StringItem index="1" value="Manager Staff Out"/>
+                <StringItem index="2" value="Staff In"/>
+                <StringItem index="3" value="Staff Out"/>
+              </StringArray>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="combobox_Vitri">
+          <Properties>
+            <Property name="editable" type="boolean" value="true"/>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="2">
+                <StringItem index="0" value="Manager"/>
+                <StringItem index="1" value="Staff"/>
               </StringArray>
             </Property>
           </Properties>

@@ -113,4 +113,41 @@ public static PositionDAO getInstance() {
         }
         return false;
     }
+    
+    public int getPositionIdByName(String positionName) {
+        String sql = "SELECT position_id FROM position WHERE position_name = ?";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+        ) {
+            ptmt.setString(1, positionName);
+            ResultSet rs = ptmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("position_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0; // Trả về 0 nếu không tìm thấy
+    }
+    
+    public String getPositionNameById(int positionId) {
+        String sql = "SELECT position_name FROM position WHERE position_id = ?";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+        ) {
+            ptmt.setInt(1, positionId);
+            ResultSet rs = ptmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("position_name");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "Không rõ";
+    }
+
+
+    
 }

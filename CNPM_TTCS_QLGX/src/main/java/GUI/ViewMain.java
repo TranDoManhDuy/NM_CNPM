@@ -67,6 +67,8 @@ import DAO.VehicleTypeDAO;
 import DAO.VisitorParkingCardsDAO;
 import GUI.GUIXE.GUI_LostVisitorParkingCard;
 import GUI.GUIXE.GUI_VisitorParkingCard;
+import GUI.NHANSU.gui_listmanager;
+
 import Model.SessionFee;
 import Model.ShiftTypes;
 import javax.swing.event.ChangeEvent;
@@ -251,15 +253,17 @@ public class ViewMain extends javax.swing.JFrame {
         gui_account account_gui = new gui_account(this);
         gui_role role_gui = new gui_role(this);
         gui_permission permission_gui = new gui_permission(this);
-//        gui_manager manager_gui = new gui_manager(this);
-        gui_position position_gui = new gui_position(this);
+        gui_manager manager_gui = new gui_manager(this);
+        gui_listmanager listmanager_gui = new gui_listmanager(this);
+        
         // add component
         addComponent(panel_nhanvien, staff_gui);
         addComponent(panel_taikhoan, account_gui);
         addComponent(panel_vaitro, role_gui);
         addComponent(panel_quyen, permission_gui);
-//        addComponent(panel_quanli, manager_gui);
-        addComponent(panel_vitri, position_gui);
+        addComponent(panel_quanli, manager_gui);
+        addComponent(panel_vitri, listmanager_gui);
+       
     }
     
     

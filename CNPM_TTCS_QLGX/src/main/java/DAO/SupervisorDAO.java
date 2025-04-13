@@ -6,7 +6,9 @@ import DatabaseHelper.OpenConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.JOptionPane;
 
 public class SupervisorDAO implements InterfaceDAO.InterfaceDAO<Supervisor> {
     public static SupervisorDAO getInstance() {
@@ -106,4 +108,27 @@ public class SupervisorDAO implements InterfaceDAO.InterfaceDAO<Supervisor> {
         }
         return false;
     }
+    
+    public boolean delete(int manager_id, int staff_id) {
+    String sql = "DELETE FROM supervisors WHERE manager_id = ? AND staff_id = ?";
+
+    try (
+        Connection conn = OpenConnection.getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+    ) {
+        pstmt.setInt(1, manager_id);
+        pstmt.setInt(2, staff_id);
+
+        int rowsDeleted = pstmt.executeUpdate();
+        return rowsDeleted > 0;
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null,
+            "Lỗi khi xóa mối quan hệ giám sát:\n" + e.getMessage(),
+            "Lỗi xóa", JOptionPane.ERROR_MESSAGE);
+        return false;
+    }
+}
+
+    
 }
