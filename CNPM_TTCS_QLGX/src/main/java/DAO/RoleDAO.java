@@ -102,4 +102,41 @@ public class RoleDAO implements InterfaceDAO.InterfaceDAO<Role> {
         }
         return false;
     }
+    
+    
+    public int getRoleIdByName(String roleName) {
+        String sql = "SELECT role_id FROM roles WHERE role_name = ?";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+        ) {
+            ptmt.setString(1, roleName);
+            ResultSet rs = ptmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("role_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0; // Trả về 0 nếu không tìm thấy (role không hợp lệ)
+    }
+    
+    public String getRoleNameById(int roleId) {
+        String sql = "SELECT role_name FROM roles WHERE role_id = ?";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+        ) {
+            ptmt.setInt(1, roleId);
+            ResultSet rs = ptmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("role_name");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "Không rõ"; // hoặc có thể return null tùy bạn xử lý
+    }
+
+
 }

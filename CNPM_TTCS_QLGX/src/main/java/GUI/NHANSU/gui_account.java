@@ -7,6 +7,7 @@ package GUI.NHANSU;
 import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import DAO.AccountDAO;
+import DAO.RoleDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Model.Account;
@@ -41,7 +42,10 @@ public class gui_account extends javax.swing.JPanel {
         this.viewmain = viewmain;
         this.logConfirm = logConfirm;
         this.logMessage = logMessage;
-        initComponents();   
+        initComponents();
+        btnLuu.setEnabled(false);
+        btnHuy.setEnabled(false);
+        combobox_Vaitro.removeAllItems();
         combobox_Trangthai.removeAllItems();
         tableModel = new DefaultTableModel() {
             @Override
@@ -69,20 +73,20 @@ public class gui_account extends javax.swing.JPanel {
         while (result.next()) {
             int account_number = result.getInt("account_number");
             String role_name = result.getString("role_name");
-                switch (role_name) {
-                case "Manager Staff In":
-                    role_name = "Quản lý nhân viên vào";
-                    break;
-                case "Manager Staff Out":
-                    role_name = "Quản lý nhân viên ra";
-                    break;
-                case "Staff In":
-                    role_name = "Nhân viên vào";
-                    break;
-                case "Staff Out":
-                    role_name = "Nhân viên ra";
-                    break;
-            }
+//                switch (role_name) {
+//                case "Manager Staff In":
+//                    role_name = "Quản lý nhân viên vào";
+//                    break;
+//                case "Manager Staff Out":
+//                    role_name = "Quản lý nhân viên ra";
+//                    break;
+//                case "Staff In":
+//                    role_name = "Nhân viên vào";
+//                    break;
+//                case "Staff Out":
+//                    role_name = "Nhân viên ra";
+//                    break;
+//            }
             boolean is_active = result.getBoolean("is_active");           
 
             tableModel.addRow(new Object[]{
@@ -105,7 +109,7 @@ public class gui_account extends javax.swing.JPanel {
                 txt_Taikhoan.setText(String.valueOf(accountNumber));
                 txt_Matkhau.setText("");
                 txt_Matkhau.setEnabled(false);
-                txt_Vaitro.setText(Table_Account.getValueAt(selectedRow, 1).toString());
+                combobox_Vaitro.setSelectedItem(Table_Account.getValueAt(selectedRow, 1).toString());
                 combobox_Trangthai.setSelectedItem(Table_Account.getValueAt(selectedRow, 2).toString());                
             }
         }
@@ -128,7 +132,6 @@ public class gui_account extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        txt_Vaitro = new javax.swing.JTextField();
         txt_Taikhoan = new javax.swing.JTextField();
         txt_Matkhau = new javax.swing.JTextField();
         btnLammoiTT = new javax.swing.JButton();
@@ -136,6 +139,7 @@ public class gui_account extends javax.swing.JPanel {
         combobox_Trangthai = new javax.swing.JComboBox<>();
         btnHuy = new javax.swing.JButton();
         btnLuu = new javax.swing.JButton();
+        combobox_Vaitro = new javax.swing.JComboBox<>();
         Panel_TKCN = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         txt_Timkiem = new javax.swing.JTextField();
@@ -212,6 +216,9 @@ public class gui_account extends javax.swing.JPanel {
             }
         });
 
+        combobox_Vaitro.setEditable(true);
+        combobox_Vaitro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Manager Staff In", "Manager Staff Out", "Staff In", "Staff Out", " " }));
+
         javax.swing.GroupLayout Panel_TTLayout = new javax.swing.GroupLayout(Panel_TT);
         Panel_TT.setLayout(Panel_TTLayout);
         Panel_TTLayout.setHorizontalGroup(
@@ -229,8 +236,8 @@ public class gui_account extends javax.swing.JPanel {
                         .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txt_Taikhoan)
                             .addComponent(txt_Matkhau)
-                            .addComponent(txt_Vaitro)
-                            .addComponent(combobox_Trangthai, 0, 238, Short.MAX_VALUE)))
+                            .addComponent(combobox_Trangthai, 0, 238, Short.MAX_VALUE)
+                            .addComponent(combobox_Vaitro, 0, 238, Short.MAX_VALUE)))
                     .addGroup(Panel_TTLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnLuu)
@@ -259,7 +266,7 @@ public class gui_account extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(txt_Vaitro, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(combobox_Vaitro, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(combobox_Trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -269,7 +276,7 @@ public class gui_account extends javax.swing.JPanel {
                     .addComponent(btnLammoiTT, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnHuy, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnLuu, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         Panel_TKCN.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -592,20 +599,29 @@ public class gui_account extends javax.swing.JPanel {
            int soTaiKhoanMoi = max + 1;
 
            txt_Taikhoan.setText(String.valueOf(soTaiKhoanMoi));
-           txt_Taikhoan.setEnabled(false);
+           txt_Taikhoan.setEditable(false);
 
            txt_Matkhau.setText("");
-           txt_Vaitro.setText("Nhân viên");
+           combobox_Vaitro.removeAllItems();
+           combobox_Vaitro.addItem("Manager Staff In");
+           combobox_Vaitro.addItem("Manager Staff Out");
+           combobox_Vaitro.addItem("Staff In");
+           combobox_Vaitro.addItem("Staff Out");
+           combobox_Vaitro.setSelectedItem("Manager Staff In");
            combobox_Trangthai.setSelectedItem("Hoạt động");
 
            txt_Matkhau.setEditable(true);
-           txt_Vaitro.setEditable(true);
+//           txt_Vaitro.setEditable(true);
            combobox_Trangthai.setEnabled(false);
 
            txt_Matkhau.requestFocus();
            
            btnCapnhat.setEnabled(false);
            btnXoa.setEnabled(false);
+           btnLuu.setEnabled(true);
+           btnHuy.setEnabled(true);
+           btnLammoiTT.setEnabled(false);
+           
     }//GEN-LAST:event_btnThemActionPerformed
 
     private void btnThemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnThemMouseClicked
@@ -620,12 +636,12 @@ public class gui_account extends javax.swing.JPanel {
     private void btnCapnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapnhatActionPerformed
         // TODO add your handling code here:
         int selectedRow = Table_Account.getSelectedRow();        
-        String roleText = txt_Vaitro.getText().trim();
-
-        if (roleText.equals("Quản lý nhân viên vào") || roleText.equals("Quản lý nhân viên ra")) {
-            log_message("Không được cập nhật");
-            return;
-        }
+//        String roleText = txt_Vaitro.getText().trim();
+//
+//        if (roleText.equals("Manager Staff Out") || roleText.equals("Manager Staff In")) {
+//            log_message("Không được cập nhật");
+//            return;
+//        }
         
                
         combobox_Trangthai.removeAllItems();
@@ -633,15 +649,18 @@ public class gui_account extends javax.swing.JPanel {
         combobox_Trangthai.addItem("Không hoạt động");
         
         txt_Taikhoan.setText(Table_Account.getValueAt(selectedRow, 0).toString());         
-        txt_Vaitro.setText(Table_Account.getValueAt(selectedRow, 1).toString());          
+        combobox_Vaitro.setSelectedItem(Table_Account.getValueAt(selectedRow, 1).toString());          
         String status = Table_Account.getValueAt(selectedRow, 2).toString().trim();      
         combobox_Trangthai.setSelectedItem(status);
         
         txt_Matkhau.setEnabled(false);
-        txt_Vaitro.requestFocus();
+//        txt_Vaitro.requestFocus();
         isUpdating = true;
         btnThem.setEnabled(false);
         btnXoa.setEnabled(false);
+        btnLuu.setEnabled(true);
+        btnHuy.setEnabled(true);
+        btnLammoiTT.setEnabled(true);
         
     }//GEN-LAST:event_btnCapnhatActionPerformed
 
@@ -652,13 +671,12 @@ public class gui_account extends javax.swing.JPanel {
     private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
         // TODO add your handling code here:
         log_comfirm("Bạn có muốn hủy không?");
-        txt_Taikhoan.setText("");
-        txt_Matkhau.setText("");
-        txt_Vaitro.setText("");
-        combobox_Trangthai.setSelectedIndex(-1);
-        btnCapnhat.setEnabled(true);
-        btnThem.setEnabled(true);
-        btnXoa.setEnabled(true);
+//        btnCapnhat.setEnabled(true);
+//        btnThem.setEnabled(true);
+//        btnXoa.setEnabled(true);
+//        btnLuu.setEnabled(false);
+//        btnHuy.setEnabled(false);
+//        btnLammoiTT.setEnabled(true);
     }//GEN-LAST:event_btnHuyActionPerformed
 
     private void btnHuyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHuyMouseClicked
@@ -668,7 +686,7 @@ public class gui_account extends javax.swing.JPanel {
     private void btnLuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLuuActionPerformed
         String accountNumText = txt_Taikhoan.getText().trim();
         String password = txt_Matkhau.getText().trim();
-        String roleText = txt_Vaitro.getText().trim();
+        String roleText = combobox_Vaitro.getSelectedItem().toString().trim();
         String statusText = combobox_Trangthai.getSelectedItem().toString().trim();
 
         if (accountNumText.isEmpty() || roleText.isEmpty() || statusText.isEmpty()) {
@@ -678,14 +696,9 @@ public class gui_account extends javax.swing.JPanel {
 
         int accountNum = Integer.parseInt(accountNumText);
         boolean isActive = statusText.equals("Hoạt động");
-
-        int roleId = switch (roleText) {
-            case "Quản lý nhân viên ra" -> 1;
-            case "Nhân viên ra" -> 2;
-            case "Quản lý nhân viên vào" -> 3;
-            case "Nhân viên vào" -> 4;
-            default -> 0;
-        };
+        
+        int roleId = RoleDAO.getInstance().getRoleIdByName(roleText);
+        
         if (roleId == 0) {
             log_message("Vai trò không hợp lệ!");
             return;
@@ -694,7 +707,7 @@ public class gui_account extends javax.swing.JPanel {
         Account acc;
         if (isUpdating) {
             // Sửa
-            acc = new Account(accountNum, null, isActive, roleId); // không cần mật khẩu
+            acc = new Account(accountNum, null, isActive, roleId); 
             boolean success = AccountDAO.getInstance().update(acc);
             if (success) {
                 log_message("Cập nhật thành công!");
@@ -716,7 +729,7 @@ public class gui_account extends javax.swing.JPanel {
             acc = new Account(accountNum, hashedPassword, isActive, roleId);
             boolean success = AccountDAO.getInstance().insert(acc);
             if (success) {
-                log_message("Thêm thành công!");
+                log_message("Thêm thành công!, Hãy thêm thông tin");
                 txt_Taikhoan.setEnabled(true);
                 combobox_Trangthai.setEnabled(true);
                 btnCapnhat.setEnabled(true);
@@ -788,10 +801,14 @@ public class gui_account extends javax.swing.JPanel {
             this.setVisible(false);
             viewmain.setEnabled(true);
             viewmain.requestFocus();
-            ResetThongTin(); 
-            btnThem.setEnabled(true);
+            ResetThongTin();
+            txt_Taikhoan.setEditable(true);
             btnCapnhat.setEnabled(true);
+            btnThem.setEnabled(true);
             btnXoa.setEnabled(true);
+            btnLuu.setEnabled(false);
+            btnHuy.setEnabled(false);
+            btnLammoiTT.setEnabled(true);
         }
 
         @Override
@@ -811,7 +828,7 @@ public class gui_account extends javax.swing.JPanel {
 
         ArrayList<Account> accountList = AccountDAO.getInstance().getList();
         for (Account account : accountList) {
-            String roleName = getRoleName(account.getRoleId());
+            String roleName = RoleDAO.getInstance().getRoleNameById(account.getRoleId());
             String status = account.isActive() ? "Hoạt động" : "Không hoạt động";
 
             model.addRow(new Object[] {
@@ -838,20 +855,20 @@ public class gui_account extends javax.swing.JPanel {
     }
 }
     
-    private String getRoleName(int roleId) {
-        return switch (roleId) {
-            case 1 -> "Quản lý nhân viên ra";
-            case 2 -> "Nhân viên ra";
-            case 3 -> "Quản lý nhân viên vào";
-            case 4 -> "Nhân viên vào";
-            default -> "";
-        };
-    }
+//    private String getRoleName(int roleId) {
+//        return switch (roleId) {
+//            case 1 -> "Quản lý nhân viên ra";
+//            case 2 -> "Nhân viên ra";
+//            case 3 -> "Quản lý nhân viên vào";
+//            case 4 -> "Nhân viên vào";
+//            default -> "";
+//        };
+//    }
     
     private void ResetThongTin(){
         txt_Taikhoan.setText("");
-        txt_Matkhau.setEnabled(false);
-        txt_Vaitro.setText("");
+        txt_Matkhau.setText("");
+        combobox_Vaitro.setSelectedIndex(-1);
         combobox_Trangthai.setSelectedIndex(-1);
     }
     
@@ -875,6 +892,7 @@ public class gui_account extends javax.swing.JPanel {
     private javax.swing.JButton btnTim;
     private javax.swing.JButton btnXoa;
     private javax.swing.JComboBox<String> combobox_Trangthai;
+    private javax.swing.JComboBox<String> combobox_Vaitro;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -887,6 +905,5 @@ public class gui_account extends javax.swing.JPanel {
     private javax.swing.JTextField txt_Matkhau;
     private javax.swing.JTextField txt_Taikhoan;
     private javax.swing.JTextField txt_Timkiem;
-    private javax.swing.JTextField txt_Vaitro;
     // End of variables declaration//GEN-END:variables
 }

@@ -49,7 +49,7 @@ public class gui_role extends javax.swing.JPanel {
         fillTable();
     }    
     public void initTable() {
-        String[] header = new String[] {"ID Vai trò", "Tên Vai trò"};
+        String[] header = new String[] {"ID Vai trò", "Tên Vai trò", "Quyền"};
         tableModel.setColumnIdentifiers(header);
         Table_Vaitro.setModel(tableModel);
     }
@@ -64,10 +64,19 @@ public class gui_role extends javax.swing.JPanel {
         tableModel.setRowCount(0); 
         while (result.next()) {
             int role_id = result.getInt("role_id");
-            String role_name = result.getString("role_name"); 
+            String role_name = result.getString("role_name");
+            
+
+            String permissions = "";
+            if (role_name.equalsIgnoreCase("Manager Staff In") || role_name.equalsIgnoreCase("Manager Staff Out")) {
+                permissions= "All permissions without insert and update manager";
+            } else if (role_name.equalsIgnoreCase("Staff In") || role_name.equalsIgnoreCase("Staff Out")) {
+                permissions = "View_accounts, View_shift_types, View_shift_sheets, View_tasks, View_buiding";
+            } 
             tableModel.addRow(new Object[]{
                 role_id,
-                role_name,                
+                role_name,
+                permissions
             });
         }
         tableModel.fireTableDataChanged();
@@ -80,7 +89,8 @@ public class gui_role extends javax.swing.JPanel {
             int selectedRow = Table_Vaitro.getSelectedRow();
             if (selectedRow >= 0) {
                 txt_Vaitro.setText(Table_Vaitro.getValueAt(selectedRow, 0).toString());
-                txt_Tenvaitro.setText(Table_Vaitro.getValueAt(selectedRow, 1).toString());                
+                txt_Tenvaitro.setText(Table_Vaitro.getValueAt(selectedRow, 1).toString());
+                txt_Quyen.setText(Table_Vaitro.getValueAt(selectedRow, 2).toString());
             }
         }
         
@@ -98,7 +108,6 @@ public class gui_role extends javax.swing.JPanel {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel12 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         txt_Vaitro = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -106,6 +115,8 @@ public class gui_role extends javax.swing.JPanel {
         btnLammoiTT = new javax.swing.JButton();
         btnHuy = new javax.swing.JButton();
         btnLuu = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        txt_Quyen = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         btnThem = new javax.swing.JButton();
@@ -124,9 +135,6 @@ public class gui_role extends javax.swing.JPanel {
         setBackground(new java.awt.Color(204, 255, 255));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel12.setText("THÔNG TIN VAI TRÒ");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setText("ID Vai trò");
@@ -155,6 +163,9 @@ public class gui_role extends javax.swing.JPanel {
             }
         });
 
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel4.setText("Quyền");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -162,43 +173,45 @@ public class gui_role extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel12))
+                        .addGap(117, 117, 117)
+                        .addComponent(btnLuu)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnHuy)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnLammoiTT))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(btnLuu)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnHuy)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnLammoiTT))
+                        .addGap(33, 33, 33)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(txt_Vaitro, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txt_Tenvaitro, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel1)
-                                .addComponent(jLabel2)
-                                .addComponent(txt_Vaitro, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addComponent(jLabel2)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(txt_Quyen, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jLabel12)
-                .addGap(18, 18, 18)
+                .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(5, 5, 5)
                 .addComponent(txt_Vaitro, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txt_Tenvaitro, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txt_Quyen)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnLammoiTT, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnLuu, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnHuy, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLuu, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(38, Short.MAX_VALUE))
+                    .addComponent(btnLammoiTT, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -313,20 +326,20 @@ public class gui_role extends javax.swing.JPanel {
 
         Table_Vaitro.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "ID Vai trò", "Tên vai trò"
+                "ID Vai trò", "Tên vai trò", "Quyền"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -358,7 +371,7 @@ public class gui_role extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -379,17 +392,12 @@ public class gui_role extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -421,9 +429,10 @@ public class gui_role extends javax.swing.JPanel {
     private void btnLuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLuuActionPerformed
         // TODO add your handling code here:
         String roleName = txt_Tenvaitro.getText().trim();
+        String permissionName = txt_Quyen.getText().trim();
 
-        if (roleName.isEmpty()) {
-            log_message("Vui lòng điền tên vai trò!");
+        if (roleName.isEmpty() || permissionName.isEmpty()) {
+            log_message("Vui lòng điền đầy đủ thông tin!");
             return;
         }
 
@@ -469,14 +478,15 @@ public class gui_role extends javax.swing.JPanel {
         String keyword = txt_Timkiem.getText().trim().toLowerCase();
 
         DefaultTableModel model = (DefaultTableModel) Table_Vaitro.getModel();
-        DefaultTableModel newModel = new DefaultTableModel(new Object[]{"ID Vai trò", "Tên Vai trò"}, 0);
+        DefaultTableModel newModel = new DefaultTableModel(new Object[]{"ID Vai trò", "Tên Vai trò", "Quyền"}, 0);
 
         for (int i = 0; i < model.getRowCount(); i++) {
             String id = model.getValueAt(i, 0).toString().toLowerCase();
             String ten = model.getValueAt(i, 1).toString().toLowerCase();
+            String quyen = model.getValueAt(i, 2).toString().toLowerCase();
 
-            if (id.contains(keyword) || ten.contains(keyword)) {
-                newModel.addRow(new Object[]{model.getValueAt(i, 0), model.getValueAt(i, 1)});
+            if (id.contains(keyword) || ten.contains(keyword) || quyen.contains(keyword)) {
+                newModel.addRow(new Object[]{model.getValueAt(i, 0), model.getValueAt(i, 1), model.getValueAt(i, 2)});
             }
         }
 
@@ -600,16 +610,17 @@ public class gui_role extends javax.swing.JPanel {
     private javax.swing.JButton btnTim;
     private javax.swing.JButton btnXoa;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField txt_Quyen;
     private javax.swing.JTextField txt_Tenvaitro;
     private javax.swing.JTextField txt_Timkiem;
     private javax.swing.JTextField txt_Vaitro;
