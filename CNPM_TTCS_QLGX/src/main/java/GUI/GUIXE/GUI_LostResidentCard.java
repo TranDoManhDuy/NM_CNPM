@@ -4,6 +4,7 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.LostResidentCardDAO;
 import DAO.ParkingSessionDAO;
@@ -42,15 +43,17 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
     private int chooseResidentCard = -1;
     private GUI_ResidentCard gui_resident_card;
     private GUI_ParkingSession gui_parking_session;
+    private LogMessage logMessage;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_LostResidentCard(ViewMain viewmain, LogSelection logSelection, GUI_ResidentCard gui_resident_card, GUI_ParkingSession gui_parking_session) {
+    public GUI_LostResidentCard(ViewMain viewmain, LogSelection logSelection, LogMessage logMessage, GUI_ResidentCard gui_resident_card, GUI_ParkingSession gui_parking_session) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
         this.gui_resident_card = gui_resident_card;
         this.gui_parking_session = gui_parking_session;
+        this.logMessage = logMessage;
         
         initComponents();
         initTable();
@@ -158,6 +161,54 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
         btn_insert.setEnabled(false);
     }
 
+    private void SetLog(String s) { 
+        this.logMessage = new LogMessage(s) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+        return;
+    }
+    
+    private String GetError(String s) { 
+        int index = 0; 
+        String sError = "";
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\"') {
+                index += 1;
+                if (index == 2) {
+                    return sError;
+                } 
+                else {
+                    continue;
+                }
+            }
+            if (index == 1) { 
+                sError = sError + s.charAt(i);
+            }
+        }
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\'') {
+                index += 1;
+                if (index == 2) {
+                    return sError;
+                } 
+                else {
+                    continue;
+                }
+            }
+            if (index == 1) { 
+                sError = sError + s.charAt(i);
+            }
+        }
+        return s;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -558,15 +609,23 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
     private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
         // TODO add your handling code here:
         LostResidentCard lre = new LostResidentCard(chooseResidentCard, chooseParkingSession);
-        LostResidentCardDAO.getInstance().insert(lre);
-        initTable();
-        loadData();
-        fillTable();
-        resetFields();
-        this.gui_resident_card.reloadData();
-        viewmain.resident_cards = ResidentCardDAO.getInstance().getList();
-        this.gui_parking_session.reloadData();
-        viewmain.parking_sessions = ParkingSessionDAO.getInstance().getList();
+        String check = LostResidentCardDAO.getInstance().insert(lre);
+        if (check.equals("Thêm Thành Công")) {
+            initTable();
+            loadData();
+            fillTable();
+            resetFields();
+            this.gui_resident_card.reloadData();
+            viewmain.resident_cards = ResidentCardDAO.getInstance().getList();
+            this.gui_parking_session.reloadData();
+            viewmain.parking_sessions = ParkingSessionDAO.getInstance().getList();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_insertActionPerformed
 
     private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked
@@ -796,11 +855,19 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
     private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
         // TODO add your handling code here:
         int lostResidentCardId = Integer.parseInt(txt_lost_resident_card.getText().toString().trim());
-        LostResidentCardDAO.getInstance().delete(lostResidentCardId);
-        initTable();
-        loadData();
-        fillTable();
-        resetFields();
+        String check = LostResidentCardDAO.getInstance().delete(lostResidentCardId);
+        if (check.equals("Xóa Thành Công")) {
+            initTable();
+            loadData();
+            fillTable();
+            resetFields();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_deleteActionPerformed
 
 

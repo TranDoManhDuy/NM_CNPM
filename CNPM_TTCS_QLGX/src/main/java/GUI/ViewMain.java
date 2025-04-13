@@ -68,7 +68,7 @@ import DAO.VisitorParkingCardsDAO;
 import Model.SessionFee;
 public class ViewMain extends javax.swing.JFrame {
     LogConfirm logComfirm = new LogConfirm("nothing");
-    LogMessage logMessage = new LogMessage("Nothing");
+    public LogMessage logMessage = new LogMessage("Nothing");
     LogSelection logSelection = new LogSelection();
     DataGlobal dataglocal = new DataGlobal();public List<Buildings> buildings = new ArrayList<>();
     public ArrayList<VehicleType> vehicle_types = new ArrayList<>();
@@ -137,11 +137,11 @@ public class ViewMain extends javax.swing.JFrame {
     
     public void GUI_GUIXE() 
     {
-        GUI_Vehicle gui_vehicle = new GUI_Vehicle(this, logSelection);
-        GUI_ResidentCard gui_resident_card = new GUI_ResidentCard(this, logSelection);
-        GUI_Customer gui_customer = new GUI_Customer(this, logSelection, gui_resident_card);
-        GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(this, logSelection, gui_vehicle);
-        GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(this, logSelection, gui_resident_card, gui_parking_session);
+        GUI_Vehicle gui_vehicle = new GUI_Vehicle(this, logSelection, logMessage);
+        GUI_ResidentCard gui_resident_card = new GUI_ResidentCard(this, logSelection, logMessage);
+        GUI_Customer gui_customer = new GUI_Customer(this, logSelection, gui_resident_card, logMessage);
+        GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(this, logSelection, logMessage, gui_vehicle);
+        GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(this, logSelection, logMessage, gui_resident_card, gui_parking_session);
         addComponent(panel_khachhang, gui_customer);
         addComponent(panel_mat_the_cd, gui_lost_resident_card);
         addComponent(panel_guixe, gui_parking_session);

@@ -4,6 +4,7 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.VehicleDAO;
 import GUI.ViewMain;
@@ -37,13 +38,15 @@ public class GUI_Vehicle extends javax.swing.JPanel {
     ArrayList<String> vehicle_type_names;
     private LogSelection logSelection;
     private int choooseIndexVehicleType = 0;
+    private LogMessage logMessage;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_Vehicle(ViewMain viewmain, LogSelection logSelection) {
+    public GUI_Vehicle(ViewMain viewmain, LogSelection logSelection, LogMessage logMessage) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
+        this.logMessage = logMessage;
         
         initComponents(); 
         initTable();
@@ -169,6 +172,54 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         loadData();
         resetFields();
         fillTable();
+    }
+    
+    private void SetLog(String s) { 
+        this.logMessage = new LogMessage(s) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+        return;
+    }
+    
+    private String GetError(String s) { 
+        int index = 0; 
+        String sError = "";
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\"') {
+                index += 1;
+                if (index == 2) {
+                    return sError;
+                } 
+                else {
+                    continue;
+                }
+            }
+            if (index == 1) { 
+                sError = sError + s.charAt(i);
+            }
+        }
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\'') {
+                index += 1;
+                if (index == 2) {
+                    return sError;
+                } 
+                else {
+                    continue;
+                }
+            }
+            if (index == 1) { 
+                sError = sError + s.charAt(i);
+            }
+        }
+        return s;
     }
     
     @SuppressWarnings("unchecked")
@@ -526,12 +577,21 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         String vehicleColor = txt_vehicle_color.getText().toString().trim();
         
         Vehicle vel = new Vehicle(vehicleIden, vehicleTypeId, vehicleName, vehicleColor); 
-        VehicleDAO.getInstance().insert(vel);
-        initTable();
-        resetActive();
-        resetFields();
-        loadData();
-        fillTable();
+        String check = "";
+        check = VehicleDAO.getInstance().insert(vel);
+        if (check.equals("Thêm Thành Công")) {
+            initTable();
+            resetActive();
+            resetFields();
+            loadData();
+            fillTable();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_insertMouseClicked
 
     private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
@@ -637,7 +697,8 @@ public class GUI_Vehicle extends javax.swing.JPanel {
                     }
                 });
                 for (VehicleType vt : viewmain.vehicle_types) {
-                    tableModel.addRow(new String[] {String.valueOf(vt.getVehicle_type_id()), vt.getVehicle_type_name(), String.valueOf(vt.isIsPermission())});
+                    if (vt.isIsPermission())
+                        tableModel.addRow(new String[] {String.valueOf(vt.getVehicle_type_id()), vt.getVehicle_type_name(), String.valueOf(vt.isIsPermission())});
                 }
                 this.tableModel.fireTableDataChanged();
                 this.btn_loc.addActionListener(new ActionListener() {
@@ -673,25 +734,40 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         String vehicleName = txt_vehicle_name.getText().toString().trim();
         String vehicleColor = txt_vehicle_color.getText().toString().trim();
         
-        Vehicle vel = new Vehicle(vehicleId, vehicleIden, vehicleTypeId, vehicleName, vehicleColor); 
-//        System.out.println(vel.getVehicle_id() + vehicleIden + vehicleTypeId + vehicleName + vehicleColor);
-        VehicleDAO.getInstance().update(vel);
-        initTable();
-        resetActive();
-        resetFields();
-        loadData();
-        fillTable();
+        Vehicle vel = new Vehicle(vehicleId, vehicleIden, vehicleTypeId, vehicleName, vehicleColor);
+        String check = VehicleDAO.getInstance().update(vel);
+        if (check.equals("Cập Nhật Thành Công")) {
+            initTable();
+            resetActive();
+            resetFields();
+            loadData();
+            fillTable();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_updateMouseClicked
 
     private void btn_xoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_xoaMouseClicked
         // TODO add your handling code here:
         int vehicleId = Integer.parseInt(txt_vehicle_id.getText().toString().trim());
-        VehicleDAO.getInstance().delete(vehicleId);
-        initTable();
-        resetActive();
-        resetFields();
-        loadData();
-        fillTable();
+        String check = VehicleDAO.getInstance().delete(vehicleId);
+        if (check.equals("Xóa Thành Công")) {
+            initTable();
+            resetActive();
+            resetFields();
+            loadData();
+            fillTable();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_xoaMouseClicked
 
 

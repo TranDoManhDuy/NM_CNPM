@@ -4,6 +4,7 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.ResidentCardDAO;
 import GUI.ViewMain;
@@ -40,14 +41,15 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
     private ArrayList<String> full_names;
     private LogSelection logSelection;
     private int chooseCustomerId = -1;
-    
+    private LogMessage logMessage;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_ResidentCard(ViewMain viewmain, LogSelection logSelection) {
+    public GUI_ResidentCard(ViewMain viewmain, LogSelection logSelection, LogMessage logMessage) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
+        this.logMessage = logMessage;
         
         initComponents();
         initTable();
@@ -57,6 +59,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         fillComboBoxActive();
         fillComboBoxBuildings();
         addDocumentListeners();
+        addButtonListeners();
     }
     
     public void initTable() { 
@@ -89,14 +92,10 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
             tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, String.valueOf(res.isIs_active())} );
         }
         tblModel.fireTableDataChanged();
-//        ResidentCard resident = new ResidentCard(104, 2, true);
-//        ResidentCardDAO.getInstance().update(resident);
-//        System.out.println(ResidentCardDAO.getInstance().findbyID(105).getCustomer_id());
-//        ResidentCardDAO.getInstance().delete(105);
     }
     
     private void fillComboBoxActive() { 
-        String[] items = { "None", "Còn", "Mất" };
+        String[] items = { "None", "Active", "No_Active" };
         cob_con_mat.setModel(new DefaultComboBoxModel<>(items));
     }
     
@@ -145,9 +144,22 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
     
     private void checkBtnInsert() {
         boolean isFilled = !txt_customer_id.getText().trim().isEmpty();
-
-//        System.out.println(isFilled);
         btnInsert.setEnabled(isFilled);
+    }
+    
+    private void checkBtnUpdate() { 
+        boolean isButton = cob_con_mat.getSelectedIndex() > 0;
+        btn_update.setEnabled(isButton);
+    }
+    
+    private void addButtonListeners() { 
+        ActionListener comboListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                checkBtnUpdate();
+            }
+        };
+        cob_con_mat.addActionListener(comboListener);
     }
     
     private void addDocumentListeners() {
@@ -169,6 +181,54 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         };
         
         txt_customer_id.getDocument().addDocumentListener(docListener);
+    }
+    
+    private void SetLog(String s) { 
+        this.logMessage = new LogMessage(s) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+        return;
+    }
+    
+    private String GetError(String s) { 
+        int index = 0; 
+        String sError = "";
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\"') {
+                index += 1;
+                if (index == 2) {
+                    return sError;
+                } 
+                else {
+                    continue;
+                }
+            }
+            if (index == 1) { 
+                sError = sError + s.charAt(i);
+            }
+        }
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\'') {
+                index += 1;
+                if (index == 2) {
+                    return sError;
+                } 
+                else {
+                    continue;
+                }
+            }
+            if (index == 1) { 
+                sError = sError + s.charAt(i);
+            }
+        }
+        return s;
     }
     
     @SuppressWarnings("unchecked")
@@ -584,13 +644,20 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
         // TODO add your handling code here:
         ResidentCard resident = new ResidentCard(chooseCustomerId, true);
-        ResidentCardDAO.getInstance().insert(resident);
-        
-        System.out.println(resident.getCustomer_id());
-        resetFields();
-        initTable(); 
-        loadData();
-        fillTable();
+        String check = "";
+        check = ResidentCardDAO.getInstance().insert(resident);
+        if (check.equals("Thêm Thành Công")) {
+            resetFields();
+            initTable(); 
+            loadData();
+            fillTable();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btnInsertActionPerformed
 
     private void btn_resetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_resetMouseClicked
@@ -682,7 +749,6 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
             fillTable();
             return;
         }
-//        System.out.println(buildingName);
         initTable();
         int count = -1;
         String crBuilding_name = "";
@@ -762,24 +828,39 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         if (cob_con_mat.getSelectedIndex() == 2) { 
             isActive = false;
         }
-        
         ResidentCard resident = new ResidentCard(residentCardId, chooseCustomerId, isActive);
-        ResidentCardDAO.getInstance().update(resident);
-//        System.out.println(resident.getCustomer_id() + " " + resident.isIs_active());
-        resetFields();
-        initTable(); 
-        loadData();
-        fillTable();
+        
+        String check = ResidentCardDAO.getInstance().update(resident);
+        if (check.equals("Cập Nhật Thành Công")) {
+            resetFields();
+            initTable(); 
+            loadData();
+            fillTable();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_updateActionPerformed
 
     private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
         // TODO add your handling code here:
         int residentCardId = Integer.parseInt(txt_pk_resident_card.getText().toString().trim());
-        ResidentCardDAO.getInstance().delete(residentCardId);
-        resetFields();
-        initTable(); 
-        loadData();
-        fillTable();
+        String check = ResidentCardDAO.getInstance().delete(residentCardId);
+        if (check.equals("Xóa Thành Công")) {
+            resetFields();
+            initTable(); 
+            loadData();
+            fillTable();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
     }//GEN-LAST:event_btn_deleteActionPerformed
 
 

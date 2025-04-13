@@ -13,13 +13,12 @@ import java.util.Map;
 /**
  * DAO cho bảng resident_cards
  */
-public class ResidentCardDAO implements InterfaceDAO<ResidentCard> {
+public class ResidentCardDAO {
     
     public static ResidentCardDAO getInstance() {
         return new ResidentCardDAO();
     }
-
-    @Override
+    
     public ArrayList<ResidentCard> getList() {
         ArrayList<ResidentCard> lstCards = new ArrayList<>();
         String sql = "GET_ALL_RESIDENT_CARDS";
@@ -74,8 +73,7 @@ public class ResidentCardDAO implements InterfaceDAO<ResidentCard> {
         return result;
     }
 
-    @Override
-    public boolean insert(ResidentCard card) {
+    public String insert(ResidentCard card) {
         String sql = "EXEC INSERT_RESIDENT_CARD @customer_id = ?, @is_active = ?";
         try (
                 Connection con = OpenConnection.getConnection();
@@ -84,15 +82,17 @@ public class ResidentCardDAO implements InterfaceDAO<ResidentCard> {
             ps.setInt(1, card.getCustomer_id());
             ps.setBoolean(2, card.isIs_active());
 
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (ps.executeUpdate() > 0) { 
+                return "Thêm Thành Công";
+            }
         }
-        return false;
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Thêm Thành Công";
     }
 
-    @Override
-    public boolean update(ResidentCard card) {
+    public String update(ResidentCard card) {
         String sql = "EXEC UPDATE_RESIDENT_CARD @customer_id = ?, @is_active = ?, @pk_resident_card = ?";
         try (
                 Connection con = OpenConnection.getConnection();
@@ -101,15 +101,16 @@ public class ResidentCardDAO implements InterfaceDAO<ResidentCard> {
             ps.setInt(1, card.getCustomer_id());
             ps.setBoolean(2, card.isIs_active());
             ps.setInt(3, card.getPk_resident_card());
-
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (ps.executeUpdate() > 0) { 
+                return "Cập Nhật Thành Công";
+            }
         }
-        return false;
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Cập Nhật Thành Công";
     }
 
-    @Override
     public ResidentCard findbyID(int id) {
         String sql = "EXEC GET_RESIDENT_CARD_BY_ID @pk_resident_card = ?";
         try (
@@ -131,19 +132,21 @@ public class ResidentCardDAO implements InterfaceDAO<ResidentCard> {
         }
         return null;
     }
-    
-    @Override
-    public boolean delete(int id) {
+
+    public String delete(int id) {
         String sql = "EXEC DELETE_RESIDENT_CARD @pk_resident_card = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)
         ) {
             ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (ps.executeUpdate() > 0) { 
+                return "Xóa Thành Công";
+            }
         }
-        return false;
+        catch (Exception e) {
+            return e.getMessage();
+        }
+        return "Xóa Thành Công";
     }
 }
