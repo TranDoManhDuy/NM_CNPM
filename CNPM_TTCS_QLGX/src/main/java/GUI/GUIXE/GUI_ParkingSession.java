@@ -8,7 +8,6 @@ import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.ParkingSessionDAO;
 import DAO.VehicleDAO;
-import DAO.VisitorParkingCardsDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
@@ -239,12 +238,12 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
     }
     
     private void checkDayMonthYearSort() {
-        boolean isDateSelected =    !cob_ngay_bat_dau.getSelectedItem().toString().equals("-1") &&
-                                    !cob_ngay_ket_thuc.getSelectedItem().toString().equals("-1") &&
-                                    !cob_thang_bat_dau.getSelectedItem().toString().equals("-1") &&
-                                    !cob_thang_ket_thuc.getSelectedItem().toString().equals("-1") &&
-                                    !cob_nam_bat_dau.getSelectedItem().toString().equals("-1") &&
-                                    !cob_nam_ket_thuc.getSelectedItem().toString().equals("-1");
+        boolean isDateSelected =    !cob_ngay_bat_dau.getSelectedItem().toString().equals("0") &&
+                                    !cob_ngay_ket_thuc.getSelectedItem().toString().equals("0") &&
+                                    !cob_thang_bat_dau.getSelectedItem().toString().equals("0") &&
+                                    !cob_thang_ket_thuc.getSelectedItem().toString().equals("0") &&
+                                    !cob_nam_bat_dau.getSelectedItem().toString().equals("0") &&
+                                    !cob_nam_ket_thuc.getSelectedItem().toString().equals("0");
         btn_loc.setEnabled(isDateSelected);
     }
     

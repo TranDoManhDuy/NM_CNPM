@@ -1,17 +1,19 @@
 package GUI.NHANSU;
 
-import DAO.ManagerDAO;
+import Annotation.LogSelection;
 import DAO.SupervisorDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
-import Model.Manager;
+import Global.DataGlobal;
+import Model.Staff;
 import Model.Supervisor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -20,9 +22,21 @@ public class gui_manager extends javax.swing.JPanel {
 
     private DefaultTableModel tableModel;
     private ViewMain viewmain;
+    private LogSelection logSelection;
+    private DataGlobal dataGlobal;
+    private int chooseManagerId = -1;
+    private int chooseStaffId = -1;
 
-    public gui_manager(ViewMain viewmain) {
+    public gui_manager(DataGlobal dataGlobal, LogSelection logSelection, ViewMain viewmain) {
         this.viewmain = viewmain;
+        this.logSelection = logSelection;
+        this.dataGlobal = dataGlobal;
+        this.dataGlobal.updateArrayStaffs();
+//        for (Staff stf : dataGlobal.getArrStaffs()) {
+//            System.out.println(stf.getStaffId() + " " + stf.getFullName());
+////                    tableModel.addRow(new String[] {String.valueOf(stf.getRoleId()), stf.getFullName()});
+//        }
+        
         initComponents();       
         tableModel = new DefaultTableModel() {
             @Override
@@ -32,6 +46,7 @@ public class gui_manager extends javax.swing.JPanel {
         };
         initTable();
         fillTable();
+        ResetThongTin();
     }    
     public void initTable() {
         String[] header = new String[] {"ID Quản lí", "Họ tên nhân viên", "ID Nhân viên", "Họ tên nhân viên"};
@@ -39,9 +54,22 @@ public class gui_manager extends javax.swing.JPanel {
         Table_Supervisor.setModel(tableModel);
     }
     
+    public void resetActive() { 
+        btn_chon_nhan_vien.setEnabled(true);
+        btn_chon_quan_ly.setEnabled(true);
+    }
+        
+    private void ResetThongTin(){
+        txtQuanly.setText("");
+        txtTenquanly.setText("");
+        txtNhanvien.setText("");
+        txtTennhanvien.setText("");
+        resetActive();
+    }
+    
     public void fillTable() {
     // Câu lệnh SQL gọi stored procedure hoặc truy vấn với JOIN để lấy thông tin nhân viên và quản lý
-    String sql = "EXEC Supervisor_render";  // Hoặc câu lệnh SQL thay thế tùy theo yêu cầu
+    String sql = "EXEC GET_ALL_SUPERVISOR";  // Hoặc câu lệnh SQL thay thế tùy theo yêu cầu
     
     try (
         // Mở kết nối cơ sở dữ liệu
@@ -58,15 +86,14 @@ public class gui_manager extends javax.swing.JPanel {
         while (result.next()) {
             int manager_id = result.getInt("manager_id");
             String manager_name = result.getString("manager_name");
-            int supervised_staff_id = result.getInt("supervised_staff_id");  // ID của nhân viên mà quản lý giám sát
-            String supervised_staff_name = result.getString("supervised_staff_name");  // Họ tên nhân viên
+            int staff_id = result.getInt("staff_id");
+            String supervised_staff_name = result.getString("staff_name");
 
-            // Thêm dữ liệu vào bảng
             tableModel.addRow(new Object[]{
-                manager_id,                // ID của quản lý
-                manager_name,            // Tên quản lý               // Chức vụ của quản lý
-                supervised_staff_id,     // ID của nhân viên dưới quyền
-                supervised_staff_name    // Tên nhân viên dưới quyền
+                manager_id,
+                manager_name,
+                staff_id,
+                supervised_staff_name
             });
         }
 
@@ -74,7 +101,7 @@ public class gui_manager extends javax.swing.JPanel {
         tableModel.fireTableDataChanged();
     } catch (Exception e) {
         e.printStackTrace();  // In ra lỗi nếu có
-}
+    }
 
     Table_Supervisor.addMouseListener(new MouseAdapter() {
         @Override
@@ -110,6 +137,8 @@ public class gui_manager extends javax.swing.JPanel {
         txtNhanvien = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtTennhanvien = new javax.swing.JTextField();
+        btn_chon_quan_ly = new javax.swing.JButton();
+        btn_chon_nhan_vien = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         btnXoa = new javax.swing.JButton();
@@ -181,7 +210,11 @@ public class gui_manager extends javax.swing.JPanel {
 
         jLabel1.setText("ID Quản lý");
 
+        txtQuanly.setEnabled(false);
+
         jLabel2.setText("Họ tên quản lý");
+
+        txtTenquanly.setEnabled(false);
 
         btnLammoi.setText("Làm mới");
         btnLammoi.addActionListener(new java.awt.event.ActionListener() {
@@ -192,7 +225,27 @@ public class gui_manager extends javax.swing.JPanel {
 
         jLabel3.setText("ID Nhân viên");
 
+        txtNhanvien.setEnabled(false);
+
         jLabel4.setText("Họ tên nhân viên");
+
+        txtTennhanvien.setEnabled(false);
+
+        btn_chon_quan_ly.setText("Chọn");
+        btn_chon_quan_ly.setEnabled(false);
+        btn_chon_quan_ly.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_chon_quan_lyActionPerformed(evt);
+            }
+        });
+
+        btn_chon_nhan_vien.setText("Chọn");
+        btn_chon_nhan_vien.setEnabled(false);
+        btn_chon_nhan_vien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_chon_nhan_vienActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -202,21 +255,25 @@ public class gui_manager extends javax.swing.JPanel {
                 .addGap(44, 44, 44)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtQuanly, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(btnLammoi)))
+                        .addGap(0, 264, Short.MAX_VALUE)
+                        .addComponent(btnLammoi)
                         .addGap(36, 36, 36))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
-                            .addComponent(txtNhanvien)
                             .addComponent(jLabel4)
-                            .addComponent(txtTenquanly, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
-                            .addComponent(txtTennhanvien))
+                            .addComponent(txtTenquanly)
+                            .addComponent(txtTennhanvien)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(txtQuanly, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btn_chon_quan_ly))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(txtNhanvien, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btn_chon_nhan_vien)))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -225,7 +282,9 @@ public class gui_manager extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtQuanly, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtQuanly, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_chon_quan_ly, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -233,7 +292,9 @@ public class gui_manager extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtNhanvien, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtNhanvien, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_chon_nhan_vien, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -379,7 +440,7 @@ public class gui_manager extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 485, Short.MAX_VALUE)
+            .addGap(0, 489, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
@@ -418,7 +479,7 @@ public class gui_manager extends javax.swing.JPanel {
 
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
         // TODO add your handling code here:
-         try {
+        try {
         int managerId = Integer.parseInt(txtQuanly.getText().trim());
         int staffId = Integer.parseInt(txtNhanvien.getText().trim());
 
@@ -474,6 +535,109 @@ public class gui_manager extends javax.swing.JPanel {
     }
     }//GEN-LAST:event_btnXoaActionPerformed
 
+    private void btn_chon_quan_lyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chon_quan_lyActionPerformed
+        this.viewmain.setEnabled(false);
+        this.logSelection = new LogSelection() {
+            @Override
+            public void initContent() {
+                this.label_property.setText("Mã Định Danh Các Quản Lí");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                String[] header = new String[] {"ID", "Họ và tên"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table.rowAtPoint(e.getPoint());
+                        txtQuanly.setText((String) table.getValueAt(row, 0) );
+                        txtTenquanly.setText((String) table.getValueAt(row, 1));
+                        chooseManagerId = Integer.parseInt((String)table.getValueAt(row, 0));
+                        logSelection.setVisible(false);
+                        viewmain.setEnabled(true);
+                        viewmain.requestFocus();
+                    }
+                });
+                dataGlobal.updateArrayStaffs();
+                for (Staff stf: dataGlobal.getArrStaffs()) {
+                    if (stf.getRoleId() == 1 || stf.getRoleId() == 3)
+                    tableModel.addRow(new String[] {String.valueOf(stf.getStaffId()), stf.getFullName()});
+                }
+                this.tableModel.fireTableDataChanged();
+                this.btn_loc.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    }
+                });
+            }
+            @Override
+            public void back() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
+    }//GEN-LAST:event_btn_chon_quan_lyActionPerformed
+
+    private void btn_chon_nhan_vienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chon_nhan_vienActionPerformed
+        // TODO add your handling code here:
+        this.viewmain.setEnabled(false);
+        this.logSelection = new LogSelection() {
+            @Override
+            public void initContent() {
+                this.label_property.setText("Mã Định Danh Các Nhân Viên");
+                this.tableModel = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    };
+                };
+                String[] header = new String[] {"ID", "Họ và tên"};
+                this.tableModel.setColumnIdentifiers(header);
+                this.table.setModel(tableModel);
+                this.table.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int row = table.rowAtPoint(e.getPoint());
+                        txtNhanvien.setText((String) table.getValueAt(row, 0) );
+                        txtTennhanvien.setText((String) table.getValueAt(row, 1));
+                        chooseStaffId = Integer.parseInt((String)table.getValueAt(row, 0));
+                        logSelection.setVisible(false);
+                        viewmain.setEnabled(true);
+                        viewmain.requestFocus();
+                    }
+                });
+                dataGlobal.updateArrayStaffs();
+                for (Staff stf: dataGlobal.getArrStaffs()) {
+                    if (stf.getRoleId() == 2 || stf.getRoleId() == 4)
+                    tableModel.addRow(new String[] {String.valueOf(stf.getStaffId()), stf.getFullName()});
+                }
+                this.tableModel.fireTableDataChanged();
+                this.btn_loc.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    }
+                });
+            }
+            @Override
+            public void back() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logSelection.initContent();
+        this.logSelection.setVisible(true);
+    }//GEN-LAST:event_btn_chon_nhan_vienActionPerformed
+
     public void loadTable() {
         
      Table_Supervisor.setModel(tableModel);
@@ -520,17 +684,6 @@ public class gui_manager extends javax.swing.JPanel {
         e.printStackTrace();
     }
 }
-    
-    private void ResetThongTin(){
-        txtQuanly.setText("");
-        txtTenquanly.setText("");
-        txtNhanvien.setText("");
-        txtTennhanvien.setText("");
-    }
-
-    
-
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel_DS;
@@ -540,6 +693,8 @@ public class gui_manager extends javax.swing.JPanel {
     private javax.swing.JButton btnThem;
     private javax.swing.JButton btnTim;
     private javax.swing.JButton btnXoa;
+    private javax.swing.JButton btn_chon_nhan_vien;
+    private javax.swing.JButton btn_chon_quan_ly;
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
