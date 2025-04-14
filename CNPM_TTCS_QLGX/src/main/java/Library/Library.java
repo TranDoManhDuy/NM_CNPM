@@ -124,22 +124,22 @@ public class Library {
     }
     
     public static String[] getDay(int month, int year) { 
-        String[] sDay = new String[] { "-1", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
+        String[] sDay = new String[] { "0", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
                                   "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", 
                                   "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" };
         if (month == 2) {
-            if (year == -1 || isLeapYear(year)) { 
-                sDay = new String[] { "-1", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", 
+            if (year == 0 || isLeapYear(year)) { 
+                sDay = new String[] { "0", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", 
                                       "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", 
                                       "22", "23", "24", "25", "26", "27", "28", "29" };
             } else {
-                sDay = new String[] { "-1", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", 
+                sDay = new String[] { "0", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", 
                                       "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", 
                                       "22", "23", "24", "25", "26", "27", "28" };
             }
         } else if (month == 4 || month == 6 || month == 9 || month == 11) {
             // Các tháng có 30 ngày
-            sDay = new String[] { "-1", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", 
+            sDay = new String[] { "0", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", 
                                   "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", 
                                   "22", "23", "24", "25", "26", "27", "28", "29", "30" };
         }
@@ -147,13 +147,13 @@ public class Library {
     }
     
     public static String[] getMonth(int day, int year) { 
-        String[] sMonth = new String[]  {"-1", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
+        String[] sMonth = new String[]  {"0", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
         if (day == 31) {
-                sMonth = new String[]   {"-1", "01", "03", "05", "07", "08", "10", "12"};
+                sMonth = new String[]   {"0", "01", "03", "05", "07", "08", "10", "12"};
                 return sMonth;
             }
         else if (day == 30){
-            sMonth = new String[]   {"-1", "01", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
+            sMonth = new String[]   {"0", "01", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
             return sMonth;
         }
         return sMonth;
@@ -161,13 +161,13 @@ public class Library {
     
     public static String[] getYear(int day, int month) {
         String[] sYear = new String[2035 - 1950 + 2];
-        sYear[0] = "-1";
+        sYear[0] = "0";
         for (int i = 1950; i <= 2035; i++) {
             sYear[i - 1950 + 1] = String.valueOf(i).substring(2);
         }
         if (day == 29 && month == 2) { 
             ArrayList<String> leapYears = new ArrayList<>();
-            leapYears.add("-1");
+            leapYears.add("0");
 
             for (int i = 1950; i <= 2035; i++) {
                 if (isLeapYear(i)) {

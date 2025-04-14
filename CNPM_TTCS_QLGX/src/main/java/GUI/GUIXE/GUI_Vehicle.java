@@ -8,6 +8,7 @@ import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.VehicleDAO;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.Vehicle;
 import Model.VehicleType;
 import java.awt.event.ActionEvent;
@@ -39,14 +40,17 @@ public class GUI_Vehicle extends javax.swing.JPanel {
     private LogSelection logSelection;
     private int choooseIndexVehicleType = 0;
     private LogMessage logMessage;
+    private DataGlobal dataGlobal;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_Vehicle(ViewMain viewmain, LogSelection logSelection, LogMessage logMessage) {
+    public GUI_Vehicle(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, LogMessage logMessage) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
         this.logMessage = logMessage;
+        this.dataGlobal = dataGlobal;
+        this.dataGlobal.updateArrVehicleType();
         
         initComponents(); 
         initTable();
@@ -92,7 +96,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
     private void fillVehicleType() { 
         cob_loai_phuong_tien.removeAllItems();
         cob_loai_phuong_tien.addItem("None");
-        for (VehicleType vehicle_type : viewmain.vehicle_types) { 
+        for (VehicleType vehicle_type : this.dataGlobal.getArrVehicleType()) { 
             if (vehicle_type.isIsPermission()) { 
                 cob_loai_phuong_tien.addItem(vehicle_type.getVehicle_type_name());
             }
@@ -596,7 +600,6 @@ public class GUI_Vehicle extends javax.swing.JPanel {
 
     private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
         // TODO add your handling code here:
-        
     }//GEN-LAST:event_btn_insertActionPerformed
 
     private void btn_resetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_resetMouseClicked
@@ -625,7 +628,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         
         String ve_t = cob_loai_phuong_tien.getSelectedItem() == null ? "" : cob_loai_phuong_tien.getSelectedItem().toString().trim();
         int ve_t_id = 0;
-        for (VehicleType vehicle_type: viewmain.vehicle_types) {
+        for (VehicleType vehicle_type: this.dataGlobal.getArrVehicleType()) {
             if (ve_t.equals(vehicle_type.getVehicle_type_name())) {
                 ve_t_id = vehicle_type.getVehicle_type_id();
             }
@@ -696,7 +699,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
                         viewmain.requestFocus();
                     }
                 });
-                for (VehicleType vt : viewmain.vehicle_types) {
+                for (VehicleType vt : dataGlobal.getArrVehicleType()) {
                     if (vt.isIsPermission())
                         tableModel.addRow(new String[] {String.valueOf(vt.getVehicle_type_id()), vt.getVehicle_type_name(), String.valueOf(vt.isIsPermission())});
                 }
@@ -723,7 +726,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         int vehicleId = Integer.parseInt(txt_vehicle_id.getText().toString().trim());
         String vehicleIden = txt_identification_code.getText().toString().trim();
         
-        for (VehicleType vt : viewmain.vehicle_types) {
+        for (VehicleType vt : this.dataGlobal.getArrVehicleType()) {
             if (vt.getVehicle_type_name().equals(txt_vehicle_type.getText().toString().trim())) {
                 this.choooseIndexVehicleType = vt.getVehicle_type_id(); 
                 break;

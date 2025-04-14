@@ -16,7 +16,7 @@ public class RoleDAO implements InterfaceDAO.InterfaceDAO<Role> {
     @Override
     public ArrayList<Role> getList() {
         ArrayList<Role> list_role = new ArrayList<>();
-        String sql = "EXEC getlist_role";
+        String sql = "SELECT * FROM roles";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -47,6 +47,7 @@ public class RoleDAO implements InterfaceDAO.InterfaceDAO<Role> {
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e.getCause());
         }
         return false;
     }

@@ -8,6 +8,7 @@ import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.ResidentCardDAO;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.Buildings;
 import Model.Customer;
 import Model.ResidentCard;
@@ -42,14 +43,18 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
     private LogSelection logSelection;
     private int chooseCustomerId = -1;
     private LogMessage logMessage;
+    private DataGlobal dataGlobal;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_ResidentCard(ViewMain viewmain, LogSelection logSelection, LogMessage logMessage) {
+    public GUI_ResidentCard(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, LogMessage logMessage) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
         this.logMessage = logMessage;
+        this.dataGlobal = dataGlobal;
+        this.dataGlobal.updateArrayResidentCard();
+        this.dataGlobal.updateArrBuildings();
         
         initComponents();
         initTable();
@@ -63,7 +68,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
     }
     
     public void initTable() { 
-        String[] header = new String[] {"Mã Thẻ", "Khách Hàng", "Tòa Nhà", "Còn/Mất"};
+        String[] header = new String[] {"Mã Thẻ", "Khách Hàng", "Tòa Nhà", "Khả Dụng"};
         tblModel.setColumnIdentifiers(header);
         tblModel.setRowCount(0);
         tbl_resident_card.setModel(tblModel);
@@ -95,14 +100,14 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
     }
     
     private void fillComboBoxActive() { 
-        String[] items = { "None", "Active", "No_Active" };
+        String[] items = { "None", "Có", "Không" };
         cob_con_mat.setModel(new DefaultComboBoxModel<>(items));
     }
     
     private void fillComboBoxBuildings() { 
         List<String> lstBuildings = new ArrayList<>();
         lstBuildings.add("None");
-        for (Buildings b: viewmain.buildings) {
+        for (Buildings b: this.dataGlobal.getArrayBuildings()) {
             lstBuildings.add(b.getBuilding_name());
         }
         String[] buildings = lstBuildings.toArray(new String[0]);
@@ -284,7 +289,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         });
 
         btn_con.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_con.setText("Còn");
+        btn_con.setText("Có");
         btn_con.setToolTipText("");
         btn_con.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -293,7 +298,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         });
 
         btn_mat.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_mat.setText("Mất");
+        btn_mat.setText("Không");
         btn_mat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_matActionPerformed(evt);
@@ -320,7 +325,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         cob_toa_nha.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel12.setText("Còn/Mất");
+        jLabel12.setText("Khả Dụng");
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel13.setText("Tìm Mã");
@@ -335,7 +340,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -514,7 +519,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         JL_building.setText("Tòa Nhà");
 
         JL_IsActive.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        JL_IsActive.setText("Còn/Mất");
+        JL_IsActive.setText("Khả Dụng");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -592,7 +597,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(21, Short.MAX_VALUE)
+                .addContainerGap(20, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -651,6 +656,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
             initTable(); 
             loadData();
             fillTable();
+            this.dataGlobal.updateArrayResidentCard();
         }
         else { 
             this.SetLog(GetError(check));
@@ -793,7 +799,8 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
                         viewmain.requestFocus();
                     }
                 });
-                for (Customer c : viewmain.lstCustomer) {
+                dataGlobal.updateArrCustomer();
+                for (Customer c : dataGlobal.getArrayCustomer()) {
                     if (c.isIs_active()) {
                         tableModel.addRow(new String[] {String.valueOf(c.getCustomer_id()), String.valueOf(c.getBuilding_id()), 
                                                         c.getFull_name(), c.getSsn(), String.valueOf(c.getDate_of_birth()), 
@@ -836,6 +843,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
             initTable(); 
             loadData();
             fillTable();
+            this.dataGlobal.updateArrayResidentCard();
         }
         else { 
             this.SetLog(GetError(check));
@@ -854,6 +862,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
             initTable(); 
             loadData();
             fillTable();
+            this.dataGlobal.updateArrayResidentCard();
         }
         else { 
             this.SetLog(GetError(check));
