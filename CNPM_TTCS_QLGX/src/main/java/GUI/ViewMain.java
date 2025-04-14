@@ -88,9 +88,9 @@ public class ViewMain extends javax.swing.JFrame {
     public ViewMain() {
         dataglocal.updateAllData();
         initComponents();
-//        GUI_DICHVU();
+        GUI_DICHVU();
         GUI_GUIXE();
-//        GUI_CATRUC();
+        GUI_CATRUC();
         GUI_NHANSU();
     }
     public void addComponent(JPanel father, JPanel child) {
