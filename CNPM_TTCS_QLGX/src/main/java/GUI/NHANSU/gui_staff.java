@@ -92,22 +92,8 @@ public class gui_staff extends javax.swing.JPanel {
             String email = result.getString("email");
             boolean is_active = result.getBoolean("is_active");
             String position_name = result.getString("position_name");
-//                    .equalsIgnoreCase("Manager") ? "Quản lý" : "Nhân viên";
             String role_name = result.getString("role_name");
-//            switch (role_name) {
-//                case "Manager Staff In":
-//                    role_name = "Quản lý nhân viên vào";
-//                    break;
-//                case "Manager Staff Out":
-//                    role_name = "Quản lý nhân viên ra";
-//                    break;
-//                case "Staff In":
-//                    role_name = "Nhân viên vào";
-//                    break;
-//                case "Staff Out":
-//                    role_name = "Nhân viên ra";
-//                    break;
-//            }
+
 
 
             tableModel.addRow(new Object[]{
@@ -147,21 +133,8 @@ public class gui_staff extends javax.swing.JPanel {
             combobox_TrangThai.setSelectedItem(Table_Staff.getValueAt(selectedRow, 9).toString());
             combobox_Vitri.setSelectedItem(Table_Staff.getValueAt(selectedRow, 10).toString());
             combobox_Vaitro.setSelectedItem(Table_Staff.getValueAt(selectedRow, 11).toString());
-//            txt_ViTri.setText(Table_Staff.getValueAt(selectedRow, 10).toString());    
-//            txt_VaiTro.setText(Table_Staff.getValueAt(selectedRow, 11).toString());    
         }       
         txt_ID.setEnabled(false);
-//        txt_TaiKhoan.setEditable(false);
-//        txt_HoTen.setEditable(false);
-//        txt_CCCD.setEditable(false);
-//        txt_NgaySinh.setEditable(false);
-//        combobox_GioiTinh.setEditable(false);
-//        txt_SDT.setEditable(false);
-//        txt_DiaChi.setEditable(false);
-//        txt_Email.setEditable(false);
-//        combobox_TrangThai.setEditable(false);
-//        txt_ViTri.setEditable(false);
-//        txt_VaiTro.setEditable(false);
     }
 });  
 }
@@ -356,7 +329,7 @@ public class gui_staff extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID Nhân viên", "Số tài khoản", "Họ tên", "CCCD", "Ngày sinh", "Giới tính", "SĐT", "Địa chỉ", "Email", "Trạng thái", "Vị trí", "Chức vụ"
+                "ID Nhân viên", "Số tài khoản", "Họ tên", "CCCD", "Ngày sinh", "Giới tính", "SĐT", "Địa chỉ", "Email", "Trạng thái", "Vị trí", "Vai trò"
             }
         ) {
             Class[] types = new Class [] {
@@ -468,7 +441,6 @@ public class gui_staff extends javax.swing.JPanel {
         combobox_TrangThai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Còn làm việc", "Nghỉ việc" }));
 
         combobox_Vaitro.setEditable(true);
-        combobox_Vaitro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Manager Staff In", "Manager Staff Out", "Staff In", "Staff Out" }));
 
         combobox_Vitri.setEditable(true);
         combobox_Vitri.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Manager", "Staff" }));
@@ -618,9 +590,7 @@ public class gui_staff extends javax.swing.JPanel {
         txt_NgaySinh.setText("");
         txt_SDT.setText("");
         txt_DiaChi.setText("");
-        txt_Email.setText("");
-//        txt_VaiTro.setText("");
-//        txt_ViTri.setText("Staff");
+        txt_Email.setText("");;
         txt_TaiKhoan.setText("");
         
         combobox_GioiTinh.removeAllItems();
@@ -632,17 +602,21 @@ public class gui_staff extends javax.swing.JPanel {
         combobox_TrangThai.addItem("Còn làm việc");
         combobox_TrangThai.setSelectedItem("Còn làm việc");
         
-        combobox_Vaitro.removeAllItems();
-        combobox_Vaitro.addItem("Manager Staff In");
-        combobox_Vaitro.addItem("Manager Staff Out");
-        combobox_Vaitro.addItem("Staff In");
-        combobox_Vaitro.addItem("Staff Out");
-        combobox_Vaitro.setSelectedItem("Manager Staff In");
+        RoleDAO daorole = new RoleDAO();
+        List <String> roleName = daorole.getRoleNames();
         
-        combobox_GioiTinh.removeAllItems();
-        combobox_GioiTinh.addItem("Manager");
-        combobox_GioiTinh.addItem("Staff");
-        combobox_GioiTinh.setSelectedItem("Manager");
+        combobox_Vaitro.removeAllItems();
+        for (String role : roleName){
+            combobox_Vaitro.addItem(role);
+        }
+
+        PositionDAO daoposition = new PositionDAO();
+        List <String> positionName = daoposition.getPositionName();
+        
+        combobox_Vitri.removeAllItems();
+        for (String position : positionName){
+            combobox_Vitri.addItem(position);
+        }
         
         txt_HoTen.requestFocus(); 
         isEditing = false;
@@ -718,12 +692,6 @@ public class gui_staff extends javax.swing.JPanel {
              return;
         }
 
-//        String viTriCheck = Table_Staff.getValueAt(selectedRow, 10).toString().trim(); 
-//        if (viTriCheck.equalsIgnoreCase("Quản lý")) {
-//             log_message("Không được phép sửa");
-//             return;
-//        }
-
         combobox_GioiTinh.removeAllItems();
         combobox_GioiTinh.addItem("Nam");
         combobox_GioiTinh.addItem("Nữ");
@@ -732,15 +700,21 @@ public class gui_staff extends javax.swing.JPanel {
         combobox_TrangThai.addItem("Còn làm việc");
         combobox_TrangThai.addItem("Đã nghỉ");
         
+        RoleDAO daorole = new RoleDAO();
+        List <String> roleName = daorole.getRoleNames();
+        
         combobox_Vaitro.removeAllItems();
-        combobox_Vaitro.addItem("Manager Staff In");
-        combobox_Vaitro.addItem("Manager Staff Out");
-        combobox_Vaitro.addItem("Staff In");
-        combobox_Vaitro.addItem("Staff Out");
+        for (String role : roleName){
+            combobox_Vaitro.addItem(role);
+        }
+
+        PositionDAO daoposition = new PositionDAO();
+        List <String> positionName = daoposition.getPositionName();
         
         combobox_Vitri.removeAllItems();
-        combobox_Vitri.addItem("Manager");
-        combobox_Vitri.addItem("Staff");
+        for (String position : positionName){
+            combobox_Vitri.addItem(position);
+        }
 
         txt_ID.setText(Table_Staff.getValueAt(selectedRow, 0).toString());             
         txt_TaiKhoan.setText(Table_Staff.getValueAt(selectedRow, 1).toString());       
@@ -757,9 +731,6 @@ public class gui_staff extends javax.swing.JPanel {
         combobox_Vitri.setSelectedItem(Table_Staff.getValueAt(selectedRow, 10).toString().trim());
         combobox_Vaitro.setSelectedItem(Table_Staff.getValueAt(selectedRow, 11).toString().trim());
         
-//        txt_ViTri.setText(Table_Staff.getValueAt(selectedRow, 10).toString());         
-//        txt_VaiTro.setText(Table_Staff.getValueAt(selectedRow, 11).toString());        
-
         txt_HoTen.requestFocus();
 
         isEditing = true;
@@ -893,7 +864,6 @@ public class gui_staff extends javax.swing.JPanel {
         String gender = switch (genderText) {
             case "Nam" -> "M";
             case "Nữ" -> "F";
-            case "Khác" -> "O";
             default -> "";
         };
 
@@ -906,11 +876,6 @@ public class gui_staff extends javax.swing.JPanel {
             log_message("Vai trò không hợp lệ với vị trí");
             return;
         }
-
-//        if (roleId == 0 || positionId == 0) {
-//            log_message("Vai trò hoặc vị trí không hợp lệ.");
-//            return;
-//        }
 
         Staff st = new Staff(
             currentStaffId,

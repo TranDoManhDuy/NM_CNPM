@@ -257,7 +257,7 @@
                     <Column editable="false" title="Email" type="java.lang.String"/>
                     <Column editable="false" title="Tr&#x1ea1;ng th&#xe1;i" type="java.lang.String"/>
                     <Column editable="false" title="V&#x1ecb; tr&#xed;" type="java.lang.String"/>
-                    <Column editable="false" title="Ch&#x1ee9;c v&#x1ee5;" type="java.lang.String"/>
+                    <Column editable="false" title="Vai tr&#xf2;" type="java.lang.String"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -636,12 +636,7 @@
           <Properties>
             <Property name="editable" type="boolean" value="true"/>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="Manager Staff In"/>
-                <StringItem index="1" value="Manager Staff Out"/>
-                <StringItem index="2" value="Staff In"/>
-                <StringItem index="3" value="Staff Out"/>
-              </StringArray>
+              <StringArray count="0"/>
             </Property>
           </Properties>
           <AuxValues>

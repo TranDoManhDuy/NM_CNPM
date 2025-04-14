@@ -17,7 +17,7 @@ public class OpenConnection {
     private static HikariDataSource dataSourse;
     
     public static void initializaConnection(String username, String password) {
-        config.setJdbcUrl("jdbc:sqlserver://localhost;database=VINHOMENOFINAL; encrypt=true;trustServerCertificate=true;");
+        config.setJdbcUrl("jdbc:sqlserver://localhost;database=VINHOMES; encrypt=true;trustServerCertificate=true;");
         config.setUsername(username);
         config.setPassword(password);
         config.addDataSourceProperty("encrypt", "true");

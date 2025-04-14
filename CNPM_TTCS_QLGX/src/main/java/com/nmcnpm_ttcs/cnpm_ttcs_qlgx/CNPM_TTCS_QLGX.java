@@ -14,7 +14,7 @@ import javax.swing.JFrame;
  */
 public class CNPM_TTCS_QLGX {
     public static void main(String[] args) {
-        initializaConnection("sa", "123");
+        initializaConnection("sa", "vantrong159p");
         ViewMain app = new ViewMain();
 //        LogSelection app = new LogSelection();
         app.setLocationRelativeTo(null);
