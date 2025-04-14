@@ -91,7 +91,7 @@ public class ViewMain extends javax.swing.JFrame {
 //        GUI_DICHVU();
         GUI_GUIXE();
 //        GUI_CATRUC();
-//        GUI_NHANSU();
+        GUI_NHANSU();
     }
     public void addComponent(JPanel father, JPanel child) {
         father.setLayout(new GridBagLayout());
@@ -234,20 +234,20 @@ public class ViewMain extends javax.swing.JFrame {
     
     public void GUI_NHANSU() {
         // init component
-        gui_staff staff_gui = new gui_staff(this);
-        gui_account account_gui = new gui_account(this);
-        gui_role role_gui = new gui_role(this);
-        gui_permission permission_gui = new gui_permission(this);
-        gui_manager manager_gui = new gui_manager(this);
-        gui_listmanager listmanager_gui = new gui_listmanager(this);
+//        gui_staff staff_gui = new gui_staff(this);
+//        gui_account account_gui = new gui_account(this);
+//        gui_role role_gui = new gui_role(this);
+//        gui_permission permission_gui = new gui_permission(this);
+        gui_manager manager_gui = new gui_manager(dataglocal, logSelection, this);
+//        gui_listmanager listmanager_gui = new gui_listmanager(this);
 //        gui_profile profile = new gui_profile();
         // add component
-        addComponent(panel_nhanvien, staff_gui);
-        addComponent(panel_taikhoan, account_gui);
-        addComponent(panel_vaitro, role_gui);
-        addComponent(panel_quyen, permission_gui);
+//        addComponent(panel_nhanvien, staff_gui);
+//        addComponent(panel_taikhoan, account_gui);
+//        addComponent(panel_vaitro, role_gui);
+//        addComponent(panel_quyen, permission_gui);
         addComponent(panel_quanli, manager_gui);
-        addComponent(panel_vitri, listmanager_gui);
+//        addComponent(panel_vitri, listmanager_gui);
 //        addComponent(panel_profile, profile);
     }
     

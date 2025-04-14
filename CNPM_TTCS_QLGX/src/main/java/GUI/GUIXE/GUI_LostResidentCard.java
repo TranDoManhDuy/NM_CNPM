@@ -7,8 +7,6 @@ package GUI.GUIXE;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.LostResidentCardDAO;
-import DAO.ParkingSessionDAO;
-import DAO.ResidentCardDAO;
 import GUI.ViewMain;
 import Global.DataGlobal;
 import Model.LostResidentCard;

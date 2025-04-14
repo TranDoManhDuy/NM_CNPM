@@ -3,8 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Global;
-import Model.VehicleType;
-import Model.VisitorParkingCards;
 import DAO.BuildingsDAO;
 import DAO.CustomerDAO;
 import DAO.PaymentDAO;
@@ -15,18 +13,14 @@ import DAO.ResidentCardDAO;
 import DAO.ServiceFeeDAO;
 import DAO.SessionFeeDAO;
 import DAO.TypeServiceDAO;
-import DAO.VehicleDAO;
-import DatabaseHelper.OpenConnection;
 import DAO.ShiftTypesDAO;
 import DAO.ShiftWorksDAO;
 import DAO.TasksDAO;
 import DAO.TimeFrameDAO;
 import DAO.VehicleDAO;
 import DAO.VehicleTypeDAO;
-import Model.Buildings;
-import Model.Customer;
-import Model.Payment;
 import DAO.VisitorParkingCardsDAO;
+import DatabaseHelper.OpenConnection;
 import Model.Buildings;
 import Model.Customer;
 import Model.LostVisitorParkingCards;
@@ -36,6 +30,7 @@ import Model.ResidentCard;
 import Model.SessionFee;
 import Model.ShiftTypes;
 import Model.ShiftWorks;
+import Model.Staff;
 import Model.Tasks;
 import Model.TimeFrame;
 import Model.TimeFrameToRender;
@@ -45,9 +40,7 @@ import Model.VisitorParkingCards;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.JFrame;
 /**
@@ -257,7 +250,32 @@ public class DataGlobal {
     private ArrayList<ParkingSession> arrParkingSessions;
     public ArrayList<SessionFee> arrSessionFees = new ArrayList<>();
     public ArrayList<TimeFrame> arrTimeFrames = new ArrayList<>();
+    public ArrayList<Staff> arrStaffs = new ArrayList<>();
 
+    public void updateArrayStaffs() {
+        arrStaffs = new ArrayList<>();
+        String sql = "EXEC [dbo].[getlist_staff]";
+        try (
+                Connection conn = OpenConnection.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet result = stmt.executeQuery(sql);
+            ) 
+        {
+            while (result.next()) {
+                int staff_id = result.getInt("staff_id");
+                String staff_name = result.getString("full_name");
+                int role_id = result.getInt("role_id");
+                arrStaffs.add(new Staff(staff_id, staff_name, role_id));
+            }
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public ArrayList<Staff> getArrStaffs() { 
+        return arrStaffs;
+    }
     
     public void updateArrayResidentCard() {
         try {
