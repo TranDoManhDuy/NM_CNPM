@@ -1043,12 +1043,31 @@ public class gui_registration extends javax.swing.JPanel {
     private void txt_tinnhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tinnhanActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_tinnhanActionPerformed
-
+    private void logError(String rs) {
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+    }
     private void btn_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_locActionPerformed
         // TODO add your handling code here:
         int index = 0;
-        LocalDate dateStart = LocalDate.parse(combo_nambatdau.getSelectedItem() + "-" + combo_thangbatdau.getSelectedItem() + "-" + combo_ngaybatdau.getSelectedItem());
-        LocalDate dateEnd = LocalDate.parse(combo_namketthuc.getSelectedItem() + "-" + combo_thangketthuc.getSelectedItem() + "-" + combo_ngayketthuc.getSelectedItem());
+        LocalDate dateStart;
+        LocalDate dateEnd;
+        try {
+            dateStart = LocalDate.parse(combo_nambatdau.getSelectedItem() + "-" + combo_thangbatdau.getSelectedItem() + "-" + combo_ngaybatdau.getSelectedItem());
+            dateEnd = LocalDate.parse(combo_namketthuc.getSelectedItem() + "-" + combo_thangketthuc.getSelectedItem() + "-" + combo_ngayketthuc.getSelectedItem()); 
+        } catch (Exception e) {
+            logError("Ngày tháng không hợp lệ");
+            return;
+        }
+        
         tableModel.setRowCount(0);
         for (ArrayList<String> arr : this.dataglobal.getArrRegistration_render()) {
             LocalDate dateofArr = LocalDate.parse(arr.get(3));

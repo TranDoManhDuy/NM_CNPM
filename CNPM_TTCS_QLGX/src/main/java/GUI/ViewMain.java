@@ -256,21 +256,15 @@ public class ViewMain extends javax.swing.JFrame {
         // init component
         gui_staff staff_gui = new gui_staff(this);
         gui_account account_gui = new gui_account(this);
-        gui_role role_gui = new gui_role(this);
-        gui_permission permission_gui = new gui_permission(this);
         gui_manager manager_gui = new gui_manager(this);
         gui_listmanager listmanager_gui = new gui_listmanager(this);
 //        gui_profile profile = new gui_profile();
         // add component
         addComponent(panel_nhanvien, staff_gui);
         addComponent(panel_taikhoan, account_gui);
-        addComponent(panel_vaitro, role_gui);
-        addComponent(panel_quyen, permission_gui);
         addComponent(panel_quanli, manager_gui);
         addComponent(panel_vitri, listmanager_gui);
-//        addComponent(panel_profile, profile);
     }
-    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -293,13 +287,9 @@ public class ViewMain extends javax.swing.JFrame {
         jTabbedPane3 = new javax.swing.JTabbedPane();
         panel_nhanvien = new javax.swing.JPanel();
         panel_taikhoan = new javax.swing.JPanel();
-        panel_vaitro = new javax.swing.JPanel();
-        panel_quyen = new javax.swing.JPanel();
         panel_quanli = new javax.swing.JPanel();
         panel_vitri = new javax.swing.JPanel();
         panel_profile = new javax.swing.JPanel();
-        jPanel19 = new javax.swing.JPanel();
-        jPanel20 = new javax.swing.JPanel();
         CaTruc = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
@@ -408,32 +398,6 @@ public class ViewMain extends javax.swing.JFrame {
 
         jTabbedPane3.addTab("Tài khoản", panel_taikhoan);
 
-        javax.swing.GroupLayout panel_vaitroLayout = new javax.swing.GroupLayout(panel_vaitro);
-        panel_vaitro.setLayout(panel_vaitroLayout);
-        panel_vaitroLayout.setHorizontalGroup(
-            panel_vaitroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        panel_vaitroLayout.setVerticalGroup(
-            panel_vaitroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        jTabbedPane3.addTab("Vai trò", panel_vaitro);
-
-        javax.swing.GroupLayout panel_quyenLayout = new javax.swing.GroupLayout(panel_quyen);
-        panel_quyen.setLayout(panel_quyenLayout);
-        panel_quyenLayout.setHorizontalGroup(
-            panel_quyenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        panel_quyenLayout.setVerticalGroup(
-            panel_quyenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        jTabbedPane3.addTab("Quyền", panel_quyen);
-
         javax.swing.GroupLayout panel_quanliLayout = new javax.swing.GroupLayout(panel_quanli);
         panel_quanli.setLayout(panel_quanliLayout);
         panel_quanliLayout.setHorizontalGroup(
@@ -472,32 +436,6 @@ public class ViewMain extends javax.swing.JFrame {
         );
 
         jTabbedPane3.addTab("Profile", panel_profile);
-
-        javax.swing.GroupLayout jPanel19Layout = new javax.swing.GroupLayout(jPanel19);
-        jPanel19.setLayout(jPanel19Layout);
-        jPanel19Layout.setHorizontalGroup(
-            jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel19Layout.setVerticalGroup(
-            jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        jTabbedPane3.addTab("tab8", jPanel19);
-
-        javax.swing.GroupLayout jPanel20Layout = new javax.swing.GroupLayout(jPanel20);
-        jPanel20.setLayout(jPanel20Layout);
-        jPanel20Layout.setHorizontalGroup(
-            jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel20Layout.setVerticalGroup(
-            jPanel20Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        jTabbedPane3.addTab("tab9", jPanel20);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -981,9 +919,7 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel17;
-    private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel20;
     private javax.swing.JPanel jPanel21;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -1013,14 +949,12 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JPanel panel_profile;
     private javax.swing.JPanel panel_ptien;
     private javax.swing.JPanel panel_quanli;
-    private javax.swing.JPanel panel_quyen;
     private javax.swing.JPanel panel_taikhoan;
     private javax.swing.JPanel panel_thanhtoan;
     private javax.swing.JPanel panel_the_cu_dan;
     private javax.swing.JPanel panel_the_xe;
     private javax.swing.JPanel panel_thongkedoanhthu;
     private javax.swing.JPanel panel_toanha;
-    private javax.swing.JPanel panel_vaitro;
     private javax.swing.JPanel panel_vitri;
     // End of variables declaration//GEN-END:variables
 }

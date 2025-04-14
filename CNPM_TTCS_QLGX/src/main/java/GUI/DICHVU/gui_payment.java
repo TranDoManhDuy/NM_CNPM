@@ -799,8 +799,16 @@ public class gui_payment extends javax.swing.JPanel {
     private void btn_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_locActionPerformed
         // TODO add your handling code here:
         int index = 0;
-        LocalDate dateStart = LocalDate.parse(comboYearStart.getSelectedItem() + "-" + comboMonthStart.getSelectedItem() + "-" + comboDayStart.getSelectedItem());
-        LocalDate dateEnd = LocalDate.parse(comboYearEnd.getSelectedItem() + "-" + comboMonthEnd.getSelectedItem() + "-" + comboDayEnd.getSelectedItem());
+        LocalDate dateStart;
+        LocalDate dateEnd;
+        try {
+            dateStart = LocalDate.parse(comboYearStart.getSelectedItem() + "-" + comboMonthStart.getSelectedItem() + "-" + comboDayStart.getSelectedItem());
+            dateEnd = LocalDate.parse(comboYearEnd.getSelectedItem() + "-" + comboMonthEnd.getSelectedItem() + "-" + comboDayEnd.getSelectedItem());
+        } catch (Exception e) {
+            logError("Ngày tháng không hợp lệ");
+            return;
+        }
+        
         tableModel.setRowCount(0);
         for (ArrayList<String> arr : this.dataglobal.getArrPayment_render()) {
             LocalDate dateofArr = LocalDate.parse(arr.get(3));
