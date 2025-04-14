@@ -64,12 +64,12 @@ public class GUI_LostVisitorParkingCard extends javax.swing.JPanel {
     public void fillTable(){
         
         tableModel.setRowCount(0);
-        String sql = "SELECT * FROM LOSTVISITORSESION";
         dataGlobal.updateArrayLostVisitorParkingCardses();
+        String sql = "{CALL loadViewLVPC()}";        
         try (
             Connection conn = OpenConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            CallableStatement stmt = conn.prepareCall(sql);
+            ResultSet rs = stmt.executeQuery();
         ) {
             while (rs.next()) {
                 tableModel.addRow(new String[] {String.valueOf(rs.getInt("lost_visitor_parking_card_id")),
