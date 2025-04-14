@@ -523,6 +523,7 @@ public class GUI_LostVisitorParkingCard extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        viewMain.setEnabled(false);
         newLostVPC = new NewLostVPC(){
             @Override
                 public void action() {
@@ -543,9 +544,27 @@ public class GUI_LostVisitorParkingCard extends javax.swing.JPanel {
                     int x = Integer.parseInt(this.jTextField1.getText().trim());
                     LostVisitorParkingCards a = new LostVisitorParkingCards(x);
                     String r = LostVisitorParkingCardsDAO.getInstance().insert(a);
-                    callLogMessage(r);
-                    fillTable();
+                        if(r == "Thêm thành công"){
+                            this.setVisible(false);
+                            fillTable();
+                            callLogMessage(r);
+                        }
+                        else{
+                            newLostVPC.setEnabled(false);
+                            message = new LogMessage(r){
+                                @Override
+                                public void action() {
+                                    newLostVPC.setEnabled(true);
+                                    newLostVPC.requestFocus();
+                                    this.setVisible(false);
+                                }
+                            };
+                            message.setLocationRelativeTo(null);
+                            message.setVisible(true);
+                            message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                        }
                     }
+                    
             @Override
                 public void reject() {
                     viewMain.setEnabled(true);

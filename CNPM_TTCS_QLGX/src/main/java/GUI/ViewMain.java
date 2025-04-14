@@ -243,7 +243,7 @@ public class ViewMain extends javax.swing.JFrame {
 //        gui_permission permission_gui = new gui_permission(this);
         gui_manager manager_gui = new gui_manager(dataglocal, logSelection, this);
 //        gui_listmanager listmanager_gui = new gui_listmanager(this);
-//        gui_profile profile = new gui_profile();
+        gui_profile profile = new gui_profile();
         // add component
 //        addComponent(panel_nhanvien, staff_gui);
 //        addComponent(panel_taikhoan, account_gui);
@@ -251,7 +251,7 @@ public class ViewMain extends javax.swing.JFrame {
 //        addComponent(panel_quyen, permission_gui);
         addComponent(panel_quanli, manager_gui);
 //        addComponent(panel_vitri, listmanager_gui);
-//        addComponent(panel_profile, profile);
+        addComponent(panel_profile, profile);
     }
     
     /**
