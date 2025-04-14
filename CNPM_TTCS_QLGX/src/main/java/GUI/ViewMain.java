@@ -66,6 +66,7 @@ import DAO.TimeFrameDAO;
 import DAO.VehicleDAO;
 import DAO.VehicleTypeDAO;
 import DAO.VisitorParkingCardsDAO;
+import GUI.GUIXE.EntryAndExit;
 import GUI.GUIXE.GUI_LostVisitorParkingCard;
 import GUI.GUIXE.GUI_VisitorParkingCard;
 import GUI.NHANSU.gui_listmanager;
@@ -180,6 +181,7 @@ public class ViewMain extends javax.swing.JFrame {
         GUI_Customer gui_customer = new GUI_Customer(dataglocal, this, logSelection, gui_resident_card, logMessage);
         GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(dataglocal, this, logSelection, logMessage, gui_vehicle);
         GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(dataglocal, this, logSelection, logMessage, gui_resident_card, gui_parking_session);
+        EntryAndExit gui_entry_exit = new EntryAndExit(this);
         addComponent(panel_khachhang, gui_customer);
         addComponent(panel_mat_the_cd, gui_lost_resident_card);
         addComponent(panel_guixe, gui_parking_session);
@@ -187,6 +189,7 @@ public class ViewMain extends javax.swing.JFrame {
         addComponent(panel_ptien, gui_vehicle);
         addComponent(panel_mat_the, gui_LostVisitorParkingCard);
         addComponent(panel_the_xe, gui_visitorParkingCard);
+        addComponent(jPanel14, gui_entry_exit);
     }
     
     public void GUI_CATRUC(){
