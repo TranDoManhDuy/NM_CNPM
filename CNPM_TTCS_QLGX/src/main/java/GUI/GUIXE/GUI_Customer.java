@@ -1062,7 +1062,7 @@ public class GUI_Customer extends javax.swing.JPanel {
         int day = Integer.parseInt(cob_ngay.getSelectedItem().toString());
         int month = Integer.parseInt(cob_thang.getSelectedItem().toString());
         int year = Integer.parseInt(cob_nam.getSelectedItem().toString());
-        System.out.println("Nam " + day + " " + month + " " + year);
+//        System.out.println("Nam " + day + " " + month + " " + year);
         
         sDay = Library.Library.getDay(month, year);
         sMonth = Library.Library.getMonth(day, year);
@@ -1123,7 +1123,7 @@ public class GUI_Customer extends javax.swing.JPanel {
         int month = Integer.parseInt(cob_thang.getSelectedItem().toString());
         int year = Integer.parseInt(cob_nam.getSelectedItem().toString());
         
-        System.out.println("Ngay " + day + " " + month + " " + year);
+//        System.out.println("Ngay " + day + " " + month + " " + year);
         sMonth = Library.Library.getMonth(day, year);
         sYear = Library.Library.getYear(day, month);
         
