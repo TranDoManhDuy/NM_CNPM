@@ -1,7 +1,6 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
-
 package com.nmcnpm_ttcs.cnpm_ttcs_qlgx;
 
 import static DatabaseHelper.OpenConnection.initializaConnection;
@@ -14,6 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 /**
  * @author manhh
@@ -81,9 +82,15 @@ public class CNPM_TTCS_QLGX {
                     user = userPassword.get(0);
                     password = userPassword.get(1);
                 }
-                Global.Global_variable.getCurrentLogin(Integer.parseInt(info.get(0)));
+                try {
+                    Global.Global_variable.getCurrentLogin(Integer.parseInt(info.get(0)));
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(CNPM_TTCS_QLGX.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(CNPM_TTCS_QLGX.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 
-                initializaConnection("manager", "123");
+                initializaConnection(user, password);
                 ViewMain app = new ViewMain();
                 app.setLocationRelativeTo(null);
                 app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
