@@ -8,6 +8,7 @@ import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.ResidentCardDAO;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.Buildings;
 import Model.Customer;
 import Model.ResidentCard;
@@ -42,14 +43,18 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
     private LogSelection logSelection;
     private int chooseCustomerId = -1;
     private LogMessage logMessage;
+    private DataGlobal dataGlobal;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_ResidentCard(ViewMain viewmain, LogSelection logSelection, LogMessage logMessage) {
+    public GUI_ResidentCard(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, LogMessage logMessage) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
         this.logMessage = logMessage;
+        this.dataGlobal = dataGlobal;
+        this.dataGlobal.updateArrayResidentCard();
+        this.dataGlobal.updateArrBuildings();
         
         initComponents();
         initTable();
@@ -102,7 +107,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
     private void fillComboBoxBuildings() { 
         List<String> lstBuildings = new ArrayList<>();
         lstBuildings.add("None");
-        for (Buildings b: viewmain.buildings) {
+        for (Buildings b: this.dataGlobal.getArrayBuildings()) {
             lstBuildings.add(b.getBuilding_name());
         }
         String[] buildings = lstBuildings.toArray(new String[0]);
@@ -651,6 +656,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
             initTable(); 
             loadData();
             fillTable();
+            this.dataGlobal.updateArrayResidentCard();
         }
         else { 
             this.SetLog(GetError(check));
@@ -793,7 +799,8 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
                         viewmain.requestFocus();
                     }
                 });
-                for (Customer c : viewmain.lstCustomer) {
+                dataGlobal.updateArrCustomer();
+                for (Customer c : dataGlobal.getArrayCustomer()) {
                     if (c.isIs_active()) {
                         tableModel.addRow(new String[] {String.valueOf(c.getCustomer_id()), String.valueOf(c.getBuilding_id()), 
                                                         c.getFull_name(), c.getSsn(), String.valueOf(c.getDate_of_birth()), 
@@ -836,6 +843,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
             initTable(); 
             loadData();
             fillTable();
+            this.dataGlobal.updateArrayResidentCard();
         }
         else { 
             this.SetLog(GetError(check));
@@ -854,6 +862,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
             initTable(); 
             loadData();
             fillTable();
+            this.dataGlobal.updateArrayResidentCard();
         }
         else { 
             this.SetLog(GetError(check));

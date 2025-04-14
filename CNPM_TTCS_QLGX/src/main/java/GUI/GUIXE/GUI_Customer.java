@@ -7,8 +7,8 @@ package GUI.GUIXE;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.CustomerDAO;
-import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.Buildings;
 import Model.Customer;
 import java.awt.event.ActionEvent;
@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -46,16 +47,18 @@ public class GUI_Customer extends javax.swing.JPanel {
     private boolean isUpdating = false;
     private GUI_ResidentCard gui_resident_card;
     private LogMessage logMessage;
-    
+    private DataGlobal dataGlobal;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_Customer(ViewMain viewmain, LogSelection logSelection, GUI_ResidentCard gui_resident_card, LogMessage logMessage) {
+    public GUI_Customer(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, GUI_ResidentCard gui_resident_card, LogMessage logMessage) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
         this.gui_resident_card = gui_resident_card;
         this.logMessage = logMessage;
+        this.dataGlobal = dataGlobal;
+        this.dataGlobal.updateArrBuildings();
         
         initComponents(); 
         resetFields();
@@ -1199,7 +1202,8 @@ public class GUI_Customer extends javax.swing.JPanel {
                         viewmain.requestFocus();
                     }
                 });
-                for (Buildings b : viewmain.buildings) {
+                
+                for (Buildings b : dataGlobal.getArrayBuildings()) {
                     tableModel.addRow(new String[] {String.valueOf(b.getBuilding_id()), b.getBuilding_name(), b.getAddress()});
                 }
                 this.tableModel.fireTableDataChanged();
@@ -1235,7 +1239,7 @@ public class GUI_Customer extends javax.swing.JPanel {
         String txtDate_of_birth = day + "/" + month + "/" + year;
         LocalDate dateOfBirth = LocalDate.parse(txtDate_of_birth.trim(), formatter);
         
-        for (Buildings b : viewmain.buildings) {
+        for (Buildings b : this.dataGlobal.getArrayBuildings()) {
             String buildingName = b.getBuilding_name();
             String customerInput = txt_building_id.getText().trim();
 

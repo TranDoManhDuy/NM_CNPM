@@ -10,6 +10,7 @@ import DAO.LostResidentCardDAO;
 import DAO.ParkingSessionDAO;
 import DAO.ResidentCardDAO;
 import GUI.ViewMain;
+import Global.DataGlobal;
 import Model.LostResidentCard;
 import Model.ParkingSession;
 import Model.ResidentCard;
@@ -44,17 +45,21 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
     private GUI_ResidentCard gui_resident_card;
     private GUI_ParkingSession gui_parking_session;
     private LogMessage logMessage;
+    private DataGlobal dataGlobal;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_LostResidentCard(ViewMain viewmain, LogSelection logSelection, LogMessage logMessage, GUI_ResidentCard gui_resident_card, GUI_ParkingSession gui_parking_session) {
+    public GUI_LostResidentCard(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, LogMessage logMessage, GUI_ResidentCard gui_resident_card, GUI_ParkingSession gui_parking_session) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
         this.gui_resident_card = gui_resident_card;
         this.gui_parking_session = gui_parking_session;
         this.logMessage = logMessage;
+        this.dataGlobal = dataGlobal;
         
+        this.dataGlobal.updateArrayResidentCard();
+        this.dataGlobal.updateArrayParkingSession();
         initComponents();
         initTable();
         resetFields();
@@ -617,9 +622,9 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
             fillTable();
             resetFields();
             this.gui_resident_card.reloadData();
-            viewmain.resident_cards = ResidentCardDAO.getInstance().getList();
+            dataGlobal.updateArrayResidentCard();
             this.gui_parking_session.reloadData();
-            viewmain.parking_sessions = ParkingSessionDAO.getInstance().getList();
+            this.dataGlobal.updateArrayParkingSession();
         }
         else { 
             this.SetLog(GetError(check));
@@ -765,7 +770,7 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
                         viewmain.requestFocus();
                     }
                 });
-                for (ResidentCard re : viewmain.resident_cards) {
+                for (ResidentCard re : dataGlobal.getArrResidentCards()) {
                     tableModel.addRow(new String[] {    String.valueOf(re.getPk_resident_card()), String.valueOf(re.getCustomer_id()), 
                                                         String.valueOf(re.isIs_active())
                     });
@@ -816,7 +821,7 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
                         viewmain.requestFocus();
                     }
                 });
-                for (ParkingSession par: viewmain.parking_sessions) {
+                for (ParkingSession par: dataGlobal.getArrParkingSession()) {
                     if (par.isIs_service() && (txt_resident_id.getText().toString().trim().equals("") || par.getCard_id() == Integer.parseInt(txt_resident_id.getText().toString().trim()))) {
                         tableModel.setRowCount(0);
                         String dt_start = "null";
