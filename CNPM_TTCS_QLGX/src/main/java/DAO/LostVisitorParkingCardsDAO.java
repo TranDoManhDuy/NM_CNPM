@@ -54,7 +54,7 @@ public class LostVisitorParkingCardsDAO {
                 return e.getMessage();
             }
             else{
-                return "Lỗi không biết";    
+                return e.getMessage();
                     }
         }
         return "Thêm thành công";

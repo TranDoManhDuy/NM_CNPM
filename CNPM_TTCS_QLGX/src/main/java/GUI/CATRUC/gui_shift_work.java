@@ -100,7 +100,30 @@ public class gui_shift_work extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-  
+    
+    public void fillTableWithStaff(int staff_id){
+        tableModel.setRowCount(0);
+        String sql = "{CALL getListShiftWorksByStaff(?)}";
+        try(
+            Connection conn = OpenConnection.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+            ){
+            stmt.setInt(1, staff_id);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                tableModel.addRow(new String[] {String.valueOf(rs.getInt("shift_work_id")),
+                                                rs.getString("shift_type_name"),
+                                                rs.getString("building_name"),
+                                                String.valueOf(rs.getInt("staff_id")),
+                                                rs.getString("full_name"),
+                                                rs.getString("task_name"),
+                                                rs.getString("shift_date")});
+            }
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     public void callLogMessage(String messageText){
         viewMain.setEnabled(false);
             this.message = new LogMessage(messageText){

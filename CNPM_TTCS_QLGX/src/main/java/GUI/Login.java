@@ -215,6 +215,7 @@ public class Login extends javax.swing.JFrame {
     } else {
         Label_Error.setVisible(false);
         JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
+//        Global.Global_variable.currentLogin = Global.Global_variable.getCurrentLogin();
     }
     }//GEN-LAST:event_Button_LoginActionPerformed
 
