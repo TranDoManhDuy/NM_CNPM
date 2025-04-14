@@ -71,7 +71,7 @@ public class CNPM_TTCS_QLGX {
                 String user;
                 String password;
                 ArrayList<String> userPassword = new ArrayList<>();
-                if (info.get(8).equals("1")) {
+                if (info.get(9).equals("1")) {
                     userPassword = getUserPassManager(conn);
                     user = userPassword.get(0);
                     password = userPassword.get(1);
@@ -83,7 +83,7 @@ public class CNPM_TTCS_QLGX {
                 }
                 Global.Global_variable.getCurrentLogin(Integer.parseInt(info.get(0)));
                 
-                initializaConnection(user, password);
+                initializaConnection("manager", "123");
                 ViewMain app = new ViewMain();
                 app.setLocationRelativeTo(null);
                 app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
