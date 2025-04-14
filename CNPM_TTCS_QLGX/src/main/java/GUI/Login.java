@@ -229,6 +229,7 @@ public class Login extends javax.swing.JFrame {
                 ResultSet rs = ptmt.executeQuery();
                 ArrayList<String> info = new ArrayList<>();
                 if (rs.next()) {
+                    info.add(String.valueOf(rs.getInt("account_number")));
                     info.add(String.valueOf(rs.getString("staff_id")));
                     info.add(rs.getString("full_name"));
                     info.add(rs.getString("ssn"));

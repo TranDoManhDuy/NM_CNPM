@@ -81,8 +81,7 @@ public class CNPM_TTCS_QLGX {
                     user = userPassword.get(0);
                     password = userPassword.get(1);
                 }
-                
-                Global.Global_variable.getCurrentLogin(Integer.parseInt(user));
+                Global.Global_variable.getCurrentLogin(Integer.parseInt(info.get(0)));
                 
                 initializaConnection(user, password);
                 ViewMain app = new ViewMain();
