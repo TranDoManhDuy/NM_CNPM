@@ -89,13 +89,14 @@ public class ViewMain extends javax.swing.JFrame {
      */
     public ViewMain(String position) {
         dataglocal.updateAllData();
+        Global.Global_variable.position = position;
         initComponents();
         GUI_DICHVU();
         GUI_GUIXE();
         GUI_CATRUC();
         GUI_NHANSU();
         System.out.println(position);
-        Global.Global_variable.position = position;
+        
     }
     public void addComponent(JPanel father, JPanel child) {
         father.setLayout(new GridBagLayout());

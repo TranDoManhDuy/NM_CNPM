@@ -20,45 +20,6 @@ import javax.swing.JFrame;
  * @author manhh
  */
 public class CNPM_TTCS_QLGX {
-    public static ArrayList<String> getUserPassManager(Connection conn) {
-        String sql = "EXEC getLoginServerManager";
-        ArrayList<String> userpass = new ArrayList<>();
-        try (
-            PreparedStatement ptmt = conn.prepareStatement(sql);
-        ) {
-            ResultSet rs = ptmt.executeQuery();
-            if (rs.next()) {
-                userpass.add(rs.getString("login"));
-                userpass.add(rs.getString("password"));
-            }
-            else {
-                System.out.println("đăng nhập không thành công");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return userpass;
-    }
-    public static ArrayList<String> getUserPassStaff(Connection conn) {
-        String sql = "EXEC getLoginServerStaff";
-        ArrayList<String> userpass = new ArrayList<>();
-        try (
-            PreparedStatement ptmt = conn.prepareStatement(sql);
-        ) {
-            ResultSet rs = ptmt.executeQuery();
-            if (rs.next()) {
-                userpass.add(rs.getString("login"));
-                userpass.add(rs.getString("password"));
-            }
-            else {
-                System.out.println("đăng nhập không thành công");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return userpass;
-    }
-    
     public static void login() throws ClassNotFoundException, SQLException {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         String connectionURL = "jdbc:sqlserver://localhost;database=VINHOMES; encrypt=true;trustServerCertificate=true;";

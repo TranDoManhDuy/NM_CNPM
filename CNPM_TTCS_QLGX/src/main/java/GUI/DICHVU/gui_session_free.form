@@ -375,6 +375,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txt_giatien1tieng">
           <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_giatien1tiengActionPerformed"/>
             <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_giatien1tiengKeyPressed"/>
             <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_giatien1tiengKeyReleased"/>
           </Events>

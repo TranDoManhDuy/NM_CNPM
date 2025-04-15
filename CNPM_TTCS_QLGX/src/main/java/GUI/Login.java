@@ -71,6 +71,9 @@ public class Login extends javax.swing.JFrame {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jtxtDNKeyPressed(evt);
             }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jtxtDNKeyReleased(evt);
+            }
         });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -271,6 +274,20 @@ public class Login extends javax.swing.JFrame {
             jtxtMK.setEchoChar('*'); 
     }
     }//GEN-LAST:event_Box_ShowPassActionPerformed
+    private String lastDN = "";
+    private void jtxtDNKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtxtDNKeyReleased
+        // TODO add your handling code here:
+        if (jtxtDN.getText().equals("")) { 
+            lastDN = "";
+            return;
+        }
+        if (!Library.Library.isNumber(jtxtDN.getText())) {
+            jtxtDN.setText(lastDN);
+        }
+        else {
+            lastDN = jtxtDN.getText();
+        }
+    }//GEN-LAST:event_jtxtDNKeyReleased
 
     /**
      * @param args the command line arguments
