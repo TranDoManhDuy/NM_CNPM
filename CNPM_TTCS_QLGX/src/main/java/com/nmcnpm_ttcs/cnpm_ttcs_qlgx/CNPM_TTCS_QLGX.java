@@ -69,29 +69,10 @@ public class CNPM_TTCS_QLGX {
         GUI.Login login = new Login(conn) {
             @Override
             public void ConnectSuccessful(ArrayList<String> info) {
-                String user;
-                String password;
-                ArrayList<String> userPassword = new ArrayList<>();
-                if (info.get(9).equals("1")) {
-                    userPassword = getUserPassManager(conn);
-                    user = userPassword.get(0);
-                    password = userPassword.get(1);
-                }
-                else {
-                    userPassword = getUserPassStaff(conn);
-                    user = userPassword.get(0);
-                    password = userPassword.get(1);
-                }
-                try {
-                    Global.Global_variable.getCurrentLogin(Integer.parseInt(info.get(0)));
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(CNPM_TTCS_QLGX.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (SQLException ex) {
-                    Logger.getLogger(CNPM_TTCS_QLGX.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
+                String user = info.get(10);
+                String password = info.get(11);
                 initializaConnection(user, password);
-                ViewMain app = new ViewMain();
+                ViewMain app = new ViewMain(user);
                 app.setLocationRelativeTo(null);
                 app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 app.setVisible(true);

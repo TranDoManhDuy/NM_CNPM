@@ -16,7 +16,7 @@ import java.time.LocalDate;
  * @author manhh
  */
 public class Global_variable {
-    public static String role_name = "staff";  // manager
+    public static String position = "staff";  // manager
     public static Staff currentLogin;
     public static void getCurrentLogin(int account_id) throws ClassNotFoundException, SQLException{
         String sql = "{CALL findStaffByAccountID(?)}";

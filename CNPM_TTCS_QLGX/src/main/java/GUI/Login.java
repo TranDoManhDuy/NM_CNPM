@@ -239,13 +239,15 @@ public class Login extends javax.swing.JFrame {
                     info.add(rs.getString("address"));
                     info.add(rs.getString("email"));
                     info.add(String.valueOf(rs.getInt("position_id")));
+                    info.add(rs.getString("account_login"));
+                    info.add(rs.getString("password_login"));
                     ConnectSuccessful(info);
                 }
                 else {
                     JOptionPane.showMessageDialog(this, "Đăng nhập không thành công");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, e.getMessage());
             }
         }
     }//GEN-LAST:event_Button_LoginActionPerformed

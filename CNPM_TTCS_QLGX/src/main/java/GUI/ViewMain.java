@@ -71,6 +71,7 @@ import GUI.GUIXE.GUI_LostVisitorParkingCard;
 import GUI.GUIXE.GUI_VisitorParkingCard;
 import GUI.NHANSU.gui_listmanager;
 import GUI.NHANSU.gui_profile;
+import Global.Global_variable;
 
 import Model.Regisatration;
 import Model.SessionFee;
@@ -86,13 +87,15 @@ public class ViewMain extends javax.swing.JFrame {
     /**
      * Creates new form ViewMain
      */
-    public ViewMain() {
+    public ViewMain(String position) {
         dataglocal.updateAllData();
         initComponents();
         GUI_DICHVU();
         GUI_GUIXE();
         GUI_CATRUC();
         GUI_NHANSU();
+        System.out.println(position);
+        Global.Global_variable.position = position;
     }
     public void addComponent(JPanel father, JPanel child) {
         father.setLayout(new GridBagLayout());
@@ -103,6 +106,10 @@ public class ViewMain extends javax.swing.JFrame {
         father.add(child, gbc);
     }
     public void GUI_DICHVU() {
+        if (Global_variable.position.equals("staff")) {
+            panelDichVu.setVisible(false);
+            return;
+        }
         // init component
         gui_registration registration_gui = new gui_registration(this, logComfirm, logMessage, logSelection, dataglocal);
         gui_payment payment_gui = new gui_payment(this, logComfirm, logMessage, logSelection, dataglocal);
@@ -113,15 +120,13 @@ public class ViewMain extends javax.swing.JFrame {
         gui_session_free session_fee_gui = new gui_session_free(this, logComfirm, logMessage, logSelection, dataglocal);
         gui_statictical statictical_gui = new gui_statictical();
         // add component
-        if (Global.Global_variable.role_name.equals("staff")) {
-            addComponent(panel_dangki, registration_gui);
-            addComponent(panel_thanhtoan, payment_gui);
-            addComponent(panel_loaidichvu, service_type_gui);
-            addComponent(panel_giadichvuThang, service_free_gui);
-            addComponent(panel_khungthoigian, time_frame_gui);
-            addComponent(panel_loaiphuongtien, vehicle_type_gui);
-            addComponent(panel_gialuot, session_fee_gui);
-        }
+        addComponent(panel_dangki, registration_gui);
+        addComponent(panel_thanhtoan, payment_gui);
+        addComponent(panel_loaidichvu, service_type_gui);
+        addComponent(panel_giadichvuThang, service_free_gui);
+        addComponent(panel_khungthoigian, time_frame_gui);
+        addComponent(panel_loaiphuongtien, vehicle_type_gui);
+        addComponent(panel_gialuot, session_fee_gui);
         panelDichVu.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {

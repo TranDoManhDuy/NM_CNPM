@@ -5,12 +5,14 @@ import Annotation.LogSelection;
 import DAO.CustomerDAO;
 import DAO.RegisatrationDAO;
 import DAO.VehicleDAO;
+import DAO.VehicleTypeDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
 import Model.Customer;
 import Model.Regisatration;
 import Model.Vehicle;
+import Model.VehicleType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -978,7 +980,11 @@ public class gui_registration extends javax.swing.JPanel {
                 
                 ArrayList<Vehicle> arrVehicles = VehicleDAO.getInstance().getList();
                 for (Vehicle vehicle : arrVehicles) {
-                    this.tableModel.addRow(new String[] {String.valueOf(vehicle.getVehicle_id()), vehicle.getIdentification_code(), vehicle.getVehicle_name()});
+                    int index_vhType = vehicle.getVehicle_type_id();
+                    VehicleType vht = VehicleTypeDAO.getInstance().findbyID(index_vhType);
+                    if (vht.isIsPermission()) {
+                        this.tableModel.addRow(new String[] {String.valueOf(vehicle.getVehicle_id()), vehicle.getIdentification_code(), vehicle.getVehicle_name()});
+                    }
                 }
                 
                 this.tableModel.fireTableDataChanged();
