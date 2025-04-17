@@ -6,6 +6,7 @@ package com.nmcnpm_ttcs.cnpm_ttcs_qlgx;
 import static DatabaseHelper.OpenConnection.initializaConnection;
 import GUI.Login;
 import GUI.ViewMain;
+import java.awt.Font;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -16,6 +17,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.*;
+import java.util.Enumeration;
 /**
  * @author manhh
  */
@@ -45,10 +49,21 @@ public class CNPM_TTCS_QLGX {
         login.setVisible(true);
     }
     public static void main(String[] args) throws ClassNotFoundException {
+        setUIFont(new Font("Arial", Font.PLAIN, 14));
         try {
             login();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    public static void setUIFont(Font font) {
+        Enumeration<Object> keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof Font) {
+                UIManager.put(key, font);
+            }
         }
     }
 }
