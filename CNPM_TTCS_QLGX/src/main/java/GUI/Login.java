@@ -5,6 +5,7 @@
 package GUI;
 
 import DatabaseHelper.OpenConnection;
+import Global.Global_variable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -244,6 +245,7 @@ public class Login extends javax.swing.JFrame {
                     info.add(String.valueOf(rs.getInt("position_id")));
                     info.add(rs.getString("account_login"));
                     info.add(rs.getString("password_login"));
+                    Global_variable.getCurrentLogin(rs.getInt("account_number"));
                     ConnectSuccessful(info);
                 }
                 else {
