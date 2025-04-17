@@ -558,8 +558,9 @@ public class gui_session_free extends javax.swing.JPanel {
             return;
         }
         try {
-            int x = Integer.parseInt(txt_giatien1tieng.getText());
+            int x = (int) Float.parseFloat(txt_giatien1tieng.getText());
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             logError("Nhập đúng định dạng chữ số");
             return;
         }
@@ -966,7 +967,7 @@ public class gui_session_free extends javax.swing.JPanel {
             return;
         }
         try {
-            int x = Integer.parseInt(txt_giatien1tieng.getText());
+            int x = (int) Float.parseFloat(txt_giatien1tieng.getText());
         } catch (Exception e) {
             logError("Nhập đúng định dạng chữ số");
             return;

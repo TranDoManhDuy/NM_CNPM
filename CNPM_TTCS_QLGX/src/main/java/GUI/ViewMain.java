@@ -66,16 +66,26 @@ import DAO.TimeFrameDAO;
 import DAO.VehicleDAO;
 import DAO.VehicleTypeDAO;
 import DAO.VisitorParkingCardsDAO;
+import DatabaseHelper.OpenConnection;
 import GUI.GUIXE.EntryAndExit;
 import GUI.GUIXE.GUI_LostVisitorParkingCard;
 import GUI.GUIXE.GUI_VisitorParkingCard;
 import GUI.NHANSU.gui_listmanager;
 import GUI.NHANSU.gui_profile;
 import Global.Global_variable;
+import Model.Account;
 
 import Model.Regisatration;
 import Model.SessionFee;
 import Model.ShiftTypes;
+import java.awt.Font;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 public class ViewMain extends javax.swing.JFrame {
@@ -83,7 +93,6 @@ public class ViewMain extends javax.swing.JFrame {
     LogMessage logMessage = new LogMessage("Nothing");
     LogSelection logSelection = new LogSelection();
     DataGlobal dataglocal = new DataGlobal();
-    
     /**
      * Creates new form ViewMain
      */
@@ -96,7 +105,53 @@ public class ViewMain extends javax.swing.JFrame {
         GUI_CATRUC();
         GUI_NHANSU();
         System.out.println(position);
-        
+        runThread();
+        checkAvailable();
+        txt_checkavailable.setFont(new Font("Segoe UI", Font.BOLD, 12));
+    }
+    public void runThread() {
+        Thread threadClock = new Thread() {
+            @Override
+            public void run() {
+                System.out.println("Thread Start");
+                while (true) {
+                    txt_timer.setText(String.valueOf(LocalTime.now()).substring(0, 8));
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ViewMain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        };
+        threadClock.start();
+    }
+    public void checkAvailable() {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    String sql = "EXEC checkAvailable";
+                    try (
+                            Connection conn = OpenConnection.getConnection();
+                            Statement stmt = conn.createStatement();
+                            ResultSet result = stmt.executeQuery(sql);
+                    ) {
+                        if (result.next()) {
+                            txt_checkavailable.setText(result.getString("statement_current"));
+                        }
+                    } catch (Exception e) {
+                        txt_checkavailable.setText(e.getMessage());
+                    }
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ViewMain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        };
+        thread.start();
     }
     public void addComponent(JPanel father, JPanel child) {
         father.setLayout(new GridBagLayout());
@@ -316,6 +371,8 @@ public class ViewMain extends javax.swing.JFrame {
         panel_gialuot = new javax.swing.JPanel();
         panel_loaiphuongtien = new javax.swing.JPanel();
         panel_khungthoigian = new javax.swing.JPanel();
+        txt_timer = new javax.swing.JLabel();
+        txt_checkavailable = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -427,7 +484,7 @@ public class ViewMain extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane3.addTab("Profile", panel_profile);
+        jTabbedPane3.addTab("Thông tin cá nhân", panel_profile);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -796,19 +853,37 @@ public class ViewMain extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        txt_timer.setForeground(new java.awt.Color(255, 51, 0));
+        txt_timer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        txt_timer.setText("time");
+
+        txt_checkavailable.setForeground(new java.awt.Color(255, 0, 0));
+        txt_checkavailable.setText("IS AVAILABLE");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txt_timer, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(33, 33, 33)
+                        .addComponent(txt_checkavailable, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                        .addGap(53, 53, 53)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(44, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(47, 47, 47)
+                .addGap(13, 13, 13)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_timer)
+                    .addComponent(txt_checkavailable))
+                .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(30, Short.MAX_VALUE))
         );
@@ -878,5 +953,7 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JPanel panel_the_xe;
     private javax.swing.JPanel panel_toanha;
     private javax.swing.JPanel panel_vitri;
+    private javax.swing.JLabel txt_checkavailable;
+    private javax.swing.JLabel txt_timer;
     // End of variables declaration//GEN-END:variables
 }
