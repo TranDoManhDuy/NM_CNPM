@@ -1224,6 +1224,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         // TODO add your handling code here:
         resetFields();
         resetBtn();
+        
     }//GEN-LAST:event_btn_resetActionPerformed
 
     private void cob_ngay_bat_dauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_ngay_bat_dauActionPerformed
@@ -1703,6 +1704,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         resetFields();
         btn_loc.setEnabled(false);
         btn_bo_loc.setEnabled(true);
+        btn_reset.setEnabled(false);
     }//GEN-LAST:event_btn_locActionPerformed
 
     private void btn_bo_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_bo_locActionPerformed
@@ -1711,6 +1713,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         fillTable();
         resetBtn();
         resetFields();
+        btn_reset.setEnabled(true);
     }//GEN-LAST:event_btn_bo_locActionPerformed
 
     private void btn_tim_kiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tim_kiemActionPerformed
@@ -1799,7 +1802,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                             for (Regisatration rg : dataGlobal.getArrayRegistration()) 
                                 if (rg.getCustomer_id() == customerId) { 
                                     date_service = rg.getRegistration_date();
-                                    if (date_service.isAfter(LocalDate.now())) {
+                                    if (date_service.isAfter(LocalDate.now()) || date_service.equals(LocalDate.now())) {
                                         check = true;
 //                                        System.out.println(check + " " + LocalDate.now() + " " + date_service + " " + customerId);
                                     }

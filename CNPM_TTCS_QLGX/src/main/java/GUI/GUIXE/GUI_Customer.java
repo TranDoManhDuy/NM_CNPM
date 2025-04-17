@@ -899,12 +899,12 @@ public class GUI_Customer extends javax.swing.JPanel {
     private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked
         // TODO add your handling code here:
         if (!Library.Library.isValidSSN(txt_ssn.getText().toString().trim())) { 
-            this.SetLog("Căn cước công dân phải có đúng 13 chữ số!");
+            this.SetLog("Căn cước công dân phải có đúng 12 chữ số!");
             return;
         }
         
         if (!Library.Library.isValidPhoneNumber(txt_phone_number.getText().toString().trim())) { 
-            this.SetLog("Số điện thoại phải có đúng 10 chữ số!");
+            this.SetLog("Số điện thoại: Sai định dạng (0** *** ****)!");
             return;
         }
         String day = cob_ngay.getSelectedItem().toString();

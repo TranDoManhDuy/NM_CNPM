@@ -742,6 +742,8 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
 
     private void btn_chon_ma_theActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chon_ma_theActionPerformed
         // TODO add your handling code here:
+        txt_parking_session_id.setText("");
+        btn_chon_ma_gui_xe.setEnabled(false);
         this.viewmain.setEnabled(false);
         this.logSelection = new LogSelection() {
             @Override
@@ -763,12 +765,14 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
                         int row = table.rowAtPoint(e.getPoint());
                         txt_resident_id.setText((String) table.getValueAt(row, 0));
                         chooseResidentCard = Integer.parseInt((String)table.getValueAt(row, 0));
+                        btn_chon_ma_gui_xe.setEnabled(true);
                         logSelection.setVisible(false);
                         viewmain.setEnabled(true);
                         viewmain.requestFocus();
                     }
                 });
                 for (ResidentCard re : dataGlobal.getArrResidentCards()) {
+                    if (re.isIs_active())
                     tableModel.addRow(new String[] {    String.valueOf(re.getPk_resident_card()), String.valueOf(re.getCustomer_id()), 
                                                         String.valueOf(re.isIs_active())
                     });
