@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -115,7 +116,7 @@ public static PositionDAO getInstance() {
     }
     
     public int getPositionIdByName(String positionName) {
-        String sql = "SELECT position_id FROM position WHERE position_name = ?";
+        String sql = "EXEC sp_getPositionIdByName ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -128,11 +129,11 @@ public static PositionDAO getInstance() {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0; // Trả về 0 nếu không tìm thấy
+        return 0;
     }
     
     public String getPositionNameById(int positionId) {
-        String sql = "SELECT position_name FROM position WHERE position_id = ?";
+        String sql = "EXEC sp_getPositionNameById ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
@@ -148,6 +149,21 @@ public static PositionDAO getInstance() {
         return "Không rõ";
     }
 
-
+        public List<String> getPositionName() {
+        List<String> positionName = new ArrayList<>();
+        String sql = "EXEC sp_getAllPositionNames";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+            ResultSet rs = ptmt.executeQuery();
+        ) {
+            while (rs.next()) {
+                positionName.add(rs.getString("position_name"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return positionName;
+    }
     
 }

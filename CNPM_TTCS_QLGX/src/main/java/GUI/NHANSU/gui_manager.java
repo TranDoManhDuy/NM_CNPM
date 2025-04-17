@@ -1,5 +1,7 @@
 package GUI.NHANSU;
 
+import Annotation.LogConfirm;
+import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.SupervisorDAO;
 import DatabaseHelper.OpenConnection;
@@ -22,6 +24,8 @@ public class gui_manager extends javax.swing.JPanel {
 
     private DefaultTableModel tableModel;
     private ViewMain viewmain;
+    private LogMessage logMessage;
+    private LogConfirm logConfirm;
     private LogSelection logSelection;
     private DataGlobal dataGlobal;
     private int chooseManagerId = -1;
@@ -30,6 +34,8 @@ public class gui_manager extends javax.swing.JPanel {
     public gui_manager(DataGlobal dataGlobal, LogSelection logSelection, ViewMain viewmain) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
+        this.logMessage = logMessage;
+        this.logConfirm = logConfirm;
         this.dataGlobal = dataGlobal;
         this.dataGlobal.updateArrayStaffs();
 //        for (Staff stf : dataGlobal.getArrStaffs()) {
@@ -69,7 +75,7 @@ public class gui_manager extends javax.swing.JPanel {
     
     public void fillTable() {
     // Câu lệnh SQL gọi stored procedure hoặc truy vấn với JOIN để lấy thông tin nhân viên và quản lý
-    String sql = "EXEC GET_ALL_SUPERVISOR";  // Hoặc câu lệnh SQL thay thế tùy theo yêu cầu
+    String sql = "EXEC Supervisor_render";  // Hoặc câu lệnh SQL thay thế tùy theo yêu cầu
     
     try (
         // Mở kết nối cơ sở dữ liệu
@@ -86,13 +92,13 @@ public class gui_manager extends javax.swing.JPanel {
         while (result.next()) {
             int manager_id = result.getInt("manager_id");
             String manager_name = result.getString("manager_name");
-            int staff_id = result.getInt("staff_id");
-            String supervised_staff_name = result.getString("staff_name");
+            int supervised_staff_id = result.getInt("supervised_staff_id");
+            String supervised_staff_name = result.getString("supervised_staff_name");
 
             tableModel.addRow(new Object[]{
                 manager_id,
                 manager_name,
-                staff_id,
+                supervised_staff_id,
                 supervised_staff_name
             });
         }
@@ -482,9 +488,10 @@ public class gui_manager extends javax.swing.JPanel {
         try {
         int managerId = Integer.parseInt(txtQuanly.getText().trim());
         int staffId = Integer.parseInt(txtNhanvien.getText().trim());
+        
 
         if (managerId == staffId) {
-            JOptionPane.showMessageDialog(this, "Không thể tự giám sát chính mình.");
+            log_message("Không thể tự giám sát chính mình.");
             return;
         }
 
@@ -493,14 +500,15 @@ public class gui_manager extends javax.swing.JPanel {
 
         boolean success = dao.insert(s);
         if (success) {
-            JOptionPane.showMessageDialog(this, "Thêm giám sát viên thành công.");
-            loadTable();  // cập nhật lại bảng sau khi thêm
+            log_message("Thêm giám sát viên thành công.");
+            loadTable();  
+            ResetThongTin();
         }
 
     } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng ID (số nguyên).", "Lỗi nhập", JOptionPane.ERROR_MESSAGE);
+        log_message("Vui lòng nhập đúng định dạng ID");
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Lỗi hệ thống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        
     }
     }//GEN-LAST:event_btnThemActionPerformed
 
@@ -511,27 +519,45 @@ public class gui_manager extends javax.swing.JPanel {
 
     private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
         // TODO add your handling code here:
-        try {
+    int selectedRow = Table_Supervisor.getSelectedRow(); // kiểm tra hàng được chọn
+    if (selectedRow == -1) {
+        log_message("Vui lòng chọn một hàng để xóa.");
+        return;
+    }
+
+    try {
         int managerId = Integer.parseInt(txtQuanly.getText().trim());
         int staffId = Integer.parseInt(txtNhanvien.getText().trim());
 
-        int confirm = JOptionPane.showConfirmDialog(this,
-            "Bạn có chắc muốn xóa mối quan hệ giám sát này?",
-            "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            SupervisorDAO dao = new SupervisorDAO();
-            if (dao.delete(managerId, staffId)) {
-                JOptionPane.showMessageDialog(this, "Xóa thành công.");
-                loadTable();
-                
-            } else {
-                JOptionPane.showMessageDialog(this, "Không tìm thấy hoặc không thể xóa.");
+        // Hiển thị hộp thoại xác nhận tùy chỉnh
+        logConfirm = new LogConfirm("Bạn có chắc muốn xóa mối quan hệ giám sát này?") {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+                SupervisorDAO dao = new SupervisorDAO();
+                if (dao.delete(managerId, staffId)) {
+                    log_message("Xóa thành công.");
+                    loadTable();
+                } else {
+                    log_message("Không tìm thấy hoặc không thể xóa.");
+                }
             }
-        }
 
+            @Override
+            public void reject() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+
+        this.viewmain.setEnabled(false);
+        logConfirm.setLocationRelativeTo(null);
+        logConfirm.setVisible(true);
     } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "ID phải là số nguyên.", "Lỗi định dạng", JOptionPane.ERROR_MESSAGE);
+        log_message("ID phải là số nguyên.");
     }
     }//GEN-LAST:event_btnXoaActionPerformed
 
@@ -638,9 +664,46 @@ public class gui_manager extends javax.swing.JPanel {
         this.logSelection.setVisible(true);
     }//GEN-LAST:event_btn_chon_nhan_vienActionPerformed
 
+    private void log_message(String message) {
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(message) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        logMessage.setLocationRelativeTo(null);
+        this.logMessage.setVisible(true);
+    }
+        
+    private void log_comfirm(String message) {
+        this.viewmain.setEnabled(false);
+
+        this.logConfirm = new LogConfirm(message) {
+        @Override
+        public void action() {
+            this.setVisible(false);
+            viewmain.setEnabled(true);
+            viewmain.requestFocus();
+            ResetThongTin(); 
+        }
+
+        @Override
+        public void reject() {
+            this.setVisible(false);
+            viewmain.setEnabled(true);
+            viewmain.requestFocus();
+        }
+    };
+    logConfirm.setLocationRelativeTo(null);
+    this.logConfirm.setVisible(true);
+    }
+    
     public void loadTable() {
         
-     Table_Supervisor.setModel(tableModel);
+    Table_Supervisor.setModel(tableModel);
     // Câu lệnh SQL gọi stored procedure hoặc truy vấn với JOIN để lấy thông tin nhân viên và quản lý
     String sql = "EXEC Supervisor_render";  // Hoặc câu lệnh SQL thay thế tùy theo yêu cầu
 
@@ -684,6 +747,7 @@ public class gui_manager extends javax.swing.JPanel {
         e.printStackTrace();
     }
 }
+   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel_DS;

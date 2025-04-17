@@ -4,20 +4,137 @@
  */
 package GUI.GUIXE;
 
+import DAO.ParkingSessionDAO;
+import GUI.ViewMain;
+import Model.ParkingSession;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Admin
  */
 public class EntryAndExit extends javax.swing.JPanel {
-
+    private ViewMain viewmain;
+    private DefaultTableModel tblModel = new DefaultTableModel(){
+        @Override 
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+    private ArrayList<ParkingSession> parking_sessions;
+    private String[] sDay, sMonth, sYear;
+    private String[] s1Day, s1Month, s1Year;
+    private boolean isUpdating = false;
+    
     /**
      * Creates new form EntryAndExit
      */
-    public EntryAndExit() {
+    public EntryAndExit(ViewMain viewmain) {
         initComponents();
+        this.viewmain = viewmain;
+        resetFields();
+        initTable();
+        loadData();
+        fillTable();
+        sDay = Library.Library.getDay(0, 0);
+        sMonth = Library.Library.getMonth(0, 0);
+        sYear = Library.Library.getYear(0, 0);
+        s1Day = Library.Library.getDay(0, 0);
+        s1Month = Library.Library.getMonth(0, 0);
+        s1Year = Library.Library.getYear(0, 0);
+        
+        cob_ngay_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
+        cob_ngay_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Day));
+        cob_thang_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sMonth));
+        cob_thang_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Month));
+        cob_nam_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
+        cob_nam_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Year));
+        addComboBoxListeners();
+    }
+    
+    private void checkDayMonthYearSort() {
+        boolean isDateSelected =    !cob_ngay_bat_dau.getSelectedItem().toString().equals("0") &&
+                                    !cob_ngay_ket_thuc.getSelectedItem().toString().equals("0") &&
+                                    !cob_thang_bat_dau.getSelectedItem().toString().equals("0") &&
+                                    !cob_thang_ket_thuc.getSelectedItem().toString().equals("0") &&
+                                    !cob_nam_bat_dau.getSelectedItem().toString().equals("0") &&
+                                    !cob_nam_ket_thuc.getSelectedItem().toString().equals("0");
+        btn_loc.setEnabled(isDateSelected);
+    }
+    
+    private void addComboBoxListeners() {
+        ActionListener comboListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                checkDayMonthYearSort();
+            }
+        };
+        cob_ngay_bat_dau.addActionListener(comboListener);
+        cob_thang_bat_dau.addActionListener(comboListener);
+        cob_nam_bat_dau.addActionListener(comboListener);
+        cob_ngay_ket_thuc.addActionListener(comboListener);
+        cob_thang_ket_thuc.addActionListener(comboListener);
+        cob_nam_ket_thuc.addActionListener(comboListener);
+    }
+    
+    public void initTable() { 
+        String[] header = new String[] {"Mã Gửi Xe", "Thời Gian Vào", "Thời Gian Ra", "Giá Tiền"};
+        tblModel.setColumnIdentifiers(header);
+        tblModel.setRowCount(0);
+        tbl_parking_session.setModel(tblModel);
+    }
+    
+    private void loadData() {
+        try {
+            this.parking_sessions = ParkingSessionDAO.getInstance().getList();
+        }
+        catch (Exception e) { 
+            e.printStackTrace();
+        }
+    }
+    
+    private void fillTable() {
+        int count = -1;
+        for (ParkingSession par: this.parking_sessions) { 
+            count += 1;
+            String dt_start = "null";
+            String dt_end = "null";
+            
+            dt_start =  String.valueOf(par.getCheck_in_time().toLocalDate()) + " " + 
+                        String.valueOf(par.getCheck_in_time().toLocalTime());
+            
+            if (par.getCheck_out_time() != null ){ 
+                dt_end =    String.valueOf(par.getCheck_out_time().toLocalDate()) + " " +
+                        String.valueOf(par.getCheck_out_time().toLocalTime());
+            }
+            tblModel.addRow(new String[] {  String.valueOf(par.getParking_session_id()),
+                                            dt_start, dt_end,
+                                            String.valueOf(par.getAmount())
+            });
+        }
+        tblModel.fireTableDataChanged();
+    }  
+    
+    private void resetBtn() { 
+        btn_loc.setEnabled(false);
+        btn_bo_loc.setEnabled(false);
     }
     
     private void resetFields() { 
+        txt_parking_session_id.setText("");
+        txt_check_in_time.setText("");
+        txt_check_out_time.setText("");
+        txt_amount.setText("");
+        txt_gui_xe.setText("");
+        txt_xe_vao.setText("");
+        txt_xe_ra.setText("");
+        tbl_parking_session.clearSelection();
+        this.resetBtn();
     }
 
     /**
@@ -49,18 +166,6 @@ public class EntryAndExit extends javax.swing.JPanel {
         jLabel39 = new javax.swing.JLabel();
         jLabel40 = new javax.swing.JLabel();
         jLabel41 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        txt_tim_kiem = new javax.swing.JTextField();
-        btn_tim_kiem = new javax.swing.JButton();
-        btn_tang = new javax.swing.JButton();
-        btn_giam = new javax.swing.JButton();
-        btn_tat_ca = new javax.swing.JButton();
-        btn_tang_gia = new javax.swing.JButton();
-        btn_giam_gia = new javax.swing.JButton();
-        btn_mac_dinh_gia = new javax.swing.JButton();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
         txt_tin_nhan = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         btn_reset = new javax.swing.JButton();
@@ -84,6 +189,9 @@ public class EntryAndExit extends javax.swing.JPanel {
         jL_parking_session_id7 = new javax.swing.JLabel();
         jL_parking_session_id8 = new javax.swing.JLabel();
         jL_parking_session_id9 = new javax.swing.JLabel();
+
+        setBackground(new java.awt.Color(204, 255, 255));
+        setForeground(new java.awt.Color(204, 255, 255));
 
         tbl_parking_session.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tbl_parking_session.setModel(new javax.swing.table.DefaultTableModel(
@@ -246,132 +354,6 @@ public class EntryAndExit extends javax.swing.JPanel {
                 .addGap(14, 14, 14))
         );
 
-        txt_tim_kiem.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txt_tim_kiem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_tim_kiemActionPerformed(evt);
-            }
-        });
-
-        btn_tim_kiem.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_tim_kiem.setText("Tìm");
-        btn_tim_kiem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_tim_kiemActionPerformed(evt);
-            }
-        });
-
-        btn_tang.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_tang.setText("Tăng");
-        btn_tang.setToolTipText("");
-        btn_tang.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_tangActionPerformed(evt);
-            }
-        });
-
-        btn_giam.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_giam.setText("Giảm");
-        btn_giam.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_giamActionPerformed(evt);
-            }
-        });
-
-        btn_tat_ca.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_tat_ca.setText("Tất cả");
-        btn_tat_ca.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_tat_caActionPerformed(evt);
-            }
-        });
-
-        btn_tang_gia.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_tang_gia.setText("Tăng");
-        btn_tang_gia.setToolTipText("");
-        btn_tang_gia.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_tang_giaActionPerformed(evt);
-            }
-        });
-
-        btn_giam_gia.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_giam_gia.setText("Giảm");
-        btn_giam_gia.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_giam_giaActionPerformed(evt);
-            }
-        });
-
-        btn_mac_dinh_gia.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_mac_dinh_gia.setText("Mặc Định");
-        btn_mac_dinh_gia.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_mac_dinh_giaActionPerformed(evt);
-            }
-        });
-
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel12.setText("Thời Gian");
-
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel13.setText("Tìm Mã Gửi:");
-
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel14.setText("Giá Tiền");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(btn_tang)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_giam)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_tat_ca))
-                    .addComponent(txt_tim_kiem))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btn_tim_kiem)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_tang_gia)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_giam_gia)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_mac_dinh_gia)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txt_tim_kiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13)
-                    .addComponent(btn_tim_kiem))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_tang)
-                    .addComponent(jLabel12)
-                    .addComponent(btn_giam)
-                    .addComponent(btn_tat_ca)
-                    .addComponent(btn_tang_gia)
-                    .addComponent(jLabel14)
-                    .addComponent(btn_giam_gia)
-                    .addComponent(btn_mac_dinh_gia))
-                .addContainerGap(12, Short.MAX_VALUE))
-        );
-
         txt_tin_nhan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txt_tin_nhan.setText("Đang hiển thị danh sách tất cả các lượt gửi xe");
         txt_tin_nhan.setEnabled(false);
@@ -390,7 +372,6 @@ public class EntryAndExit extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(sc_pariking_session)
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(txt_tin_nhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -402,11 +383,9 @@ public class EntryAndExit extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
                 .addComponent(txt_tin_nhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sc_pariking_session, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+                .addComponent(sc_pariking_session, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -494,49 +473,48 @@ public class EntryAndExit extends javax.swing.JPanel {
                 .addComponent(jL_parking_session_id8, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jL_parking_session_id9, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jL_parking_session_id9, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_tong_tien, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                    .addComponent(jL_title, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(64, 64, 64)
-                                    .addComponent(btn_reset))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                    .addComponent(jL_parking_session_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txt_parking_session_id, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jL_title1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jL_parking_session_id1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jL_title, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(64, 64, 64)
+                                .addComponent(btn_reset))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jL_parking_session_id, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_check_in_time, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jL_parking_session_id2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_check_out_time, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jL_parking_session_id3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_amount, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jL_parking_session_id4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jL_parking_session_id5, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_gui_xe, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jL_parking_session_id6, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_xe_vao, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jL_parking_session_id7, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_xe_ra, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(txt_parking_session_id, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jL_title1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jL_parking_session_id1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txt_check_in_time, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jL_parking_session_id2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txt_check_out_time, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jL_parking_session_id3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txt_amount, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jL_parking_session_id4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jL_parking_session_id5, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txt_gui_xe, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jL_parking_session_id6, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txt_xe_vao, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jL_parking_session_id7, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txt_xe_ra, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -584,7 +562,7 @@ public class EntryAndExit extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jL_parking_session_id9)
                     .addComponent(txt_tong_tien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -601,7 +579,7 @@ public class EntryAndExit extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(17, Short.MAX_VALUE)
+                .addContainerGap(20, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -611,71 +589,312 @@ public class EntryAndExit extends javax.swing.JPanel {
 
     private void tbl_parking_sessionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_parking_sessionMouseClicked
         // TODO add your handling code here:
+        int selectedRow = tbl_parking_session.getSelectedRow();
+        // Kiểm tra xem có hàng nào được chọn không
+        if (selectedRow != -1) {
+            // Lấy dữ liệu từ bảng và gán vào các biến
+            int parkingSessionId = Integer.parseInt(tbl_parking_session.getValueAt(selectedRow, 0).toString());
+            String checkInTime = tbl_parking_session.getValueAt(selectedRow, 1).toString();
+            String checkOutTime = tbl_parking_session.getValueAt(selectedRow, 2).toString();
+            int amount = Integer.parseInt(tbl_parking_session.getValueAt(selectedRow, 3).toString());
+            
+            // Hiển thị dữ liệu lên các ô nhập liệu
+            txt_parking_session_id.setText(String.valueOf(parkingSessionId));
+            txt_check_in_time.setText(checkInTime);
+            txt_check_out_time.setText(checkOutTime); 
+            txt_amount.setText(String.valueOf(amount));
+        }
     }//GEN-LAST:event_tbl_parking_sessionMouseClicked
 
     private void btn_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_locActionPerformed
         // TODO add your handling code here:
+        int countNull = 0;
+        int countVao = 0;
+        int countRa = 0;
+        int Samount = 0;
+        initTable();
+        int ngay_bat_dau = Integer.parseInt(cob_ngay_bat_dau.getSelectedItem().toString());
+        int ngay_ket_thuc = Integer.parseInt(cob_ngay_ket_thuc.getSelectedItem().toString());
+        int thang_bat_dau = Integer.parseInt(cob_thang_bat_dau.getSelectedItem().toString());
+        int thang_ket_thuc = Integer.parseInt(cob_thang_ket_thuc.getSelectedItem().toString());
+        int nam_bat_dau = Integer.parseInt(cob_nam_bat_dau.getSelectedItem().toString());
+        int nam_ket_thuc = Integer.parseInt(cob_nam_ket_thuc.getSelectedItem().toString());
+        
+        if (nam_bat_dau >= 50) nam_bat_dau += 1900;
+        else nam_bat_dau += 2000;
+        
+        if (nam_ket_thuc >= 50) nam_ket_thuc += 1900;
+        else nam_ket_thuc += 2000;
+        
+        LocalDate dateStart = LocalDate.of(nam_bat_dau, thang_bat_dau, ngay_bat_dau);
+        LocalDate dateEnd = LocalDate.of(nam_ket_thuc, thang_ket_thuc, ngay_ket_thuc);
+        
+        int count = -1;
+        LocalDate dateStartPs;
+        LocalDate dateEndPs;
+        for (ParkingSession par: parking_sessions) { 
+            
+            count += 1;
+            dateStartPs = par.getCheck_in_time().toLocalDate();
+            dateEndPs = par.getCheck_out_time() != null ? par.getCheck_out_time().toLocalDate() : null;
+//            System.out.println(dateEndPs + " " + dateStart);
+            if (
+                    (dateEndPs != null &&
+                        (dateStart.isBefore(dateStartPs) || dateStart.equals(dateStartPs)) &&
+                        (dateEnd.isAfter(dateEndPs) || dateEnd.equals(dateEndPs))
+                    ) || 
+                    (   
+                        dateEndPs == null &&
+                        (dateStart.isBefore(dateStartPs) || dateStart.equals(dateStartPs)) &&
+                        (dateEnd.isAfter(LocalDate.now()) || dateEnd.equals(LocalDate.now()))
+                    )
+                )
+            {
+                countVao += 1;
+                String dt_start = "null";
+                String dt_end = "null";
+
+                dt_start =  String.valueOf(par.getCheck_in_time().toLocalDate()) + " " + 
+                            String.valueOf(par.getCheck_in_time().toLocalTime());
+
+                if (par.getCheck_out_time() != null ){ 
+                    dt_end =    String.valueOf(par.getCheck_out_time().toLocalDate()) + " " +
+                            String.valueOf(par.getCheck_out_time().toLocalTime());
+                    Samount += par.getAmount();
+                }
+                else { 
+                    countNull += 1;
+                }
+                
+                tblModel.addRow(new String[] {  String.valueOf(par.getParking_session_id()),
+                                                dt_start, dt_end,
+                                                String.valueOf(par.getAmount())
+                }); 
+            }
+            else if (
+                    (
+                        dateEndPs != null &&
+                        !(dateStart.isBefore(dateStartPs) || dateStart.equals(dateStartPs)) &&
+                        (dateStart.isBefore(dateEndPs) || dateStart.equals(dateEndPs)) &&
+                        (dateEnd.isAfter(dateEndPs) || dateEnd.equals(dateEndPs))
+                    )
+                )
+            {
+                countRa += 1;
+                String dt_start = "null";
+                String dt_end = "null";
+
+                dt_start =  String.valueOf(par.getCheck_in_time().toLocalDate()) + " " + 
+                            String.valueOf(par.getCheck_in_time().toLocalTime());
+
+                if (par.getCheck_out_time() != null ){ 
+                    dt_end =    String.valueOf(par.getCheck_out_time().toLocalDate()) + " " +
+                            String.valueOf(par.getCheck_out_time().toLocalTime());
+                    Samount += par.getAmount();
+                }
+                else { 
+                    countNull += 1;
+                }
+                
+                tblModel.addRow(new String[] {  String.valueOf(par.getParking_session_id()),
+                                                "--", dt_end,
+                                                String.valueOf(par.getAmount())
+                }); 
+            }
+        }
+        tblModel.fireTableDataChanged();
+        resetFields();
+        txt_xe_vao.setText(String.valueOf(countVao));
+        txt_xe_ra.setText(String.valueOf(countVao - countNull + countRa));
+        txt_gui_xe.setText(String.valueOf(countNull));
+        txt_tong_tien.setText(String.valueOf(Samount));
+        btn_loc.setEnabled(false);
+        btn_bo_loc.setEnabled(true);
+        
     }//GEN-LAST:event_btn_locActionPerformed
 
     private void btn_bo_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_bo_locActionPerformed
         // TODO add your handling code here:
+        initTable();
+        fillTable();
+        resetBtn();
+        resetFields();
     }//GEN-LAST:event_btn_bo_locActionPerformed
 
     private void cob_ngay_bat_dauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_ngay_bat_dauActionPerformed
         // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        
+        int day = Integer.parseInt(cob_ngay_bat_dau.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang_bat_dau.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam_bat_dau.getSelectedItem().toString());
+        
+        sMonth = Library.Library.getMonth(day, year);
+        sYear = Library.Library.getYear(day, month);
+        cob_thang_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sMonth));
+        cob_nam_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
+        
+        int monthIndex = Arrays.asList(sMonth).indexOf(String.format("%02d", month));
+        int yearIndex = Arrays.asList(sYear).indexOf(String.format("%02d", year));
+        
+        if (monthIndex == -1 || yearIndex == -1) {
+            cob_thang_bat_dau.setSelectedIndex(0);
+            cob_nam_bat_dau.setSelectedIndex(0);
+        }
+        else {
+            cob_thang_bat_dau.setSelectedIndex(monthIndex);
+            cob_nam_bat_dau.setSelectedIndex(yearIndex);
+        }
+        
+        isUpdating = false;
     }//GEN-LAST:event_cob_ngay_bat_dauActionPerformed
 
     private void cob_thang_bat_dauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_thang_bat_dauActionPerformed
         // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        
+        int day = Integer.parseInt(cob_ngay_bat_dau.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang_bat_dau.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam_bat_dau.getSelectedItem().toString());
+        
+        sDay = Library.Library.getDay(month, year);
+        sYear = Library.Library.getYear(day, month);
+        
+//        System.out.println(day + " " + month + " " + year);
+        cob_ngay_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
+        cob_nam_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sYear));
+        
+        int dayIndex = Arrays.asList(sDay).indexOf(String.format("%02d", day));
+        int yearIndex = Arrays.asList(sYear).indexOf(String.format("%02d", year));
+        
+        if (dayIndex == -1 || yearIndex == -1) {
+            cob_ngay_bat_dau.setSelectedIndex(0);
+            cob_nam_bat_dau.setSelectedIndex(0);
+        }
+        else {
+            cob_ngay_bat_dau.setSelectedIndex(dayIndex);
+            cob_nam_bat_dau.setSelectedIndex(yearIndex);
+        }
+        isUpdating = false;
     }//GEN-LAST:event_cob_thang_bat_dauActionPerformed
 
     private void cob_nam_bat_dauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_nam_bat_dauActionPerformed
         // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        int day = Integer.parseInt(cob_ngay_bat_dau.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang_bat_dau.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam_bat_dau.getSelectedItem().toString());
+//        System.out.println(day + " " + month + " " + year);
+        
+        sDay = Library.Library.getDay(month, year);
+        sMonth = Library.Library.getMonth(day, year);
+        
+        cob_ngay_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sDay));
+        cob_thang_bat_dau.setModel(new javax.swing.DefaultComboBoxModel<>(sMonth));
+        
+        int dayIndex = Arrays.asList(sDay).indexOf(String.format("%02d", day));
+        int monthIndex = Arrays.asList(sMonth).indexOf(String.format("%02d", month));
+        
+        if (monthIndex == -1 || dayIndex == -1) {
+            cob_ngay_bat_dau.setSelectedIndex(0);
+            cob_thang_bat_dau.setSelectedIndex(0);
+        }
+        else {
+            cob_ngay_bat_dau.setSelectedIndex(dayIndex);
+            cob_thang_bat_dau.setSelectedIndex(monthIndex);
+        }
+        isUpdating = false;
     }//GEN-LAST:event_cob_nam_bat_dauActionPerformed
 
     private void cob_ngay_ket_thucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_ngay_ket_thucActionPerformed
         // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        int day = Integer.parseInt(cob_ngay_ket_thuc.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang_ket_thuc.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam_ket_thuc.getSelectedItem().toString());
+//        System.out.println(day + " " + month + " " + year);
+        
+        s1Month = Library.Library.getMonth(day, year);
+        s1Year = Library.Library.getYear(day, month);
+        cob_thang_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Month));
+        cob_nam_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Year));
+        
+        int monthIndex = Arrays.asList(s1Month).indexOf(String.format("%02d", month));
+        int yearIndex = Arrays.asList(s1Year).indexOf(String.format("%02d", year));
+        
+        if (monthIndex == -1 || yearIndex == -1) {
+            cob_thang_ket_thuc.setSelectedIndex(0);
+            cob_nam_ket_thuc.setSelectedIndex(0);
+        }
+        else {
+            cob_thang_ket_thuc.setSelectedIndex(monthIndex);
+            cob_nam_ket_thuc.setSelectedIndex(yearIndex);
+        }
+        isUpdating = false;
     }//GEN-LAST:event_cob_ngay_ket_thucActionPerformed
 
     private void cob_thang_ket_thucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_thang_ket_thucActionPerformed
         // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        int day = Integer.parseInt(cob_ngay_ket_thuc.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang_ket_thuc.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam_ket_thuc.getSelectedItem().toString());
+        
+        s1Day = Library.Library.getDay(month, year);
+        s1Year = Library.Library.getYear(day, month);
+        
+//        System.out.println(day + " " + month + " " + year);
+        cob_ngay_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Day));
+        cob_nam_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Year));
+        
+        int dayIndex = Arrays.asList(s1Day).indexOf(String.format("%02d", day));
+        int yearIndex = Arrays.asList(s1Year).indexOf(String.format("%02d", year));
+        
+        if (dayIndex == -1 || yearIndex == -1) {
+            cob_ngay_ket_thuc.setSelectedIndex(0);
+            cob_nam_ket_thuc.setSelectedIndex(0);
+        }
+        else {
+            cob_ngay_ket_thuc.setSelectedIndex(dayIndex);
+            cob_nam_ket_thuc.setSelectedIndex(yearIndex);
+        }
+        isUpdating = false;
     }//GEN-LAST:event_cob_thang_ket_thucActionPerformed
 
     private void cob_nam_ket_thucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cob_nam_ket_thucActionPerformed
         // TODO add your handling code here:
+        if (isUpdating) return;
+        isUpdating = true;
+        int day = Integer.parseInt(cob_ngay_ket_thuc.getSelectedItem().toString());
+        int month = Integer.parseInt(cob_thang_ket_thuc.getSelectedItem().toString());
+        int year = Integer.parseInt(cob_nam_ket_thuc.getSelectedItem().toString());
+//        System.out.println(day + " " + month + " " + year);
+        
+        s1Day = Library.Library.getDay(month, year);
+        s1Month = Library.Library.getMonth(day, year);
+        
+        cob_ngay_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Day));
+        cob_thang_ket_thuc.setModel(new javax.swing.DefaultComboBoxModel<>(s1Month));
+        
+        int dayIndex = Arrays.asList(s1Day).indexOf(String.format("%02d", day));
+        int monthIndex = Arrays.asList(s1Month).indexOf(String.format("%02d", month));
+        
+        if (monthIndex == -1 || dayIndex == -1) {
+            cob_ngay_ket_thuc.setSelectedIndex(0);
+            cob_thang_ket_thuc.setSelectedIndex(0);
+        }
+        else {
+            cob_ngay_ket_thuc.setSelectedIndex(dayIndex);
+            cob_thang_ket_thuc.setSelectedIndex(monthIndex);
+        }
+        
+        isUpdating = false;
     }//GEN-LAST:event_cob_nam_ket_thucActionPerformed
-
-    private void txt_tim_kiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tim_kiemActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_tim_kiemActionPerformed
-
-    private void btn_tim_kiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tim_kiemActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_tim_kiemActionPerformed
-
-    private void btn_tangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tangActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_tangActionPerformed
-
-    private void btn_giamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_giamActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_giamActionPerformed
-
-    private void btn_tat_caActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tat_caActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_tat_caActionPerformed
-
-    private void btn_tang_giaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tang_giaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_tang_giaActionPerformed
-
-    private void btn_giam_giaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_giam_giaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_giam_giaActionPerformed
-
-    private void btn_mac_dinh_giaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mac_dinh_giaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_mac_dinh_giaActionPerformed
 
     private void txt_tin_nhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tin_nhanActionPerformed
         // TODO add your handling code here:
@@ -687,20 +906,14 @@ public class EntryAndExit extends javax.swing.JPanel {
 
     private void btn_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_resetActionPerformed
         // TODO add your handling code here:
+        resetFields();
     }//GEN-LAST:event_btn_resetActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_bo_loc;
-    private javax.swing.JButton btn_giam;
-    private javax.swing.JButton btn_giam_gia;
     private javax.swing.JButton btn_loc;
-    private javax.swing.JButton btn_mac_dinh_gia;
     private javax.swing.JButton btn_reset;
-    private javax.swing.JButton btn_tang;
-    private javax.swing.JButton btn_tang_gia;
-    private javax.swing.JButton btn_tat_ca;
-    private javax.swing.JButton btn_tim_kiem;
     private javax.swing.JComboBox<String> cob_nam_bat_dau;
     private javax.swing.JComboBox<String> cob_nam_ket_thuc;
     private javax.swing.JComboBox<String> cob_ngay_bat_dau;
@@ -719,9 +932,6 @@ public class EntryAndExit extends javax.swing.JPanel {
     private javax.swing.JLabel jL_parking_session_id9;
     private javax.swing.JLabel jL_title;
     private javax.swing.JLabel jL_title1;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
@@ -732,7 +942,6 @@ public class EntryAndExit extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel41;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane sc_pariking_session;
     private javax.swing.JTable tbl_parking_session;
@@ -741,7 +950,6 @@ public class EntryAndExit extends javax.swing.JPanel {
     private javax.swing.JTextField txt_check_out_time;
     private javax.swing.JTextField txt_gui_xe;
     private javax.swing.JTextField txt_parking_session_id;
-    private javax.swing.JTextField txt_tim_kiem;
     private javax.swing.JTextField txt_tin_nhan;
     private javax.swing.JTextField txt_tong_tien;
     private javax.swing.JTextField txt_xe_ra;

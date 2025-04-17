@@ -1791,9 +1791,25 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                     });
                     dataGlobal.updateArrayResidentCard();
                     for (ResidentCard re : dataGlobal.getArrResidentCards()) {
-                        if (re.isIs_active())
-                        tableModel.addRow(new String[] {String.valueOf(re.getPk_resident_card()), String.valueOf(re.getCustomer_id()),
-                                                        String.valueOf(re.isIs_active())});
+                        if (re.isIs_active()) {
+                            int customerId = re.getCustomer_id();
+                            LocalDate date_service = null;
+                            boolean check = false;
+                            
+                            for (Regisatration rg : dataGlobal.getArrayRegistration()) 
+                                if (rg.getCustomer_id() == customerId) { 
+                                    date_service = rg.getRegistration_date();
+                                    if (date_service.isAfter(LocalDate.now())) {
+                                        check = true;
+//                                        System.out.println(check + " " + LocalDate.now() + " " + date_service + " " + customerId);
+                                    }
+                                }
+
+//                            System.out.println(check);
+                            if (check)
+                            tableModel.addRow(new String[] {String.valueOf(re.getPk_resident_card()), String.valueOf(re.getCustomer_id()),
+                                                            String.valueOf(re.isIs_active())});
+                            }
                     }
                     this.tableModel.fireTableDataChanged();
                     this.btn_loc.addActionListener(new ActionListener() {

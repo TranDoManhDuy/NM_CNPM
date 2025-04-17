@@ -71,6 +71,9 @@ public class Login extends javax.swing.JFrame {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jtxtDNKeyPressed(evt);
             }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jtxtDNKeyReleased(evt);
+            }
         });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -229,6 +232,7 @@ public class Login extends javax.swing.JFrame {
                 ResultSet rs = ptmt.executeQuery();
                 ArrayList<String> info = new ArrayList<>();
                 if (rs.next()) {
+                    info.add(String.valueOf(rs.getInt("account_number")));
                     info.add(String.valueOf(rs.getString("staff_id")));
                     info.add(rs.getString("full_name"));
                     info.add(rs.getString("ssn"));
@@ -238,13 +242,15 @@ public class Login extends javax.swing.JFrame {
                     info.add(rs.getString("address"));
                     info.add(rs.getString("email"));
                     info.add(String.valueOf(rs.getInt("position_id")));
+                    info.add(rs.getString("account_login"));
+                    info.add(rs.getString("password_login"));
                     ConnectSuccessful(info);
                 }
                 else {
                     JOptionPane.showMessageDialog(this, "Đăng nhập không thành công");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, e.getMessage());
             }
         }
     }//GEN-LAST:event_Button_LoginActionPerformed
@@ -268,6 +274,20 @@ public class Login extends javax.swing.JFrame {
             jtxtMK.setEchoChar('*'); 
     }
     }//GEN-LAST:event_Box_ShowPassActionPerformed
+    private String lastDN = "";
+    private void jtxtDNKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtxtDNKeyReleased
+        // TODO add your handling code here:
+        if (jtxtDN.getText().equals("")) { 
+            lastDN = "";
+            return;
+        }
+        if (!Library.Library.isNumber(jtxtDN.getText())) {
+            jtxtDN.setText(lastDN);
+        }
+        else {
+            lastDN = jtxtDN.getText();
+        }
+    }//GEN-LAST:event_jtxtDNKeyReleased
 
     /**
      * @param args the command line arguments

@@ -623,6 +623,7 @@ public final class gui_service_free extends javax.swing.JPanel {
             public void action() {
                 this.setVisible(false);
                 viewmain.setEnabled(true);
+                viewmain.requestFocus();
             }
         };
         

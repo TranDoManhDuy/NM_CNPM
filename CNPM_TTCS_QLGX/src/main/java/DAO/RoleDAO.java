@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 
 public class RoleDAO implements InterfaceDAO.InterfaceDAO<Role> {
     public static RoleDAO getInstance() {
@@ -105,13 +106,13 @@ public class RoleDAO implements InterfaceDAO.InterfaceDAO<Role> {
     }
     
     
-    public int getRoleIdByName(String roleName) {
-        String sql = "SELECT role_id FROM roles WHERE role_name = ?";
+    public int getRoleIdByName(String role_name) {
+        String sql = "EXEC sp_getRoleIdByName ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
-            ptmt.setString(1, roleName);
+            ptmt.setString(1, role_name);
             ResultSet rs = ptmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt("role_id");
@@ -119,16 +120,18 @@ public class RoleDAO implements InterfaceDAO.InterfaceDAO<Role> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0; // Trả về 0 nếu không tìm thấy (role không hợp lệ)
+        return 0;
     }
+
+
     
-    public String getRoleNameById(int roleId) {
-        String sql = "SELECT role_name FROM roles WHERE role_id = ?";
+    public String getRoleNameById(int role_id) {
+        String sql = "EXEC sp_getRoleNameById ?";
         try (
             Connection conn = OpenConnection.getConnection();
             PreparedStatement ptmt = conn.prepareStatement(sql);
         ) {
-            ptmt.setInt(1, roleId);
+            ptmt.setInt(1, role_id);
             ResultSet rs = ptmt.executeQuery();
             if (rs.next()) {
                 return rs.getString("role_name");
@@ -136,8 +139,29 @@ public class RoleDAO implements InterfaceDAO.InterfaceDAO<Role> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "Không rõ"; // hoặc có thể return null tùy bạn xử lý
+        return null;
     }
+
+    
+    
+    public List<String> getRoleNames() {
+        List<String> roleName = new ArrayList<>();
+        String sql = "EXEC sp_getRoleNames";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+            ResultSet rs = ptmt.executeQuery();
+        ) {
+            while (rs.next()) {
+                roleName.add(rs.getString("role_name"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return roleName;
+    }
+
+
 
 
 }
