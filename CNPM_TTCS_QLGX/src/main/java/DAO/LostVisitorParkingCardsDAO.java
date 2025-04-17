@@ -54,7 +54,7 @@ public class LostVisitorParkingCardsDAO {
                 return e.getMessage();
             }
             else{
-                return e.getMessage();
+                return "Mã lượt gửi xe không tồn tại";
                     }
         }
         return "Thêm thành công";

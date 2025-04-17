@@ -305,7 +305,7 @@ public class ViewMain extends javax.swing.JFrame {
 //        gui_listmanager listmanager_gui = new gui_listmanager(this);
 //        gui_profile profile = new gui_profile();
         gui_listmanager listmanager_gui = new gui_listmanager(this);
-//        gui_profile profile = new gui_profile();
+        gui_profile profile = new gui_profile();
         // add component
         addComponent(panel_nhanvien, staff_gui);
         addComponent(panel_taikhoan, account_gui);
@@ -315,7 +315,7 @@ public class ViewMain extends javax.swing.JFrame {
 //        addComponent(panel_vitri, listmanager_gui);
 //        addComponent(panel_profile, profile);
         addComponent(panel_vitri, listmanager_gui);
-//        addComponent(panel_profile, profile);
+        addComponent(panel_profile, profile);
     }
     
     /**
