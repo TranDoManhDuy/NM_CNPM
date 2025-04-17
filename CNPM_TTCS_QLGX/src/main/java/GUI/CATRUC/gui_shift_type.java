@@ -86,6 +86,7 @@ public class gui_shift_type extends javax.swing.JPanel {
         a.setEnd_time(end);
         String r = ShiftTypesDAO.getInstance().insert(a);
         callLogMessage(r);
+        dataGlobal.updateArrShiftTypes();
         fillTable(dataGlobal.getArrayShiftTypes());
     }
     
@@ -99,12 +100,14 @@ public class gui_shift_type extends javax.swing.JPanel {
         a.setEnd_time(end);
         String r = ShiftTypesDAO.getInstance().update(a);
         callLogMessage(r);
+        dataGlobal.updateArrShiftTypes();
         fillTable(dataGlobal.getArrayShiftTypes());
     }
     
     public void deleteShiftType(){
         String r = ShiftTypesDAO.getInstance().delete(Integer.parseInt(jTextField1.getText()));
         callLogMessage(r);
+        dataGlobal.updateArrShiftTypes();
         fillTable(dataGlobal.getArrayShiftTypes());
     }
     /**

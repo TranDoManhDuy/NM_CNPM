@@ -141,7 +141,7 @@ public class gui_shift_work extends javax.swing.JPanel {
     
     public void insertShiftWork(){
         try{
-            LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1);
+            LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex());
             int stID = Integer.parseInt(jTextField2.getText());
             int bID = Integer.parseInt(jTextField3.getText());
             int sID = Integer.parseInt(jTextField4.getText());
@@ -795,7 +795,7 @@ public class gui_shift_work extends javax.swing.JPanel {
                              || jTextField3.getText() == null||jTextField3.getText().isEmpty()
                              || jTextField4.getText() == null||jTextField4.getText().isEmpty()
                              || jTextField5.getText() == null||jTextField5.getText().isEmpty()){
-            callLogMessage("Thông tin không hợp lệ");
+            callLogMessage("Không được để trống các thông tin bắt buộc");
         }else{
             this.confirm = new LogConfirm("Xác nhận thêm"){
                 @Override

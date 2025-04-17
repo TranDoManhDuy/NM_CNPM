@@ -73,6 +73,7 @@ public class ShiftWorksDAO {
 
             ptmt.executeUpdate();
         } catch (SQLException e) {
+            
             if(e.getErrorCode() == 547){
                 String foreignKey = extractForeignKeyName(e.getMessage());
                 switch (foreignKey) {
@@ -90,7 +91,7 @@ public class ShiftWorksDAO {
                 return e.getMessage();
             }
             else{
-                return "Lỗi không biết";    
+                return "Lỗi thông tin không tồn tại";    
                     }
         }
         return "Thêm thành công";
@@ -128,7 +129,7 @@ public class ShiftWorksDAO {
                 return e.getMessage();
             }
             else{
-                return "Lỗi không biết";    
+                return "Lỗi thông tin không tồn tại";
                     }
         }
         return "Cập nhật thành công";
