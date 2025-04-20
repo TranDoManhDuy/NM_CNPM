@@ -10,7 +10,9 @@ import Annotation.LogSelection;
 import DAO.CustomerDAO;
 import DAO.PaymentDAO;
 import DAO.RegisatrationDAO;
+import DAO.ServiceFeeDAO;
 import DAO.TypeServiceDAO;
+import DAO.VehicleDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
@@ -760,6 +762,10 @@ public class gui_payment extends javax.swing.JPanel {
 
     private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
         // TODO add your handling code here:
+        if (PaymentDAO.getInstance().findbyID(Integer.parseInt(txt_idthanhtoan.getText())).isPayment_state()) {
+            logError("Không thể xóa khi đã thanh toán thành công");
+            return;
+        }
         String rs = PaymentDAO.getInstance().delete(Integer.parseInt(txt_idthanhtoan.getText()));
         logError(rs);
         this.dataglobal.updateArrPaymentRender();
@@ -790,6 +796,26 @@ public class gui_payment extends javax.swing.JPanel {
         int id_registration = Integer.parseInt(txt_iddangki.getText());
         int id_serviceType = Integer.parseInt(txt_idloaidichvu.getText());
         Payment payment = new Payment(1, id_registration , LocalDate.now(), false, id_serviceType);
+        
+        for (Payment pm : PaymentDAO.getInstance().getList()) {
+            if (pm.getRegistration_id() == payment.getRegistration_id() && pm.isPayment_state() == false) {
+                logError("Đăng kí này chưa hoàn tất một hóa đơn khác, không thể tạo lập hóa đơn mới");
+                return; 
+            }
+        }
+        int id_regis = payment.getRegistration_id();
+        int id_vehicle = RegisatrationDAO.getInstance().findbyID(id_regis).getVehicle_id();
+        int id_vehicle_type1 = VehicleDAO.getInstance().findbyID(id_vehicle).getVehicle_type_id();
+        
+        int serviceType_id = payment.getService_type_id();
+        int serviceFee_id = TypeServiceDAO.getInstance().findbyID(serviceType_id).getService_fee_id();
+        int id_vehicle_type2 = ServiceFeeDAO.getInstance().findbyID(serviceFee_id).getVehicle_type_id();
+        
+        if (id_vehicle_type1 != id_vehicle_type2) {
+            logError("Loại phương tiện trên đăng kí và loại dịch vụ không tương thích");
+            return;
+        }
+        
         String rs = PaymentDAO.getInstance().insert(payment);
         logError(rs);
         this.dataglobal.updateArrPaymentRender();
@@ -1017,6 +1043,25 @@ public class gui_payment extends javax.swing.JPanel {
         }
         int serviceTypeId = Integer.parseInt(txt_idloaidichvu.getText());
         Payment payment = new Payment(id_thanhtoan, id_dangki, extension_time, state, serviceTypeId);
+        
+        if (payment.isPayment_state()) {
+            logError("Không thể thay đổi khi đã thanh toán thành công");
+            return;
+        }
+        
+        int id_regis = payment.getRegistration_id();
+        int id_vehicle = RegisatrationDAO.getInstance().findbyID(id_regis).getVehicle_id();
+        int id_vehicle_type1 = VehicleDAO.getInstance().findbyID(id_vehicle).getVehicle_type_id();
+        
+        int serviceType_id = payment.getService_type_id();
+        int serviceFee_id = TypeServiceDAO.getInstance().findbyID(serviceType_id).getService_fee_id();
+        int id_vehicle_type2 = ServiceFeeDAO.getInstance().findbyID(serviceFee_id).getVehicle_type_id();
+        
+        if (id_vehicle_type1 != id_vehicle_type2) {
+            logError("Loại phương tiện trên đăng kí và loại dịch vụ không tương thích");
+            return;
+        }
+        
         String rs = PaymentDAO.getInstance().update(payment);
         logError(rs);
         dataglobal.updateArrPaymentRender();

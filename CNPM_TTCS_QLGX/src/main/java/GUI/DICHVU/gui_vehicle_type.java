@@ -7,9 +7,14 @@ package GUI.DICHVU;
 import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
+import DAO.ServiceFeeDAO;
+import DAO.SessionFeeDAO;
 import DAO.VehicleTypeDAO;
 import GUI.ViewMain;
 import Global.DataGlobal;
+import Model.ServiceFee;
+import Model.SessionFee;
+import Model.Vehicle;
 import Model.VehicleType;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -46,7 +51,7 @@ public class gui_vehicle_type extends javax.swing.JPanel {
                 return false;
             }
         };
-        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Được phép", "Không được phép", ""}));
+        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Được phép", "Không được phép"}));
         table_loaiphuongtien.addMouseListener(new MouseAdapter()
         {
             @Override
@@ -421,8 +426,29 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         btn_xoa.setEnabled(false);
     }//GEN-LAST:event_btn_datlaiActionPerformed
     private void processDelete() {
-        String rs = VehicleTypeDAO.getInstance().delete(Integer.parseInt(txt_idloaiphuongtien.getText()));
+        int id_vehicle_type = Integer.parseInt(txt_idloaiphuongtien.getText());
+        for (Vehicle vehicle : dataglobal.getArrayVehicle()) {
+            if (vehicle.getVehicle_type_id() == id_vehicle_type) {
+                logError("Có loại xe trong bãi xe thuộc loại phương tiện này, không thể xóa");
+                return;
+            }
+        }
         
+        for (ServiceFee serviceFee : ServiceFeeDAO.getInstance().getList()) {
+            if (serviceFee.getVehicle_type_id() == id_vehicle_type) {
+                logError("Đã có đơn vị giá dịch vụ cho loại phương tiện này, không thể xóa");
+                return;
+            }
+        }
+        
+        for (SessionFee sessionFee : SessionFeeDAO.getInstance().getList()) {
+            if (sessionFee.getVehicle_type_id() == id_vehicle_type) {
+                logError("Đã có đơn vị giá lượt cho loại phương tiện này, không thể xóa");
+                return;
+            }
+        }
+        
+        String rs = VehicleTypeDAO.getInstance().delete(id_vehicle_type);
         this.viewmain.setEnabled(false);
             this.logMessage = new LogMessage(rs) {
                 @Override
@@ -498,9 +524,17 @@ public class gui_vehicle_type extends javax.swing.JPanel {
             logError("Tên loại phương tiện phải độ dài > 3");
             return;
         }
+        
         VehicleType vehicle_type = new VehicleType();
         vehicle_type.setIsPermission((combo_trangthai.getSelectedIndex() == 0));
         vehicle_type.setVehicle_type_name(txt_tenloaiphuongtien.getText());
+        
+        for (VehicleType vt : dataglobal.getArrVehicleType()) {
+            if (vehicle_type.getVehicle_type_name().equals(vt.getVehicle_type_name())) {
+                logError("Loại xe này đã tồn tại");
+                return;
+            }
+        }
         
         String rs = VehicleTypeDAO.getInstance().insert(vehicle_type);
         
@@ -608,8 +642,14 @@ public class gui_vehicle_type extends javax.swing.JPanel {
         vehicle_type.setVehicle_type_name(txt_tenloaiphuongtien.getText());
         vehicle_type.setVehicle_type_id(Integer.parseInt(txt_idloaiphuongtien.getText()));
         
-        String rs = VehicleTypeDAO.getInstance().update(vehicle_type);
+        for (VehicleType vt : dataglobal.getArrVehicleType()) {
+            if (vehicle_type.getVehicle_type_name().equals(vt.getVehicle_type_name()) && vehicle_type.getVehicle_type_id() != vt.getVehicle_type_id()) {
+                logError("Loại xe này đã tồn tại");
+                return;
+            }
+        }
         
+        String rs = VehicleTypeDAO.getInstance().update(vehicle_type);
         this.viewmain.setEnabled(false);
             this.logMessage = new LogMessage(rs) {
                 @Override

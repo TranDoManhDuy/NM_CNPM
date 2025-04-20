@@ -8,12 +8,14 @@ import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.ServiceFeeDAO;
+import DAO.TypeServiceDAO;
 import DAO.VehicleTypeDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
 import Library.Library;
 import Model.ServiceFee;
+import Model.TypeService;
 import Model.Vehicle;
 import Model.VehicleType;
 import java.awt.event.ActionEvent;
@@ -584,6 +586,12 @@ public final class gui_service_free extends javax.swing.JPanel {
 
     private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
         // TODO add your handling code here:
+        for (TypeService tsv : TypeServiceDAO.getInstance().getList()) {
+            if (tsv.getService_fee_id() == Integer.parseInt(txt_idbanghi.getText())) {
+                logError("Có loại dịch vụ tương ứng với đơn vị giá dịch vụ này, không thể xóa");
+                return;
+            }
+        }
         String rs = ServiceFeeDAO.getInstance().delete(Integer.parseInt(txt_idbanghi.getText()));
         this.viewmain.setEnabled(false);
         this.logMessage = new LogMessage(rs) {
@@ -616,6 +624,14 @@ public final class gui_service_free extends javax.swing.JPanel {
             return;
         }
         ServiceFee service_fee = new ServiceFee(1, LocalDate.now(), Integer.parseInt(txt_idloaixe.getText()), (int) Float.parseFloat(txt_tonggiatien.getText()), true);
+        
+        for (ServiceFee svf : ServiceFeeDAO.getInstance().getList()) {
+            if (svf.getAmount() == service_fee.getAmount() && svf.getVehicle_type_id() == service_fee.getVehicle_type_id()) {
+                logError("Trùng loại phương tiện và mức giá");
+                return;
+            }
+        }
+        
         String rs = ServiceFeeDAO.getInstance().insert(service_fee);
         this.viewmain.setEnabled(false);
         this.logMessage = new LogMessage(rs) {
@@ -637,7 +653,6 @@ public final class gui_service_free extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_timkiemActionPerformed
 
     private void btn_conhieulucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_conhieulucActionPerformed
-        // TODO add your handling code here:
         tableModel.setRowCount(0);
         int index = 0;
         for (ArrayList<String> rowDataServiceFee : dataGlobal.getArrServiceFee_render()) {
@@ -656,7 +671,6 @@ public final class gui_service_free extends javax.swing.JPanel {
         if (index != dataGlobal.getArrServiceFee_render().size()) {
             txt_tinnhan.setText("Hiển thị tất cả các giá dịch vụ / tháng của các loại xe còn hạn");
         }
-        
     }//GEN-LAST:event_btn_conhieulucActionPerformed
 
     private void btn_hethieulucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hethieulucActionPerformed
@@ -731,6 +745,23 @@ public final class gui_service_free extends javax.swing.JPanel {
             state = false;
         }
         ServiceFee service_fee = new ServiceFee(Integer.parseInt(txt_idbanghi.getText()), LocalDate.parse(txt_ngayapdung.getText()), Integer.parseInt(txt_idloaixe.getText()), (int) Float.parseFloat(txt_tonggiatien.getText()), state);
+        
+        for (ServiceFee svf : ServiceFeeDAO.getInstance().getList()) {
+            if (svf.getAmount() == service_fee.getAmount() && svf.getVehicle_type_id() == service_fee.getVehicle_type_id() && svf.getService_fee_id() != service_fee.getService_fee_id()) {
+                logError("Trùng loại phương tiện và mức giá");
+                return;
+            }
+        }
+        for (TypeService tsv : TypeServiceDAO.getInstance().getList()) {
+            if (tsv.getService_fee_id() == Integer.parseInt(txt_idbanghi.getText())) {
+                
+                ServiceFee tmp = ServiceFeeDAO.getInstance().findbyID(Integer.parseInt(txt_idbanghi.getText()));
+                if (tmp.getAmount() != service_fee.getAmount() || tmp.getVehicle_type_id() != service_fee.getVehicle_type_id()) {
+                    logError("Có loại dịch vụ tương ứng với đơn vị giá dịch vụ này, không thể xóa");
+                    return;  
+                }
+            }
+        }
         String rs = ServiceFeeDAO.getInstance().update(service_fee);
         this.viewmain.setEnabled(false);
         this.logMessage = new LogMessage(rs) {

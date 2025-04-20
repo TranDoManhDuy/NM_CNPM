@@ -25,7 +25,6 @@ import GUI.DICHVU.gui_registration;
 import GUI.DICHVU.gui_serviceType;
 import GUI.DICHVU.gui_service_free;
 import GUI.DICHVU.gui_session_free;
-import GUI.DICHVU.gui_statictical;
 import GUI.DICHVU.gui_timeframe;
 import GUI.DICHVU.gui_vehicle_type;
 import GUI.GUIXE.GUI_Customer;
@@ -174,7 +173,6 @@ public class ViewMain extends javax.swing.JFrame {
         gui_vehicle_type vehicle_type_gui = new gui_vehicle_type(this, logComfirm, logMessage, logSelection, dataglocal);
         gui_timeframe time_frame_gui = new gui_timeframe(this, logComfirm, logMessage, dataglocal);
         gui_session_free session_fee_gui = new gui_session_free(this, logComfirm, logMessage, logSelection, dataglocal);
-        gui_statictical statictical_gui = new gui_statictical();
         // add component
         addComponent(panel_dangki, registration_gui);
         addComponent(panel_thanhtoan, payment_gui);

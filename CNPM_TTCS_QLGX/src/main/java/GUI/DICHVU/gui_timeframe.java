@@ -10,11 +10,13 @@ import DAO.TimeFrameDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
+import Model.SessionFee;
 import Model.TimeFrameToRender;
 import java.awt.Frame;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -677,6 +679,16 @@ public class gui_timeframe extends javax.swing.JPanel {
         this.viewmain.setEnabled(false);
         this.cursorBreak = false;
         
+        for (SessionFee ss : dataglobal.getArrSessionFees()) {
+            if (ss.getTime_frame_id() == index ||
+                    ss.getTime_frame_id() == index + 1 ||
+                    ss.getTime_frame_id() == index + 2
+                    ){
+                logError("Đã có giá lượt trong khung thời gian này, không thể xóa");
+                return;
+            } 
+        }
+        
         this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật?") {
             @Override
             public void action() {
@@ -890,16 +902,26 @@ public class gui_timeframe extends javax.swing.JPanel {
         String phutketthuc3 = (String)combo_phutKetthuc3.getSelectedItem();
         
         LocalDate decision_date = LocalDate.now();
+        
         LocalTime start1 = LocalTime.of(Integer.parseInt(giobatdau1), Integer.parseInt(phutbatdau1));
         LocalTime end1 = LocalTime.of(Integer.parseInt(gioketthuc1), Integer.parseInt(phutketthuc1));
-
+        long duration_1 = Duration.between(start1, end1).toMinutes();
+        
         LocalTime start2 = LocalTime.of(Integer.parseInt(giobatdau2), Integer.parseInt(phutbatdau2));
         LocalTime end2 = LocalTime.of(Integer.parseInt(gioketthuc2), Integer.parseInt(phutketthuc2));
-
+        long duration_2 = Duration.between(start2, end2).toMinutes();
+        
         LocalTime start3 = LocalTime.of(Integer.parseInt(giobatdau3), Integer.parseInt(phutbatdau3));
         LocalTime end3 = LocalTime.of(Integer.parseInt(gioketthuc3), Integer.parseInt(phutketthuc3));
-
+        long duration_3 = Duration.between(start3, end3).toMinutes();
+        
+        if (duration_1 + duration_2 + duration_3 <= 1436) {
+            logError("Tổng thời gian phải đủ 24h");
+            return;
+        }
+        
         String rs = TimeFrameDAO.getInstance().insert_timeframe_container(decision_date, start1, start2, start3, end1, end2, end3, true);
+        
         viewmain.setEnabled(false);
         logMessage = new LogMessage(rs) {
             @Override
@@ -915,7 +937,18 @@ public class gui_timeframe extends javax.swing.JPanel {
         repaint();
         logMessage.setVisible(true);
     }//GEN-LAST:event_btn_themActionPerformed
-
+    private void logError(String rs) {
+        this.viewmain.setEnabled(false);
+        this.logMessage = new LogMessage(rs) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logMessage.setVisible(true);
+    }
     private void btn_tailaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tailaiActionPerformed
         // TODO add your handling code here:
         this.dataglobal.updateArrTimeFrameToRender();

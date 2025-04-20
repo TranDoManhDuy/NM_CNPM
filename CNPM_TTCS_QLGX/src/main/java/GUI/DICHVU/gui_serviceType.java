@@ -7,6 +7,7 @@ package GUI.DICHVU;
 import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
+import DAO.PaymentDAO;
 import DAO.ServiceFeeDAO;
 import DAO.TypeServiceDAO;
 import DAO.VehicleDAO;
@@ -14,6 +15,7 @@ import DAO.VehicleTypeDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
+import Model.Payment;
 import Model.ServiceFee;
 import Model.TypeService;
 import Model.Vehicle;
@@ -630,6 +632,14 @@ public final class gui_serviceType extends javax.swing.JPanel {
     private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
         // TODO add your handling code here:
         int id = Integer.parseInt(txt_idloaidichvu.getText());
+        
+        for (Payment pm : PaymentDAO.getInstance().getList()) {
+            if (pm.getService_type_id() == id) {
+                logError("Có đơn thanh toán trên loại dịch vụ này, không thể xóa");
+                return;
+            }
+        }
+        
         String rs = TypeServiceDAO.getInstance().delete(id);
         this.viewmain.setEnabled(false);
         this.logMessage = new LogMessage(rs) {
@@ -676,6 +686,23 @@ public final class gui_serviceType extends javax.swing.JPanel {
         float coefficient = Float.parseFloat(txt_heso.getText());
         
         TypeService serviceType = new TypeService(1, idServiceFee, monthUnit, ServiceTypeName, LocalDate.now(), coefficient, true);
+        
+        for (TypeService tsv : TypeServiceDAO.getInstance().getList()) {
+            if (serviceType.getService_name().equals(tsv.getService_name())) {
+                logError("Không được trùng loại tên");
+                return;
+            }
+        }
+        
+        for (TypeService tsv : TypeServiceDAO.getInstance().getList()) {
+            if (tsv.getMonth_unit() == serviceType.getMonth_unit() && tsv.getPayment_coefficient() == serviceType.getPayment_coefficient()
+                    && tsv.getService_fee_id() == serviceType.getService_fee_id()
+                    ) {
+                logError("Không được trùng thông tin dịch vụ khác");
+                return;
+            }
+        }
+        
         String rs = TypeServiceDAO.getInstance().insert(serviceType);
         this.viewmain.setEnabled(false);
         this.logMessage = new LogMessage(rs) {
