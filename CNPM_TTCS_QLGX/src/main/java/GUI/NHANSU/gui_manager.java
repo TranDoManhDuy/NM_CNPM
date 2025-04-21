@@ -260,7 +260,7 @@ public class gui_manager extends javax.swing.JPanel {
                 .addGap(44, 44, 44)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 264, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnLammoi)
                         .addGap(36, 36, 36))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -335,13 +335,13 @@ public class gui_manager extends javax.swing.JPanel {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel13)
-                .addContainerGap(342, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(55, 55, 55)
+                .addGap(51, 51, 51)
                 .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(57, 57, 57))
+                .addGap(82, 82, 82))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -382,7 +382,7 @@ public class gui_manager extends javax.swing.JPanel {
                 .addComponent(btnTim)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnLammoiTK, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -477,32 +477,20 @@ public class gui_manager extends javax.swing.JPanel {
     }//GEN-LAST:event_btnLammoiTKActionPerformed
 
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
-        // TODO add your handling code here:
-        try {
+        // TODO add your handling code here:       
         int managerId = Integer.parseInt(txtQuanly.getText().trim());
         int staffId = Integer.parseInt(txtNhanvien.getText().trim());
-        
 
-        if (managerId == staffId) {
-            log_message("Không thể tự giám sát chính mình.");
-            return;
-        }
-
-        Supervisor s = new Supervisor(managerId, staffId);
+        Supervisor supervisor = new Supervisor(managerId, staffId);
         SupervisorDAO dao = new SupervisorDAO();
 
-        boolean success = dao.insert(s);
+        boolean success = dao.insert(supervisor);
+
         if (success) {
-            log_message("Thêm giám sát viên thành công.");
+            log_message("Thêm giám sát thành công.");
             loadTable();  
             ResetThongTin();
-        }
-
-    } catch (NumberFormatException e) {
-        log_message("Vui lòng nhập đúng định dạng ID");
-    } catch (Exception e) {
-        
-    }
+        }          
     }//GEN-LAST:event_btnThemActionPerformed
 
     private void btnLammoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLammoiActionPerformed
@@ -518,7 +506,6 @@ public class gui_manager extends javax.swing.JPanel {
         return;
     }
 
-    try {
         int managerId = Integer.parseInt(txtQuanly.getText().trim());
         int staffId = Integer.parseInt(txtNhanvien.getText().trim());
 
@@ -533,6 +520,7 @@ public class gui_manager extends javax.swing.JPanel {
                 if (dao.delete(managerId, staffId)) {
                     log_message("Xóa thành công.");
                     loadTable();
+                    ResetThongTin();
                 } else {
                     log_message("Không tìm thấy hoặc không thể xóa.");
                 }
@@ -549,9 +537,6 @@ public class gui_manager extends javax.swing.JPanel {
         this.viewmain.setEnabled(false);
         logConfirm.setLocationRelativeTo(null);
         logConfirm.setVisible(true);
-    } catch (NumberFormatException e) {
-        log_message("ID phải là số nguyên.");
-    }
     }//GEN-LAST:event_btnXoaActionPerformed
 
     private void btn_chon_quan_lyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chon_quan_lyActionPerformed

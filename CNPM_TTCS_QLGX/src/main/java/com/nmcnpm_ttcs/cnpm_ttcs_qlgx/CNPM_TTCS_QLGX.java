@@ -22,7 +22,7 @@ import javax.swing.JFrame;
 public class CNPM_TTCS_QLGX {
     public static void login() throws ClassNotFoundException, SQLException {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        String connectionURL = "jdbc:sqlserver://localhost;database=VINHOMES; encrypt=true;trustServerCertificate=true;";
+        String connectionURL = "jdbc:sqlserver://localhost:1433;database=VINHOMES;encrypt=true;trustServerCertificate=true;";
         String username = "check_login";
         String password = "123";
         Connection conn = DriverManager.getConnection(connectionURL, username, password);
@@ -44,7 +44,7 @@ public class CNPM_TTCS_QLGX {
         login.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         login.setVisible(true);
     }
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
         try {
             login();
         } catch (Exception e) {
