@@ -16,6 +16,10 @@ public class Staff {
     private int position_id;
     private int account_number;
     
+    public Staff() {
+        
+    }
+    
     public Staff(int role_id, String full_name, String ssn, LocalDate date_of_birth, String gender, String phone_number, String address, String email, boolean is_active, int position_id, int account_number) {
         this.role_id = role_id;
         this.full_name = full_name;
