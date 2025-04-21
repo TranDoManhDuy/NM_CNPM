@@ -270,6 +270,11 @@ public class gui_session_free extends javax.swing.JPanel {
 
         jLabel1.setText("Giá tiền/1 tiếng");
 
+        txt_giatien1tieng.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_giatien1tiengActionPerformed(evt);
+            }
+        });
         txt_giatien1tieng.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txt_giatien1tiengKeyPressed(evt);
@@ -1024,6 +1029,10 @@ public class gui_session_free extends javax.swing.JPanel {
         this.dataglobal.updateArrSessionFeeRender();
         fillTable();
     }//GEN-LAST:event_btn_tailaiActionPerformed
+
+    private void txt_giatien1tiengActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_giatien1tiengActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_giatien1tiengActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JPanel PanelFilter;
