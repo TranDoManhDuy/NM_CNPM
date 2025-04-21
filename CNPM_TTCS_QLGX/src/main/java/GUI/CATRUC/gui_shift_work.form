@@ -360,7 +360,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="int a = LocalDate.now().getYear();&#xa;String year[] = new String[a-2000 + 1];&#xa;year[0] = &quot;&quot;;&#xa;for(int i = 2001; i&lt;= a; i++){&#xa;    year[i - 2000] = String.valueOf(i);&#xa;}"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="int a = LocalDate.now().getYear()+1;&#xa;String year[] = new String[a-2000 + 1];&#xa;year[0] = &quot;&quot;;&#xa;for(int i = 2001; i&lt;= a; i++){&#xa;    year[i - 2000] = String.valueOf(i);&#xa;}"/>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
         </Component>
@@ -385,7 +385,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox7ActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="dataGlobal.updateArrtasks();&#xa;List&lt;Tasks&gt; arrTask = dataGlobal.getArrayTasks();&#xa;String strT[] = new String[arrTask.size() + 1];&#xa;strT[0] = &quot;&quot;;&#xa;for(int i = 1; i&lt;arrTask.size(); i++){&#xa;    strT[i] = arrTask.get(i-1).getTask_name();&#xa;}"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="dataGlobal.updateArrtasks();&#xa;List&lt;Tasks&gt; arrTask = dataGlobal.getArrayTasks();&#xa;String strT[] = new String[arrTask.size() + 1];&#xa;strT[0] = &quot;&quot;;&#xa;for(int i = 1; i&lt;=arrTask.size(); i++){&#xa;    strT[i] = arrTask.get(i-1).getTask_name();&#xa;}"/>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
         </Component>
@@ -415,7 +415,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox8ActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="dataGlobal.updateArrShiftTypes();&#xa;List&lt;ShiftTypes&gt; arrShiftTypes = dataGlobal.getArrayShiftTypes();;&#xa;String st[] = new String[arrShiftTypes.size() +1];&#xa;st[0] = &quot;&quot;;&#xa;for(int i = 1; i&lt; arrShiftTypes.size(); i++){&#xa;    st[i] = arrShiftTypes.get(i-1).getShift_type_name();&#xa;}"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="dataGlobal.updateArrShiftTypes();&#xa;List&lt;ShiftTypes&gt; arrShiftTypes = dataGlobal.getArrayShiftTypes();;&#xa;String st[] = new String[arrShiftTypes.size() +1];&#xa;st[0] = &quot;&quot;;&#xa;for(int i = 1; i&lt;= arrShiftTypes.size(); i++){&#xa;    st[i] = arrShiftTypes.get(i-1).getShift_type_name();&#xa;}"/>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
         </Component>
@@ -430,7 +430,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox9ActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="dataGlobal.updateArrBuildings();&#xa;List&lt;Buildings&gt; listBuildings = dataGlobal.getArrayBuildings();&#xa;String strB[] = new String[listBuildings.size()+1];&#xa;strB[0] = &quot;&quot;;&#xa;for(int i =1; i&lt;listBuildings.size(); i++ ){&#xa;    strB[i] = listBuildings.get(i-1).getBuilding_name();&#xa;}"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="dataGlobal.updateArrBuildings();&#xa;List&lt;Buildings&gt; listBuildings = dataGlobal.getArrayBuildings();&#xa;String strB[] = new String[listBuildings.size()+1];&#xa;strB[0] = &quot;&quot;;&#xa;for(int i =1; i&lt;=listBuildings.size(); i++ ){&#xa;    strB[i] = listBuildings.get(i-1).getBuilding_name();&#xa;}"/>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
         </Component>

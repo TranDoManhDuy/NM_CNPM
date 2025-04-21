@@ -45,7 +45,7 @@ public class ShiftTypesDAO {
     }
     
     public String insert(ShiftTypes shiftType) {
-        String sql = "{CALL InsertShiftTypes(?, ?, ?)}";
+        String sql = "{CALL InsertShiftTypes(?, ?, ?, ?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -54,21 +54,17 @@ public class ShiftTypesDAO {
             ptmt.setString(1, shiftType.getShift_type_name());
             ptmt.setTime(2, Time.valueOf(shiftType.getStart_time()));
             ptmt.setTime(3, Time.valueOf(shiftType.getEnd_time()));
-
+            ptmt.registerOutParameter(4, Types.NVARCHAR);
             ptmt.executeUpdate();
+            String errorMessage = ptmt.getString(4);
+            return errorMessage;
         } catch (SQLException e) {
-            if(e.getErrorCode() == 50000){
-                return e.getMessage();
-            }
-            else{
-                return "Lỗi không biết";    
-                    }
+                return "Thêm không thành công";    
         }
-        return "Thêm thành công";
     }
 
     public String update(ShiftTypes shiftType) {
-        String sql = "{CALL UpdateShiftTypes(?, ?, ?, ?)}";
+        String sql = "{CALL UpdateShiftTypes(?, ?, ?, ?, ?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -78,16 +74,13 @@ public class ShiftTypesDAO {
             ptmt.setString(2, shiftType.getShift_type_name());
             ptmt.setTime(3, Time.valueOf(shiftType.getStart_time()));
             ptmt.setTime(4, Time.valueOf(shiftType.getEnd_time()));
+            ptmt.registerOutParameter(5, Types.NVARCHAR);
             ptmt.executeUpdate();
+            String errorMessage = ptmt.getString(5);
+            return errorMessage;
         } catch (SQLException e) {
-            if(e.getErrorCode() == 50000){
-                return e.getMessage();
-            }
-            else{
-                return "Lỗi không biết";    
-                    }
+            return "Cập nhật thất bại";
         }
-        return "Cập nhật thành công";
     }
 
     public String delete(int shift_type_id) {
@@ -107,7 +100,7 @@ public class ShiftTypesDAO {
                 return "Lỗi không biết";    
                     }
         }
-        return "Thêm thành công";
+        return "Xóa thành công";
     }
 
     public ShiftTypes findByID(int shift_type_id) {

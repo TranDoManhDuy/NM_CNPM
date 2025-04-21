@@ -59,7 +59,7 @@ public class ShiftWorksDAO {
     }
 
     public String insert(ShiftWorks shift) {
-        String sql = "{CALL InsertShiftWorks(?, ?, ?, ?, ?)}";
+        String sql = "{CALL InsertShiftWorks(?, ?, ?, ?, ?, ?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -70,8 +70,10 @@ public class ShiftWorksDAO {
             ptmt.setInt(3, shift.getStaff_id());
             ptmt.setInt(4, shift.getTask_id());
             ptmt.setDate(5, Date.valueOf(shift.getShift_date()));
-
+            ptmt.registerOutParameter(6, Types.NVARCHAR);
             ptmt.executeUpdate();
+            String errorMessage = ptmt.getString(6);
+            return errorMessage;
         } catch (SQLException e) {
             if(e.getErrorCode() == 547){
                 String foreignKey = extractForeignKeyName(e.getMessage());
@@ -87,18 +89,14 @@ public class ShiftWorksDAO {
 //                        return "Mã nhiệm vụ không tồn tại";
 //                }
             }
-            if(e.getErrorCode() == 50000){
-                return e.getMessage();
-            }
             else{
                 return "Thêm không thành công";    
                     }
         }
-        return "Thêm thành công";
     }
 
     public String update(ShiftWorks shift) {
-        String sql = "{CALL UpdateShiftWorks(?, ?, ?, ?, ?, ?)}";
+        String sql = "{CALL UpdateShiftWorks(?, ?, ?, ?, ?, ?, ?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
@@ -110,7 +108,10 @@ public class ShiftWorksDAO {
             ptmt.setInt(4, shift.getTask_id());
             ptmt.setDate(5, Date.valueOf(shift.getShift_date()));
             ptmt.setInt(6, shift.getShift_work_id());
+            ptmt.registerOutParameter(7, Types.NVARCHAR);
             ptmt.executeUpdate();
+            String errorMessage = ptmt.getString(7);
+            return errorMessage;
         } catch (SQLException e) {
             if(e.getErrorCode() == 547){
                 String foreignKey = extractForeignKeyName(e.getMessage());
@@ -126,34 +127,27 @@ public class ShiftWorksDAO {
 //                        return "Mã nhiệm vụ không tồn tại";
 //                }
             }
-            if(e.getErrorCode() == 50000){
-                return e.getMessage();
-            }
             else{
                 return "Cập nhật không thành công";
                     }
         }
-        return "Cập nhật thành công";
     }
 
     public String delete(int shift_work_id) {
-        String sql = "{CALL DeleteShiftWorks(?)}";
+        String sql = "{CALL DeleteShiftWorks(?, ?)}";
         
         try (
             Connection conn = OpenConnection.getConnection();
             CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, shift_work_id);
+            ptmt.registerOutParameter(2, Types.NVARCHAR);
             ptmt.executeUpdate();
+            String errorMessage = ptmt.getString(2);
+            return errorMessage;
         } catch (SQLException e) {
-             if(e.getErrorCode() == 50000){
-                return e.getMessage();
-            }
-            else{
-                return "Xóa không thành công";
-                    }
+            return "Xóa không thành công";
         }
-        return "Xoá thành công";
     }
 
     public ShiftWorks findByID(int shift_work_id) {

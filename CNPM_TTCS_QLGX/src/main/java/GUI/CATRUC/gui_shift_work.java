@@ -80,12 +80,12 @@ public class gui_shift_work extends javax.swing.JPanel {
     
     public void fillTable(){
         tableModel.setRowCount(0);
-        String sql = "SELECT * FROM SHIFTWORKS";
+        String sql = "{CALL GetAllShiftWorksView}";
         dataGlobal.updateArrShiftWorks();
         try (
             Connection conn = OpenConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            CallableStatement stmt = conn.prepareCall(sql);
+            ResultSet rs = stmt.executeQuery();
         ) {
             while (rs.next()) {
                 tableModel.addRow(new String[] {String.valueOf(rs.getInt("shift_work_id")),
@@ -148,6 +148,7 @@ public class gui_shift_work extends javax.swing.JPanel {
             int tID = Integer.parseInt(jTextField5.getText());
             ShiftWorks a = new ShiftWorks( stID, bID, sID, tID, shiftDate);
             String r = ShiftWorksDAO.getInstance().insert(a);
+            System.out.println(shiftDate);
             callLogMessage(r);
             fillTable();
         }catch(Exception e){
@@ -156,7 +157,7 @@ public class gui_shift_work extends javax.swing.JPanel {
         
     }
     public void updateShiftWork(){
-            LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex()+1 ,jComboBox4.getSelectedIndex()+1);
+            LocalDate shiftDate = LocalDate.of(jComboBox6.getSelectedIndex()+2000,jComboBox5.getSelectedIndex() ,jComboBox4.getSelectedIndex());
             int shID = Integer.parseInt(jTextField1.getText());
             int stID = Integer.parseInt(jTextField2.getText());
             int bID = Integer.parseInt(jTextField3.getText());
@@ -346,7 +347,7 @@ public class gui_shift_work extends javax.swing.JPanel {
         }
         jComboBox5.setModel(new javax.swing.DefaultComboBoxModel<>(month));
 
-        int a = LocalDate.now().getYear();
+        int a = LocalDate.now().getYear()+1;
         String year[] = new String[a-2000 + 1];
         year[0] = "";
         for(int i = 2001; i<= a; i++){
@@ -366,7 +367,7 @@ public class gui_shift_work extends javax.swing.JPanel {
         List<Tasks> arrTask = dataGlobal.getArrayTasks();
         String strT[] = new String[arrTask.size() + 1];
         strT[0] = "";
-        for(int i = 1; i<arrTask.size(); i++){
+        for(int i = 1; i<=arrTask.size(); i++){
             strT[i] = arrTask.get(i-1).getTask_name();
         }
         jComboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(strT));
@@ -391,7 +392,7 @@ public class gui_shift_work extends javax.swing.JPanel {
         List<ShiftTypes> arrShiftTypes = dataGlobal.getArrayShiftTypes();;
         String st[] = new String[arrShiftTypes.size() +1];
         st[0] = "";
-        for(int i = 1; i< arrShiftTypes.size(); i++){
+        for(int i = 1; i<= arrShiftTypes.size(); i++){
             st[i] = arrShiftTypes.get(i-1).getShift_type_name();
         }
         jComboBox8.setModel(new javax.swing.DefaultComboBoxModel<>(st));
@@ -410,7 +411,7 @@ public class gui_shift_work extends javax.swing.JPanel {
         List<Buildings> listBuildings = dataGlobal.getArrayBuildings();
         String strB[] = new String[listBuildings.size()+1];
         strB[0] = "";
-        for(int i =1; i<listBuildings.size(); i++ ){
+        for(int i =1; i<=listBuildings.size(); i++ ){
             strB[i] = listBuildings.get(i-1).getBuilding_name();
         }
         jComboBox9.setModel(new javax.swing.DefaultComboBoxModel<>(strB));
@@ -853,8 +854,7 @@ public class gui_shift_work extends javax.swing.JPanel {
         jTextField6.setText((String) jTable1.getValueAt(jTable1.rowAtPoint(evt.getPoint()), 4));
         jComboBox7.setSelectedItem((String) jTable1.getValueAt(jTable1.rowAtPoint(evt.getPoint()), 5));
         jTextField5.setText(String.valueOf( dataGlobal.getArrayTasks().get(jComboBox7.getSelectedIndex() - 1).getTask_id()));
-        int row = jTable1.rowAtPoint(evt.getPoint());
-        LocalDate date = dataGlobal.getArrayShiftWorks().get(row).getShift_date();
+        LocalDate date = LocalDate.parse((String) jTable1.getValueAt(jTable1.rowAtPoint(evt.getPoint()), 6));
         jComboBox4.setSelectedIndex(date.getDayOfMonth());
         jComboBox5.setSelectedIndex(date.getMonthValue());
         jComboBox6.setSelectedIndex(date.getYear() - 2000);
