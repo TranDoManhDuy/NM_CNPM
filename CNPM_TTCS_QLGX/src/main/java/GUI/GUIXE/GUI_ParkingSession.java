@@ -60,6 +60,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
     private int chooseCardId = -1;
     private int chooseVehicleId = -1;
     private int choooseIndexVehicleType = -1;
+    private int chooseCustomerId = -1;
     private GUI_Vehicle gui_vehicle;
     private LogMessage logMessage;
     private DataGlobal dataGlobal;
@@ -386,6 +387,18 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             }
         }
         return s;
+    }
+    
+    public boolean checkExistsVehicleInRegistration(int vehicle_id, int customer_id) {
+        this.dataGlobal.updateArrRegistration();
+        
+        for (Regisatration re : this.dataGlobal.getArrayRegistration()) { 
+            if (customer_id == re.getCustomer_id() && vehicle_id == re.getVehicle_id()) { 
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     /**
@@ -1173,6 +1186,16 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             return;
         }
         LocalDateTime now = LocalDateTime.now();
+        
+        if (isService) { 
+            if ( !checkExistsVehicleInRegistration(chooseVehicleId, chooseCustomerId) ) {
+                SetLog("Xe chưa được đăng ký dịch vụ!");
+//            System.out.println(chooseVehicleId + " " + chooseCustomerId);
+                return;
+            }
+                
+        }
+        
         if (shift_work_id != -1 && cb_is_service.isSelected() == false && btn_vehicle_type.isEnabled()) { 
             String vehicle_identification = txt_ma_nhan_dang_xe.getText().toString().trim();
             
@@ -1787,6 +1810,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                             int row = table.rowAtPoint(e.getPoint());
                             txt_card_id.setText((String) table.getValueAt(row, 0));
                             chooseCardId = Integer.parseInt((String)table.getValueAt(row, 0));
+                            chooseCustomerId = Integer.parseInt((String)table.getValueAt(row, 1));
                             logSelection.setVisible(false);
                             viewmain.setEnabled(true);
                             viewmain.requestFocus();
@@ -1796,13 +1820,11 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                     for (ResidentCard re : dataGlobal.getArrResidentCards()) {
                         if (re.isIs_active()) {
                             int customerId = re.getCustomer_id();
-                            LocalDate date_service = null;
                             boolean check = false;
                             
                             for (Regisatration rg : dataGlobal.getArrayRegistration()) 
                                 if (rg.getCustomer_id() == customerId) { 
-                                    date_service = rg.getRegistration_date();
-                                    if (date_service.isAfter(LocalDate.now()) || date_service.equals(LocalDate.now())) {
+                                    if (rg.getState() == 'B') {
                                         check = true;
 //                                        System.out.println(check + " " + LocalDate.now() + " " + date_service + " " + customerId);
                                     }

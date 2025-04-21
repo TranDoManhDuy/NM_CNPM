@@ -11,6 +11,7 @@ import GUI.ViewMain;
 import Global.DataGlobal;
 import Model.Buildings;
 import Model.Customer;
+import Model.ParkingSession;
 import Model.ResidentCard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -126,7 +127,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         
         btn_update.setEnabled(false);
         btn_delete.setEnabled(false);
-        btnInsert.setEnabled(false);
+        btn_insert.setEnabled(false);
         
         chooseCustomerId = -1;
     }
@@ -144,12 +145,12 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         
         btn_update.setEnabled(true);
         btn_delete.setEnabled(true);
-        btnInsert.setEnabled(false);
+        btn_insert.setEnabled(false);
     }
     
     private void checkBtnInsert() {
         boolean isFilled = !txt_customer_id.getText().trim().isEmpty();
-        btnInsert.setEnabled(isFilled);
+        btn_insert.setEnabled(isFilled);
     }
     
     private void checkBtnUpdate() { 
@@ -236,6 +237,32 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         return s;
     }
     
+    public boolean checkExistsResidentCard(int customer_id) {
+        this.dataGlobal.updateArrayResidentCard();
+        
+        for (ResidentCard r : this.dataGlobal.getArrResidentCards()) { 
+            if (customer_id == r.getCustomer_id() && r.isIs_active()) { 
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    
+    public boolean checkOutParkingSessionForResidentCard(int resident_card) {
+        this.dataGlobal.updateArrayParkingSession();
+        
+        for (ParkingSession par: this.dataGlobal.getArrParkingSession()) {
+            if (par.getCard_id() == resident_card && par.isIs_service() && par.getCheck_out_time() == null) { 
+                System.out.println(par.getCheck_out_time());
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -259,7 +286,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         txt_pk_resident_card = new javax.swing.JTextField();
         txt_customer_id = new javax.swing.JTextField();
         txt_building_id = new javax.swing.JTextField();
-        btnInsert = new javax.swing.JButton();
+        btn_insert = new javax.swing.JButton();
         btn_update = new javax.swing.JButton();
         btn_delete = new javax.swing.JButton();
         btn_reset = new javax.swing.JButton();
@@ -447,17 +474,17 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         txt_building_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txt_building_id.setEnabled(false);
 
-        btnInsert.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnInsert.setText("Thêm");
-        btnInsert.setEnabled(false);
-        btnInsert.addMouseListener(new java.awt.event.MouseAdapter() {
+        btn_insert.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_insert.setText("Thêm");
+        btn_insert.setEnabled(false);
+        btn_insert.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnInsertMouseClicked(evt);
+                btn_insertMouseClicked(evt);
             }
         });
-        btnInsert.addActionListener(new java.awt.event.ActionListener() {
+        btn_insert.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnInsertActionPerformed(evt);
+                btn_insertActionPerformed(evt);
             }
         });
 
@@ -552,7 +579,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
                         .addGap(82, 82, 82))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(44, 44, 44)
-                        .addComponent(btnInsert, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_insert, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_update, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -586,7 +613,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
                     .addComponent(cob_con_mat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnInsert)
+                    .addComponent(btn_insert)
                     .addComponent(btn_update)
                     .addComponent(btn_delete))
                 .addContainerGap(134, Short.MAX_VALUE))
@@ -642,11 +669,11 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         
     }//GEN-LAST:event_tbl_resident_cardMouseClicked
 
-    private void btnInsertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInsertMouseClicked
+    private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnInsertMouseClicked
+    }//GEN-LAST:event_btn_insertMouseClicked
 
-    private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
+    private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
         // TODO add your handling code here:
         ResidentCard resident = new ResidentCard(chooseCustomerId, true);
         String check = "";
@@ -664,7 +691,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         }
         this.SetLog(check);
         return;
-    }//GEN-LAST:event_btnInsertActionPerformed
+    }//GEN-LAST:event_btn_insertActionPerformed
 
     private void btn_resetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_resetMouseClicked
 
@@ -801,7 +828,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
                 });
                 dataGlobal.updateArrCustomer();
                 for (Customer c : dataGlobal.getArrayCustomer()) {
-                    if (c.isIs_active()) {
+                    if (c.isIs_active() && !checkExistsResidentCard(c.getCustomer_id())) {
                         tableModel.addRow(new String[] {String.valueOf(c.getCustomer_id()), String.valueOf(c.getBuilding_id()), 
                                                         c.getFull_name(), c.getSsn(), String.valueOf(c.getDate_of_birth()), 
                                                         c.getGender(), c.getPhone_number(), c.getAddress(), c.getNationality(), String.valueOf(c.isIs_active())
@@ -828,6 +855,11 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
 
     private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
         // TODO add your handling code here:
+        
+        if (!checkOutParkingSessionForResidentCard(Integer.parseInt(txt_pk_resident_card.getText().toString().trim()))) { 
+            SetLog("Xe còn đang được gửi");
+            return;
+        };
         
         int residentCardId = Integer.parseInt(txt_pk_resident_card.getText().toString().trim());
         
@@ -879,10 +911,10 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
     private javax.swing.JLabel JL_MaTheCuDan;
     private javax.swing.JLabel JL_Title;
     private javax.swing.JLabel JL_building;
-    private javax.swing.JButton btnInsert;
     private javax.swing.JButton btn_chon_customer;
     private javax.swing.JButton btn_con;
     private javax.swing.JButton btn_delete;
+    private javax.swing.JButton btn_insert;
     private javax.swing.JButton btn_mat;
     private javax.swing.JButton btn_reset;
     private javax.swing.JButton btn_sap_xep;
