@@ -1013,11 +1013,11 @@ public class gui_shift_work extends javax.swing.JPanel {
                 loadStaffList();
                 this.tableModel.fireTableDataChanged();
                 this.btn_sapxep.setVisible(false);
-                this.btn_boloc.addActionListener((ActionEvent e) -> {
+                this.btn_loc.addActionListener((ActionEvent e) -> {
                     filterStaff();
                 });
                 
-                this.btn_sapxep.addActionListener((ActionEvent e) -> {
+                this.btn_boloc.addActionListener((ActionEvent e) -> {
                     loadStaffList();
                 });
             }
@@ -1048,18 +1048,17 @@ public class gui_shift_work extends javax.swing.JPanel {
                     CallableStatement stmt = conn.prepareCall(sql);
                 ) {
                     stmt.setString(1, logSelection.txt_property.getText().trim());
-                    try(ResultSet rs = stmt.executeQuery()){
-                        tableModel.setRowCount(0);
+                    ResultSet rs = stmt.executeQuery();
+                        this.tableModel.setRowCount(0);
                         while (rs.next()) {
-                            logSelection.tableModel.addRow(new String[]{
-                                rs.getString("StaffId"), rs.getString("FullName"),
-                                rs.getString("SSN"), rs.getString("PhoneNumber")
+                            this.tableModel.addRow(new String[]{
+                                rs.getString("staff_id"), rs.getString("full_name"),
+                                rs.getString("ssn"), rs.getString("phone_number")
                                 });        
                         }
-                    }
                     logSelection.tableModel.fireTableDataChanged();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    System.out.println("Không tim thấy");
                 }
             }
         };     

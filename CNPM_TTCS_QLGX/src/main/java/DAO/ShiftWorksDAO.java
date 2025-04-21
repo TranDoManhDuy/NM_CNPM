@@ -73,25 +73,25 @@ public class ShiftWorksDAO {
 
             ptmt.executeUpdate();
         } catch (SQLException e) {
-            
             if(e.getErrorCode() == 547){
                 String foreignKey = extractForeignKeyName(e.getMessage());
-                switch (foreignKey) {
-                    case "FK__shift_wor__build__2739D489":
-                        return "Mã tòa nhà không tồn tại";
-                    case "FK__shift_wor__shift__2645B050":
-                        return "Mã loại ca trực không tồn tại";
-                    case "FK__shift_wor__staff__2A164134":
-                        return "Nhân viên không tồn tại";
-                    case "FK__shift_wor__task___25518C17":
-                        return "Mã nhiệm vụ không tồn tại";
-                }
+                return foreignKey;
+//                switch (foreignKey) {
+//                    case "FK__shift_wor__build__2739D489":
+//                        return "Mã tòa nhà không tồn tại";
+//                    case "FK__shift_wor__shift__2645B050":
+//                        return "Mã loại ca trực không tồn tại";
+//                    case "FK__shift_wor__staff__2A164134":
+//                        return "Nhân viên không tồn tại";
+//                    case "FK__shift_wor__task___25518C17":
+//                        return "Mã nhiệm vụ không tồn tại";
+//                }
             }
             if(e.getErrorCode() == 50000){
                 return e.getMessage();
             }
             else{
-                return "Lỗi thông tin không tồn tại";    
+                return "Thêm không thành công";    
                     }
         }
         return "Thêm thành công";
@@ -114,22 +114,23 @@ public class ShiftWorksDAO {
         } catch (SQLException e) {
             if(e.getErrorCode() == 547){
                 String foreignKey = extractForeignKeyName(e.getMessage());
-                switch (foreignKey) {
-                    case "FK__shift_wor__build__2739D489":
-                        return "Mã tòa nhà không tồn tại";
-                    case "FK__shift_wor__shift__2645B050":
-                        return "Mã loại ca trực không tồn tại";
-                    case "[FK__shift_wor__staff__2A164134]":
-                        return "Nhân viên không tồn tại";
-                    case "[FK__shift_wor__task___25518C17]":
-                        return "Mã nhiệm vụ không tồn tại";
-                }
+                return foreignKey;
+//                switch (foreignKey) {
+//                    case "FK__shift_wor__build__2739D489":
+//                        return "Mã tòa nhà không tồn tại";
+//                    case "FK__shift_wor__shift__2645B050":
+//                        return "Mã loại ca trực không tồn tại";
+//                    case "[FK__shift_wor__staff__2A164134]":
+//                        return "Nhân viên không tồn tại";
+//                    case "[FK__shift_wor__task___25518C17]":
+//                        return "Mã nhiệm vụ không tồn tại";
+//                }
             }
             if(e.getErrorCode() == 50000){
                 return e.getMessage();
             }
             else{
-                return "Lỗi thông tin không tồn tại";
+                return "Cập nhật không thành công";
                     }
         }
         return "Cập nhật thành công";
@@ -145,7 +146,12 @@ public class ShiftWorksDAO {
             ptmt.setInt(1, shift_work_id);
             ptmt.executeUpdate();
         } catch (SQLException e) {
-            return e.getMessage();
+             if(e.getErrorCode() == 50000){
+                return e.getMessage();
+            }
+            else{
+                return "Xóa không thành công";
+                    }
         }
         return "Xoá thành công";
     }
