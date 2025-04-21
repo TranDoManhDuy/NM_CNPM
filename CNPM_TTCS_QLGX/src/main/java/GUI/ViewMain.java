@@ -66,6 +66,7 @@ import DAO.VehicleDAO;
 import DAO.VehicleTypeDAO;
 import DAO.VisitorParkingCardsDAO;
 import DatabaseHelper.OpenConnection;
+import GUI.DICHVU.gui_statictical;
 import GUI.GUIXE.EntryAndExit;
 import GUI.GUIXE.GUI_LostVisitorParkingCard;
 import GUI.GUIXE.GUI_VisitorParkingCard;
@@ -173,6 +174,7 @@ public class ViewMain extends javax.swing.JFrame {
         gui_vehicle_type vehicle_type_gui = new gui_vehicle_type(this, logComfirm, logMessage, logSelection, dataglocal);
         gui_timeframe time_frame_gui = new gui_timeframe(this, logComfirm, logMessage, dataglocal);
         gui_session_free session_fee_gui = new gui_session_free(this, logComfirm, logMessage, logSelection, dataglocal);
+        gui_statictical statictical_gui = new gui_statictical(this, logComfirm, logMessage, logSelection, dataglocal);
         // add component
         addComponent(panel_dangki, registration_gui);
         addComponent(panel_thanhtoan, payment_gui);
@@ -181,6 +183,7 @@ public class ViewMain extends javax.swing.JFrame {
         addComponent(panel_khungthoigian, time_frame_gui);
         addComponent(panel_loaiphuongtien, vehicle_type_gui);
         addComponent(panel_gialuot, session_fee_gui);
+        addComponent(panel_thongke, statictical_gui);
         panelDichVu.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -224,7 +227,13 @@ public class ViewMain extends javax.swing.JFrame {
                         dataglocal.updateArrTimeFrameToRender();
                         time_frame_gui.fillTable();
                         break;
-                    // thêm các case khác tương ứng tab
+                    case 7:
+                        System.out.println("Cập nhật giao diện thống kê doanh thu dịch vụ");
+                        dataglocal.updateArrServiceType_render();
+                        dataglocal.updateArrPaymentRender();
+                        statictical_gui.fillTable();
+                        statictical_gui.fillCombo();
+                        break;
                 }
             }
         });
@@ -369,7 +378,7 @@ public class ViewMain extends javax.swing.JFrame {
         panel_gialuot = new javax.swing.JPanel();
         panel_loaiphuongtien = new javax.swing.JPanel();
         panel_khungthoigian = new javax.swing.JPanel();
-        jPanel9 = new javax.swing.JPanel();
+        panel_thongke = new javax.swing.JPanel();
         txt_timer = new javax.swing.JLabel();
         txt_checkavailable = new javax.swing.JLabel();
 
@@ -815,18 +824,18 @@ public class ViewMain extends javax.swing.JFrame {
 
         panelDichVu.addTab("Các khung thời gian", panel_khungthoigian);
 
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout panel_thongkeLayout = new javax.swing.GroupLayout(panel_thongke);
+        panel_thongke.setLayout(panel_thongkeLayout);
+        panel_thongkeLayout.setHorizontalGroup(
+            panel_thongkeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 1203, Short.MAX_VALUE)
         );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panel_thongkeLayout.setVerticalGroup(
+            panel_thongkeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 453, Short.MAX_VALUE)
         );
 
-        panelDichVu.addTab("Thông kê doanh thu dịch vụ", jPanel9);
+        panelDichVu.addTab("Thông kê doanh thu dịch vụ", panel_thongke);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -937,7 +946,6 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;
@@ -964,6 +972,7 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JPanel panel_thanhtoan;
     private javax.swing.JPanel panel_the_cu_dan;
     private javax.swing.JPanel panel_the_xe;
+    private javax.swing.JPanel panel_thongke;
     private javax.swing.JPanel panel_toanha;
     private javax.swing.JPanel panel_vitri;
     private javax.swing.JLabel txt_checkavailable;

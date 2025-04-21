@@ -40,6 +40,10 @@ public class PaymentDAO {
                 String type_service_name = rs.getString("service_name");
                 boolean payment_state = rs.getBoolean("payment_state");
                 String trangthai = payment_state ? "Đã hoàn tất" : "Chưa hoàn tất";
+                
+                int sothang = rs.getInt("month_unit");
+                float heso = rs.getFloat("payment_coefficient");
+                int sotien = rs.getInt("amount");
                 ArrayList<String> payment_data = new ArrayList<>(Arrays.asList(
                         String.valueOf(payment_id),
                         String.valueOf(registration_id),
@@ -47,7 +51,10 @@ public class PaymentDAO {
                         String.valueOf(extension_time),
                         type_service_name,
                         trangthai,
-                        type_service_id
+                        type_service_id,
+                        String.valueOf(sothang),
+                        String.valueOf(heso),
+                        String.valueOf(sotien)
                 ));
                 dataPayment.add(payment_data);
             }
