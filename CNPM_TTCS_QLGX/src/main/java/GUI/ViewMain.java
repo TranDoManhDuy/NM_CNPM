@@ -369,6 +369,7 @@ public class ViewMain extends javax.swing.JFrame {
         panel_gialuot = new javax.swing.JPanel();
         panel_loaiphuongtien = new javax.swing.JPanel();
         panel_khungthoigian = new javax.swing.JPanel();
+        jPanel9 = new javax.swing.JPanel();
         txt_timer = new javax.swing.JLabel();
         txt_checkavailable = new javax.swing.JLabel();
 
@@ -814,6 +815,19 @@ public class ViewMain extends javax.swing.JFrame {
 
         panelDichVu.addTab("Các khung thời gian", panel_khungthoigian);
 
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1203, Short.MAX_VALUE)
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 453, Short.MAX_VALUE)
+        );
+
+        panelDichVu.addTab("Thông kê doanh thu dịch vụ", jPanel9);
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -923,6 +937,7 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;

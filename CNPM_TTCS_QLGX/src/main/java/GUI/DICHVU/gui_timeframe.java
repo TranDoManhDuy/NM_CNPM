@@ -98,6 +98,9 @@ public class gui_timeframe extends javax.swing.JPanel {
                 public void EventClick_btnXoa() {
                     int id_delete = Integer.min(tf.getT1_id(), Integer.max(tf.getT2_id(), tf.getT3_id()));
                     deleteHandle(id_delete);
+                    
+                    
+                    
                 }
                 @Override
                 public void EventClick_btnChinhSua() {

@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -51,7 +52,7 @@ public final class gui_service_free extends javax.swing.JPanel {
         this.logSelection = logSelection;
         this.dataGlobal = dataGlobal;
         initComponents();
-        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Còn hạn", "Hết hạn", ""}));
+        combo_trangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Còn hạn", "Hết hạn"}));
         tableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -583,9 +584,7 @@ public final class gui_service_free extends javax.swing.JPanel {
     private void txt_tenloaixeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tenloaixeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_tenloaixeActionPerformed
-
-    private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
-        // TODO add your handling code here:
+    private void processDelete() {
         for (TypeService tsv : TypeServiceDAO.getInstance().getList()) {
             if (tsv.getService_fee_id() == Integer.parseInt(txt_idbanghi.getText())) {
                 logError("Có loại dịch vụ tương ứng với đơn vị giá dịch vụ này, không thể xóa");
@@ -605,6 +604,50 @@ public final class gui_service_free extends javax.swing.JPanel {
         this.logMessage.setVisible(true);
         dataGlobal.updateArrServiceFee_render();
         fillTable();
+    }
+    private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
+        // TODO add your handling code here:
+        this.viewmain.setEnabled(false);
+        this.cursorBreak = false;
+
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn xóa ?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processDelete();
+            }
+        };
+        worker.execute();
+        worker = null;
     }//GEN-LAST:event_btn_xoaActionPerformed
     
     private void btn_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themActionPerformed
@@ -721,8 +764,7 @@ public final class gui_service_free extends javax.swing.JPanel {
             txt_tinnhan.setText("Hiển thị tất cả các giá dịch vụ / tháng của các loại xe còn hạn");
         }
     }//GEN-LAST:event_btn_timkiemActionPerformed
-
-    private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
+    private void processUpdate() {
         if (txt_idloaixe.getText().equals("")) {
             logError("Phải chọn loại phương tiện");
             return;
@@ -776,6 +818,48 @@ public final class gui_service_free extends javax.swing.JPanel {
         this.logMessage.setVisible(true);
         dataGlobal.updateArrServiceFee_render();
         fillTable();
+    }
+    private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
+        this.viewmain.setEnabled(false);
+        this.cursorBreak = false;
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật ?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { 
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processUpdate();
+            }
+        };
+        worker.execute();
+        worker = null;
     }//GEN-LAST:event_btn_capnhatActionPerformed
 
     private void btn_tailaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tailaiActionPerformed

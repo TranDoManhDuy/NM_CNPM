@@ -1040,7 +1040,7 @@ public class gui_session_free extends javax.swing.JPanel {
         }
         this.viewmain.setEnabled(false);
         this.cursorBreak = false;
-
+        
         this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật?") {
             @Override
             public void action() {
