@@ -1822,13 +1822,16 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                             int customerId = re.getCustomer_id();
                             boolean check = false;
                             
-                            for (Regisatration rg : dataGlobal.getArrayRegistration()) 
+                            for (Regisatration rg : dataGlobal.getArrayRegistration()) {
                                 if (rg.getCustomer_id() == customerId) { 
                                     if (rg.getState() == 'B') {
                                         check = true;
 //                                        System.out.println(check + " " + LocalDate.now() + " " + date_service + " " + customerId);
+                                        
                                     }
                                 }
+                                System.out.println( customerId + " " + rg.getState() + " " + rg.getCustomer_id() );
+                            }
 
 //                            System.out.println(check);
                             if (check)
