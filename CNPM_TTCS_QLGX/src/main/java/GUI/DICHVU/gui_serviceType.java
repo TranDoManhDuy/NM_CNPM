@@ -7,6 +7,7 @@ package GUI.DICHVU;
 import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
+import DAO.PaymentDAO;
 import DAO.ServiceFeeDAO;
 import DAO.TypeServiceDAO;
 import DAO.VehicleDAO;
@@ -14,6 +15,7 @@ import DAO.VehicleTypeDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
+import Model.Payment;
 import Model.ServiceFee;
 import Model.TypeService;
 import Model.Vehicle;
@@ -26,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 /**
  *
@@ -204,7 +207,7 @@ public final class gui_serviceType extends javax.swing.JPanel {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
         );
 
         txt_idloaidichvu.setFocusable(false);
@@ -531,7 +534,7 @@ public final class gui_serviceType extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -539,9 +542,9 @@ public final class gui_serviceType extends javax.swing.JPanel {
                             .addComponent(txt_tinnhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btn_tailai))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(7, Short.MAX_VALUE))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -626,10 +629,16 @@ public final class gui_serviceType extends javax.swing.JPanel {
     private void txt_tenloaixeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tenloaixeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_tenloaixeActionPerformed
-
-    private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
-        // TODO add your handling code here:
+    private void processDelete() {
         int id = Integer.parseInt(txt_idloaidichvu.getText());
+        
+        for (Payment pm : PaymentDAO.getInstance().getList()) {
+            if (pm.getService_type_id() == id) {
+                logError("Có đơn thanh toán trên loại dịch vụ này, không thể xóa");
+                return;
+            }
+        }
+        
         String rs = TypeServiceDAO.getInstance().delete(id);
         this.viewmain.setEnabled(false);
         this.logMessage = new LogMessage(rs) {
@@ -643,6 +652,49 @@ public final class gui_serviceType extends javax.swing.JPanel {
         this.logMessage.setVisible(true);
         dataGlobal.updateArrServiceType_render();
         fillTable();
+    }
+    private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
+        this.viewmain.setEnabled(false);
+        this.cursorBreak = false;
+
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn xóa ?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processDelete();
+            }
+        };
+        worker.execute();
+        worker = null;
     }//GEN-LAST:event_btn_xoaActionPerformed
     private void logError(String rs) {
         this.viewmain.setEnabled(false);
@@ -676,6 +728,23 @@ public final class gui_serviceType extends javax.swing.JPanel {
         float coefficient = Float.parseFloat(txt_heso.getText());
         
         TypeService serviceType = new TypeService(1, idServiceFee, monthUnit, ServiceTypeName, LocalDate.now(), coefficient, true);
+        
+        for (TypeService tsv : TypeServiceDAO.getInstance().getList()) {
+            if (serviceType.getService_name().equals(tsv.getService_name())) {
+                logError("Không được trùng loại tên");
+                return;
+            }
+        }
+        
+        for (TypeService tsv : TypeServiceDAO.getInstance().getList()) {
+            if (tsv.getMonth_unit() == serviceType.getMonth_unit() && tsv.getPayment_coefficient() == serviceType.getPayment_coefficient()
+                    && tsv.getService_fee_id() == serviceType.getService_fee_id()
+                    ) {
+                logError("Không được trùng thông tin dịch vụ khác");
+                return;
+            }
+        }
+        
         String rs = TypeServiceDAO.getInstance().insert(serviceType);
         this.viewmain.setEnabled(false);
         this.logMessage = new LogMessage(rs) {
@@ -812,8 +881,7 @@ public final class gui_serviceType extends javax.swing.JPanel {
             txt_timkiem.setText(this.lasttimkiem);
         }
     }//GEN-LAST:event_txt_timkiemKeyReleased
-
-    private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
+    private void processUpdate() {
         if (txt_tendichvu.getText().length() <= 5) {
             logError("Tên dịch vụ phải dài hơn 5 kí tự");
             return;
@@ -855,6 +923,49 @@ public final class gui_serviceType extends javax.swing.JPanel {
         this.logMessage.setVisible(true);
         dataGlobal.updateArrServiceType_render();
         fillTable();
+    }
+    private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
+        this.viewmain.setEnabled(false);
+        this.cursorBreak = false;
+
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processUpdate();
+            }
+        };
+        worker.execute();
+        worker = null;
     }//GEN-LAST:event_btn_capnhatActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

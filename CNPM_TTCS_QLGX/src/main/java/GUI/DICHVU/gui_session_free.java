@@ -7,14 +7,20 @@ package GUI.DICHVU;
 import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
+import DAO.ParkingSessionDAO;
 import DAO.SessionFeeDAO;
+import DAO.ShiftWorksDAO;
 import DAO.TimeFrameDAO;
+import DAO.VehicleDAO;
 import DAO.VehicleTypeDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
+import Model.ParkingSession;
 import Model.SessionFee;
+import Model.ShiftWorks;
 import Model.TimeFrame;
+import Model.Vehicle;
 import Model.VehicleType;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -558,8 +564,9 @@ public class gui_session_free extends javax.swing.JPanel {
             return;
         }
         try {
-            int x = Integer.parseInt(txt_giatien1tieng.getText());
+            int x = (int) Float.parseFloat(txt_giatien1tieng.getText());
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             logError("Nhập đúng định dạng chữ số");
             return;
         }
@@ -606,8 +613,22 @@ public class gui_session_free extends javax.swing.JPanel {
         
         SessionFee sessionFee = new SessionFee(Integer.parseInt(txt_idkhungthoigian.getText()), 
                 Integer.parseInt(txt_idloaiphuongtien.getText()), LocalDate.now(), 1, (int) Float.parseFloat(txt_giatien1tieng.getText()), true);
-        String rs = SessionFeeDAO.getInstance().insert(sessionFee);
         
+        for (VehicleType vhc : dataglobal.getArrVehicleType()) {
+            if (vhc.getVehicle_type_id() == sessionFee.getVehicle_type_id() && vhc.isIsPermission() == false) {
+                logError("Loại phương tiện này không còn được cho phép");
+                return;
+            }
+        }
+        
+        for (TimeFrame tf : TimeFrameDAO.getInstance().getList()) {
+            if (tf.isIs_active() == false && sessionFee.getTime_frame_id() == tf.getTime_frame_id()) {
+                logError("Khung thời gian này không còn được sử dụng");
+                return;
+            }
+        }
+        
+        String rs = SessionFeeDAO.getInstance().insert(sessionFee);
         this.viewmain.setEnabled(false);
         this.logMessage = new LogMessage(rs) {
             @Override
@@ -623,6 +644,22 @@ public class gui_session_free extends javax.swing.JPanel {
     }//GEN-LAST:event_btn_themActionPerformed
     private void processDelete() {
         int id_session_fee = Integer.parseInt(txt_idbanghimucgia.getText());
+        
+        SessionFee sessionFee = SessionFeeDAO.getInstance().findbyID(id_session_fee);
+        for (SessionFee ss : dataglobal.getArrSessionFees()) {
+            for (ParkingSession pk : ParkingSessionDAO.getInstance().getList()) {
+                Vehicle vh = VehicleDAO.getInstance().findbyID(pk.getVehicle_id());
+                for (ShiftWorks sw : ShiftWorksDAO.getInstance().getAllShiftWorks()) {
+                    if (sw.getShift_work_id() == pk.getCheck_in_shift_id() && !pk.isIs_service()) {
+                        if (ss.getDecision_date().isBefore(sw.getShift_date()) && ss.getVehicle_type_id() == vh.getVehicle_type_id()) {
+                            logError("Đã có lượt ra vào áp dụng mức giá này, không thể xóa");
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        
         String rs = SessionFeeDAO.getInstance().delete(id_session_fee);
         
         this.viewmain.setEnabled(false);
@@ -937,6 +974,36 @@ public class gui_session_free extends javax.swing.JPanel {
         else {status = false;}
         SessionFee sessionFee = new SessionFee(Integer.parseInt(txt_idkhungthoigian.getText()), 
                 Integer.parseInt(txt_idloaiphuongtien.getText()), LocalDate.parse(txt_ngaybanhanh.getText()), Integer.parseInt(txt_idbanghimucgia.getText()), (int) Float.parseFloat(txt_giatien1tieng.getText()), status);
+        
+        for (SessionFee ss : dataglobal.getArrSessionFees()) {
+            if (ss.getSession_fee_id() == sessionFee.getSession_fee_id() && (ss.getVehicle_type_id() != sessionFee.getVehicle_type_id()
+                    || ss.getAmount() != sessionFee.getAmount() 
+                    || ss.getTime_frame_id() != sessionFee.getTime_frame_id()
+                    )) {
+                
+                for (ParkingSession pk : ParkingSessionDAO.getInstance().getList()) {
+                    Vehicle vh = VehicleDAO.getInstance().findbyID(pk.getVehicle_id());
+                    VehicleType vh_t = VehicleTypeDAO.getInstance().findbyID(vh.getVehicle_type_id());
+                    for (ShiftWorks sw : ShiftWorksDAO.getInstance().getAllShiftWorks()) {
+                        if (sw.getShift_work_id() == pk.getCheck_in_shift_id() && !pk.isIs_service()) {
+                            if (ss.getDecision_date().isBefore(sw.getShift_date()) && ss.getVehicle_type_id() == vh.getVehicle_type_id()) {
+                                logError("Đã có lượt ra vào áp dụng mức giá này, không thể thay đổi");
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        for (SessionFee ss : dataglobal.getArrSessionFees()) {
+            if (sessionFee.getSession_fee_id() != ss.getSession_fee_id() && ss.getTime_frame_id() == sessionFee.getTime_frame_id() 
+                    && ss.getVehicle_type_id() == sessionFee.getVehicle_type_id() && ss.getAmount() == sessionFee.getAmount()) {
+                logError("Trùng lặp thông tin với một bản ghi khác");
+                return;
+            }
+        }
+        
         String rs = SessionFeeDAO.getInstance().update(sessionFee);
         this.viewmain.setEnabled(false);
             this.logMessage = new LogMessage(rs) {
@@ -966,14 +1033,14 @@ public class gui_session_free extends javax.swing.JPanel {
             return;
         }
         try {
-            int x = Integer.parseInt(txt_giatien1tieng.getText());
+            int x = (int) Float.parseFloat(txt_giatien1tieng.getText());
         } catch (Exception e) {
             logError("Nhập đúng định dạng chữ số");
             return;
         }
         this.viewmain.setEnabled(false);
         this.cursorBreak = false;
-
+        
         this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật?") {
             @Override
             public void action() {

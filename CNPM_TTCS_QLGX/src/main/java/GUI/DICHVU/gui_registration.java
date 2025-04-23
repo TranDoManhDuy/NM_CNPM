@@ -3,6 +3,7 @@ import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.CustomerDAO;
+import DAO.PaymentDAO;
 import DAO.RegisatrationDAO;
 import DAO.VehicleDAO;
 import DAO.VehicleTypeDAO;
@@ -10,9 +11,11 @@ import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
 import Model.Customer;
+import Model.Payment;
 import Model.Regisatration;
 import Model.Vehicle;
 import Model.VehicleType;
+import Model.Payment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -32,6 +35,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
@@ -351,44 +355,48 @@ public class gui_registration extends javax.swing.JPanel {
                     .addComponent(inforDetail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(label_trangthai)
-                                .addGap(36, 36, 36)
-                                .addComponent(combo_trangthai, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(label_iddangki)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txt_iddangki))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(label_id_khachhang)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_id_khachhang, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_chonkhachhang, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(label_khachhang)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_ten_Khachhang))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(btn_xoa)
                                     .addComponent(btn_datlai)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(label_ngaydangki)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(txt_ngaydangki))
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(label_id_pt)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(txt_phuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(btn_chonphuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(label_iddangki)
+                                    .addComponent(label_id_khachhang))
+                                .addGap(27, 27, 27)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(txt_id_khachhang, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btn_chonkhachhang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(txt_iddangki)))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(btn_them)
-                                .addGap(28, 28, 28)
-                                .addComponent(btn_capnhat)))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(label_khachhang)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txt_ten_Khachhang, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(label_ngaydangki)
+                                            .addComponent(label_id_pt))
+                                        .addGap(34, 34, 34)
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addComponent(txt_phuongtien)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(btn_chonphuongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(txt_ngaydangki, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(btn_them)
+                                        .addGap(28, 28, 28)
+                                        .addComponent(btn_capnhat)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(label_trangthai)
+                                .addGap(50, 50, 50)
+                                .addComponent(combo_trangthai, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(32, 32, 32))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -399,10 +407,10 @@ public class gui_registration extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(label_iddangki)
                             .addComponent(txt_iddangki, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(label_id_khachhang)
                             .addComponent(txt_id_khachhang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -705,6 +713,14 @@ public class gui_registration extends javax.swing.JPanel {
     }//GEN-LAST:event_combo_trangthaiActionPerformed
     private void processDelete() {
         int registrationId = Integer.parseInt(txt_iddangki.getText());
+        
+        for (Payment pm : PaymentDAO.getInstance().getList()) {
+            if (pm.getRegistration_id() == registrationId) {
+                logError("Đã tồn tại đơn thanh toán cho đăng kí này, không thể xóa");
+                return;
+            }
+        }
+        
         String rs = RegisatrationDAO.getInstance().delete(registrationId);
         
         this.viewmain.setEnabled(false);
@@ -828,10 +844,26 @@ public class gui_registration extends javax.swing.JPanel {
         }
         
         Regisatration registration = new Regisatration(Integer.parseInt(txt_id_khachhang.getText()), 1, LocalDate.now(), id_pt, 'A');
+        
+        for (Regisatration rs : dataglobal.getArrayRegistration()) {
+            if (rs.getCustomer_id() == registration.getCustomer_id() && rs.getVehicle_id() == registration.getVehicle_id() && rs.getState() != 'C') {
+                logError("Đăng kí của khách hàng này vẫn đang hoạt động.");
+                return;
+            }
+        }
+        for (Regisatration rs : dataglobal.getArrayRegistration()) {
+            if (rs.getVehicle_id() == registration.getVehicle_id() && rs.getState() != 'C') {
+                logError("Phương tiện này đã được sử dụng bởi người khác");
+                return;
+            }
+        }
+        
+        int length_before = dataglobal.getArrayRegistration().size();
         String rs = RegisatrationDAO.getInstance().insert(registration);
-
+        dataglobal.updateArrRegistration();
+        int length_after = dataglobal.getArrayRegistration().size();
         for (Regisatration tmp : RegisatrationDAO.getInstance().getList()) {
-            if (tmp.getCustomer_id() == registration.getCustomer_id() && tmp.getVehicle_id() == registration.getVehicle_id() && rs.equals("Thêm thành công")) {
+            if (tmp.getCustomer_id() == registration.getCustomer_id() && tmp.getVehicle_id() == registration.getVehicle_id() && rs.equals("Thêm thành công") && length_after == length_before) {
                 rs = "Tái kích hoạt thành công";
             }
         }
@@ -925,31 +957,6 @@ public class gui_registration extends javax.swing.JPanel {
     }//GEN-LAST:event_btn_chonkhachhangActionPerformed
 
     private void btn_chonphuongtienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chonphuongtienActionPerformed
-        // TODO add your handling code here:
-        // init log confirm
-        
-        // Khống chế viewmain
-//        this.viewmain.setEnabled(false);
-//        // ghi đè cho các phím xác nhận
-//        this.logConfirm = new LogConfirm( "Cảnh báo cảnh báo") {
-//            @Override
-//            public void action() {
-//                System.out.println("DO SOMETHING");
-//                this.setVisible(false);
-//                viewmain.setEnabled(true);
-//                viewmain.requestFocus();
-//                
-//                System.out.println("hkjdawhkjđnaokwdnkjàcbnưaeoilfjằdưeanlk");
-//            }
-//            @Override
-//            public void reject() {
-//                System.out.println("Huy bo thao tac");
-//                this.setVisible(false);
-//                viewmain.setEnabled(true);
-//                viewmain.requestFocus();
-//            }
-//        };
-//        this.logConfirm.setVisible(true);
         this.viewmain.setEnabled(false);
         this.logSelection = new LogSelection() {
             @Override
@@ -1137,9 +1144,37 @@ public class gui_registration extends javax.swing.JPanel {
             Integer.parseInt(txt_iddangki.getText()),
             datetime, id_pt, state
         );
-
+        
+        for (Regisatration rs : dataglobal.getArrayRegistration()) {
+            if (rs.getVehicle_id() == registration.getVehicle_id() && 
+                    rs.getRegistration_id() != registration.getRegistration_id() &&
+                    rs.getState() != 'C'
+                    ) {
+                logError("Phương tiện này đã được sử dụng ở đăng kí khác");
+                return;
+            }
+        }
+        for (Regisatration rs : dataglobal.getArrayRegistration()) {
+            if (registration.getRegistration_id() == rs.getRegistration_id() && 
+                    (registration.getVehicle_id() != rs.getVehicle_id() || registration.getCustomer_id() != rs.getCustomer_id())) {
+                for (Payment pm : PaymentDAO.getInstance().getList()) {
+                    if (pm.getRegistration_id() == registration.getRegistration_id()) {
+                        logError("Không sửa thông tin về khách hàng và phương tiện");
+                        return;
+                    }
+                }
+            }
+        }
+        for (Regisatration rs : dataglobal.getArrayRegistration()) {
+            if (registration.getRegistration_id() != rs.getRegistration_id() && 
+                    registration.getVehicle_id() == rs.getVehicle_id() && registration.getCustomer_id() == rs.getCustomer_id()) {
+                logError("Trùng lặp đăng kí");
+                return;
+            }
+        }
+        
+        
         String rs = RegisatrationDAO.getInstance().update(registration);
-
         this.viewmain.setEnabled(false);
         this.logMessage = new LogMessage(rs) {
             @Override
@@ -1165,7 +1200,7 @@ public class gui_registration extends javax.swing.JPanel {
         String idDangki = txt_iddangki.getText();
         String idKhachhang = txt_id_khachhang.getText();
         String idPhuongtien = txt_phuongtien.getText();
-        System.out.println(idDangki + "-" + idKhachhang + "-" + idPhuongtien);
+        
         for (ArrayList<String> datacheck : this.dataglobal.getArrRegistration_render()) {
             if (!idDangki.equals(datacheck.get(0)) && idKhachhang.equals(datacheck.get(1)) && idPhuongtien.equals(datacheck.get(4))) {
                 this.viewmain.setEnabled(false);

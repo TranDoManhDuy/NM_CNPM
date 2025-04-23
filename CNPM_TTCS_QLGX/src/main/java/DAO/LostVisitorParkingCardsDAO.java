@@ -53,8 +53,11 @@ public class LostVisitorParkingCardsDAO {
             if(e.getErrorCode() == 50000){
                 return e.getMessage();
             }
+            if(e.getErrorCode() == 547){
+                return "Mã lượt gửi xe không tồn tại";
+            }
             else{
-                return e.getMessage();
+                return "Thêm không thành công";
                     }
         }
         return "Thêm thành công";
@@ -71,11 +74,14 @@ public class LostVisitorParkingCardsDAO {
             ptmt.setInt(2, lostCard.getParking_session_id());
             ptmt.executeUpdate();
         } catch (SQLException e) {
+            if(e.getErrorCode() == 547){
+                return "Mã gửi xe không tồn tại";
+            }
             if(e.getErrorCode() == 50000){
                 return e.getMessage();
             }
             else{
-                return "Lỗi không biết";    
+                return "Cập nhật không thành công";    
                     }
         }
         return "Cập nhật thành công";
@@ -95,7 +101,7 @@ public class LostVisitorParkingCardsDAO {
                 return e.getMessage();
             }
             else{
-                return "Lỗi không biết";    
+                return "Xoá không thành công";    
                     }
         }
         return "Xóa thành công";

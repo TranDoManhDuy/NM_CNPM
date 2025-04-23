@@ -6,18 +6,22 @@ package com.nmcnpm_ttcs.cnpm_ttcs_qlgx;
 import static DatabaseHelper.OpenConnection.initializaConnection;
 import GUI.Login;
 import GUI.ViewMain;
+import java.awt.Font;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.*;
+import java.util.Enumeration;
 /**
  * @author manhh
  */
 public class CNPM_TTCS_QLGX {
     public static void login() throws ClassNotFoundException, SQLException {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        String connectionURL = "jdbc:sqlserver://localhost;database=VINHOMES; encrypt=true;trustServerCertificate=true;";
+        String connectionURL = "jdbc:sqlserver://localhost:1433;database=VINHOMES;encrypt=true;trustServerCertificate=true;";
         String username = "check_login";
         String password = "123";
         Connection conn = DriverManager.getConnection(connectionURL, username, password);
@@ -39,11 +43,23 @@ public class CNPM_TTCS_QLGX {
         login.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         login.setVisible(true);
     }
-    public static void main(String[] args) throws ClassNotFoundException {
+    
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+        setUIFont(new Font("Arial", Font.PLAIN, 14));
         try {
             login();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    public static void setUIFont(Font font) {
+        Enumeration<Object> keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof Font) {
+                UIManager.put(key, font);
+            }
         }
     }
 }

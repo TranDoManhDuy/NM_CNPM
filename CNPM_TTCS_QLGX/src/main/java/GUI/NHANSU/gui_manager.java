@@ -149,7 +149,6 @@ public class gui_manager extends javax.swing.JPanel {
         jLabel13 = new javax.swing.JLabel();
         btnXoa = new javax.swing.JButton();
         btnThem = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jTextField4 = new javax.swing.JTextField();
         btnLammoiTK = new javax.swing.JButton();
@@ -261,7 +260,7 @@ public class gui_manager extends javax.swing.JPanel {
                 .addGap(44, 44, 44)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 264, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnLammoi)
                         .addGap(36, 36, 36))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -329,25 +328,20 @@ public class gui_manager extends javax.swing.JPanel {
             }
         });
 
-        jButton7.setText("SỬA");
-
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel13))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jLabel13)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(51, 51, 51)
+                .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(82, 82, 82))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -357,8 +351,7 @@ public class gui_manager extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -389,7 +382,7 @@ public class gui_manager extends javax.swing.JPanel {
                 .addComponent(btnTim)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnLammoiTK, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -484,32 +477,20 @@ public class gui_manager extends javax.swing.JPanel {
     }//GEN-LAST:event_btnLammoiTKActionPerformed
 
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
-        // TODO add your handling code here:
-        try {
+        // TODO add your handling code here:       
         int managerId = Integer.parseInt(txtQuanly.getText().trim());
         int staffId = Integer.parseInt(txtNhanvien.getText().trim());
-        
 
-        if (managerId == staffId) {
-            log_message("Không thể tự giám sát chính mình.");
-            return;
-        }
-
-        Supervisor s = new Supervisor(managerId, staffId);
+        Supervisor supervisor = new Supervisor(managerId, staffId);
         SupervisorDAO dao = new SupervisorDAO();
 
-        boolean success = dao.insert(s);
+        boolean success = dao.insert(supervisor);
+
         if (success) {
-            log_message("Thêm giám sát viên thành công.");
+            log_message("Thêm giám sát thành công.");
             loadTable();  
             ResetThongTin();
-        }
-
-    } catch (NumberFormatException e) {
-        log_message("Vui lòng nhập đúng định dạng ID");
-    } catch (Exception e) {
-        
-    }
+        }          
     }//GEN-LAST:event_btnThemActionPerformed
 
     private void btnLammoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLammoiActionPerformed
@@ -525,7 +506,6 @@ public class gui_manager extends javax.swing.JPanel {
         return;
     }
 
-    try {
         int managerId = Integer.parseInt(txtQuanly.getText().trim());
         int staffId = Integer.parseInt(txtNhanvien.getText().trim());
 
@@ -540,6 +520,7 @@ public class gui_manager extends javax.swing.JPanel {
                 if (dao.delete(managerId, staffId)) {
                     log_message("Xóa thành công.");
                     loadTable();
+                    ResetThongTin();
                 } else {
                     log_message("Không tìm thấy hoặc không thể xóa.");
                 }
@@ -556,9 +537,6 @@ public class gui_manager extends javax.swing.JPanel {
         this.viewmain.setEnabled(false);
         logConfirm.setLocationRelativeTo(null);
         logConfirm.setVisible(true);
-    } catch (NumberFormatException e) {
-        log_message("ID phải là số nguyên.");
-    }
     }//GEN-LAST:event_btnXoaActionPerformed
 
     private void btn_chon_quan_lyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chon_quan_lyActionPerformed
@@ -759,7 +737,6 @@ public class gui_manager extends javax.swing.JPanel {
     private javax.swing.JButton btnXoa;
     private javax.swing.JButton btn_chon_nhan_vien;
     private javax.swing.JButton btn_chon_quan_ly;
-    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel13;

@@ -10,7 +10,9 @@ import Annotation.LogSelection;
 import DAO.CustomerDAO;
 import DAO.PaymentDAO;
 import DAO.RegisatrationDAO;
+import DAO.ServiceFeeDAO;
 import DAO.TypeServiceDAO;
+import DAO.VehicleDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
@@ -28,6 +30,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 /**
  *
@@ -344,42 +347,43 @@ public class gui_payment extends javax.swing.JPanel {
                         .addGap(5, 5, 5)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(27, 27, 27)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txt_tenkhachhang)
-                                    .addComponent(txt_ngaylendon)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                        .addComponent(txt_iddangki, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btn_chondangki))
-                                    .addComponent(txt_idthanhtoan)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(txt_idloaidichvu)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btn_chondichvu, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addComponent(label_khachhang, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(1, 1, 1)
+                                        .addComponent(label_tenkhachhang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(txt_idloaidichvu, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btn_chondichvu, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(txt_ngaylendon, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(txt_iddangki, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btn_chondangki))
+                                    .addComponent(txt_tenkhachhang, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txt_idthanhtoan, javax.swing.GroupLayout.Alignment.TRAILING)))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(label_trangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                                .addComponent(label_ngaydangki)
-                                                .addGap(0, 0, Short.MAX_VALUE))
-                                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(0, 0, Short.MAX_VALUE)
-                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addComponent(jLabel11)
-                                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                        .addComponent(label_tenloaidichvu, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(label_tenkhachhang, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                                        .addGap(16, 16, 16)))
+                                            .addComponent(label_ngaydangki, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(label_khachhang, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGap(23, 23, 23))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(label_tenloaidichvu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(combo_trangthai, 0, 189, Short.MAX_VALUE)
-                                    .addComponent(txt_tendichvu))))
+                                    .addComponent(txt_tendichvu)
+                                    .addComponent(combo_trangthai, 0, 162, Short.MAX_VALUE))))
                         .addGap(22, 22, 22))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(btn_them)
@@ -436,7 +440,7 @@ public class gui_payment extends javax.swing.JPanel {
                     .addComponent(btn_capnhat)
                     .addComponent(btn_xoa)
                     .addComponent(btn_datlai))
-                .addGap(23, 23, 23))
+                .addGap(30, 30, 30))
         );
 
         txt_timkiem.addActionListener(new java.awt.event.ActionListener() {
@@ -685,9 +689,9 @@ public class gui_payment extends javax.swing.JPanel {
                             .addComponent(btn_tailai))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 341, Short.MAX_VALUE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -757,13 +761,59 @@ public class gui_payment extends javax.swing.JPanel {
     private void txt_iddangkiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_iddangkiActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_iddangkiActionPerformed
-
-    private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
-        // TODO add your handling code here:
+    private void processDelete() {
+        if (PaymentDAO.getInstance().findbyID(Integer.parseInt(txt_idthanhtoan.getText())).isPayment_state()) {
+            logError("Không thể xóa khi đã thanh toán thành công");
+            return;
+        }
         String rs = PaymentDAO.getInstance().delete(Integer.parseInt(txt_idthanhtoan.getText()));
         logError(rs);
         this.dataglobal.updateArrPaymentRender();
         fillTable();
+    }
+    private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
+        // TODO add your handling code here:
+        this.viewmain.setEnabled(false);
+        this.cursorBreak = false;
+
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn xóa ?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processDelete();
+            }
+        };
+        worker.execute();
+        worker = null;
     }//GEN-LAST:event_btn_xoaActionPerformed
     private void logError(String rs) {
         this.viewmain.setEnabled(false);
@@ -790,6 +840,26 @@ public class gui_payment extends javax.swing.JPanel {
         int id_registration = Integer.parseInt(txt_iddangki.getText());
         int id_serviceType = Integer.parseInt(txt_idloaidichvu.getText());
         Payment payment = new Payment(1, id_registration , LocalDate.now(), false, id_serviceType);
+        
+        for (Payment pm : PaymentDAO.getInstance().getList()) {
+            if (pm.getRegistration_id() == payment.getRegistration_id() && pm.isPayment_state() == false) {
+                logError("Đăng kí này chưa hoàn tất một hóa đơn khác, không thể tạo lập hóa đơn mới");
+                return; 
+            }
+        }
+        int id_regis = payment.getRegistration_id();
+        int id_vehicle = RegisatrationDAO.getInstance().findbyID(id_regis).getVehicle_id();
+        int id_vehicle_type1 = VehicleDAO.getInstance().findbyID(id_vehicle).getVehicle_type_id();
+        
+        int serviceType_id = payment.getService_type_id();
+        int serviceFee_id = TypeServiceDAO.getInstance().findbyID(serviceType_id).getService_fee_id();
+        int id_vehicle_type2 = ServiceFeeDAO.getInstance().findbyID(serviceFee_id).getVehicle_type_id();
+        
+        if (id_vehicle_type1 != id_vehicle_type2) {
+            logError("Loại phương tiện trên đăng kí và loại dịch vụ không tương thích");
+            return;
+        }
+        
         String rs = PaymentDAO.getInstance().insert(payment);
         logError(rs);
         this.dataglobal.updateArrPaymentRender();
@@ -1004,8 +1074,7 @@ public class gui_payment extends javax.swing.JPanel {
         this.logSelection.initContent();
         this.logSelection.setVisible(true);
     }//GEN-LAST:event_btn_chondichvuActionPerformed
-
-    private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
+    private void processUpdate() {
         // TODO add your handling code here:
         int id_thanhtoan = Integer.parseInt(txt_idthanhtoan.getText());
         int id_dangki = Integer.parseInt(txt_iddangki.getText());
@@ -1017,10 +1086,72 @@ public class gui_payment extends javax.swing.JPanel {
         }
         int serviceTypeId = Integer.parseInt(txt_idloaidichvu.getText());
         Payment payment = new Payment(id_thanhtoan, id_dangki, extension_time, state, serviceTypeId);
+        
+        if (payment.isPayment_state()) {
+            logError("Không thể thay đổi khi đã thanh toán thành công");
+            return;
+        }
+        
+        int id_regis = payment.getRegistration_id();
+        int id_vehicle = RegisatrationDAO.getInstance().findbyID(id_regis).getVehicle_id();
+        int id_vehicle_type1 = VehicleDAO.getInstance().findbyID(id_vehicle).getVehicle_type_id();
+        
+        int serviceType_id = payment.getService_type_id();
+        int serviceFee_id = TypeServiceDAO.getInstance().findbyID(serviceType_id).getService_fee_id();
+        int id_vehicle_type2 = ServiceFeeDAO.getInstance().findbyID(serviceFee_id).getVehicle_type_id();
+        
+        if (id_vehicle_type1 != id_vehicle_type2) {
+            logError("Loại phương tiện trên đăng kí và loại dịch vụ không tương thích");
+            return;
+        }
+        
         String rs = PaymentDAO.getInstance().update(payment);
         logError(rs);
         dataglobal.updateArrPaymentRender();
         fillTable();
+    }
+    private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
+        this.viewmain.setEnabled(false);
+        this.cursorBreak = false;
+
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật ?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processUpdate();
+            }
+        };
+        worker.execute();
+        worker = null;
     }//GEN-LAST:event_btn_capnhatActionPerformed
 
 

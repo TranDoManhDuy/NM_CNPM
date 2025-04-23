@@ -661,13 +661,8 @@ public class gui_staff extends javax.swing.JPanel {
         }
 
         String trangThai = Table_Staff.getValueAt(selectedRow, 9).toString().trim();
-        String viTri = Table_Staff.getValueAt(selectedRow, 10).toString().trim();
         if (trangThai.equalsIgnoreCase("Còn làm việc")) {
-            log_message("Không thể xóa");
-            return;
-        }
-        if (viTri.equalsIgnoreCase("Manager")) {
-            log_message("Không thể xóa");
+            log_message("Không thể xóa vì người này đang hoạt động.");
             return;
         }
 
@@ -678,12 +673,19 @@ public class gui_staff extends javax.swing.JPanel {
             public void action() {
                 setVisible(false);
                 viewmain.setEnabled(true);
-                if (StaffDAO.getInstance().delete(staff_id)) {
-                    log_message("Xóa thành công!");
-                    loadTable();
-                    resetThongTin();
-                } else {
-                    log_message("Xóa thất bại");
+                try {
+                    boolean deleted = StaffDAO.getInstance().delete(staff_id);
+                    if (deleted) {
+                        log_message("Xóa thành công!");
+                        List<Staff> allStaff = StaffDAO.getInstance().getList();
+                        loadAndFilterTable(allStaff);
+                        resetThongTin();
+                    } else {
+                        log_message("Xóa thất bại! Vui lòng kiểm tra lại điều kiện.");
+                    }
+                } catch (Exception e) {
+                    log_message("Lỗi khi xóa: " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
 
@@ -693,6 +695,7 @@ public class gui_staff extends javax.swing.JPanel {
                 viewmain.setEnabled(true);
             }
         };
+
         logConfirm.setLocationRelativeTo(null);
         logConfirm.setVisible(true);
     }//GEN-LAST:event_btnXoaActionPerformed
@@ -807,7 +810,7 @@ public class gui_staff extends javax.swing.JPanel {
         }
 
         if (!email.matches("^[\\w.+\\-]+@gmail\\.com$")) {
-            log_message("Email phải là địa chỉ Gmail hợp lệ.");
+            log_message("Email phải là địa chỉ Gmail hợp lệ (@gmail.com).");
             return;
         }
 
@@ -835,14 +838,12 @@ public class gui_staff extends javax.swing.JPanel {
             log_message("Ngày sinh không đúng định dạng yyyy-MM-dd.");
             return;
         }
-
-        
-        
+       
         int accountNumber;
         try {
             accountNumber = Integer.parseInt(accNumText);
         } catch (NumberFormatException e) {
-            log_message("Số tài khoản phải là số");
+            log_message("Số tài khoản không hợp lệ.");
             return;
         }
 
@@ -853,7 +854,6 @@ public class gui_staff extends javax.swing.JPanel {
             currentStaffId = 0;
         }
         
-                // Kiểm tra trùng ssn, phone, email
         if (StaffDAO.getInstance().isSsnExists(ssn, currentStaffId)) {
             log_message("CCCD đã tồn tại!");
             return;
@@ -877,7 +877,7 @@ public class gui_staff extends javax.swing.JPanel {
             }
 
             if (StaffDAO.getInstance().isAccountUsedByStaff(accountNumber)) {
-                log_message("Số tài khoản đã được gán cho nhân viên khác.");
+                log_message("Số tài khoản đã tồn tại.");
                 return;
             }
         }
@@ -892,9 +892,9 @@ public class gui_staff extends javax.swing.JPanel {
         int roleId = RoleDAO.getInstance().getRoleIdByName(roleText);
         int positionId = PositionDAO.getInstance().getPositionIdByName(positionText);
         
-        if ((positionText.equalsIgnoreCase("Staff") && roleText.equalsIgnoreCase("Manager")) ||
-            (positionText.equalsIgnoreCase("Manager") && roleText.equalsIgnoreCase("Staff"))) {
-            log_message("Vai trò không hợp lệ với vị trí");
+        if ((positionText.equalsIgnoreCase("Manager") && !roleText.startsWith("Manager")) ||
+            (positionText.equalsIgnoreCase("Staff") && !roleText.startsWith("Staff"))) {
+            log_message("Vai trò không hợp lệ với vị trí đã chọn.");
             return;
         }
 
@@ -912,11 +912,9 @@ public class gui_staff extends javax.swing.JPanel {
 
             List<Staff> allStaff = StaffDAO.getInstance().getList();
             loadAndFilterTable(allStaff);   
-
-            
+           
             resetThongTin();    
            
-
             isEditing = false;
             editingStaffId = -1;
             btnThem.setEnabled(true);
@@ -989,7 +987,6 @@ public class gui_staff extends javax.swing.JPanel {
                 switch (s.getGender()) {
                     case "M" -> "Nam";
                     case "F" -> "Nữ";
-                    case "O" -> "Khác";
                     default -> "";
                 },
                 s.getPhoneNumber(),
