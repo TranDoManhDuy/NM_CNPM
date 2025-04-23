@@ -156,7 +156,7 @@ public class gui_staff extends javax.swing.JPanel {
     }
     
     // Load Data ComboBox...
-    private void loadComboBox() { 
+    private void loadComboBox() {
         // Bổ sung nha Trọng.
     }
 
