@@ -56,12 +56,30 @@ public class gui_staff extends javax.swing.JPanel {
         combobox_Vaitro.removeAllItems();
         combobox_Vitri.removeAllItems();
         
+        combobox_GioiTinh.addItem("Nam");
+        combobox_GioiTinh.addItem("Nữ");
+        combobox_TrangThai.addItem("Còn làm việc");
+        combobox_TrangThai.addItem("Nghỉ việc");
+        combobox_TrangThai.setSelectedItem("Còn làm việc");
+        
+        RoleDAO daorole = new RoleDAO();
+        List <String> roleName = daorole.getRoleNames();
+        for (String role : roleName){
+            combobox_Vaitro.addItem(role);
+        }
+        
+        PositionDAO daoposition = new PositionDAO();
+        List <String> positionName = daoposition.getPositionName();
+        for (String position : positionName){
+            combobox_Vitri.addItem(position);
+        }
+        
 
         tableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
-        }
+            }
         };
         initTable();
         fillTable();
@@ -73,71 +91,74 @@ public class gui_staff extends javax.swing.JPanel {
     }
     
     public void fillTable() {
-    String sql = "EXEC Staff_render";
-    try (
-        Connection conn = OpenConnection.getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet result = stmt.executeQuery(sql);
-    ) {
-        tableModel.setRowCount(0); 
-        while (result.next()) {
-            int staff_id = result.getInt("staff_id");
-            int account_number = result.getInt("account_number");
-            String full_name = result.getString("full_name");
-            String ssn = result.getString("ssn");
-            LocalDate date_of_birth = result.getDate("date_of_birth").toLocalDate();
-            String gender = result.getString("gender").equalsIgnoreCase("M") ? "Nam" : "Nữ";
-            String phone_number = result.getString("phone_number");
-            String address = result.getString("address");
-            String email = result.getString("email");
-            boolean is_active = result.getBoolean("is_active");
-            String position_name = result.getString("position_name");
-            String role_name = result.getString("role_name");
+        String sql = "EXEC Staff_render";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet result = stmt.executeQuery(sql);
+        ) {
+            tableModel.setRowCount(0); 
+            while (result.next()) {
+                int staff_id = result.getInt("staff_id");
+                int account_number = result.getInt("account_number");
+                String full_name = result.getString("full_name");
+                String ssn = result.getString("ssn");
+                LocalDate date_of_birth = result.getDate("date_of_birth").toLocalDate();
+                String gender = result.getString("gender").equalsIgnoreCase("M") ? "Nam" : "Nữ";
+                String phone_number = result.getString("phone_number");
+                String address = result.getString("address");
+                String email = result.getString("email");
+                boolean is_active = result.getBoolean("is_active");
+                String position_name = result.getString("position_name");
+                String role_name = result.getString("role_name");
 
+                tableModel.addRow(new Object[]{
+                    staff_id,
+                    account_number,
+                    full_name,
+                    ssn,
+                    date_of_birth,
+                    gender,
+                    phone_number,
+                    address,
+                    email,
+                    is_active ? "Còn làm việc" : "Nghỉ việc",
+                    position_name,
+                    role_name,
 
-
-            tableModel.addRow(new Object[]{
-                staff_id,
-                account_number,
-                full_name,
-                ssn,
-                date_of_birth,
-                gender,
-                phone_number,
-                address,
-                email,
-                is_active ? "Còn làm việc" : "Nghỉ việc",
-                position_name,
-                role_name,
-                
-            });
+                });
+            }
+            tableModel.fireTableDataChanged();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        tableModel.fireTableDataChanged();
-    } catch (Exception e) {
-        e.printStackTrace();
+        Table_Staff.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int selectedRow = Table_Staff.getSelectedRow();
+                if (selectedRow != -1) {
+                    txt_ID.setText(Table_Staff.getValueAt(selectedRow, 0).toString());         
+                    txt_TaiKhoan.setText(Table_Staff.getValueAt(selectedRow, 1).toString());   
+                    txt_HoTen.setText(Table_Staff.getValueAt(selectedRow, 2).toString());      
+                    txt_CCCD.setText(Table_Staff.getValueAt(selectedRow, 3).toString());       
+                    txt_NgaySinh.setText(Table_Staff.getValueAt(selectedRow, 4).toString());   
+                    combobox_GioiTinh.setSelectedItem(Table_Staff.getValueAt(selectedRow, 5).toString()); 
+                    txt_SDT.setText(Table_Staff.getValueAt(selectedRow, 6).toString());       
+                    txt_DiaChi.setText(Table_Staff.getValueAt(selectedRow, 7).toString());     
+                    txt_Email.setText(Table_Staff.getValueAt(selectedRow, 8).toString());      
+                    combobox_TrangThai.setSelectedItem(Table_Staff.getValueAt(selectedRow, 9).toString());
+                    combobox_Vitri.setSelectedItem(Table_Staff.getValueAt(selectedRow, 10).toString());
+                    combobox_Vaitro.setSelectedItem(Table_Staff.getValueAt(selectedRow, 11).toString());
+                }       
+                txt_ID.setEnabled(false);
+            }
+        });
     }
-    Table_Staff.addMouseListener(new MouseAdapter() {
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        int selectedRow = Table_Staff.getSelectedRow();
-        if (selectedRow != -1) {
-            txt_ID.setText(Table_Staff.getValueAt(selectedRow, 0).toString());         
-            txt_TaiKhoan.setText(Table_Staff.getValueAt(selectedRow, 1).toString());   
-            txt_HoTen.setText(Table_Staff.getValueAt(selectedRow, 2).toString());      
-            txt_CCCD.setText(Table_Staff.getValueAt(selectedRow, 3).toString());       
-            txt_NgaySinh.setText(Table_Staff.getValueAt(selectedRow, 4).toString());   
-            combobox_GioiTinh.setSelectedItem(Table_Staff.getValueAt(selectedRow, 5).toString()); 
-            txt_SDT.setText(Table_Staff.getValueAt(selectedRow, 6).toString());       
-            txt_DiaChi.setText(Table_Staff.getValueAt(selectedRow, 7).toString());     
-            txt_Email.setText(Table_Staff.getValueAt(selectedRow, 8).toString());      
-            combobox_TrangThai.setSelectedItem(Table_Staff.getValueAt(selectedRow, 9).toString());
-            combobox_Vitri.setSelectedItem(Table_Staff.getValueAt(selectedRow, 10).toString());
-            combobox_Vaitro.setSelectedItem(Table_Staff.getValueAt(selectedRow, 11).toString());
-        }       
-        txt_ID.setEnabled(false);
+    
+    // Load Data ComboBox...
+    private void loadComboBox() { 
+        // Bổ sung nha Trọng.
     }
-});  
-}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -593,30 +614,30 @@ public class gui_staff extends javax.swing.JPanel {
         txt_Email.setText("");;
         txt_TaiKhoan.setText("");
         
-        combobox_GioiTinh.removeAllItems();
-        combobox_GioiTinh.addItem("Nam");
-        combobox_GioiTinh.addItem("Nữ");
-        combobox_GioiTinh.setSelectedItem("Nam");
-
-        combobox_TrangThai.removeAllItems();
-        combobox_TrangThai.addItem("Còn làm việc");
-        combobox_TrangThai.setSelectedItem("Còn làm việc");
-        
-        RoleDAO daorole = new RoleDAO();
-        List <String> roleName = daorole.getRoleNames();
-        
-        combobox_Vaitro.removeAllItems();
-        for (String role : roleName){
-            combobox_Vaitro.addItem(role);
-        }
-
-        PositionDAO daoposition = new PositionDAO();
-        List <String> positionName = daoposition.getPositionName();
-        
-        combobox_Vitri.removeAllItems();
-        for (String position : positionName){
-            combobox_Vitri.addItem(position);
-        }
+//        combobox_GioiTinh.removeAllItems();
+//        combobox_GioiTinh.addItem("Nam");
+//        combobox_GioiTinh.addItem("Nữ");
+//        combobox_GioiTinh.setSelectedItem("Nam");
+//
+//        combobox_TrangThai.removeAllItems();
+//        combobox_TrangThai.addItem("Còn làm việc");
+//        combobox_TrangThai.setSelectedItem("Còn làm việc");
+//        
+//        RoleDAO daorole = new RoleDAO();
+//        List <String> roleName = daorole.getRoleNames();
+//        
+//        combobox_Vaitro.removeAllItems();
+//        for (String role : roleName){
+//            combobox_Vaitro.addItem(role);
+//        }
+//
+//        PositionDAO daoposition = new PositionDAO();
+//        List <String> positionName = daoposition.getPositionName();
+//        
+//        combobox_Vitri.removeAllItems();
+//        for (String position : positionName){
+//            combobox_Vitri.addItem(position);
+//        }
         
         txt_HoTen.requestFocus(); 
         isEditing = false;
@@ -692,29 +713,29 @@ public class gui_staff extends javax.swing.JPanel {
              return;
         }
 
-        combobox_GioiTinh.removeAllItems();
-        combobox_GioiTinh.addItem("Nam");
-        combobox_GioiTinh.addItem("Nữ");
-
-        combobox_TrangThai.removeAllItems();
-        combobox_TrangThai.addItem("Còn làm việc");
-        combobox_TrangThai.addItem("Đã nghỉ");
-        
-        RoleDAO daorole = new RoleDAO();
-        List <String> roleName = daorole.getRoleNames();
-        
-        combobox_Vaitro.removeAllItems();
-        for (String role : roleName){
-            combobox_Vaitro.addItem(role);
-        }
-
-        PositionDAO daoposition = new PositionDAO();
-        List <String> positionName = daoposition.getPositionName();
-        
-        combobox_Vitri.removeAllItems();
-        for (String position : positionName){
-            combobox_Vitri.addItem(position);
-        }
+//        combobox_GioiTinh.removeAllItems();
+//        combobox_GioiTinh.addItem("Nam");
+//        combobox_GioiTinh.addItem("Nữ");
+//
+//        combobox_TrangThai.removeAllItems();
+//        combobox_TrangThai.addItem("Còn làm việc");
+//        combobox_TrangThai.addItem("Đã nghỉ");
+//        
+//        RoleDAO daorole = new RoleDAO();
+//        List <String> roleName = daorole.getRoleNames();
+//        
+//        combobox_Vaitro.removeAllItems();
+//        for (String role : roleName){
+//            combobox_Vaitro.addItem(role);
+//        }
+//
+//        PositionDAO daoposition = new PositionDAO();
+//        List <String> positionName = daoposition.getPositionName();
+//        
+//        combobox_Vitri.removeAllItems();
+//        for (String position : positionName){
+//            combobox_Vitri.addItem(position);
+//        }
 
         txt_ID.setText(Table_Staff.getValueAt(selectedRow, 0).toString());             
         txt_TaiKhoan.setText(Table_Staff.getValueAt(selectedRow, 1).toString());       
@@ -943,8 +964,8 @@ public class gui_staff extends javax.swing.JPanel {
         // TODO add your handling code here:
         List<Staff> allStaff = StaffDAO.getInstance().getList();
         loadAndFilterTable(allStaff);
-        combobox_GioiTinh.removeAllItems();
-        combobox_TrangThai.removeAllItems();
+//        combobox_GioiTinh.removeAllItems();
+//        combobox_TrangThai.removeAllItems();
     }//GEN-LAST:event_btn_TimkiemActionPerformed
 
     private void Combobox_ViTriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Combobox_ViTriActionPerformed
