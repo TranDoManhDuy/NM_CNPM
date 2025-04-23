@@ -132,7 +132,7 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
                                 !txt_resident_id.getText().trim().isEmpty();
 
         btn_chon_ma_gui_xe.setEnabled(!txt_resident_id.getText().trim().isEmpty());
-        System.out.println(txt_resident_id.getText());
+//        System.out.println(txt_resident_id.getText());
         btn_insert.setEnabled(isFilled);
     }
     

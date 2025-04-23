@@ -637,7 +637,7 @@ public class EntryAndExit extends javax.swing.JPanel {
             count += 1;
             dateStartPs = par.getCheck_in_time().toLocalDate();
             dateEndPs = par.getCheck_out_time() != null ? par.getCheck_out_time().toLocalDate() : null;
-            System.out.println(dateEndPs + " " + dateStart);
+//            System.out.println(dateEndPs + " " + dateStart);
             if (
                     (dateEndPs != null &&
                         (dateStart.isBefore(dateStartPs) || dateStart.equals(dateStartPs)) &&

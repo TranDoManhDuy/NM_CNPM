@@ -261,7 +261,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         
         for (ParkingSession par: this.dataGlobal.getArrParkingSession()) {
             if (par.getCard_id() == resident_card && par.isIs_service() && par.getCheck_out_time() == null) { 
-                System.out.println(par.getCheck_out_time());
+//                System.out.println(par.getCheck_out_time());
                 return false;
             }
         }

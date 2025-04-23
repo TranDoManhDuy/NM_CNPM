@@ -7,7 +7,6 @@ package GUI.GUIXE;
 import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import DAO.VisitorParkingCardsDAO;
-import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
 import Model.VisitorParkingCards;

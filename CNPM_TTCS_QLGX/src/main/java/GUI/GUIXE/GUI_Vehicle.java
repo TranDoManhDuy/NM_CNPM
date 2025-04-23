@@ -699,7 +699,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
                         int row = table.rowAtPoint(e.getPoint());
                         txt_vehicle_type.setText((String) table.getValueAt(row, 1));
                         choooseIndexVehicleType = Integer.parseInt((String)table.getValueAt(row, 0));
-                        System.out.println(choooseIndexVehicleType);
+//                        System.out.println(choooseIndexVehicleType);
                         logSelection.setVisible(false);
                         viewmain.setEnabled(true);
                         viewmain.requestFocus();
