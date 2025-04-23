@@ -158,6 +158,7 @@ public class gui_listmanager extends javax.swing.JPanel {
         txt_gioitinh = new javax.swing.JTextField();
         txt_vitri = new javax.swing.JTextField();
         btn_LammoiTT = new javax.swing.JButton();
+        btn_Load = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(204, 255, 255));
 
@@ -306,6 +307,14 @@ public class gui_listmanager extends javax.swing.JPanel {
             }
         });
 
+        btn_Load.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_Load.setText("Tải lại");
+        btn_Load.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_LoadActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout Panel_TTLayout = new javax.swing.GroupLayout(Panel_TT);
         Panel_TT.setLayout(Panel_TTLayout);
         Panel_TTLayout.setHorizontalGroup(
@@ -359,6 +368,8 @@ public class gui_listmanager extends javax.swing.JPanel {
                         .addContainerGap()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_Load, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btn_LammoiTT)))
                 .addGap(30, 30, 30))
         );
@@ -374,7 +385,9 @@ public class gui_listmanager extends javax.swing.JPanel {
                                 .addGap(2, 2, 2))
                             .addGroup(Panel_TTLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(btn_LammoiTT, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btn_LammoiTT, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btn_Load, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
@@ -484,6 +497,11 @@ public class gui_listmanager extends javax.swing.JPanel {
         resetThongTin();
     }//GEN-LAST:event_btn_LammoiTTActionPerformed
 
+    private void btn_LoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_LoadActionPerformed
+        // TODO add your handling code here:
+        fillTable();
+    }//GEN-LAST:event_btn_LoadActionPerformed
+
     
      
         private void resetThongTin() {
@@ -510,6 +528,7 @@ public class gui_listmanager extends javax.swing.JPanel {
     private javax.swing.JTable Table_Listmanager;
     private javax.swing.JButton btn_LammoiTT;
     private javax.swing.JButton btn_Lammoitimkiem;
+    private javax.swing.JButton btn_Load;
     private javax.swing.JButton btn_Timkiem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;

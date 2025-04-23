@@ -50,9 +50,15 @@ public class SupervisorDAO implements InterfaceDAO.InterfaceDAO<Supervisor> {
             ptmt.setInt(2, supervisor.getStaffId());
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
-            e.printStackTrace();
+            // Display error message using JOptionPane
+            JOptionPane.showMessageDialog(
+                null,
+                "Lỗi:" + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE
+            );
+            return false;
         }
-        return false;
     }
     
     @Override
