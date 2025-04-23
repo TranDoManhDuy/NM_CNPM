@@ -221,6 +221,7 @@ public class ViewMain extends javax.swing.JFrame {
                         break;
                     case 1:
                         System.out.println("Cập nhật giao diện Ca trực");
+                        sw.resetPanel();
                         dataglocal.updateArrShiftWorks();
                         sw.fillTable();
                         break;

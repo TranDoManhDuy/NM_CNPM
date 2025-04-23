@@ -89,6 +89,9 @@ public class ShiftWorksDAO {
 //                        return "Mã nhiệm vụ không tồn tại";
 //                }
             }
+            if(e.getErrorCode() == 2627){
+                return "Hành động không thể thực hiện. Ca trực này đã được tồn tại";
+            }
             else{
                 return "Thêm không thành công";    
                     }
@@ -127,6 +130,9 @@ public class ShiftWorksDAO {
 //                        return "Mã nhiệm vụ không tồn tại";
 //                }
             }
+            if(e.getErrorCode() == 2627){
+                return "Hành động không thể thực hiện. Ca trực này đã được tồn tại";
+            }
             else{
                 return "Cập nhật không thành công";
                     }
@@ -146,6 +152,9 @@ public class ShiftWorksDAO {
             String errorMessage = ptmt.getString(2);
             return errorMessage;
         } catch (SQLException e) {
+            if(e.getErrorCode() == 247){
+                return "Không thể thực hiện thao tác. Ca trực đã có lượt gửi xe được ghi nhận.";
+            }
             return "Xóa không thành công";
         }
     }
