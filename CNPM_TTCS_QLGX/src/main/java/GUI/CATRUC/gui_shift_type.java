@@ -494,7 +494,8 @@ public class gui_shift_type extends javax.swing.JPanel {
         List<ShiftWorks> arrShiftWorks = ShiftWorksDAO.getInstance().getAllShiftWorks();
         for (ShiftWorks sw : arrShiftWorks) {
             if (sw.getShift_type_id() == Integer.parseInt(jTextField1.getText())) {
-                callLogMessage("Không thể thay đổi do có ca trực đã hoàn thành");
+                callLogMessage("Không thể thay đổi do có ca trực thuộc loại ca trực này đã được đặt hoặc hoàn thành");
+                return;
             }
         }
         confirm = new LogConfirm("Xác nhận cập nhật"){
