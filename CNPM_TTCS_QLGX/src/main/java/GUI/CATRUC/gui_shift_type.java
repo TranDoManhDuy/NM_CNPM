@@ -7,8 +7,10 @@ import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Model.ShiftTypes;
 import DAO.ShiftTypesDAO; 
+import DAO.ShiftWorksDAO;
 import GUI.ViewMain;
 import Global.DataGlobal;
+import Model.ShiftWorks;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -487,28 +489,33 @@ public class gui_shift_type extends javax.swing.JPanel {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if(jTextField2.getText() == null||jTextField2.getText().isEmpty()){
             callLogMessage("Không được để trống tên ca loại trực");
+            return;
         }
-        else{
-            confirm = new LogConfirm("Xác nhận cập nhật"){
-                @Override
-                public void action() {
-                    updateShiftType();
-                    this.dispose();
-                }
-                @Override
-                public void reject() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.dispose();
-                }
+        List<ShiftWorks> arrShiftWorks = ShiftWorksDAO.getInstance().getAllShiftWorks();
+        for (ShiftWorks sw : arrShiftWorks) {
+            if (sw.getShift_type_id() == Integer.parseInt(jTextField1.getText())) {
+                callLogMessage("Không thể thay đổi do có ca trực đã hoàn thành");
+            }
+        }
+        confirm = new LogConfirm("Xác nhận cập nhật"){
+            @Override
+            public void action() {
+                updateShiftType();
+                this.dispose();
+            }
+            @Override
+            public void reject() {
+                viewMain.setEnabled(true);
+                viewMain.requestFocus();
+                this.dispose();
+            }
 
-            };
-            viewMain.setEnabled(false);
-            confirm.setEnabled(true);
-            confirm.setVisible(true);
-            confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-            confirm.setLocationRelativeTo(null);
-        }
+        };
+        viewMain.setEnabled(false);
+        confirm.setEnabled(true);
+        confirm.setVisible(true);
+        confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        confirm.setLocationRelativeTo(null);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jTextField5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField5MouseClicked

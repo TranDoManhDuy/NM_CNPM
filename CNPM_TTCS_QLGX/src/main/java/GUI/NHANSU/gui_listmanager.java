@@ -54,7 +54,7 @@ public class gui_listmanager extends javax.swing.JPanel {
         tableModel.setRowCount(0); 
         while (result.next()) {
             String position_name = result.getString("position_name");
-            if (!position_name.equalsIgnoreCase("Manager")) {
+            if (!position_name.equalsIgnoreCase("Quan ly")) {
                 continue; // bỏ qua nhân viên không phải quản lý
             }
             
