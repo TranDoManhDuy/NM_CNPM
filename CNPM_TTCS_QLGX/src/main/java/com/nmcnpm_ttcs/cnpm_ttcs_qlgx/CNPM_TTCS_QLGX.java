@@ -43,12 +43,8 @@ public class CNPM_TTCS_QLGX {
         login.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         login.setVisible(true);
     }
-<<<<<<< HEAD
-    public static void main(String[] args) throws ClassNotFoundException {
-        setUIFont(new Font("Arial", Font.PLAIN, 14));
-=======
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
->>>>>>> tranvantrong
+        setUIFont(new Font("Arial", Font.PLAIN, 14));
         try {
             login();
         } catch (Exception e) {
