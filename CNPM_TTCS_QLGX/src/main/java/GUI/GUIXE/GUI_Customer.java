@@ -4,6 +4,7 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.CustomerDAO;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -48,16 +50,20 @@ public class GUI_Customer extends javax.swing.JPanel {
     private GUI_ResidentCard gui_resident_card;
     private LogMessage logMessage;
     private DataGlobal dataGlobal;
+    private LogConfirm logConfirm;
+    private boolean cursorBreak = false;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_Customer(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, GUI_ResidentCard gui_resident_card, LogMessage logMessage) {
+    public GUI_Customer(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, GUI_ResidentCard gui_resident_card, LogMessage logMessage, LogConfirm logConfirm) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
         this.gui_resident_card = gui_resident_card;
         this.logMessage = logMessage;
         this.dataGlobal = dataGlobal;
+        this.logConfirm = logConfirm;
+        
         this.dataGlobal.updateArrBuildings();
         
         initComponents(); 
@@ -1224,12 +1230,7 @@ public class GUI_Customer extends javax.swing.JPanel {
         this.logSelection.setVisible(true);
     }//GEN-LAST:event_btn_chonActionPerformed
 
-    private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
-        // TODO add your handling code here:
-        if (!Library.Library.isValidPhoneNumber(txt_phone_number.getText().toString().trim())) { 
-            this.SetLog("Số điện thoại phải có đúng 10 chữ số!");
-            return;
-        }
+    private void processUpdate() { 
         String day = cob_ngay.getSelectedItem().toString();
         String month = cob_thang.getSelectedItem().toString();
         String year = cob_nam.getSelectedItem().toString();
@@ -1274,10 +1275,60 @@ public class GUI_Customer extends javax.swing.JPanel {
         }
         this.SetLog(check);
         return;
+    }
+    
+    private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
+        // TODO add your handling code here:
+        if (!Library.Library.isValidPhoneNumber(txt_phone_number.getText().toString().trim())) { 
+            this.SetLog("Số điện thoại phải có đúng 10 chữ số!");
+            return;
+        }
+        
+        // -------------------- Log Confirm -------------------- //
+        this.cursorBreak = false;
+        viewmain.setEnabled(false);
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật khách hàng này không ?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processUpdate();
+            }
+        };
+        worker.execute();
+        worker = null;
+        // -------------------- Log Confirm -------------------- //
     }//GEN-LAST:event_btn_updateActionPerformed
 
-    private void btn_deleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_deleteMouseClicked
-        // TODO add your handling code here:
+    private void processDelete() { 
         String check = CustomerDAO.getInstance().delete(Integer.parseInt(txt_customer_id.getText().trim()));
         if (check.equals("Xóa Thành Công")) {
             resetFields();
@@ -1292,6 +1343,51 @@ public class GUI_Customer extends javax.swing.JPanel {
         }
         this.SetLog(check);
         return;
+    }
+    
+    private void btn_deleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_deleteMouseClicked
+        // -------------------- Log Confirm -------------------- //
+        this.cursorBreak = false;
+        viewmain.setEnabled(false);
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật khách hàng này không ?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processDelete();
+            }
+        };
+        worker.execute();
+        worker = null;
+        // -------------------- Log Confirm -------------------- //
     }//GEN-LAST:event_btn_deleteMouseClicked
 
     private void btn_mac_dinhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mac_dinhActionPerformed
