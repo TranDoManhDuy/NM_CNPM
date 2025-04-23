@@ -4,6 +4,7 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.ParkingSessionDAO;
@@ -34,6 +35,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -64,15 +66,20 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
     private GUI_Vehicle gui_vehicle;
     private LogMessage logMessage;
     private DataGlobal dataGlobal;
+    private LogConfirm logConfirm;
+    private boolean cursorBreak = false;
+    
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_ParkingSession(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, LogMessage logMessage, GUI_Vehicle gui_vehicle) {
+    public GUI_ParkingSession(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, LogMessage logMessage, GUI_Vehicle gui_vehicle, LogConfirm logConfirm) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
         this.gui_vehicle = gui_vehicle;
         this.logMessage = logMessage;
         this.dataGlobal = dataGlobal;
+        this.logConfirm = logConfirm;
+        
         this.dataGlobal.updateArrayResidentCard();
         this.dataGlobal.updateArrayVisitorParkingCardses();
         this.dataGlobal.updateArrVehicle();
@@ -1201,7 +1208,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             
             Vehicle newVehicle = new Vehicle(vehicle_identification, choooseIndexVehicleType, "", "");
             String check = VehicleDAO.getInstance().insert(newVehicle);
-            System.out.println(check);
+//            System.out.println(check);
             if (!check.equals("Thêm Thành Công") && !check.equals("Đã có sẵn xe, nên không cần thêm!")) {
                 SetLog(GetError(check));
                 return;
@@ -1826,11 +1833,11 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                                 if (rg.getCustomer_id() == customerId) { 
                                     if (rg.getState() == 'B') {
                                         check = true;
-//                                        System.out.println(check + " " + LocalDate.now() + " " + date_service + " " + customerId);
+//                                        System.out.println(customerId);
                                         
                                     }
                                 }
-                                System.out.println( customerId + " " + rg.getState() + " " + rg.getCustomer_id() );
+//                                System.out.println( customerId + " " + rg.getState() + " " + rg.getCustomer_id() );
                             }
 
 //                            System.out.println(check);
@@ -2162,8 +2169,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         return;
     }//GEN-LAST:event_btn_updateActionPerformed
 
-    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
-        // TODO add your handling code here:
+    private void processDelete() { 
         int parking_session_id = Integer.parseInt(txt_parking_session_id.getText().toString().trim());
 //        System.out.println(parking_session_id);
         String check = ParkingSessionDAO.getInstance().delete(parking_session_id);
@@ -2182,6 +2188,51 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         }
         this.SetLog(check);
         return;
+    }
+    
+    
+    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+        // TODO add your handling code here:
+        this.cursorBreak = false;
+        viewmain.setEnabled(false);
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn xóa lượt gửi xe này ?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processDelete();
+            }
+        };
+        worker.execute();
+        worker = null;
     }//GEN-LAST:event_btn_deleteActionPerformed
 
     private void btn_mac_dinh_giaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mac_dinh_giaActionPerformed

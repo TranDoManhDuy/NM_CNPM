@@ -89,7 +89,7 @@ import java.util.logging.Logger;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 public class ViewMain extends javax.swing.JFrame {
-    LogConfirm logComfirm = new LogConfirm("nothing");
+    LogConfirm logConfirm = new LogConfirm("nothing");
     LogMessage logMessage = new LogMessage("Nothing");
     LogSelection logSelection = new LogSelection();
     DataGlobal dataglocal = new DataGlobal();
@@ -167,14 +167,14 @@ public class ViewMain extends javax.swing.JFrame {
             return;
         }
         // init component
-        gui_registration registration_gui = new gui_registration(this, logComfirm, logMessage, logSelection, dataglocal);
-        gui_payment payment_gui = new gui_payment(this, logComfirm, logMessage, logSelection, dataglocal);
-        gui_serviceType service_type_gui = new gui_serviceType(this, logComfirm, logMessage, logSelection, dataglocal);
-        gui_service_free service_free_gui = new gui_service_free(this, logComfirm, logMessage, logSelection, dataglocal);
-        gui_vehicle_type vehicle_type_gui = new gui_vehicle_type(this, logComfirm, logMessage, logSelection, dataglocal);
-        gui_timeframe time_frame_gui = new gui_timeframe(this, logComfirm, logMessage, dataglocal);
-        gui_session_free session_fee_gui = new gui_session_free(this, logComfirm, logMessage, logSelection, dataglocal);
-        gui_statictical statictical_gui = new gui_statictical(this, logComfirm, logMessage, logSelection, dataglocal);
+        gui_registration registration_gui = new gui_registration(this, logConfirm, logMessage, logSelection, dataglocal);
+        gui_payment payment_gui = new gui_payment(this, logConfirm, logMessage, logSelection, dataglocal);
+        gui_serviceType service_type_gui = new gui_serviceType(this, logConfirm, logMessage, logSelection, dataglocal);
+        gui_service_free service_free_gui = new gui_service_free(this, logConfirm, logMessage, logSelection, dataglocal);
+        gui_vehicle_type vehicle_type_gui = new gui_vehicle_type(this, logConfirm, logMessage, logSelection, dataglocal);
+        gui_timeframe time_frame_gui = new gui_timeframe(this, logConfirm, logMessage, dataglocal);
+        gui_session_free session_fee_gui = new gui_session_free(this, logConfirm, logMessage, logSelection, dataglocal);
+        gui_statictical statictical_gui = new gui_statictical(this, logConfirm, logMessage, logSelection, dataglocal);
         // add component
         addComponent(panel_dangki, registration_gui);
         addComponent(panel_thanhtoan, payment_gui);
@@ -243,11 +243,11 @@ public class ViewMain extends javax.swing.JFrame {
     {   
         GUI_LostVisitorParkingCard gui_LostVisitorParkingCard = new GUI_LostVisitorParkingCard(this);
         GUI_VisitorParkingCard gui_visitorParkingCard = new GUI_VisitorParkingCard(this);
-        GUI_Vehicle gui_vehicle = new GUI_Vehicle(dataglocal, this, logSelection, logMessage);
-        GUI_ResidentCard gui_resident_card = new GUI_ResidentCard(dataglocal, this, logSelection, logMessage);
-        GUI_Customer gui_customer = new GUI_Customer(dataglocal, this, logSelection, gui_resident_card, logMessage);
-        GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(dataglocal, this, logSelection, logMessage, gui_vehicle);
-        GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(dataglocal, this, logSelection, logMessage, gui_resident_card, gui_parking_session);
+        GUI_Vehicle gui_vehicle = new GUI_Vehicle(dataglocal, this, logSelection, logMessage, logConfirm);
+        GUI_ResidentCard gui_resident_card = new GUI_ResidentCard(dataglocal, this, logSelection, logMessage, logConfirm);
+        GUI_Customer gui_customer = new GUI_Customer(dataglocal, this, logSelection, gui_resident_card, logMessage, logConfirm);
+        GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(dataglocal, this, logSelection, logMessage, gui_vehicle, logConfirm);
+        GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(dataglocal, this, logSelection, logMessage, gui_resident_card, gui_parking_session, logConfirm);
         EntryAndExit gui_entry_exit = new EntryAndExit(this);
         addComponent(panel_khachhang, gui_customer);
         addComponent(panel_mat_the_cd, gui_lost_resident_card);
@@ -312,7 +312,7 @@ public class ViewMain extends javax.swing.JFrame {
 //        gui_listmanager listmanager_gui = new gui_listmanager(this);
 //        gui_profile profile = new gui_profile();
         gui_listmanager listmanager_gui = new gui_listmanager(this);
-        gui_profile profile = new gui_profile();
+//        gui_profile profile = new gui_profile();
         // add component
         addComponent(panel_nhanvien, staff_gui);
         addComponent(panel_taikhoan, account_gui);
@@ -322,7 +322,7 @@ public class ViewMain extends javax.swing.JFrame {
 //        addComponent(panel_vitri, listmanager_gui);
 //        addComponent(panel_profile, profile);
         addComponent(panel_vitri, listmanager_gui);
-        addComponent(panel_profile, profile);
+//        addComponent(panel_profile, profile);
     }
     
     /**

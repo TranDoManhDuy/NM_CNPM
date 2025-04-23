@@ -4,6 +4,7 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.ResidentCardDAO;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -45,15 +47,19 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
     private int chooseCustomerId = -1;
     private LogMessage logMessage;
     private DataGlobal dataGlobal;
+    private LogConfirm logConfirm;
+    private boolean cursorBreak = false;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_ResidentCard(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, LogMessage logMessage) {
+    public GUI_ResidentCard(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, LogMessage logMessage, LogConfirm logConfirm) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
         this.logMessage = logMessage;
         this.dataGlobal = dataGlobal;
+        this.logConfirm = logConfirm;
+        
         this.dataGlobal.updateArrayResidentCard();
         this.dataGlobal.updateArrBuildings();
         
@@ -255,7 +261,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         
         for (ParkingSession par: this.dataGlobal.getArrParkingSession()) {
             if (par.getCard_id() == resident_card && par.isIs_service() && par.getCheck_out_time() == null) { 
-                System.out.println(par.getCheck_out_time());
+//                System.out.println(par.getCheck_out_time());
                 return false;
             }
         }
@@ -853,22 +859,14 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         this.logSelection.setVisible(true);
     }//GEN-LAST:event_btn_chon_customerActionPerformed
 
-    private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
-        // TODO add your handling code here:
-        
-        if (!checkOutParkingSessionForResidentCard(Integer.parseInt(txt_pk_resident_card.getText().toString().trim()))) { 
-            SetLog("Xe còn đang được gửi");
-            return;
-        };
-        
+    
+    private void processUpdate() { 
         int residentCardId = Integer.parseInt(txt_pk_resident_card.getText().toString().trim());
-        
         boolean isActive = true;
         if (cob_con_mat.getSelectedIndex() == 2) { 
             isActive = false;
         }
         ResidentCard resident = new ResidentCard(residentCardId, chooseCustomerId, isActive);
-        
         String check = ResidentCardDAO.getInstance().update(resident);
         if (check.equals("Cập Nhật Thành Công")) {
             resetFields();
@@ -883,10 +881,59 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         }
         this.SetLog(check);
         return;
+    }
+    
+    private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
+        // TODO add your handling code here:
+        if (!checkOutParkingSessionForResidentCard(Integer.parseInt(txt_pk_resident_card.getText().toString().trim()))) { 
+            SetLog("Xe còn đang được gửi");
+            return;
+        };
+        
+        // LogConfirm
+        this.cursorBreak = false;
+        viewmain.setEnabled(false);
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật thẻ cư dân?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processUpdate();
+            }
+        };
+        worker.execute();
+        worker = null;
     }//GEN-LAST:event_btn_updateActionPerformed
 
-    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
-        // TODO add your handling code here:
+    private void processDelete() { 
         int residentCardId = Integer.parseInt(txt_pk_resident_card.getText().toString().trim());
         String check = ResidentCardDAO.getInstance().delete(residentCardId);
         if (check.equals("Xóa Thành Công")) {
@@ -902,6 +949,51 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         }
         this.SetLog(check);
         return;
+    }
+    
+    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+        // TODO add your handling code here:
+        // LogConfirm
+        this.cursorBreak = false;
+        viewmain.setEnabled(false);
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn xóa thẻ cư dân?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processDelete();
+            }
+        };
+        worker.execute();
+        worker = null;
     }//GEN-LAST:event_btn_deleteActionPerformed
 
 

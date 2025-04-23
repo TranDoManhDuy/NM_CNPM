@@ -4,6 +4,7 @@
  */
 package GUI.GUIXE;
 
+import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.LostResidentCardDAO;
@@ -18,6 +19,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Map;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -44,17 +46,20 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
     private GUI_ParkingSession gui_parking_session;
     private LogMessage logMessage;
     private DataGlobal dataGlobal;
+    private LogConfirm logConfirm;
+    private boolean cursorBreak = false;
     
     /**
      * Creates new form GUI_Customer
      */
-    public GUI_LostResidentCard(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, LogMessage logMessage, GUI_ResidentCard gui_resident_card, GUI_ParkingSession gui_parking_session) {
+    public GUI_LostResidentCard(DataGlobal dataGlobal, ViewMain viewmain, LogSelection logSelection, LogMessage logMessage, GUI_ResidentCard gui_resident_card, GUI_ParkingSession gui_parking_session, LogConfirm logConfirm) {
         this.viewmain = viewmain;
         this.logSelection = logSelection;
         this.gui_resident_card = gui_resident_card;
         this.gui_parking_session = gui_parking_session;
         this.logMessage = logMessage;
         this.dataGlobal = dataGlobal;
+        this.logConfirm = logConfirm;
         
         this.dataGlobal.updateArrayResidentCard();
         this.dataGlobal.updateArrayParkingSession();
@@ -127,7 +132,7 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
                                 !txt_resident_id.getText().trim().isEmpty();
 
         btn_chon_ma_gui_xe.setEnabled(!txt_resident_id.getText().trim().isEmpty());
-        System.out.println(txt_resident_id.getText());
+//        System.out.println(txt_resident_id.getText());
         btn_insert.setEnabled(isFilled);
     }
     
@@ -862,8 +867,7 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
         this.logSelection.setVisible(true);
     }//GEN-LAST:event_btn_chon_ma_gui_xeActionPerformed
 
-    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
-        // TODO add your handling code here:
+    private void processDelete() { 
         int lostResidentCardId = Integer.parseInt(txt_lost_resident_card.getText().toString().trim());
         String check = LostResidentCardDAO.getInstance().delete(lostResidentCardId);
         if (check.equals("Xóa Thành Công")) {
@@ -878,6 +882,50 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
         }
         this.SetLog(check);
         return;
+    }
+    
+    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+        // TODO add your handling code here:
+        this.cursorBreak = false;
+        viewmain.setEnabled(false);
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn xóa lượt mất thẻ cư dân này không ?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processDelete();
+            }
+        };
+        worker.execute();
+        worker = null;
     }//GEN-LAST:event_btn_deleteActionPerformed
 
 
