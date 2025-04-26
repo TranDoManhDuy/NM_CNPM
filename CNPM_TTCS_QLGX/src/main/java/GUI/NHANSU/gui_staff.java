@@ -14,6 +14,8 @@ import DAO.StaffDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Model.Staff;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
@@ -38,8 +40,6 @@ public class gui_staff extends javax.swing.JPanel {
     private LogConfirm logConfirm;
     private LogMessage logMessage;
     private LogSelection logSelection;
-    private boolean isEditing = false;
-    private int editingStaffId = -1;
     
 
     public gui_staff(ViewMain viewmain) {
@@ -48,15 +48,27 @@ public class gui_staff extends javax.swing.JPanel {
         this.logMessage = logMessage;
         this.logSelection = logSelection;
         initComponents();
-        btnLuu.setEnabled(false);
-        btnHuy.setEnabled(false);
+        btnXoa.setEnabled(false);
+        btnSua.setEnabled(false);
+        btn_LammoiTT.setEnabled(false);
         txt_ID.setEditable(false);
-        combobox_GioiTinh.removeAllItems();
-        combobox_TrangThai.removeAllItems();
-        combobox_Vaitro.removeAllItems();
-        combobox_Vitri.removeAllItems();
+        combobox_GioiTinh.setEnabled(false);
+        combobox_Vitri.setEnabled(false);
+        combobox_Vaitro.setEnabled(false);
+        combobox_TrangThai.setEnabled(false);
         
+        RoleDAO daorole = new RoleDAO();
+        List <String> roleName = daorole.getRoleNames();       
+        for (String role : roleName){
+            combobox_Vaitro.addItem(role);
+        }
 
+        PositionDAO daoposition = new PositionDAO();
+        List <String> positionName = daoposition.getPositionName();
+        for (String position : positionName){
+            combobox_Vitri.addItem(position);
+        }
+               
         tableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -94,8 +106,6 @@ public class gui_staff extends javax.swing.JPanel {
             String position_name = result.getString("position_name");
             String role_name = result.getString("role_name");
 
-
-
             tableModel.addRow(new Object[]{
                 staff_id,
                 account_number,
@@ -106,7 +116,7 @@ public class gui_staff extends javax.swing.JPanel {
                 phone_number,
                 address,
                 email,
-                is_active ? "Còn làm việc" : "Nghỉ việc",
+                is_active ? "Còn làm việc" : "Đã nghỉ",
                 position_name,
                 role_name,
                 
@@ -134,7 +144,15 @@ public class gui_staff extends javax.swing.JPanel {
             combobox_Vitri.setSelectedItem(Table_Staff.getValueAt(selectedRow, 10).toString());
             combobox_Vaitro.setSelectedItem(Table_Staff.getValueAt(selectedRow, 11).toString());
         }       
-        txt_ID.setEnabled(false);
+        btnXoa.setEnabled(true);
+        btnSua.setEnabled(true);
+        btn_LammoiTT.setEnabled(true);
+        txt_CCCD.setEditable(false);
+        txt_TaiKhoan.setEditable(false);
+        combobox_GioiTinh.setEnabled(true);
+        combobox_Vitri.setEnabled(true);
+        combobox_Vaitro.setEnabled(true);
+        combobox_TrangThai.setEnabled(true);
     }
 });  
 }
@@ -151,7 +169,6 @@ public class gui_staff extends javax.swing.JPanel {
         jLabel14 = new javax.swing.JLabel();
         jComboBox3 = new javax.swing.JComboBox<>();
         Panel_TKCN = new javax.swing.JPanel();
-        btnThem = new javax.swing.JButton();
         btnXoa = new javax.swing.JButton();
         btnSua = new javax.swing.JButton();
         btn_Lammoitimkiem = new javax.swing.JButton();
@@ -182,15 +199,13 @@ public class gui_staff extends javax.swing.JPanel {
         jLabel15 = new javax.swing.JLabel();
         txt_CCCD = new javax.swing.JTextField();
         txt_SDT = new javax.swing.JTextField();
-        btnLuu = new javax.swing.JButton();
-        btnHuy = new javax.swing.JButton();
         btn_LammoiTT = new javax.swing.JButton();
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         txt_TaiKhoan = new javax.swing.JTextField();
         combobox_TrangThai = new javax.swing.JComboBox<>();
-        combobox_Vaitro = new javax.swing.JComboBox<>();
         combobox_Vitri = new javax.swing.JComboBox<>();
+        combobox_Vaitro = new javax.swing.JComboBox<>();
 
         jLabel14.setText("Vai trò");
 
@@ -198,19 +213,6 @@ public class gui_staff extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(1125, 485));
 
         Panel_TKCN.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        btnThem.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnThem.setText("Thêm");
-        btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnThemMouseClicked(evt);
-            }
-        });
-        btnThem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnThemActionPerformed(evt);
-            }
-        });
 
         btnXoa.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnXoa.setText("Xóa");
@@ -287,9 +289,7 @@ public class gui_staff extends javax.swing.JPanel {
                 .addComponent(btn_Timkiem, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_Lammoitimkiem)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(112, 112, 112)
                 .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSua, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -308,7 +308,6 @@ public class gui_staff extends javax.swing.JPanel {
                             .addComponent(txt_Timkiem, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel9))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(btnThem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btn_Lammoitimkiem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(Combobox_ViTri)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_TKCNLayout.createSequentialGroup()
@@ -379,46 +378,19 @@ public class gui_staff extends javax.swing.JPanel {
 
         jLabel5.setText("Giới tính");
 
-        jLabel6.setText("Vai trò");
+        jLabel6.setText("Vị trí");
 
         jLabel7.setText("Địa chỉ");
 
         jLabel8.setText("Ngày sinh");
 
-        combobox_GioiTinh.setEditable(true);
-        combobox_GioiTinh.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nam", "Nữ ", "Khác", " " }));
+        combobox_GioiTinh.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {" ", "Nam", "Nữ" }));
 
         jLabel12.setText("Số điện thoại");
 
         jLabel13.setText("Email");
 
-        jLabel15.setText("Vị trí");
-
-        btnLuu.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnLuu.setText("Lưu");
-        btnLuu.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnLuuMouseClicked(evt);
-            }
-        });
-        btnLuu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLuuActionPerformed(evt);
-            }
-        });
-
-        btnHuy.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnHuy.setText("Hủy");
-        btnHuy.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnHuyMouseClicked(evt);
-            }
-        });
-        btnHuy.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHuyActionPerformed(evt);
-            }
-        });
+        jLabel15.setText("Vai trò");
 
         btn_LammoiTT.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_LammoiTT.setText("Làm mới");
@@ -437,13 +409,16 @@ public class gui_staff extends javax.swing.JPanel {
 
         jLabel17.setText("Trạng thái");
 
-        combobox_TrangThai.setEditable(true);
-        combobox_TrangThai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Còn làm việc", "Nghỉ việc" }));
+        combobox_TrangThai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {" ", "Còn làm việc", "Đã nghỉ" }));
 
-        combobox_Vaitro.setEditable(true);
+        combobox_Vitri.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
+        combobox_Vitri.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combobox_VitriActionPerformed(evt);
+            }
+        });
 
-        combobox_Vitri.setEditable(true);
-        combobox_Vitri.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Manager", "Staff" }));
+        combobox_Vaitro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
 
         javax.swing.GroupLayout Panel_TTLayout = new javax.swing.GroupLayout(Panel_TT);
         Panel_TT.setLayout(Panel_TTLayout);
@@ -469,7 +444,7 @@ public class gui_staff extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(txt_DiaChi, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-                                    .addComponent(combobox_Vitri, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                    .addComponent(combobox_Vaitro, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                         .addGap(62, 62, 62)
                         .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
@@ -493,15 +468,11 @@ public class gui_staff extends javax.swing.JPanel {
                             .addComponent(txt_CCCD)
                             .addComponent(txt_SDT, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
                             .addComponent(combobox_TrangThai, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(combobox_Vaitro, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(combobox_Vitri, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(Panel_TTLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnLuu, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnHuy, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_LammoiTT)))
                 .addGap(30, 30, 30))
         );
@@ -512,8 +483,6 @@ public class gui_staff extends javax.swing.JPanel {
                 .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(Panel_TTLayout.createSequentialGroup()
                         .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnLuu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnHuy, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(Panel_TTLayout.createSequentialGroup()
                                 .addGap(0, 6, Short.MAX_VALUE)
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -545,15 +514,16 @@ public class gui_staff extends javax.swing.JPanel {
                     .addComponent(jLabel13)
                     .addComponent(txt_Email, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
-                    .addComponent(combobox_Vaitro, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(jLabel16)
-                    .addComponent(jLabel17)
-                    .addComponent(txt_TaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(combobox_TrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(combobox_Vitri, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(combobox_Vaitro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(Panel_TTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel15)
+                        .addComponent(jLabel16)
+                        .addComponent(jLabel17)
+                        .addComponent(txt_TaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(combobox_TrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -576,57 +546,6 @@ public class gui_staff extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnThemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnThemMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnThemMouseClicked
-
-    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
-        // TODO add your handling code here:
-        btnLuu.setEnabled(true);
-        btnHuy.setEnabled(true);
-        
-        txt_HoTen.setText("");
-        txt_CCCD.setText("");
-        txt_NgaySinh.setText("");
-        txt_SDT.setText("");
-        txt_DiaChi.setText("");
-        txt_Email.setText("");;
-        txt_TaiKhoan.setText("");
-        
-        combobox_GioiTinh.removeAllItems();
-        combobox_GioiTinh.addItem("Nam");
-        combobox_GioiTinh.addItem("Nữ");
-        combobox_GioiTinh.setSelectedItem("Nam");
-
-        combobox_TrangThai.removeAllItems();
-        combobox_TrangThai.addItem("Còn làm việc");
-        combobox_TrangThai.setSelectedItem("Còn làm việc");
-        
-        RoleDAO daorole = new RoleDAO();
-        List <String> roleName = daorole.getRoleNames();
-        
-        combobox_Vaitro.removeAllItems();
-        for (String role : roleName){
-            combobox_Vaitro.addItem(role);
-        }
-
-        PositionDAO daoposition = new PositionDAO();
-        List <String> positionName = daoposition.getPositionName();
-        
-        combobox_Vitri.removeAllItems();
-        for (String position : positionName){
-            combobox_Vitri.addItem(position);
-        }
-        
-        txt_HoTen.requestFocus(); 
-        isEditing = false;
-        editingStaffId = -1;
-        
-        btnXoa.setEnabled(false);
-        btnSua.setEnabled(false);
-        btn_LammoiTT.setEnabled(false);
-    }//GEN-LAST:event_btnThemActionPerformed
-
     private void btnXoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnXoaMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_btnXoaMouseClicked
@@ -634,49 +553,49 @@ public class gui_staff extends javax.swing.JPanel {
     private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
         // TODO add your handling code here:
         int selectedRow = Table_Staff.getSelectedRow();
-        if (selectedRow == -1) {
-            log_message("Vui lòng chọn nhân viên để xóa!");
-            return;
-        }
-
-        String trangThai = Table_Staff.getValueAt(selectedRow, 9).toString().trim();
-        if (trangThai.equalsIgnoreCase("Còn làm việc")) {
-            log_message("Không thể xóa vì người này đang hoạt động.");
-            return;
-        }
+//        if (selectedRow == -1) {
+//            log_message("Vui lòng chọn nhân viên để xóa!");
+//            return;
+//        }
 
         int staff_id = Integer.parseInt(Table_Staff.getValueAt(selectedRow, 0).toString());
 
-        logConfirm = new LogConfirm("Xác nhận xóa") {
+        this.logConfirm = new LogConfirm("Xác nhận xóa?") {
             @Override
             public void action() {
-                setVisible(false);
+                boolean success = StaffDAO.getInstance().delete(staff_id);
+                this.setVisible(false);
                 viewmain.setEnabled(true);
-                try {
-                    boolean deleted = StaffDAO.getInstance().delete(staff_id);
-                    if (deleted) {
-                        log_message("Xóa thành công!");
-                        List<Staff> allStaff = StaffDAO.getInstance().getList();
-                        loadAndFilterTable(allStaff);
-                        resetThongTin();
-                    } else {
-                        log_message("Xóa thất bại! Vui lòng kiểm tra lại điều kiện.");
-                    }
-                } catch (Exception e) {
-                    log_message("Lỗi khi xóa: " + e.getMessage());
-                    e.printStackTrace();
+                viewmain.requestFocus();
+
+                if (success) {
+                    log_message("Xóa thành công!");
+                    resetThongTin(); 
+                    loadAndFilterTable(StaffDAO.getInstance().getList());
+                    btnXoa.setEnabled(false);
+//                    btnThem.setEnabled(true);
+                    btnSua.setEnabled(false);
+                    txt_CCCD.setEditable(true);
+                    txt_TaiKhoan.setEditable(true);
+                } else {
+                    log_message("Xóa thất bại!");
+                    btnXoa.setEnabled(false);
+//                    btnThem.setEnabled(true);
+                    btnSua.setEnabled(false);
+                    txt_CCCD.setEditable(true);
+                    txt_TaiKhoan.setEditable(true);
                 }
             }
 
             @Override
             public void reject() {
-                setVisible(false);
+                this.setVisible(false);
                 viewmain.setEnabled(true);
+                viewmain.requestFocus();
             }
         };
-
         logConfirm.setLocationRelativeTo(null);
-        logConfirm.setVisible(true);
+        this.logConfirm.setVisible(true);
     }//GEN-LAST:event_btnXoaActionPerformed
 
     private void btnSuaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSuaMouseClicked
@@ -685,85 +604,14 @@ public class gui_staff extends javax.swing.JPanel {
 
     private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
         // TODO add your handling code here:
-        txt_CCCD.setEditable(false);
-        txt_TaiKhoan.setEditable(false);
-        btnLuu.setEnabled(true);
-        btnHuy.setEnabled(true);       
         int selectedRow = Table_Staff.getSelectedRow();
-        if (selectedRow == -1) {
-             log_message("Vui lòng chọn nhân viên để sửa!");
-             return;
-        }
 
-        combobox_GioiTinh.removeAllItems();
-        combobox_GioiTinh.addItem("Nam");
-        combobox_GioiTinh.addItem("Nữ");
+        int staffId = (int) Table_Staff.getValueAt(selectedRow, 0); 
 
-        combobox_TrangThai.removeAllItems();
-        combobox_TrangThai.addItem("Còn làm việc");
-        combobox_TrangThai.addItem("Đã nghỉ");
-        
-        RoleDAO daorole = new RoleDAO();
-        List <String> roleName = daorole.getRoleNames();
-        
-        combobox_Vaitro.removeAllItems();
-        for (String role : roleName){
-            combobox_Vaitro.addItem(role);
-        }
-
-        PositionDAO daoposition = new PositionDAO();
-        List <String> positionName = daoposition.getPositionName();
-        
-        combobox_Vitri.removeAllItems();
-        for (String position : positionName){
-            combobox_Vitri.addItem(position);
-        }
-
-        txt_ID.setText(Table_Staff.getValueAt(selectedRow, 0).toString());             
-        txt_TaiKhoan.setText(Table_Staff.getValueAt(selectedRow, 1).toString());       
-        txt_HoTen.setText(Table_Staff.getValueAt(selectedRow, 2).toString());          
-        txt_CCCD.setText(Table_Staff.getValueAt(selectedRow, 3).toString());           
-        txt_NgaySinh.setText(Table_Staff.getValueAt(selectedRow, 4).toString());       
-        String gender = Table_Staff.getValueAt(selectedRow, 5).toString().trim();      
-        combobox_GioiTinh.setSelectedItem(gender);
-        txt_SDT.setText(Table_Staff.getValueAt(selectedRow, 6).toString());            
-        txt_DiaChi.setText(Table_Staff.getValueAt(selectedRow, 7).toString());         
-        txt_Email.setText(Table_Staff.getValueAt(selectedRow, 8).toString());          
-        String status = Table_Staff.getValueAt(selectedRow, 9).toString().trim();      
-        combobox_TrangThai.setSelectedItem(status);
-        combobox_Vitri.setSelectedItem(Table_Staff.getValueAt(selectedRow, 10).toString().trim());
-        combobox_Vaitro.setSelectedItem(Table_Staff.getValueAt(selectedRow, 11).toString().trim());
-        
-        txt_HoTen.requestFocus();
-
-        isEditing = true;
-        editingStaffId = Integer.parseInt(txt_ID.getText());
-        
-        btnXoa.setEnabled(false);
-        btnThem.setEnabled(false);
-        btn_LammoiTT.setEnabled(false);
-    }//GEN-LAST:event_btnSuaActionPerformed
-
-    private void btn_LammoitimkiemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_LammoitimkiemMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_LammoitimkiemMouseClicked
-
-    private void btn_LammoitimkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_LammoitimkiemActionPerformed
-        // TODO add your handling code here:
-        txt_Timkiem.setText("");
-        List<Staff> allStaff = StaffDAO.getInstance().getList();
-        loadAndFilterTable(allStaff);
-    }//GEN-LAST:event_btn_LammoitimkiemActionPerformed
-
-    private void btnLuuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLuuMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnLuuMouseClicked
-
-    private void btnLuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLuuActionPerformed
         String fullName = txt_HoTen.getText().trim();
         String ssn = txt_CCCD.getText().trim();
         String dobText = txt_NgaySinh.getText().trim();
-        String genderText = combobox_GioiTinh.getSelectedItem().toString();
+        String genderText = combobox_GioiTinh.getSelectedItem().toString().trim();
         String phone = txt_SDT.getText().trim();
         String address = txt_DiaChi.getText().trim();
         String email = txt_Email.getText().trim();
@@ -778,6 +626,7 @@ public class gui_staff extends javax.swing.JPanel {
             return;
         }
 
+        // Kiểm tra định dạng
         if (!ssn.matches("^0\\d{11}$")) {
             log_message("CCCD không hợp lệ! Phải đủ 12 số và bắt đầu bằng 0.");
             return;
@@ -796,16 +645,13 @@ public class gui_staff extends javax.swing.JPanel {
         LocalDate dob;
         try {
             dob = LocalDate.parse(dobText);
-
             LocalDate now = LocalDate.now();
 
-            // Kiểm tra nếu ngày sinh trong tương lai
             if (dob.isAfter(now)) {
                 log_message("Ngày sinh không được lớn hơn ngày hiện tại.");
                 return;
             }
 
-            // Kiểm tra đủ 18 tuổi
             Period age = Period.between(dob, now);
             if (age.getYears() < 18 || 
                (age.getYears() == 18 && now.getDayOfYear() < dob.plusYears(18).getDayOfYear())) {
@@ -817,7 +663,7 @@ public class gui_staff extends javax.swing.JPanel {
             log_message("Ngày sinh không đúng định dạng yyyy-MM-dd.");
             return;
         }
-       
+
         int accountNumber;
         try {
             accountNumber = Integer.parseInt(accNumText);
@@ -826,103 +672,93 @@ public class gui_staff extends javax.swing.JPanel {
             return;
         }
 
-        int currentStaffId;
-        if (isEditing) {
-            currentStaffId = editingStaffId;
-        } else {
-            currentStaffId = 0;
-        }
-        
-        if (StaffDAO.getInstance().isSsnExists(ssn, currentStaffId)) {
+        if (StaffDAO.getInstance().isSsnExists(ssn, staffId)) {
             log_message("CCCD đã tồn tại!");
             return;
         }
 
-        if (StaffDAO.getInstance().isPhoneExists(phone, currentStaffId)) {
+        if (StaffDAO.getInstance().isPhoneExists(phone, staffId)) {
             log_message("Số điện thoại đã tồn tại!");
             return;
         }
 
-        if (StaffDAO.getInstance().isEmailExists(email, currentStaffId)) {
+        if (StaffDAO.getInstance().isEmailExists(email, staffId)) {
             log_message("Email đã tồn tại!");
             return;
         }
 
-        // Chỉ kiểm tra account khi thêm
-        if (!isEditing) {
-            if (!AccountDAO.getInstance().isAccountNumberExists(accountNumber)) {
-                log_message("Số tài khoản chưa tồn tại. Vui lòng tạo tài khoản trước.");
-                return;
-            }
-
-            if (StaffDAO.getInstance().isAccountUsedByStaff(accountNumber)) {
-                log_message("Số tài khoản đã tồn tại.");
-                return;
-            }
+        String gender;
+        if (genderText.equals("Nam")) {
+            gender = "M";
+        } else if (genderText.equals("Nữ")) {
+            gender = "F";
+        } else {
+            log_message("Giới tính không hợp lệ!");
+            return;
         }
-
-        String gender = switch (genderText) {
-            case "Nam" -> "M";
-            case "Nữ" -> "F";
-            default -> "";
-        };
 
         boolean isActive = statusText.equalsIgnoreCase("Còn làm việc");
         int roleId = RoleDAO.getInstance().getRoleIdByName(roleText);
         int positionId = PositionDAO.getInstance().getPositionIdByName(positionText);
-        
+
         if ((positionText.equalsIgnoreCase("Manager") && !roleText.startsWith("Manager")) ||
             (positionText.equalsIgnoreCase("Staff") && !roleText.startsWith("Staff"))) {
             log_message("Vai trò không hợp lệ với vị trí đã chọn.");
             return;
         }
+        
+        
+        
+        Staff updatedStaff = new Staff(staffId, roleId, fullName, ssn, dob, gender, phone, address, email, isActive, positionId, accountNumber);
 
-        Staff st = new Staff(
-            currentStaffId,
-            roleId, fullName, ssn, dob, gender, phone, address, email, isActive, positionId, accountNumber
-        );
+        this.logConfirm = new LogConfirm("Xác nhận cập nhật?") {
+        @Override
+        public void action() {
+            boolean success = StaffDAO.getInstance().update(updatedStaff);
+            this.setVisible(false);
+            viewmain.setEnabled(true);
+            viewmain.requestFocus();
 
-        boolean success = isEditing
-            ? StaffDAO.getInstance().update(st)
-            : StaffDAO.getInstance().insert(st);
-
-        if (success) {
-            log_message(isEditing ? "Cập nhật thành công!" : "Thêm thành công!");
-
-            List<Staff> allStaff = StaffDAO.getInstance().getList();
-            loadAndFilterTable(allStaff);   
-           
-            resetThongTin();    
-           
-            isEditing = false;
-            editingStaffId = -1;
-            btnThem.setEnabled(true);
-            btnXoa.setEnabled(true);
-            btnSua.setEnabled(true);
-            btnLuu.setEnabled(false);
-            btnHuy.setEnabled(false);
-            btn_LammoiTT.setEnabled(true);
-            txt_CCCD.setEditable(true);
-            txt_TaiKhoan.setEditable(true);
-
-        } else {
-            log_message(isEditing ? "Cập nhật thất bại!" : "Thêm thất bại!");
+            if (success) {
+                log_message("Cập nhật thành công!");
+                resetThongTin(); 
+                loadAndFilterTable(StaffDAO.getInstance().getList());
+                btnXoa.setEnabled(false);
+//                btnThem.setEnabled(true);
+                btnSua.setEnabled(false);
+                txt_CCCD.setEditable(true);
+                txt_TaiKhoan.setEditable(true);
+            } else {
+                log_message("Cập nhật thất bại!");
+                btnXoa.setEnabled(false);
+//                btnThem.setEnabled(true);
+                btnSua.setEnabled(false);
+                txt_CCCD.setEditable(true);
+                txt_TaiKhoan.setEditable(true);
+            }
         }
-    }//GEN-LAST:event_btnLuuActionPerformed
 
-    private void btnHuyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHuyMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnHuyMouseClicked
+        @Override
+        public void reject() {
+            this.setVisible(false);
+            viewmain.setEnabled(true);
+            viewmain.requestFocus();
+        }
+    };
+    logConfirm.setLocationRelativeTo(null);
+    this.logConfirm.setVisible(true);
+    }//GEN-LAST:event_btnSuaActionPerformed
 
-    private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
+    private void btn_LammoitimkiemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_LammoitimkiemMouseClicked
         // TODO add your handling code here:
-        log_comfirm("Bạn có muốn hủy không?");
-        btnLuu.setEnabled(false);
-        btnHuy.setEnabled(false);
-        btn_LammoiTT.setEnabled(true);
-        txt_CCCD.setEditable(true);
-        txt_TaiKhoan.setEditable(true);
-    }//GEN-LAST:event_btnHuyActionPerformed
+    }//GEN-LAST:event_btn_LammoitimkiemMouseClicked
+
+    private void btn_LammoitimkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_LammoitimkiemActionPerformed
+        // TODO add your handling code here:
+        txt_Timkiem.setText("");
+        List<Staff> allStaff = StaffDAO.getInstance().getList();
+        loadAndFilterTable(allStaff);
+    }//GEN-LAST:event_btn_LammoitimkiemActionPerformed
 
     private void btn_LammoiTTMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_LammoiTTMouseClicked
         // TODO add your handling code here:
@@ -931,6 +767,11 @@ public class gui_staff extends javax.swing.JPanel {
     private void btn_LammoiTTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_LammoiTTActionPerformed
         // TODO add your handling code here:
         resetThongTin();
+        btnXoa.setEnabled(false);
+        btnSua.setEnabled(false);
+        txt_CCCD.setEditable(true);
+        txt_TaiKhoan.setEditable(true);
+        btn_LammoiTT.setEnabled(false);
     }//GEN-LAST:event_btn_LammoiTTActionPerformed
 
     private void txt_TimkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_TimkiemActionPerformed
@@ -941,8 +782,6 @@ public class gui_staff extends javax.swing.JPanel {
         // TODO add your handling code here:
         List<Staff> allStaff = StaffDAO.getInstance().getList();
         loadAndFilterTable(allStaff);
-        combobox_GioiTinh.removeAllItems();
-        combobox_TrangThai.removeAllItems();
     }//GEN-LAST:event_btn_TimkiemActionPerformed
 
     private void Combobox_ViTriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Combobox_ViTriActionPerformed
@@ -950,13 +789,60 @@ public class gui_staff extends javax.swing.JPanel {
         List<Staff> allStaff = StaffDAO.getInstance().getList();
         loadAndFilterTable(allStaff);
     }//GEN-LAST:event_Combobox_ViTriActionPerformed
+
+    private void combobox_VitriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combobox_VitriActionPerformed
+        // TODO add your handling code here:
+        updateRoleComboBox();
+    }//GEN-LAST:event_combobox_VitriActionPerformed
+    
+    private void updateRoleComboBox() {
+        String selectedPosition = (String) combobox_Vitri.getSelectedItem();
+        combobox_Vaitro.removeAllItems();
+        
+        RoleDAO daorole = new RoleDAO();
+        List<String> roleNames = daorole.getRoleNames();
+        
+        // Filter roles based on selected position (e.g., "Staff" roles)
+        for (String role : roleNames) {
+            if (selectedPosition != null && selectedPosition.toLowerCase().contains("staff") && role.toLowerCase().contains("staff")) {
+                combobox_Vaitro.addItem(role);
+            } else if (selectedPosition != null && selectedPosition.toLowerCase().contains("manager") && role.toLowerCase().contains("manager")) {
+                combobox_Vaitro.addItem(role);
+            }
+        }
+    }
+    
     
     private void loadAndFilterTable(List<Staff> list) {
-        DefaultTableModel model = (DefaultTableModel) Table_Staff.getModel();
+       DefaultTableModel model = (DefaultTableModel) Table_Staff.getModel();
         model.setRowCount(0); // Xóa dữ liệu cũ
 
-        // Đổ lại dữ liệu
-        for (Staff s : list) {
+        // Lấy dữ liệu từ UI
+        String keyword = txt_Timkiem.getText().trim();
+        String selectedViTri = Combobox_ViTri.getSelectedItem().toString();
+
+        List<Staff> filteredList = new ArrayList<>();
+
+        // Nếu người dùng nhập số (có thể là ID), tìm theo ID trước
+        if (!keyword.isEmpty() && keyword.matches("\\d+")) {
+            int id = Integer.parseInt(keyword);
+            Staff staff = StaffDAO.getInstance().findbyID(id);
+            if (staff != null) {
+                filteredList.add(staff); // Thêm nhân viên tìm được vào danh sách lọc
+            }
+        } else {
+            // Nếu không phải số, tìm theo tên hoặc account
+            filteredList.addAll(list);
+        }
+
+        // Đổ dữ liệu vào bảng sau khi lọc
+        for (Staff s : filteredList) {
+            // Nếu chọn vị trí cụ thể và không khớp thì bỏ qua
+            if (!selectedViTri.equalsIgnoreCase("Tất cả")) {
+                String viTri = PositionDAO.getInstance().getPositionNameById(s.getPositionId());
+                if (!viTri.equalsIgnoreCase(selectedViTri)) continue;
+            }
+
             model.addRow(new Object[]{
                 s.getStaffId(),
                 s.getAccountNumber(),
@@ -972,33 +858,12 @@ public class gui_staff extends javax.swing.JPanel {
                 s.getAddress(),
                 s.getEmail(),
                 s.isActive() ? "Còn làm việc" : "Đã nghỉ",
-                PositionDAO.getInstance().getPositionNameById(s.getPositionId()), 
-                RoleDAO.getInstance().getRoleNameById(s.getRoleId())                         
+                PositionDAO.getInstance().getPositionNameById(s.getPositionId()),
+                RoleDAO.getInstance().getRoleNameById(s.getRoleId())
             });
         }
 
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        Table_Staff.setRowSorter(sorter);
-
-        // Lấy filter từ UI
-        String keyword = txt_Timkiem.getText().trim();
-        String selectedViTri = Combobox_ViTri.getSelectedItem().toString();
-
-        List<RowFilter<Object, Object>> filters = new ArrayList<>();
-
-        if (!keyword.isEmpty()) {
-            filters.add(RowFilter.regexFilter("(?i)" + keyword, 0, 1, 2, 6));
-        }
-
-        if (!selectedViTri.equalsIgnoreCase("Tất cả")) {
-            filters.add(RowFilter.regexFilter("(?i)^" + selectedViTri + "$", 10)); 
-        }
-
-        if (filters.isEmpty()) {
-            sorter.setRowFilter(null);
-        } else {
-            sorter.setRowFilter(RowFilter.andFilter(filters));
-        }
+    Table_Staff.setRowSorter(null);
     }
 
         
@@ -1008,19 +873,21 @@ public class gui_staff extends javax.swing.JPanel {
         txt_HoTen.setText("");
         txt_CCCD.setText("");
         txt_NgaySinh.setText(""); 
-        combobox_GioiTinh.setSelectedIndex(-1);
+        combobox_GioiTinh.setSelectedIndex(0);
         txt_SDT.setText("");
         txt_DiaChi.setText("");
         txt_Email.setText("");
-        combobox_TrangThai.setSelectedIndex(-1);
-        combobox_Vaitro.setSelectedIndex(-1);
-        combobox_Vitri.setSelectedIndex(-1);
-
+        combobox_TrangThai.setSelectedIndex(0);
+        combobox_Vaitro.setSelectedIndex(0);
+        combobox_Vitri.setSelectedIndex(0);
+        combobox_GioiTinh.setEnabled(true);
+        combobox_Vitri.setEnabled(true);
+        combobox_Vaitro.setEnabled(true);
+        combobox_TrangThai.setEnabled(true);
         Table_Staff.clearSelection();
     }
         
     private void log_message(String message) {
-        this.viewmain.setEnabled(false);
         this.logMessage = new LogMessage(message) {
             @Override
             public void action() {
@@ -1033,68 +900,6 @@ public class gui_staff extends javax.swing.JPanel {
         this.logMessage.setVisible(true);
     }
         
-    private void log_comfirm(String message) {
-        this.viewmain.setEnabled(false);
-
-        this.logConfirm = new LogConfirm(message) {
-        @Override
-        public void action() {
-            this.setVisible(false);
-            viewmain.setEnabled(true);
-            viewmain.requestFocus();
-            resetThongTin(); 
-            btnXoa.setEnabled(true);
-            btnThem.setEnabled(true);
-            btnSua.setEnabled(true);
-        }
-
-        @Override
-        public void reject() {
-            this.setVisible(false);
-            viewmain.setEnabled(true);
-            viewmain.requestFocus();
-        }
-    };
-    logConfirm.setLocationRelativeTo(null);
-    this.logConfirm.setVisible(true);
-    }
-        
-    private void loadTable() {
-        DefaultTableModel model = (DefaultTableModel) Table_Staff.getModel();
-        model.setRowCount(0); 
-
-        ArrayList<Staff> list = StaffDAO.getInstance().getList();
-
-        for (Staff st : list) {
-            String gender = "";
-            if ("M".equals(st.getGender())) {
-                gender = "Nam";
-            } else if ("F".equals(st.getGender())) {
-                gender = "Nữ";
-
-            String status = st.isActive() ? "Còn làm việc" : "Nghỉ việc";
-
-            // Dùng DAO để lấy tên role và position
-            String roleName = RoleDAO.getInstance().getRoleNameById(st.getRoleId());
-            String positionName = PositionDAO.getInstance().getPositionNameById(st.getPositionId());
-
-            model.addRow(new Object[]{
-                st.getStaffId(),
-                st.getAccountNumber(),
-                st.getFullName(),
-                st.getSsn(),
-                st.getDateOfBirth(),
-                gender,
-                st.getPhoneNumber(),
-                st.getAddress(),
-                st.getEmail(),
-                status,
-                positionName,
-                roleName
-            });
-        }
-    }   
-}
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1103,10 +908,7 @@ public class gui_staff extends javax.swing.JPanel {
     private javax.swing.JPanel Panel_TKCN;
     private javax.swing.JPanel Panel_TT;
     private javax.swing.JTable Table_Staff;
-    private javax.swing.JButton btnHuy;
-    private javax.swing.JButton btnLuu;
     private javax.swing.JButton btnSua;
-    private javax.swing.JButton btnThem;
     private javax.swing.JButton btnXoa;
     private javax.swing.JButton btn_LammoiTT;
     private javax.swing.JButton btn_Lammoitimkiem;

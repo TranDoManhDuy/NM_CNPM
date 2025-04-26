@@ -122,4 +122,56 @@ public class AccountDAO implements InterfaceDAO.InterfaceDAO<Account> {
         }
         return false;
     }
+    
+    public String getRoleNameByAccount(int accountNumber) {
+        String sql = "SELECT r.role_name FROM accounts a JOIN roles r ON a.role_id = r.role_id WHERE a.account_number = ?";
+        try (
+            Connection conn = OpenConnection.getConnection();
+            PreparedStatement ptmt = conn.prepareStatement(sql);
+        ) {
+            ptmt.setInt(1, accountNumber);
+            ResultSet rs = ptmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("role_name");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public int getMaxAccountNumber() {
+    int max = 0;
+    try (
+        Connection conn = OpenConnection.getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT MAX(account_number) AS max_acc FROM accounts");
+    ) {
+        if (rs.next()) {
+            max = rs.getInt("max_acc");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return max;
+}
+    
+    public String getFullNameByAccountNumber(int accountNumber) {
+    String sql = "SELECT full_name FROM staff WHERE account_number = ?";
+    try (Connection conn = OpenConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setInt(1, accountNumber);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return rs.getString("full_name");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return "Không rõ";
+}
+
+
+
+    
 }
