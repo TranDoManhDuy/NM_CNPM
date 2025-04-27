@@ -217,7 +217,7 @@ public class gui_shift_type extends javax.swing.JPanel {
             }
         });
 
-        jButton5.setText("New");
+        jButton5.setText("Mới");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);

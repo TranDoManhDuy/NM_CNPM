@@ -13,6 +13,7 @@ import DatabaseHelper.OpenConnection;
 import java.sql.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class ShiftTypesDAO {
@@ -50,6 +51,7 @@ public class ShiftTypesDAO {
         try (
             Connection conn = OpenConnection.getConnection();
             CallableStatement ptmt = conn.prepareCall(sql);
+            
         ) {
             ptmt.setString(1, shiftType.getShift_type_name());
             ptmt.setTime(2, Time.valueOf(shiftType.getStart_time()));
@@ -58,9 +60,11 @@ public class ShiftTypesDAO {
             ptmt.executeUpdate();
             String errorMessage = ptmt.getString(4);
             return errorMessage;
+            
         } catch (SQLException e) {
-                return "Thêm không thành công";    
+             return "Thêm không thành công "+ e.getMessage();    
         }
+        
     }
 
     public String update(ShiftTypes shiftType) {
@@ -79,7 +83,10 @@ public class ShiftTypesDAO {
             String errorMessage = ptmt.getString(5);
             return errorMessage;
         } catch (SQLException e) {
-            return "Cập nhật thất bại";
+            if(e.getErrorCode() == 2627){
+                return "Hành động không thể thực hiện. Tên ca trực đã tồn tại.";
+            }
+            else return "Cập nhật thất bại";
         }
     }
 
@@ -93,12 +100,7 @@ public class ShiftTypesDAO {
             ptmt.setInt(1, shift_type_id);
             ptmt.executeUpdate();
         } catch (SQLException e) {
-            if(e.getErrorCode() == 50000){
-                return e.getMessage();
-            }
-            else{
-                return "Lỗi không biết";    
-                    }
+            return "Hành động không thể thực hiện. Loại ca trực này đã được sử dụng.";
         }
         return "Xóa thành công";
     }

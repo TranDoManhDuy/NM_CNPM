@@ -61,6 +61,7 @@ public class gui_shift_work extends javax.swing.JPanel {
             };
         this.viewMain = viewMain;
         initComponents();
+        resetPanel();
         initTable();
         fillTable();
         jTextField1.setEnabled(false);
@@ -69,6 +70,26 @@ public class gui_shift_work extends javax.swing.JPanel {
         jTextField6.setEnabled(false);
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);
+    }
+    public void resetPanel(){
+        LocalDate now = LocalDate.now();
+        jComboBox4.setSelectedIndex(now.getDayOfMonth());
+        jComboBox5.setSelectedIndex(now.getMonthValue());
+        jComboBox6.setSelectedIndex(now.getYear() - 2000);
+        jButton1.setEnabled(true);
+        jButton2.setEnabled(false);
+        jButton3.setEnabled(false);
+        jTextField1.setText(null);
+        jTextField2.setText(null);
+        jTextField3.setText(null);
+        jTextField4.setText(null);
+        jTextField5.setText(null);
+        jTextField6.setText(null);
+        jTextField7.setText(null);
+        jTextField8.setText(null);
+        jComboBox7.setSelectedIndex(0);
+        jComboBox8.setSelectedIndex(0);
+        jComboBox9.setSelectedIndex(0);
     }
     
     public void initTable() {
@@ -321,7 +342,7 @@ public class gui_shift_work extends javax.swing.JPanel {
             }
         });
 
-        jButton5.setText("New");
+        jButton5.setText("Mới");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
@@ -567,6 +588,12 @@ public class gui_shift_work extends javax.swing.JPanel {
 
         jLabel8.setText("Mã Loại ca trực");
 
+        jTextField7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField7ActionPerformed(evt);
+            }
+        });
+
         jLabel9.setText("Mã Nhân viên");
 
         jLabel10.setText("Ngày trực");
@@ -764,6 +791,7 @@ public class gui_shift_work extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        resetPanel();
         jButton1.setEnabled(true);
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);
@@ -773,12 +801,6 @@ public class gui_shift_work extends javax.swing.JPanel {
         jTextField4.setText(null);
         jTextField5.setText(null);
         jTextField6.setText(null);
-        jComboBox4.setSelectedIndex(0);
-        jComboBox5.setSelectedIndex(0);
-        jComboBox6.setSelectedIndex(0);
-        jComboBox7.setSelectedIndex(0);
-        jComboBox8.setSelectedIndex(0);
-        jComboBox9.setSelectedIndex(0);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -931,7 +953,13 @@ public class gui_shift_work extends javax.swing.JPanel {
         if(jComboBox1.getSelectedIndex() == 0 || jComboBox2.getSelectedIndex() == 0 || jComboBox3.getSelectedIndex() == 0){
             shiftDate = null;
         }else{
-            shiftDate = LocalDate.of(jComboBox3.getSelectedIndex()+2000,jComboBox2.getSelectedIndex() ,jComboBox1.getSelectedIndex());
+            try{shiftDate = LocalDate.of(jComboBox3.getSelectedIndex()+2000,
+                                    jComboBox2.getSelectedIndex() ,
+                                    jComboBox1.getSelectedIndex());
+            }catch(Exception e){
+                callLogMessage("Ngày không tồn tại.");
+                return;
+            }   
         }
         Integer shiftTypeId = null;
         Integer staffId = null;
@@ -954,13 +982,13 @@ public class gui_shift_work extends javax.swing.JPanel {
             if (shiftTypeId != null) {
                 stmt.setInt(1, shiftTypeId);
             } else {
-                stmt.setNull(1, INTEGER);
+                stmt.setNull(1, Types.INTEGER);
             }
 
             if (staffId != null) {
                 stmt.setInt(2, staffId);
             } else {
-                stmt.setNull(2, INTEGER);
+                stmt.setNull(2, Types.INTEGER);
             }
 
             if (shiftDate != null) {
@@ -1067,6 +1095,10 @@ public class gui_shift_work extends javax.swing.JPanel {
         this.logSelection.setVisible(true);
         
     }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jTextField7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField7ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField7ActionPerformed
     
    
 
