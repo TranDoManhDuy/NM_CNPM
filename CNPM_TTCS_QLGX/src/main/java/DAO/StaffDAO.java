@@ -49,7 +49,7 @@ public class StaffDAO implements InterfaceDAO.InterfaceDAO<Staff> {
 
     @Override 
     // Thêm nhân viên mới
-    public boolean insert(Staff st) {
+    public boolean insert(Staff st)  {
         String sql = "EXEC insert_staff @role_id = ?, @full_name = ?, @ssn = ?, @date_of_birth = ?, @gender = ?, @phone_number = ?, @address = ?, @email = ?, @is_active = ?, @position_id = ?, @account_number = ? ";
         try (
             Connection conn = OpenConnection.getConnection();

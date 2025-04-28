@@ -72,6 +72,7 @@ import GUI.GUIXE.GUI_LostVisitorParkingCard;
 import GUI.GUIXE.GUI_VisitorParkingCard;
 import GUI.NHANSU.gui_listmanager;
 import GUI.NHANSU.gui_profile;
+import GUI.NHANSU.gui_registaff;
 import Global.Global_variable;
 import Model.Account;
 
@@ -313,6 +314,7 @@ public class ViewMain extends javax.swing.JFrame {
 //        gui_listmanager listmanager_gui = new gui_listmanager(this);
         gui_profile profile = new gui_profile();
         gui_listmanager listmanager_gui = new gui_listmanager(this);
+        gui_registaff registaff_gui = new gui_registaff(this);
 //        gui_profile profile = new gui_profile();
         // add component
         addComponent(panel_nhanvien, staff_gui);
@@ -324,7 +326,28 @@ public class ViewMain extends javax.swing.JFrame {
 //        addComponent(panel_profile, profile);
         addComponent(panel_vitri, listmanager_gui);
         addComponent(panel_profile, profile);
+        addComponent(jPanel9,registaff_gui);
+        
+        jTabbedPane3.addChangeListener(new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            int selectedIndex = jTabbedPane3.getSelectedIndex();
+            switch (selectedIndex) {
+                case 0: // Tab "Nhân viên"
+                    System.out.println("Cập nhật giao diện Nhân viên");
+                    staff_gui.fillTable();
+                    break;
+                case 1: // Tab "Tài khoản"
+                    System.out.println("Cập nhật giao diện Tài khoản");
+                    account_gui.fillTable();
+                    break;
+                // Có thể thêm các case khác nếu cần
+            }
+        }
+    });
     }
+    
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -350,6 +373,7 @@ public class ViewMain extends javax.swing.JFrame {
         panel_quanli = new javax.swing.JPanel();
         panel_vitri = new javax.swing.JPanel();
         panel_profile = new javax.swing.JPanel();
+        jPanel9 = new javax.swing.JPanel();
         CaTruc = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
@@ -495,15 +519,28 @@ public class ViewMain extends javax.swing.JFrame {
 
         jTabbedPane3.addTab("Thông tin cá nhân", panel_profile);
 
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1203, Short.MAX_VALUE)
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 453, Short.MAX_VALUE)
+        );
+
+        jTabbedPane3.addTab("Đăng ký nhân viên", jPanel9);
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1203, Short.MAX_VALUE)
+            .addComponent(jTabbedPane3)
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+            .addComponent(jTabbedPane3)
         );
 
         javax.swing.GroupLayout NhanSuLayout = new javax.swing.GroupLayout(NhanSu);
@@ -947,6 +984,7 @@ public class ViewMain extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;
