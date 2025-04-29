@@ -27,6 +27,7 @@ public class gui_registaff extends javax.swing.JPanel {
     
     private ViewMain viewmain;
     private LogMessage logMessage;
+    private static gui_registaff instance;
 
 
     /**
@@ -36,7 +37,9 @@ public class gui_registaff extends javax.swing.JPanel {
         this.viewmain = viewmain;
         this.logMessage = logMessage;
         initComponents();
+        instance = this; 
         setAccountNumberDefault();
+
         
         RoleDAO daorole = new RoleDAO();
         List <String> roleName = daorole.getRoleNames();       
@@ -431,9 +434,21 @@ public class gui_registaff extends javax.swing.JPanel {
     }//GEN-LAST:event_btnDangKiActionPerformed
    
     private void setAccountNumberDefault() {
-        int acc = AccountDAO.getInstance().getMaxAccountNumber() + 1;
-        txt_Taikhoan.setText(String.valueOf(acc));
+        int newAccountNumber = AccountDAO.getInstance().getMaxAccountNumber() + 1;
+        txt_Taikhoan.setText(String.valueOf(newAccountNumber));
         txt_Taikhoan.setEditable(false);
+    }
+
+    
+    public static void refreshAccountNumber() {
+        if (instance != null) {
+            try {
+                int maxAccountNumber = AccountDAO.getInstance().getMaxAccountNumber();
+                instance.txt_Taikhoan.setText(String.valueOf(maxAccountNumber + 1));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void resetThongTin() {
