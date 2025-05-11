@@ -67,6 +67,7 @@ public class gui_shift_work extends javax.swing.JPanel {
         jTextField1.setEnabled(false);
         jTextField2.setEnabled(false);
         jTextField3.setEnabled(false);
+        jTextField5.setEnabled(false);
         jTextField6.setEnabled(false);
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);

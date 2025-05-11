@@ -73,28 +73,13 @@ public class ShiftWorksDAO {
             ptmt.registerOutParameter(6, Types.NVARCHAR);
             ptmt.executeUpdate();
             String errorMessage = ptmt.getString(6);
-            return errorMessage;
+            String foreignKey = extractForeignKeyName(errorMessage);
+            if(!foreignKey.equals("Unknown")){
+                return "Mã nhân viên không tồn tại.";
+            }
+            else return errorMessage;
         } catch (SQLException e) {
-            if(e.getErrorCode() == 547){
-                String foreignKey = extractForeignKeyName(e.getMessage());
-                return foreignKey;
-//                switch (foreignKey) {
-//                    case "FK__shift_wor__build__2739D489":
-//                        return "Mã tòa nhà không tồn tại";
-//                    case "FK__shift_wor__shift__2645B050":
-//                        return "Mã loại ca trực không tồn tại";
-//                    case "FK__shift_wor__staff__2A164134":
-//                        return "Nhân viên không tồn tại";
-//                    case "FK__shift_wor__task___25518C17":
-//                        return "Mã nhiệm vụ không tồn tại";
-//                }
-            }
-            if(e.getErrorCode() == 2627){
-                return "Hành động không thể thực hiện. Ca trực này đã được tồn tại";
-            }
-            else{
-                return "Thêm không thành công";    
-                    }
+            return "Thêm không thành công";    
         }
     }
 
@@ -114,28 +99,13 @@ public class ShiftWorksDAO {
             ptmt.registerOutParameter(7, Types.NVARCHAR);
             ptmt.executeUpdate();
             String errorMessage = ptmt.getString(7);
-            return errorMessage;
+            String foreignKey = extractForeignKeyName(errorMessage);
+            if(!foreignKey.equals("Unknown")){
+                return "Mã nhân viên không tồn tại.";
+            }
+            else return errorMessage;
         } catch (SQLException e) {
-            if(e.getErrorCode() == 547){
-                String foreignKey = extractForeignKeyName(e.getMessage());
-                return foreignKey;
-//                switch (foreignKey) {
-//                    case "FK__shift_wor__build__2739D489":
-//                        return "Mã tòa nhà không tồn tại";
-//                    case "FK__shift_wor__shift__2645B050":
-//                        return "Mã loại ca trực không tồn tại";
-//                    case "[FK__shift_wor__staff__2A164134]":
-//                        return "Nhân viên không tồn tại";
-//                    case "[FK__shift_wor__task___25518C17]":
-//                        return "Mã nhiệm vụ không tồn tại";
-//                }
-            }
-            if(e.getErrorCode() == 2627){
-                return "Hành động không thể thực hiện. Ca trực này đã được tồn tại";
-            }
-            else{
-                return "Cập nhật không thành công";
-                    }
+            return "Cập nhật không thành công";
         }
     }
 
