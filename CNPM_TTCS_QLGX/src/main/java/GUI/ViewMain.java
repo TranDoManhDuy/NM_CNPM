@@ -250,13 +250,20 @@ public class ViewMain extends javax.swing.JFrame {
         GUI_ParkingSession gui_parking_session = new GUI_ParkingSession(dataglocal, this, logSelection, logMessage, gui_vehicle, logConfirm);
         GUI_LostResidentCard gui_lost_resident_card = new GUI_LostResidentCard(dataglocal, this, logSelection, logMessage, gui_resident_card, gui_parking_session, logConfirm);
         EntryAndExit gui_entry_exit = new EntryAndExit(this);
-        addComponent(panel_khachhang, gui_customer);
+        
         addComponent(panel_mat_the_cd, gui_lost_resident_card);
         addComponent(panel_guixe, gui_parking_session);
         addComponent(panel_the_cu_dan, gui_resident_card);
         addComponent(panel_ptien, gui_vehicle);
         addComponent(panel_mat_the, gui_LostVisitorParkingCard);
         addComponent(panel_the_xe, gui_visitorParkingCard);
+        
+        if (Global_variable.position.equals("staff")) {
+            panel_khachhang.setVisible(false);
+            jPanel14.setVisible(false);
+            return;
+        }
+        addComponent(panel_khachhang, gui_customer);
         addComponent(jPanel14, gui_entry_exit);
     }
     

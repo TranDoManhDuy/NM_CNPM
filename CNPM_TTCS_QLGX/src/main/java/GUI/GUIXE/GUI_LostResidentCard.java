@@ -443,7 +443,7 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
         });
 
         btn_reset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_reset.setText("Reset");
+        btn_reset.setText("Tải Lại");
         btn_reset.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btn_resetMouseClicked(evt);

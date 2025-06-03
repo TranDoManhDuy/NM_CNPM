@@ -116,12 +116,21 @@ public class GUI_Customer extends javax.swing.JPanel {
     public void fillTable() {
         int count = -1;
         String crBuildingName = "";
+        String currentIsActive = "";
         for (Customer cus : this.customers) { 
             count += 1;
             crBuildingName = this.buildingNames.get(count);
+            
+            if (cus.isIs_active()) { 
+                currentIsActive = "Có";
+            }
+            else { 
+                currentIsActive = "Không";
+            }
+            
             tblModel.addRow(new String[] {  String.valueOf(cus.getCustomer_id()), crBuildingName, cus.getFull_name(), cus.getSsn(), 
                                             String.valueOf(cus.getDate_of_birth()), cus.getGender(),
-                                            cus.getPhone_number(), cus.getAddress(), cus.getNationality(), String.valueOf(cus.isIs_active())
+                                            cus.getPhone_number(), cus.getAddress(), cus.getNationality(), currentIsActive
             });
         }
         tblModel.fireTableDataChanged();
@@ -582,7 +591,7 @@ public class GUI_Customer extends javax.swing.JPanel {
         });
 
         btn_reset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_reset.setText("Reset");
+        btn_reset.setText("Tải Lại");
         btn_reset.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btn_resetMouseClicked(evt);
@@ -841,7 +850,7 @@ public class GUI_Customer extends javax.swing.JPanel {
             String phoneNumber = tblCustomer.getValueAt(selectedRow, 6).toString();
             String address = tblCustomer.getValueAt(selectedRow, 7).toString();
             String nationality = tblCustomer.getValueAt(selectedRow, 8).toString();
-            boolean isActive = Boolean.parseBoolean(tblCustomer.getValueAt(selectedRow, 9).toString());
+            boolean isActive = tblCustomer.getValueAt(selectedRow, 9).toString().equals("Có");
    
             this.isUpdating = true;
             int year = 0;

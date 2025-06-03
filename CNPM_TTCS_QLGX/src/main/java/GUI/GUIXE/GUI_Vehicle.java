@@ -101,7 +101,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
     
     private void fillVehicleType() { 
         cob_loai_phuong_tien.removeAllItems();
-        cob_loai_phuong_tien.addItem("None");
+        cob_loai_phuong_tien.addItem("");
         for (VehicleType vehicle_type : this.dataGlobal.getArrVehicleType()) { 
             if (vehicle_type.isIsPermission()) { 
                 cob_loai_phuong_tien.addItem(vehicle_type.getVehicle_type_name());
@@ -424,7 +424,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         });
 
         btn_reset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_reset.setText("Reset");
+        btn_reset.setText("Tải Lại");
         btn_reset.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btn_resetMouseClicked(evt);

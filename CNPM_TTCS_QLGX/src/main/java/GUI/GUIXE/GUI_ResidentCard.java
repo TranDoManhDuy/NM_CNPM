@@ -97,23 +97,32 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         int count = -1;
         String crBuilding_name = "";
         String crFull_name = "";
+        String currentIsActive = "";
         for (ResidentCard res : residents) {
             count += 1;
             crBuilding_name = building_names.get(count);
             crFull_name = full_names.get(count);
-            tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, String.valueOf(res.isIs_active())} );
+            
+            if (res.isIs_active()) {
+                currentIsActive = "Có";
+            }
+            else { 
+                currentIsActive = "Không";
+            }
+            
+            tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, currentIsActive} );
         }
         tblModel.fireTableDataChanged();
     }
     
     private void fillComboBoxActive() { 
-        String[] items = { "None", "Có", "Không" };
+        String[] items = { "", "Có", "Không" };
         cob_con_mat.setModel(new DefaultComboBoxModel<>(items));
     }
     
     private void fillComboBoxBuildings() { 
         List<String> lstBuildings = new ArrayList<>();
-        lstBuildings.add("None");
+        lstBuildings.add("");
         for (Buildings b: this.dataGlobal.getArrayBuildings()) {
             lstBuildings.add(b.getBuilding_name());
         }
@@ -513,7 +522,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         });
 
         btn_reset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_reset.setText("Reset");
+        btn_reset.setText("Tải Lại");
         btn_reset.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btn_resetMouseClicked(evt);
@@ -656,7 +665,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
             int residentCardId = Integer.parseInt(tbl_resident_card.getValueAt(selectedRow, 0).toString());
             String customer = tbl_resident_card.getValueAt(selectedRow, 1).toString();
             String building = tbl_resident_card.getValueAt(selectedRow, 2).toString();
-            boolean isActive = Boolean.parseBoolean(tbl_resident_card.getValueAt(selectedRow, 3).toString());
+            boolean isActive = tbl_resident_card.getValueAt(selectedRow, 3).toString().equals("Có");
             
             // Hiển thị dữ liệu lên các ô nhập liệu
             txt_pk_resident_card.setText(String.valueOf(residentCardId));
@@ -727,7 +736,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
                 count += 1;
                 crBuilding_name = building_names.get(count);
                 crFull_name = full_names.get(count);
-                tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, String.valueOf(res.isIs_active())} );
+                tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, "Có"} );
             }
         }
         tblModel.fireTableDataChanged();
@@ -745,7 +754,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
                 count += 1;
                 crBuilding_name = building_names.get(count);
                 crFull_name = full_names.get(count);
-                tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, String.valueOf(res.isIs_active())} );
+                tblModel.addRow(new String[] {String.valueOf(res.getPk_resident_card()), crFull_name, crBuilding_name, "Không"} );
             }
         }
         tblModel.fireTableDataChanged();
@@ -782,7 +791,7 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         // TODO add your handling code here:
         String buildingName = cob_toa_nha.getSelectedItem().toString().trim();
         txt_tim_kiem.setText("");
-        if (buildingName == "None") {
+        if (buildingName.equals("")) {
             initTable();
             resetFields();
             fillTable();
