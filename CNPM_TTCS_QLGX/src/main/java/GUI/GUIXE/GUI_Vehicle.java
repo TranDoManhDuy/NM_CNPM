@@ -595,6 +595,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
             resetFields();
             loadData();
             fillTable();
+            
         }
         else { 
             this.SetLog(GetError(check));

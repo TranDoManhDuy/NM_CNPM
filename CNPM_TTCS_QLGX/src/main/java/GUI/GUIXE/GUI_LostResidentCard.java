@@ -776,6 +776,7 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
                         viewmain.requestFocus();
                     }
                 });
+                dataGlobal.updateArrayResidentCard();
                 for (ResidentCard re : dataGlobal.getArrResidentCards()) {
                     if (re.isIs_active())
                     tableModel.addRow(new String[] {    String.valueOf(re.getPk_resident_card()), String.valueOf(re.getCustomer_id()), 

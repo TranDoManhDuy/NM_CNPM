@@ -143,9 +143,9 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             crCheck_in_shift_type_name = check_in_shift_type_names.get(count);
             crCheck_out_shift_type_name = check_out_shift_type_names.get(count);
             String dt_start = "null";
-            String dt_end = "Chưa ra";
+            String dt_end = "Chua ra";
             String isService = "Không";
-            String amount = "Chưa ra";
+//            int amount = 0;
 
             dt_start =  String.valueOf(par.getCheck_in_time().toLocalDate()) + " " +
                         String.valueOf(par.getCheck_in_time().toLocalTime());
@@ -153,12 +153,12 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             if (par.getCheck_out_time() != null ){
                 dt_end =    String.valueOf(par.getCheck_out_time().toLocalDate()) + " " +
                         String.valueOf(par.getCheck_out_time().toLocalTime());
-                amount = String.valueOf(par.getAmount());
+//                amount = String.valueOf(par.getAmount());
             }
             
 
             if (crCheck_out_shift_type_name == null) {
-                crCheck_out_shift_type_name = "Chưa ra";
+                crCheck_out_shift_type_name = "Chua ra";
             }
             
             if (par.isIs_service()) { 
@@ -169,7 +169,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                                             dt_start, dt_end,
                                             crCheck_in_shift_type_name,
                                             crCheck_out_shift_type_name,
-                                            String.valueOf(par.getVehicle_id()), amount
+                                            String.valueOf(par.getVehicle_id()), String.valueOf(par.getAmount())
             });
         }
         tblModel.fireTableDataChanged();
@@ -290,6 +290,8 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         if (cb_not_service.isSelected()) {
             boolean checkVehicleId = false;
             int vehicleTypeId = -1;
+            
+            this.dataGlobal.updateArrVehicle();
             for (Vehicle vel: this.dataGlobal.getArrayVehicle()) {
                     if (vel.getIdentification_code().equals(txt_ma_nhan_dang_xe.getText().toString().trim())) {
                         checkVehicleId = true;
@@ -1163,8 +1165,9 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             txt_vehicle.setText(vehicleId);
             txt_amount.setText(String.valueOf(amount));
 
-            if (checkOutTime == "null") {
-
+            System.err.println(checkOutTime);
+            if (checkOutTime.equals("Chua ra")) {
+                System.err.println("GO");
                 showUpdate();
             }
             else {
@@ -1805,6 +1808,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         // TODO add your handling code here:
         this.viewmain.setEnabled(false);
         if (cb_is_service.isSelected()) {
+//            System.err.println("GO");
             this.logSelection = new LogSelection() {
                 @Override
                 public void initContent() {
