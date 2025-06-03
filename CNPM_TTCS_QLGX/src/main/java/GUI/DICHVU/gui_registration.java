@@ -253,7 +253,7 @@ public class gui_registration extends javax.swing.JPanel {
             }
         });
 
-        label_iddangki.setText("Id đăng kí");
+        label_iddangki.setText("ID đăng kí");
 
         label_khachhang.setText("Tên Khách hàng");
 

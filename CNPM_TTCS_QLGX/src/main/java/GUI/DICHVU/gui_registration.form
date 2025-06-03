@@ -251,7 +251,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="label_iddangki">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Id &#x111;&#x103;ng k&#xed;"/>
+            <Property name="text" type="java.lang.String" value="ID &#x111;&#x103;ng k&#xed;"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="label_khachhang">

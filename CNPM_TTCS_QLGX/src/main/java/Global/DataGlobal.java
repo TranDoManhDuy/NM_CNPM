@@ -265,7 +265,8 @@ public class DataGlobal {
                 int staff_id = result.getInt("staff_id");
                 String staff_name = result.getString("full_name");
                 int role_id = result.getInt("role_id");
-                arrStaffs.add(new Staff(staff_id, staff_name, role_id));
+                int position_id = result.getInt("position_id");
+                arrStaffs.add(new Staff(staff_id, staff_name, role_id, position_id));
             }
         } 
         catch (Exception e) {

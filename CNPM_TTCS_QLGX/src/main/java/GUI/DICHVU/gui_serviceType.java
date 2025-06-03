@@ -114,7 +114,7 @@ public final class gui_serviceType extends javax.swing.JPanel {
         txt_ngayapdung.setText(String.valueOf(LocalDate.now()));
     }
     private void initTable() {
-        String[] header = new String[] {"ID dịch vụ", "Tên dịch vụ", "Phí dịch vụ/tháng (%)",  "Loại xe", "Số tháng", "Hệ số", "Trạng thái"};
+        String[] header = new String[] {"ID dịch vụ", "Tên dịch vụ", "Phí dịch vụ/tháng (%)",  "Loại xe", "Số tháng", "Hệ số (%)", "Trạng thái"};
         tableModel.setColumnIdentifiers(header);
         table_loaidichvu.setModel(tableModel);
     }

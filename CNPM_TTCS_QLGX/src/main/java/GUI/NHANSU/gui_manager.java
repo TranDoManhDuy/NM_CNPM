@@ -76,7 +76,6 @@ public class gui_manager extends javax.swing.JPanel {
     public void fillTable() {
     // Câu lệnh SQL gọi stored procedure hoặc truy vấn với JOIN để lấy thông tin nhân viên và quản lý
     String sql = "EXEC Supervisor_render";  // Hoặc câu lệnh SQL thay thế tùy theo yêu cầu
-    
     try (
         // Mở kết nối cơ sở dữ liệu
         Connection conn = OpenConnection.getConnection();
@@ -569,7 +568,7 @@ public class gui_manager extends javax.swing.JPanel {
                 });
                 dataGlobal.updateArrayStaffs();
                 for (Staff stf: dataGlobal.getArrStaffs()) {
-                    if (stf.getRoleId() == 1 || stf.getRoleId() == 3)
+                    if (stf.getPositionId() == 1)
                     tableModel.addRow(new String[] {String.valueOf(stf.getStaffId()), stf.getFullName()});
                 }
                 this.tableModel.fireTableDataChanged();
@@ -621,7 +620,7 @@ public class gui_manager extends javax.swing.JPanel {
                 });
                 dataGlobal.updateArrayStaffs();
                 for (Staff stf: dataGlobal.getArrStaffs()) {
-                    if (stf.getRoleId() == 2 || stf.getRoleId() == 4)
+                    if (stf.getPositionId() == 2)
                     tableModel.addRow(new String[] {String.valueOf(stf.getStaffId()), stf.getFullName()});
                 }
                 this.tableModel.fireTableDataChanged();
