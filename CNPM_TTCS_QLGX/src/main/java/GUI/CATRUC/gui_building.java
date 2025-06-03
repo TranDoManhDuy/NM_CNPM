@@ -45,9 +45,14 @@ public class gui_building extends javax.swing.JPanel {
         dataGlobal.updateArrBuildings();
         fillTable(dataGlobal.getArrayBuildings());
         jTextField2.setEnabled(false);
-//        jButton1.setEnabled(false);
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);
+        if(Global.Global_variable.currentLogin.getPositionId() != 1){
+            jButton1.setEnabled(false);
+            jButton5.setEnabled(false);
+            jTextField3.setEnabled(false);
+            jTextArea1.setEnabled(false);
+        }
     }
     
     public void initTable() {
@@ -315,10 +320,12 @@ public class gui_building extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-        jButton1.setEnabled(false);
-        jButton2.setEnabled(true);
-        jButton3.setEnabled(true);
-        jButton5.setEnabled(true);
+        if(Global.Global_variable.currentLogin.getPositionId() == 1){
+            jButton1.setEnabled(false);
+            jButton2.setEnabled(true);
+            jButton3.setEnabled(true);
+            jButton5.setEnabled(true);
+        }
         int row = jTable1.rowAtPoint(evt.getPoint());
         Buildings arr = dataGlobal.getArrayBuildings().get(row);
         jTextField2.setText(String.valueOf(arr.getBuilding_id()));
