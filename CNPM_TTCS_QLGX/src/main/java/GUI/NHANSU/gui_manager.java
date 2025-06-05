@@ -55,7 +55,7 @@ public class gui_manager extends javax.swing.JPanel {
         ResetThongTin();
     }    
     public void initTable() {
-        String[] header = new String[] {"ID Quản lí", "Họ tên nhân viên", "ID Nhân viên", "Họ tên nhân viên"};
+        String[] header = new String[] {"ID Quản lí", "Họ tên quản lý", "ID Nhân viên", "Họ tên nhân viên"};
         tableModel.setColumnIdentifiers(header);
         Table_Supervisor.setModel(tableModel);
     }

@@ -1,8 +1,10 @@
 package DAO;
 
+import Annotation.LogMessage;
 import Model.Supervisor;
 import java.util.ArrayList;
 import DatabaseHelper.OpenConnection;
+import GUI.ViewMain;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +13,9 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 
 public class SupervisorDAO implements InterfaceDAO.InterfaceDAO<Supervisor> {
+    private LogMessage logMessage;
+    private ViewMain viewmain;
+    
     public static SupervisorDAO getInstance() {
         return new SupervisorDAO();
     }
@@ -50,13 +55,7 @@ public class SupervisorDAO implements InterfaceDAO.InterfaceDAO<Supervisor> {
             ptmt.setInt(2, supervisor.getStaffId());
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
-            // Display error message using JOptionPane
-            JOptionPane.showMessageDialog(
-                null,
-                "Lỗi:" + e.getMessage(),
-                "Lỗi",
-                JOptionPane.ERROR_MESSAGE
-            );
+            log_message("Lỗi:" + e.getMessage());
             return false;
         }
     }
@@ -135,6 +134,17 @@ public class SupervisorDAO implements InterfaceDAO.InterfaceDAO<Supervisor> {
         return false;
     }
 }
+    
+    private void log_message(String message) {
+        this.logMessage = new LogMessage(message) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+            }
+        };
+        logMessage.setLocationRelativeTo(null);
+        this.logMessage.setVisible(true);
+    }
 
     
 }
