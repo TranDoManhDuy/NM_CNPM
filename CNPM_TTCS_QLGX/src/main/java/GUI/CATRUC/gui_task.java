@@ -48,6 +48,12 @@ public class gui_task extends javax.swing.JPanel {
         jTextField1.setEnabled(false);
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);
+        if(Global.Global_variable.currentLogin.getPositionId() != 1){
+            jButton1.setEnabled(false);
+            jButton5.setEnabled(false);
+            jTextArea1.setEnabled(false);
+            jTextField2.setEnabled(false);
+        }
     }
     
     public void initTable() {
@@ -326,10 +332,12 @@ public class gui_task extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-        jButton1.setEnabled(false);
-        jButton2.setEnabled(true);
-        jButton3.setEnabled(true);
-        jButton5.setEnabled(true);
+        if(Global.Global_variable.currentLogin.getPositionId() == 1){
+            jButton1.setEnabled(false);
+            jButton2.setEnabled(true);
+            jButton3.setEnabled(true);
+            jButton5.setEnabled(true);
+        }
         int row = jTable1.rowAtPoint(evt.getPoint());
         Tasks arr = dataGlobal.getArrayTasks().get(row);
         jTextField1.setText(String.valueOf(arr.getTask_id()));

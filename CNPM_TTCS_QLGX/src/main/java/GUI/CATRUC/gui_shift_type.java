@@ -41,9 +41,18 @@ public class gui_shift_type extends javax.swing.JPanel {
             };
         initComponents();
         jTextField1.setEnabled(false);
-//        jButton1.setEnabled(false);
+        
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);
+        if (Global.Global_variable.currentLogin.getPositionId() != 1){
+            jButton1.setEnabled(false);
+            jButton5.setEnabled(false);
+            jTextField2.setEnabled(false);
+            jComboBox1.setEnabled(false);
+            jComboBox2.setEnabled(false);
+            jComboBox4.setEnabled(false);
+            jComboBox5.setEnabled(false);
+        }
         initTable();
         dataGlobal.updateArrShiftTypes();     
         fillTable(dataGlobal.getArrayShiftTypes());
@@ -421,6 +430,12 @@ public class gui_shift_type extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        if(Global.Global_variable.currentLogin.getPositionId() == 1){
+            jButton1.setEnabled(false);
+            jButton2.setEnabled(true);
+            jButton3.setEnabled(true);
+            jButton5.setEnabled(true);
+        }
         int a = Integer.parseInt(jTextField5.getText().trim());
         ShiftTypes r = ShiftTypesDAO.getInstance().findByID(a);
         jTextField1.setText(String.valueOf(r.getShift_type_id()));
@@ -433,11 +448,12 @@ public class gui_shift_type extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-        jButton1.setEnabled(false);
-        jButton2.setEnabled(true);
-        jButton3.setEnabled(true);
-        jButton5.setEnabled(true);
-        
+        if(Global.Global_variable.currentLogin.getPositionId() == 1){
+            jButton1.setEnabled(false);
+            jButton2.setEnabled(true);
+            jButton3.setEnabled(true);
+            jButton5.setEnabled(true);
+        }
         int row = jTable1.rowAtPoint(evt.getPoint());
         ShiftTypes arr = dataGlobal.getArrayShiftTypes().get(row);
         jTextField1.setText(String.valueOf(arr.getShift_type_id()));

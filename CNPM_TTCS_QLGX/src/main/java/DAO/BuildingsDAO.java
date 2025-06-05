@@ -52,8 +52,11 @@ public class BuildingsDAO {
             if(e.getErrorCode() == 50000){
                 return e.getMessage();
             }
+            if(e.getErrorCode() == 229){
+                return "Không có quyền thực hiện thao tác";   
+            }
             else{
-                return "Lỗi không biết";    
+                return "thêm thất bại";
                     }
         }
         return "Thêm thành công";
@@ -74,8 +77,11 @@ public class BuildingsDAO {
             if(e.getErrorCode() == 50000){
                 return e.getMessage();
             }
+            if(e.getErrorCode() == 229){
+                return "Không có quyền thực hiện thao tác";   
+            }
             else{
-                return "Lỗi không biết";    
+                return "cập nhật thất bại";
                     }
         }
         return "Cập nhật thành công";
@@ -93,8 +99,11 @@ public class BuildingsDAO {
             if(e.getErrorCode() == 50000){
                 return e.getMessage();
             }
+            if(e.getErrorCode() == 229){
+                return "Không có quyền thực hiện thao tác";   
+            }
             else{
-                return "Lỗi không biết";    
+                return "xóa thất bại";
                     }
         }
         return "Xóa thành công";
