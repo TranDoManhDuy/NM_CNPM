@@ -89,6 +89,7 @@ public class gui_building extends javax.swing.JPanel {
     public void deleteBuilding(){
         int t = Integer.parseInt(jTextField2.getText());
         String r = BuildingsDAO.getInstance().delete(t);
+        dataGlobal.updateArrBuildings();
         callLogMessage(r);
         fillTable(dataGlobal.getArrayBuildings());
     }
@@ -96,6 +97,7 @@ public class gui_building extends javax.swing.JPanel {
     public void updateBuilding(){
         Buildings a = new Buildings(Integer.parseInt(jTextField2.getText()),jTextField3.getText(), jTextArea1.getText());
         String r = BuildingsDAO.getInstance().update(a);
+        dataGlobal.updateArrBuildings();
         callLogMessage(r);
         fillTable(dataGlobal.getArrayBuildings());
     }
@@ -103,6 +105,7 @@ public class gui_building extends javax.swing.JPanel {
     public void insertBuilding(){
         Buildings b = new Buildings(jTextField3.getText(), jTextArea1.getText());
         String r = BuildingsDAO.getInstance().insert(b);
+        dataGlobal.updateArrBuildings();
         callLogMessage(r);
         fillTable(dataGlobal.getArrayBuildings());
     }

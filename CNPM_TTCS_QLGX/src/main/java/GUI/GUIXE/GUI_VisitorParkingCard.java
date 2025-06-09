@@ -321,6 +321,7 @@ public class GUI_VisitorParkingCard extends javax.swing.JPanel {
                     return;
                 }
             }
+            dataGlobal.updateArrayVisitorParkingCardses();
             applyFilter();
         }else{
             callLogMessage("Số lượng không hợp lệ");

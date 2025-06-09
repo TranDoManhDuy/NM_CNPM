@@ -91,6 +91,7 @@ public class gui_task extends javax.swing.JPanel {
         Tasks t = new Tasks(jTextField2.getText(), jTextArea1.getText());
         String r = TasksDAO.getInstance().insert(t);
         callLogMessage(r);
+        dataGlobal.updateArrtasks();
         fillTable(dataGlobal.getArrayTasks());
     }
     
@@ -98,6 +99,7 @@ public class gui_task extends javax.swing.JPanel {
         Tasks a = new Tasks(Integer.parseInt(jTextField1.getText()),jTextField2.getText(), jTextArea1.getText());
         String r = TasksDAO.getInstance().update(a);
         callLogMessage(r);
+        dataGlobal.updateArrtasks();
         fillTable(dataGlobal.getArrayTasks());
     }
     
@@ -105,6 +107,7 @@ public class gui_task extends javax.swing.JPanel {
         int t = Integer.parseInt(jTextField1.getText());
         String r = TasksDAO.getInstance().delete(t);
         callLogMessage(r);
+        dataGlobal.updateArrtasks();
         fillTable(dataGlobal.getArrayTasks());
     }
     /**

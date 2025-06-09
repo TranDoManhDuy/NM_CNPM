@@ -184,7 +184,7 @@ public class gui_shift_work extends javax.swing.JPanel {
             int tID = Integer.parseInt(jTextField5.getText());
             ShiftWorks a = new ShiftWorks( stID, bID, sID, tID, shiftDate);
             String r = ShiftWorksDAO.getInstance().insert(a);
-            System.out.println(shiftDate);
+            dataGlobal.updateArrShiftWorks();
             callLogMessage(r);
             fillTable();
         }catch(Exception e){
@@ -200,6 +200,7 @@ public class gui_shift_work extends javax.swing.JPanel {
             int sID = Integer.parseInt(jTextField4.getText());
             int tID = Integer.parseInt(jTextField5.getText());
             ShiftWorks a = new ShiftWorks(shID, stID, bID, sID, tID, shiftDate);
+            dataGlobal.updateArrShiftWorks();
             String r = ShiftWorksDAO.getInstance().update(a);
             callLogMessage(r);
             fillTable();
@@ -207,6 +208,7 @@ public class gui_shift_work extends javax.swing.JPanel {
     public void deleteShiftWork(){
         int t = Integer.parseInt(jTextField1.getText());
         String r = ShiftWorksDAO.getInstance().delete(t);
+        dataGlobal.updateArrShiftWorks();
         callLogMessage(r);
             fillTable();
     }
