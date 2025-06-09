@@ -145,6 +145,4 @@ public class SupervisorDAO implements InterfaceDAO.InterfaceDAO<Supervisor> {
         logMessage.setLocationRelativeTo(null);
         this.logMessage.setVisible(true);
     }
-
-    
 }

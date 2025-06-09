@@ -67,18 +67,33 @@ public class gui_shift_work extends javax.swing.JPanel {
         jTextField1.setEnabled(false);
         jTextField2.setEnabled(false);
         jTextField3.setEnabled(false);
+        jTextField5.setEnabled(false);
         jTextField6.setEnabled(false);
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);
+        if(Global.Global_variable.currentLogin.getPositionId() != 1){
+           jButton1.setEnabled(false);
+           jButton5.setEnabled(false);
+           jButton7.setEnabled(false);
+           jTextField4.setEnabled(false);
+           jComboBox4.setEnabled(false);
+           jComboBox5.setEnabled(false);
+           jComboBox6.setEnabled(false);
+           jComboBox7.setEnabled(false);
+           jComboBox8.setEnabled(false);
+           jComboBox9.setEnabled(false);
+        }
     }
     public void resetPanel(){
         LocalDate now = LocalDate.now();
         jComboBox4.setSelectedIndex(now.getDayOfMonth());
         jComboBox5.setSelectedIndex(now.getMonthValue());
         jComboBox6.setSelectedIndex(now.getYear() - 2000);
-        jButton1.setEnabled(true);
-        jButton2.setEnabled(false);
-        jButton3.setEnabled(false);
+        if(Global.Global_variable.currentLogin.getPositionId() == 1){
+            jButton1.setEnabled(true);
+            jButton2.setEnabled(false);
+            jButton3.setEnabled(false);
+        }
         jTextField1.setText(null);
         jTextField2.setText(null);
         jTextField3.setText(null);
@@ -169,7 +184,7 @@ public class gui_shift_work extends javax.swing.JPanel {
             int tID = Integer.parseInt(jTextField5.getText());
             ShiftWorks a = new ShiftWorks( stID, bID, sID, tID, shiftDate);
             String r = ShiftWorksDAO.getInstance().insert(a);
-            System.out.println(shiftDate);
+            dataGlobal.updateArrShiftWorks();
             callLogMessage(r);
             fillTable();
         }catch(Exception e){
@@ -185,6 +200,7 @@ public class gui_shift_work extends javax.swing.JPanel {
             int sID = Integer.parseInt(jTextField4.getText());
             int tID = Integer.parseInt(jTextField5.getText());
             ShiftWorks a = new ShiftWorks(shID, stID, bID, sID, tID, shiftDate);
+            dataGlobal.updateArrShiftWorks();
             String r = ShiftWorksDAO.getInstance().update(a);
             callLogMessage(r);
             fillTable();
@@ -192,6 +208,7 @@ public class gui_shift_work extends javax.swing.JPanel {
     public void deleteShiftWork(){
         int t = Integer.parseInt(jTextField1.getText());
         String r = ShiftWorksDAO.getInstance().delete(t);
+        dataGlobal.updateArrShiftWorks();
         callLogMessage(r);
             fillTable();
     }
@@ -863,10 +880,12 @@ public class gui_shift_work extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-        jButton1.setEnabled(false);
-        jButton2.setEnabled(true);
-        jButton3.setEnabled(true);
-        jButton5.setEnabled(true);
+        if(Global.Global_variable.currentLogin.getPositionId() == 1){
+            jButton1.setEnabled(false);
+            jButton2.setEnabled(true);
+            jButton3.setEnabled(true);
+            jButton5.setEnabled(true);
+        }
         jTextField1.setText((String) jTable1.getValueAt(jTable1.rowAtPoint(evt.getPoint()), 0));
         jComboBox8.setSelectedItem((String) jTable1.getValueAt(jTable1.rowAtPoint(evt.getPoint()), 1));
         jTextField2.setText(String.valueOf( dataGlobal.getArrayShiftTypes().get(jComboBox8.getSelectedIndex() - 1).getShift_type_id()));
