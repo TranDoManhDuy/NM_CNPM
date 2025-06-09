@@ -750,11 +750,11 @@ public class gui_staff extends javax.swing.JPanel {
         int roleId = RoleDAO.getInstance().getRoleIdByName(roleText);
         int positionId = PositionDAO.getInstance().getPositionIdByName(positionText);
 
-        if ((positionText.equalsIgnoreCase("Manager") && !roleText.startsWith("Manager")) ||
-            (positionText.equalsIgnoreCase("Staff") && !roleText.startsWith("Staff"))) {
-            log_message("Vai trò không hợp lệ với vị trí đã chọn.");
-            return;
-        }
+//        if ((positionText.equalsIgnoreCase("Manager") && !roleText.startsWith("Manager")) ||
+//            (positionText.equalsIgnoreCase("Staff") && !roleText.startsWith("Staff"))) {
+//            log_message("Vai trò không hợp lệ với vị trí đã chọn.");
+//            return;
+//        }
         
         
         
