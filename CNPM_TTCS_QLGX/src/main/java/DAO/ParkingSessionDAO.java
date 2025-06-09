@@ -130,43 +130,22 @@ public class ParkingSessionDAO{
         return "Thêm Thành Công";
     }
 
-    public String update(ParkingSession session) {
-        String sql = "EXEC UPDATE_PARKING_SESSION @card_id = ?, @is_service = ?, @check_in_time = ?, @check_out_time = ?, @check_in_shift_id = ?, @check_out_shift_id = ?, @vehicle_id = ?, @amount = ?, @parking_session_id = ?";
+    public String update(ParkingSession session, boolean is_extend) {
+        String sql = "EXEC UPDATE_PARKING_SESSION @card_id = ?, @is_service = ?, @vehicle_id = ?, @parking_session_id = ?, @is_extend = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, session.getCard_id());
             ps.setBoolean(2, session.isIs_service());
-            ps.setTimestamp(3, Timestamp.valueOf(session.getCheck_in_time())); 
-            
-            if (session.getCheck_out_time() != null) {
-                ps.setTimestamp(4, Timestamp.valueOf(session.getCheck_out_time())); 
-            } else {
-                ps.setNull(4, java.sql.Types.TIME);
-            }
-            
-            ps.setInt(5, session.getCheck_in_shift_id());
-            
-            if (session.getCheck_out_shift_id() != -1) { 
-                ps.setInt(6, session.getCheck_out_shift_id());
-            } else {
-                ps.setNull(6, java.sql.Types.INTEGER);
-            }
-            
-            ps.setInt(7, session.getVehicle_id());
-            
-                if (session.getAmount() != -1) {
-                ps.setInt(8, session.getAmount());
-            } else {
-                ps.setNull(8, java.sql.Types.INTEGER);
-            }
-            
-            ps.setInt(9, session.getParking_session_id());
+            ps.setInt(3, session.getVehicle_id());
+            ps.setInt(4, session.getParking_session_id());
+            ps.setBoolean(5, is_extend);
             if (ps.executeUpdate() > 0) { 
                 return "Cập Nhật Thành Công";
             }
         }
         catch (Exception e) {
+            System.out.println(e.getMessage());
             return e.getMessage();
         }
         return "Cập Nhật Thành Công";
@@ -215,5 +194,23 @@ public class ParkingSessionDAO{
             return e.getMessage();
         }
         return "Xóa Thành Công";
+    }
+    
+    public String getState(int card_id, int vehicle_id) { 
+        String sql = "EXEC SP_GET_STATE @card_id = ?, @vehicle_id = ?";
+        try (
+                Connection con = OpenConnection.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, card_id);
+            ps.setInt(2, vehicle_id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String state = rs.getString("RegistrationState").toString().trim();
+                return state;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
