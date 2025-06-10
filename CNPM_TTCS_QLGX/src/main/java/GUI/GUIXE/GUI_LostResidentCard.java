@@ -10,6 +10,7 @@ import Annotation.LogSelection;
 import DAO.LostResidentCardDAO;
 import GUI.ViewMain;
 import Global.DataGlobal;
+import Global.Global_variable;
 import Model.LostResidentCard;
 import Model.ParkingSession;
 import Model.ResidentCard;
@@ -107,6 +108,11 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
     
     
     private void setActive() { 
+        if (Global_variable.position.trim().equals("staff"))
+        {
+            this.deniedStaff();
+            return;
+        }
         txt_lost_resident_card.setEnabled(false);
         txt_resident_id.setEnabled(false);
         txt_parking_session_id.setEnabled(false);
@@ -125,6 +131,32 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
         
         tbl_lost_resident_card.clearSelection();
         this.setActive();
+    }
+    
+    private void showDelete() { 
+        if (Global_variable.position.trim().equals("staff"))
+        {
+            this.deniedStaff();
+            return;
+        }
+        txt_lost_resident_card.setEditable(false);
+        txt_customer_name.setEnabled(false);
+        txt_parking_session_id.setEditable(false);
+        txt_resident_id.setEditable(false);
+        
+        btn_chon_ma_gui_xe.setEnabled(false);
+        btn_chon_ma_the.setEnabled(false);
+        btn_delete.setEnabled(true);
+        btn_insert.setEnabled(false);
+    }
+    
+    private void deniedStaff() { 
+        btn_chon_ma_gui_xe.setEnabled(false);
+        btn_chon_ma_the.setEnabled(false);
+        btn_delete.setEnabled(false);
+        btn_insert.setEnabled(false);
+        btn_delete.setEnabled(false);
+        txt_parking_session_id.setEnabled(false);
     }
     
     private void checkBtnInsert() {
@@ -156,18 +188,6 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
         
         txt_parking_session_id.getDocument().addDocumentListener(docListener);
         txt_resident_id.getDocument().addDocumentListener(docListener);
-    }
-    
-    private void showDelete() { 
-        txt_lost_resident_card.setEditable(false);
-        txt_customer_name.setEnabled(false);
-        txt_parking_session_id.setEditable(false);
-        txt_resident_id.setEditable(false);
-        
-        btn_chon_ma_gui_xe.setEnabled(false);
-        btn_chon_ma_the.setEnabled(false);
-        btn_delete.setEnabled(true);
-        btn_insert.setEnabled(false);
     }
 
     private void SetLog(String s) { 

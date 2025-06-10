@@ -10,6 +10,7 @@ import Annotation.LogSelection;
 import DAO.ResidentCardDAO;
 import GUI.ViewMain;
 import Global.DataGlobal;
+import Global.Global_variable;
 import Model.Buildings;
 import Model.Customer;
 import Model.ParkingSession;
@@ -130,20 +131,24 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         cob_toa_nha.setModel(new DefaultComboBoxModel<>(buildings));
     }
     
-    public void resetFields() { 
+    public void resetFields() {
         txt_building_id.setText("");
         txt_customer_id.setText("");
         txt_pk_resident_card.setText("");
         
         tbl_resident_card.clearSelection();
         cob_con_mat.setSelectedIndex(0);
+        if (Global_variable.position.trim().equals("staff")) {
+            this.deniedStaff();
+            return;
+        }
+        
         cob_con_mat.setEnabled(false);
         btn_chon_customer.setEnabled(true);
         
         btn_update.setEnabled(false);
         btn_delete.setEnabled(false);
         btn_insert.setEnabled(false);
-        
         chooseCustomerId = -1;
     }
     
@@ -154,7 +159,12 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         fillTable();
     }
     
-    private void showUpdate() { 
+    private void showUpdate() {
+        if (Global_variable.position.trim().equals("staff")) {
+            System.out.println("Denied");
+            this.deniedStaff();
+            return;
+        }
         cob_con_mat.setEnabled(true);
         btn_chon_customer.setEnabled(false);
         
@@ -163,14 +173,27 @@ public class GUI_ResidentCard extends javax.swing.JPanel {
         btn_insert.setEnabled(false);
     }
     
+    private void deniedStaff() { 
+        txt_building_id.setEnabled(false);
+        txt_customer_id.setEnabled(false);
+        txt_pk_resident_card.setEditable(false);
+        
+        btn_insert.setEnabled(false);
+        btn_delete.setEnabled(false);
+        btn_update.setEnabled(false);
+        btn_chon_customer.setEnabled(false);
+    }
+    
     private void checkBtnInsert() {
         boolean isFilled = !txt_customer_id.getText().trim().isEmpty();
-        btn_insert.setEnabled(isFilled);
+        if (!Global_variable.position.equals("staff")) 
+            btn_insert.setEnabled(isFilled);
     }
     
     private void checkBtnUpdate() { 
         boolean isButton = cob_con_mat.getSelectedIndex() > 0;
-        btn_update.setEnabled(isButton);
+        if (!Global_variable.position.equals("staff")) 
+            btn_update.setEnabled(isButton);
     }
     
     private void addButtonListeners() { 

@@ -291,6 +291,21 @@ public class GUI_Customer extends javax.swing.JPanel {
         cb_gender_O.addActionListener(actionListener);
     }
     
+    private boolean checkInformation(Customer customer) { 
+        for (Customer c : customers) {
+            if (c.getSsn().trim().equals(customer.getSsn().trim())) {
+                this.SetLog("Căn cước công dân đã tồn tại!");
+                return false;
+            }
+            
+            if (c.getPhone_number().trim().equals(customer.getPhone_number().trim())) {
+                this.SetLog("Số điện thoại đã tồn tại!");
+                return false;
+            }
+        }
+        return true;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -941,6 +956,9 @@ public class GUI_Customer extends javax.swing.JPanel {
             Txt_nationality.getText().trim(),
             cb_is_active.isSelected()
         );
+        
+        if (!this.checkInformation(customer)) return;
+    
         String check = CustomerDAO.getInstance().insert(customer);
         if (check.equals("Thêm Thành Công")) {
             resetFields();
@@ -1238,7 +1256,7 @@ public class GUI_Customer extends javax.swing.JPanel {
         this.logSelection.setVisible(true);
     }//GEN-LAST:event_btn_chonActionPerformed
 
-    private void processUpdate() { 
+    private void processUpdate(int index) { 
         String day = cob_ngay.getSelectedItem().toString();
         String month = cob_thang.getSelectedItem().toString();
         String year = cob_nam.getSelectedItem().toString();
@@ -1269,6 +1287,20 @@ public class GUI_Customer extends javax.swing.JPanel {
             Txt_nationality.getText().trim(),
             cb_is_active.isSelected()
         );
+        System.out.println(index);
+        for (int i = 0; i < customers.size(); ++i) {
+            if (customers.get(i).getSsn().trim().equals(customer.getSsn().trim()) && i != index) {
+                this.SetLog("Căn cước công dân đã tồn tại!");
+                return;
+            }
+            
+            if (customers.get(i).getPhone_number().trim().equals(customer.getPhone_number().trim()) && i != index) {
+                this.SetLog("Số điện thoại đã tồn tại!");
+                return ;
+            }
+        }
+        
+        
         String check = CustomerDAO.getInstance().update(customer);
         if (check.equals("Cập Nhật Thành Công")) {
             resetFields();
@@ -1288,7 +1320,7 @@ public class GUI_Customer extends javax.swing.JPanel {
     private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
         // TODO add your handling code here:
         if (!Library.Library.isValidPhoneNumber(txt_phone_number.getText().toString().trim())) { 
-            this.SetLog("Số điện thoại phải có đúng 10 chữ số!");
+            this.SetLog("Số điện thoại: Sai định dạng (0** *** ****)!");
             return;
         }
         
@@ -1328,7 +1360,7 @@ public class GUI_Customer extends javax.swing.JPanel {
                 if (!cursorBreak) {
                     return;
                 }
-                processUpdate();
+                processUpdate(tblCustomer.getSelectedRow());
             }
         };
         worker.execute();

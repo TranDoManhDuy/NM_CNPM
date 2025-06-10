@@ -10,6 +10,7 @@ import Annotation.LogSelection;
 import DAO.VehicleDAO;
 import GUI.ViewMain;
 import Global.DataGlobal;
+import Global.Global_variable;
 import Model.Vehicle;
 import Model.VehicleType;
 import java.awt.event.ActionEvent;
@@ -119,10 +120,16 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         txt_vehicle_id.setEnabled(false);
         txt_identification_code.setEnabled(true);
         txt_vehicle_name.setEnabled(true);
+        txt_vehicle_color.setEnabled(true);
         txt_vehicle_type.setEnabled(false);
     }
     
     private void showUpdate() { 
+        if (Global_variable.position.equals("staff")) { 
+            this.deniedStaff();
+            System.out.println("Denied");
+            return;
+        }
         btn_insert.setEnabled(false);
         btn_update.setEnabled(true);
         btn_xoa.setEnabled(true);
@@ -131,6 +138,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         txt_vehicle_id.setEnabled(false);
         txt_identification_code.setEnabled(true);
         txt_vehicle_name.setEnabled(true);
+        txt_vehicle_color.setEnabled(true);
         txt_vehicle_type.setEnabled(false);
     }
     
@@ -142,6 +150,12 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         txt_vehicle_color.setText("");
         this.choooseIndexVehicleType = 0;
         tbl_vehicle.clearSelection();
+    }
+    
+    private void deniedStaff() { 
+        btn_update.setEnabled(false);
+        btn_insert.setEnabled(false);
+        btn_chon_vehicle_type.setEnabled(false);
     }
     
     private void checkInsertButton () { 
@@ -230,6 +244,17 @@ public class GUI_Vehicle extends javax.swing.JPanel {
             }
         }
         return s;
+    }
+    
+    
+    private boolean checkInformation(Vehicle vel) { 
+        for (Vehicle v : vehicles) { 
+            if (vel.getIdentification_code().trim().equals(v.getIdentification_code().trim())) { 
+                this.SetLog("Mã nhận dạng đã tồn tại!");
+                return false;
+            }
+        }
+        return true;
     }
     
     @SuppressWarnings("unchecked")
@@ -414,12 +439,22 @@ public class GUI_Vehicle extends javax.swing.JPanel {
                 btn_updateMouseClicked(evt);
             }
         });
+        btn_update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_updateActionPerformed(evt);
+            }
+        });
 
         btn_xoa.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_xoa.setText("Xóa");
         btn_xoa.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btn_xoaMouseClicked(evt);
+            }
+        });
+        btn_xoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_xoaActionPerformed(evt);
             }
         });
 
@@ -576,17 +611,22 @@ public class GUI_Vehicle extends javax.swing.JPanel {
             txt_vehicle_color.setText(vehicleColor);
         }
         this.showUpdate();
-        
     }//GEN-LAST:event_tbl_vehicleMouseClicked
 
     private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked
         // TODO add your handling code here:
+    }//GEN-LAST:event_btn_insertMouseClicked
+
+    private void processInsert() { 
         String vehicleIden = txt_identification_code.getText().toString().trim();
         int vehicleTypeId = this.choooseIndexVehicleType;
         String vehicleName = txt_vehicle_name.getText().toString().trim();
         String vehicleColor = txt_vehicle_color.getText().toString().trim();
         
         Vehicle vel = new Vehicle(vehicleIden, vehicleTypeId, vehicleName, vehicleColor); 
+        
+        if (!checkInformation(vel)) return;
+        
         String check = "";
         check = VehicleDAO.getInstance().insert(vel);
         if (check.equals("Thêm Thành Công")) {
@@ -595,7 +635,6 @@ public class GUI_Vehicle extends javax.swing.JPanel {
             resetFields();
             loadData();
             fillTable();
-            
         }
         else { 
             this.SetLog(GetError(check));
@@ -603,10 +642,50 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         }
         this.SetLog(check);
         return;
-    }//GEN-LAST:event_btn_insertMouseClicked
-
+    }
+    
     private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
         // TODO add your handling code here:
+        this.cursorBreak = false;
+        viewmain.setEnabled(false);
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật lượt gửi xe này ?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processInsert();
+            }
+        };
+        worker.execute();
+        worker = null;
     }//GEN-LAST:event_btn_insertActionPerformed
 
     private void btn_resetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_resetMouseClicked
@@ -728,7 +807,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         this.logSelection.setVisible(true);
     }//GEN-LAST:event_btn_chon_vehicle_typeActionPerformed
 
-    private void processUpdate() { 
+    private void processUpdate(int index) { 
         int vehicleId = Integer.parseInt(txt_vehicle_id.getText().toString().trim());
         String vehicleIden = txt_identification_code.getText().toString().trim();
         
@@ -744,6 +823,12 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         String vehicleColor = txt_vehicle_color.getText().toString().trim();
         
         Vehicle vel = new Vehicle(vehicleId, vehicleIden, vehicleTypeId, vehicleName, vehicleColor);
+        for (int i = 0; i < vehicles.size(); ++i) { 
+            if (vel.getIdentification_code().trim().equals(vehicles.get(i).getIdentification_code().trim()) && i != index) { 
+                this.SetLog("Mã nhận dạng đã tồn tại!");
+                return;
+            }
+        }
         String check = VehicleDAO.getInstance().update(vel);
         if (check.equals("Cập Nhật Thành Công")) {
             initTable();
@@ -762,9 +847,36 @@ public class GUI_Vehicle extends javax.swing.JPanel {
     
     private void btn_updateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_updateMouseClicked
         // TODO add your handling code here:
+    }//GEN-LAST:event_btn_updateMouseClicked
+
+    private void processDelete() { 
+        // TODO add your handling code here:
+        int vehicleId = Integer.parseInt(txt_vehicle_id.getText().toString().trim());
+        String check = VehicleDAO.getInstance().delete(vehicleId);
+        if (check.equals("Xóa Thành Công")) {
+            initTable();
+            resetActive();
+            resetFields();
+            loadData();
+            fillTable();
+        }
+        else { 
+            this.SetLog(GetError(check));
+            return;
+        }
+        this.SetLog(check);
+        return;
+    }
+    
+    private void btn_xoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_xoaMouseClicked
+        
+    }//GEN-LAST:event_btn_xoaMouseClicked
+
+    private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
+        // TODO add your handling code here:
         this.cursorBreak = false;
         viewmain.setEnabled(false);
-        this.logConfirm = new LogConfirm("Bạn có chắc là muốn xóa lượt gửi xe này ?") {
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật lượt gửi xe này ?") {
             @Override
             public void action() {
                 cursorBreak = true;
@@ -797,33 +909,15 @@ public class GUI_Vehicle extends javax.swing.JPanel {
                 if (!cursorBreak) {
                     return;
                 }
-                processUpdate();
+                processUpdate(tbl_vehicle.getSelectedRow());
             }
         };
         worker.execute();
         worker = null;
-    }//GEN-LAST:event_btn_updateMouseClicked
+    }//GEN-LAST:event_btn_updateActionPerformed
 
-    private void processDelete() { 
+    private void btn_xoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xoaActionPerformed
         // TODO add your handling code here:
-        int vehicleId = Integer.parseInt(txt_vehicle_id.getText().toString().trim());
-        String check = VehicleDAO.getInstance().delete(vehicleId);
-        if (check.equals("Xóa Thành Công")) {
-            initTable();
-            resetActive();
-            resetFields();
-            loadData();
-            fillTable();
-        }
-        else { 
-            this.SetLog(GetError(check));
-            return;
-        }
-        this.SetLog(check);
-        return;
-    }
-    
-    private void btn_xoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_xoaMouseClicked
         this.cursorBreak = false;
         viewmain.setEnabled(false);
         this.logConfirm = new LogConfirm("Bạn có chắc là muốn xóa lượt gửi xe này ?") {
@@ -864,7 +958,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         };
         worker.execute();
         worker = null;
-    }//GEN-LAST:event_btn_xoaMouseClicked
+    }//GEN-LAST:event_btn_xoaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

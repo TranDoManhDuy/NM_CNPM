@@ -12,12 +12,12 @@ import DAO.VehicleDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Global.DataGlobal;
+import Global.Global_variable;
+import Model.Customer;
 import javax.swing.table.DefaultTableModel;
 import Model.ParkingSession;
 import Model.Regisatration;
 import Model.ResidentCard;
-import Model.SessionFee;
-import Model.TimeFrame;
 import Model.Vehicle;
 import Model.VehicleType;
 import Model.VisitorParkingCards;
@@ -31,7 +31,6 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -233,7 +232,8 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
     private void showDelete() {
         this.ShowNotInsert();
         btn_update.setEnabled(false);
-        btn_delete.setEnabled(true);
+        if (!Global_variable.position.equals("staff"))
+            btn_delete.setEnabled(true);
     }
 
     private void resetBtn() {
@@ -1164,8 +1164,6 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
             txt_check_out_shift_id.setText(checkOutShiftId);
             txt_vehicle.setText(vehicleId);
             txt_amount.setText(String.valueOf(amount));
-
-            System.err.println(checkOutTime);
             if (checkOutTime.equals("Chua ra")) {
                 showUpdate();
             }
@@ -1976,18 +1974,31 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
                     }
                 });
                 dataGlobal.updateArrVehicle();
+                int customerId = -1;
+                int cardId = Integer.parseInt(txt_card_id.getText().trim());
+                for (ResidentCard rc : dataGlobal.getArrResidentCards()) { 
+                    if (rc.getPk_resident_card() == cardId && rc.isIs_active()) {
+                        customerId = rc.getCustomer_id();
+                    }
+                }
+                
                 for (Vehicle vel : dataGlobal.getArrayVehicle()) {
                     int typeId = vel.getVehicle_type_id();
                     for (VehicleType vt: dataGlobal.getArrVehicleType()) {
                         if (vt.isIsPermission() && vt.getVehicle_type_id() == typeId) {
-                            tableModel.addRow(new String[] {String.valueOf(vel.getVehicle_id()), vel.getIdentification_code(),
+                            for (Regisatration re : dataGlobal.getArrayRegistration()) {
+                                if (re.getCustomer_id() == customerId && re.getVehicle_id() == vel.getVehicle_id() && re.getState() == 'B') {
+                                    tableModel.addRow(new String[] {String.valueOf(vel.getVehicle_id()), vel.getIdentification_code(),
                                                     String.valueOf(vel.getVehicle_type_id()), vel.getVehicle_name(),
                                                     vel.getVehicle_color()
-                            });
-                            break;
+                                    });
+                                    break;
+                                } 
+                            }
                         }
                     }
                 }
+                
                 this.tableModel.fireTableDataChanged();
                 this.btn_loc.addActionListener(new ActionListener() {
                     @Override
