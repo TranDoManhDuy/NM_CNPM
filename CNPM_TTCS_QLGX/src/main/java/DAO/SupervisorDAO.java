@@ -128,9 +128,7 @@ public class SupervisorDAO implements InterfaceDAO.InterfaceDAO<Supervisor> {
         return rowsDeleted > 0;
 
     } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null,
-            "Lỗi khi xóa mối quan hệ giám sát:\n" + e.getMessage(),
-            "Lỗi xóa", JOptionPane.ERROR_MESSAGE);
+        log_message("Lỗi:" + e.getMessage());
         return false;
     }
 }

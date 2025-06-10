@@ -1,8 +1,10 @@
 package DAO;
 
+import Annotation.LogMessage;
 import Model.Staff;
 import java.util.ArrayList;
 import DatabaseHelper.OpenConnection;
+import GUI.ViewMain;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +13,8 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 public class StaffDAO implements InterfaceDAO.InterfaceDAO<Staff> {
+    private LogMessage logMessage;
+    private ViewMain viewmain;
     public static StaffDAO getInstance() {
         return new StaffDAO();
     }
@@ -146,10 +150,9 @@ public class StaffDAO implements InterfaceDAO.InterfaceDAO<Staff> {
             ptmt.setInt(1, id);
             return ptmt.executeUpdate() > 0;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Lỗi: " + e.getMessage(), e);
+            }
         }
-        return false;
-    }
     
     public boolean isAccountUsedByStaff(int accountNumber) {
         String sql = "SELECT 1 FROM staff WHERE account_number = ?";
@@ -206,6 +209,17 @@ public class StaffDAO implements InterfaceDAO.InterfaceDAO<Staff> {
             e.printStackTrace();
         }
         return false;
+    }
+    
+        private void log_message(String message) {
+        this.logMessage = new LogMessage(message) {
+            @Override
+            public void action() {
+                this.setVisible(false);
+            }
+        };
+        logMessage.setLocationRelativeTo(null);
+        this.logMessage.setVisible(true);
     }
 
     
