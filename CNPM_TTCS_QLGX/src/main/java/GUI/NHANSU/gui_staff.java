@@ -600,16 +600,29 @@ public class gui_staff extends javax.swing.JPanel {
     private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
         // TODO add your handling code here:
         int selectedRow = Table_Staff.getSelectedRow();
+        if (selectedRow == -1) {
+        log_message("Vui lòng chọn một hàng để xóa.");
+        return;
+    }
 
         int staff_id = Integer.parseInt(Table_Staff.getValueAt(selectedRow, 0).toString());
+        
 
         this.logConfirm = new LogConfirm("Xác nhận xóa?") {
             @Override
             public void action() {
-                boolean success = StaffDAO.getInstance().delete(staff_id);
+
                 this.setVisible(false);
                 viewmain.setEnabled(true);
                 viewmain.requestFocus();
+                
+                boolean success;
+                try {
+                    success = StaffDAO.getInstance().delete(staff_id);
+                } catch (Exception e) {
+                    log_message(e.getMessage());
+                    return;
+                }
 
                 if (success) {
                     log_message("Xóa thành công!");
@@ -618,7 +631,8 @@ public class gui_staff extends javax.swing.JPanel {
                     btn_Lammoitimkiem.setEnabled(true);
                     loadAndFilterTable(StaffDAO.getInstance().getList());
                     gui_registaff.refreshAccountNumber(); 
-                } else {
+                } 
+                else {
                     log_message("Xóa thất bại!");
                     btnXoa.setEnabled(true);
                     btnSua.setEnabled(true);

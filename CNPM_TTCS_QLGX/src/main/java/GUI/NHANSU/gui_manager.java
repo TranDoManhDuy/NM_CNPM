@@ -521,7 +521,7 @@ public class gui_manager extends javax.swing.JPanel {
                     loadTable();
                     ResetThongTin();
                 } else {
-                    log_message("Không tìm thấy hoặc không thể xóa.");
+                    log_message("Không thể xóa.");
                 }
             }
 
