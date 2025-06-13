@@ -1085,9 +1085,10 @@ public class gui_payment extends javax.swing.JPanel {
             state = true;
         }
         int serviceTypeId = Integer.parseInt(txt_idloaidichvu.getText());
+        Payment lastPayment = PaymentDAO.getInstance().findbyID(id_thanhtoan);
         Payment payment = new Payment(id_thanhtoan, id_dangki, extension_time, state, serviceTypeId);
         
-        if (payment.isPayment_state()) {
+        if (lastPayment.isPayment_state()) {
             logError("Không thể thay đổi khi đã thanh toán thành công");
             return;
         }

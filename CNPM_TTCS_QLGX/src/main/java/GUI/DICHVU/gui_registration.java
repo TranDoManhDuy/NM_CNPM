@@ -1159,7 +1159,7 @@ public class gui_registration extends javax.swing.JPanel {
                     (registration.getVehicle_id() != rs.getVehicle_id() || registration.getCustomer_id() != rs.getCustomer_id())) {
                 for (Payment pm : PaymentDAO.getInstance().getList()) {
                     if (pm.getRegistration_id() == registration.getRegistration_id()) {
-                        logError("Không sửa thông tin về khách hàng và phương tiện");
+                        logError("Không sửa thông tin về khách hàng và phương tiện khi đã có thanh toán");
                         return;
                     }
                 }
@@ -1172,7 +1172,6 @@ public class gui_registration extends javax.swing.JPanel {
                 return;
             }
         }
-        
         
         String rs = RegisatrationDAO.getInstance().update(registration);
         this.viewmain.setEnabled(false);

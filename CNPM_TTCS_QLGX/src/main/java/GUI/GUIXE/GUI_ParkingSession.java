@@ -2186,7 +2186,7 @@ public class GUI_ParkingSession extends javax.swing.JPanel {
         ParkingSession par = new ParkingSession(parking_session_id, card_id, is_service, start_date_time, null, check_in_shift_id, -1, vehicle_id, amount);
         System.out.println(is_service + " " + card_id + " " + check_in_shift_id + " " + parking_session_id + " " + vehicle_id);
         String state = null;
-        if (is_service) { 
+        if (is_service) {
             state = ParkingSessionDAO.getInstance().getState(card_id, vehicle_id);
         }
         if (state == null || state.equals("B")) { 
