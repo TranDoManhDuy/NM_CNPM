@@ -117,7 +117,6 @@ public class gui_registration extends javax.swing.JPanel {
                 Vehicle vehicle = new Vehicle();
                 
                 int row = table_dangki.rowAtPoint(e.getPoint());
-                
                 ArrayList <String> rs_view = dataglobal.getArrRegistration_render().get(row);
                 
                 txt_iddangki.setText(rs_view.get(0));
@@ -146,6 +145,17 @@ public class gui_registration extends javax.swing.JPanel {
         combo_thangketthuc.setSelectedItem(monthnow);
         combo_namketthuc.setSelectedItem(String.valueOf(currentDate.getYear()));
         table_dangki.setRowHeight(30);
+        
+        final int[] lastValidIndex = {0};
+        combo_trangthai.addActionListener(e -> {
+            if (combo_trangthai.getSelectedIndex() == 1) {
+                // Cấm chọn
+                JOptionPane.showMessageDialog(viewmain, "Phải tạo thanh toán cho đăng kí này");
+                combo_trangthai.setSelectedIndex(lastValidIndex[0]); 
+            } else {
+                lastValidIndex[0] = combo_trangthai.getSelectedIndex();
+            }
+        });
     }
     private void initTable() {
         String[] header = new String[] {"ID đăng kí", "Khách hàng", "Ngày đăng kí", "Định danh phương tiện", "Trạng thái"};
