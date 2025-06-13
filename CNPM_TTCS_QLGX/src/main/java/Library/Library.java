@@ -13,6 +13,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -32,7 +33,7 @@ public class Library {
         }
         return lastInput;
     }
-    // email validate
+    
     public static boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9]+@[a-zA-Z0-9.]+\\.[a-zA-Z]{2,}$";
         return email.matches(emailRegex);
@@ -45,11 +46,39 @@ public class Library {
     }
     // kiem tra cccd
     public static boolean isValidSSN(String str) {
-        return str.matches("\\d{12}");
+        return str.matches("0\\d{11}");
     }
     
     public static boolean isValidPhoneNumber(String phone_number) {
         return phone_number != null && phone_number.matches("0\\d{9}");
+    }
+    
+    public static boolean isValidName(String name) {
+
+        System.out.println(name);
+        
+        if (name == null || name.trim().isEmpty()) {
+            System.out.println("Tên không được để trống.");
+            return false;
+        }
+        String[] words = name.trim().split("\\s+");
+        for (String word : words) {
+            if (word.isEmpty() || !Character.isUpperCase(word.charAt(0))) {
+                return false;
+            }
+        }
+        
+        String trimmedName = name.trim();
+        if (trimmedName.matches(".*\\d.*")) {
+            System.out.println("Tên không được chứa số.");
+            return false;
+        }
+        else if (trimmedName.matches(".*[!@#$%^&*(){}\\[\\]\\\\|:;'\"/.,><~`].*")) {
+            System.out.println("Tên không được chứa các ký tự đặc biệt: !@#$%^&*(){}[]\\|:;'\"/.,><~`");
+            return false;
+        }
+        
+        return true;
     }
     
     // in dinh dang tien te

@@ -237,7 +237,7 @@ public class ViewMain extends javax.swing.JFrame {
     }
     
     public void GUI_GUIXE() 
-    {   
+    {  
         GUI_LostVisitorParkingCard gui_LostVisitorParkingCard = new GUI_LostVisitorParkingCard(this);
         GUI_VisitorParkingCard gui_visitorParkingCard = new GUI_VisitorParkingCard(this);
         GUI_Vehicle gui_vehicle = new GUI_Vehicle(dataglocal, this, logSelection, logMessage, logConfirm);

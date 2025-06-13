@@ -648,7 +648,7 @@ public class GUI_Vehicle extends javax.swing.JPanel {
         // TODO add your handling code here:
         this.cursorBreak = false;
         viewmain.setEnabled(false);
-        this.logConfirm = new LogConfirm("Bạn có chắc là muốn cập nhật lượt gửi xe này ?") {
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn thêm lượt gửi xe này ?") {
             @Override
             public void action() {
                 cursorBreak = true;

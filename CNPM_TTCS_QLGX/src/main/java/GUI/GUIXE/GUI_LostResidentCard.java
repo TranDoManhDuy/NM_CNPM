@@ -8,6 +8,7 @@ import Annotation.LogConfirm;
 import Annotation.LogMessage;
 import Annotation.LogSelection;
 import DAO.LostResidentCardDAO;
+import DAO.ParkingSessionDAO;
 import GUI.ViewMain;
 import Global.DataGlobal;
 import Global.Global_variable;
@@ -635,10 +636,10 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
 
     }//GEN-LAST:event_btn_resetMouseClicked
 
-    private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
-        // TODO add your handling code here:
-        LostResidentCard lre = new LostResidentCard(chooseResidentCard, chooseParkingSession);
-        String check = LostResidentCardDAO.getInstance().insert(lre);
+    private void processUpdate(LostResidentCard lre, boolean is_extend) {
+        String check = LostResidentCardDAO.getInstance().insert(lre, is_extend);
+        
+        System.out.println(check);
         if (check.equals("Thêm Thành Công")) {
             initTable();
             loadData();
@@ -655,6 +656,75 @@ public class GUI_LostResidentCard extends javax.swing.JPanel {
         }
         this.SetLog(check);
         return;
+    }
+    
+    private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
+        // TODO add your handling code here:
+        LostResidentCard lre = new LostResidentCard(chooseResidentCard, chooseParkingSession);
+        
+        int card_id = -1;
+        int vehicle_id = -1;
+        for (ParkingSession par : this.dataGlobal.getArrParkingSession()) { 
+            if (par.getParking_session_id() == lre.getParking_session_id()) { 
+                card_id = par.getCard_id();
+                vehicle_id = par.getVehicle_id();
+            }
+        }
+        if (card_id == -1 || vehicle_id == -1) return;
+        
+        String state = ParkingSessionDAO.getInstance().getState(card_id, vehicle_id);
+        
+        
+        if (state == null || state.equals("B")) { 
+            processUpdate(lre, false);
+        }
+        else if (state.equals("A")) {
+            this.cursorBreak = false;
+            viewmain.setEnabled(false);
+            this.logConfirm = new LogConfirm("Bạn có muốn gia hạn tiếp gói dịch vụ hay không?") {
+                @Override
+                public void action() {
+                    cursorBreak = true;
+                    this.setVisible(false);
+                    viewmain.setEnabled(true);
+                    viewmain.requestFocus();
+                    processUpdate(lre, true);
+                }
+
+                @Override
+                public void reject() {
+                    cursorBreak = false;
+                    this.setVisible(false);
+                    viewmain.setEnabled(true);
+                    viewmain.requestFocus();
+                    processUpdate(lre, false);
+                }
+            };
+            this.logConfirm.setVisible(true);
+
+            SwingWorker<Void, Void> worker = new SwingWorker<>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    while (logConfirm.isVisible()) { // Chờ đến khi hộp thoại đóng
+                        Thread.sleep(100);
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void done() {
+                    if (!cursorBreak) {
+                        return;
+                    }
+                    else 
+                    {
+                        return;
+                    }
+                }
+            };
+            worker.execute();
+            worker = null;
+        }
     }//GEN-LAST:event_btn_insertActionPerformed
 
     private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked
