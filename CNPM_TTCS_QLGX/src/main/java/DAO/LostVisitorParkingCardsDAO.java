@@ -47,20 +47,20 @@ public class LostVisitorParkingCardsDAO {
             CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, lostCard.getParking_session_id());
-
-            ptmt.executeUpdate();
+            ptmt.executeQuery();
+            return "Thêm thành công";
         } catch (SQLException e) {
-            if(e.getErrorCode() == 50000){
+            switch (e.getErrorCode()) {
+            case 50000:
                 return e.getMessage();
-            }
-            if(e.getErrorCode() == 547){
+            case 547:
                 return "Mã lượt gửi xe không tồn tại";
+            case 2627:
+                return "Lượt mất thẻ này đã từng được ghi nhận";
+            default:
+                return "Thêm không thành công" + e.getErrorCode();
             }
-            else{
-                return "Thêm không thành công";
-                    }
-        }
-        return "Thêm thành công";
+        }   
     }
 
     public String update(LostVisitorParkingCards lostCard) {
@@ -72,7 +72,7 @@ public class LostVisitorParkingCardsDAO {
         ) {
             ptmt.setInt(1, lostCard.getLost_visitor_parking_card_id());
             ptmt.setInt(2, lostCard.getParking_session_id());
-            ptmt.executeUpdate();
+            ptmt.executeQuery();
         } catch (SQLException e) {
             if(e.getErrorCode() == 547){
                 return "Mã gửi xe không tồn tại";
@@ -95,7 +95,7 @@ public class LostVisitorParkingCardsDAO {
             CallableStatement ptmt = conn.prepareCall(sql);
         ) {
             ptmt.setInt(1, lost_visitor_parking_card_id);
-            ptmt.executeUpdate();
+            ptmt.executeQuery();
         } catch (SQLException e) {
             if(e.getErrorCode() == 50000){
                 return e.getMessage();

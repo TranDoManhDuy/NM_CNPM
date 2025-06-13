@@ -81,6 +81,14 @@ public class gui_building extends javax.swing.JPanel {
                     this.setVisible(false);
                 }
             };
+            if(messageText.equals("Xóa thành công")){
+                jButton1.setEnabled(true);
+                jButton2.setEnabled(false);
+                jButton3.setEnabled(false);
+                jTextField2.setText(null);
+                jTextField3.setText(null);
+                jTextArea1.setText(null);
+            }
             message.setLocationRelativeTo(null);
             message.setVisible(true);
             message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -90,6 +98,7 @@ public class gui_building extends javax.swing.JPanel {
         int t = Integer.parseInt(jTextField2.getText());
         String r = BuildingsDAO.getInstance().delete(t);
         callLogMessage(r);
+        dataGlobal.updateArrBuildings();
         fillTable(dataGlobal.getArrayBuildings());
     }
     
@@ -97,6 +106,7 @@ public class gui_building extends javax.swing.JPanel {
         Buildings a = new Buildings(Integer.parseInt(jTextField2.getText()),jTextField3.getText(), jTextArea1.getText());
         String r = BuildingsDAO.getInstance().update(a);
         callLogMessage(r);
+        dataGlobal.updateArrBuildings();
         fillTable(dataGlobal.getArrayBuildings());
     }
     
@@ -104,6 +114,7 @@ public class gui_building extends javax.swing.JPanel {
         Buildings b = new Buildings(jTextField3.getText(), jTextArea1.getText());
         String r = BuildingsDAO.getInstance().insert(b);
         callLogMessage(r);
+        dataGlobal.updateArrBuildings();
         fillTable(dataGlobal.getArrayBuildings());
     }
     /**
@@ -365,25 +376,30 @@ public class gui_building extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if(!jTextField3.getText().isEmpty()){
-            confirm = new LogConfirm("Xác nhận cập nhật"){
-                @Override
-                public void action() {
-                    updateBuilding();
-                    this.setVisible(false);
-                }
-                @Override
-                public void reject() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
+            if(!jTextArea1.getText().isEmpty()){
+                confirm = new LogConfirm("Xác nhận cập nhật"){
+                    @Override
+                    public void action() {
+                        updateBuilding();
+                        this.setVisible(false);
+                    }
+                    @Override
+                    public void reject() {
+                        viewMain.setEnabled(true);
+                        viewMain.requestFocus();
+                        this.setVisible(false);
+                    }
 
-            };
-            viewMain.setEnabled(false);
-            confirm.setEnabled(true);
-            confirm.setVisible(true);
-            confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-            confirm.setLocationRelativeTo(null);
+                };
+                viewMain.setEnabled(false);
+                confirm.setEnabled(true);
+                confirm.setVisible(true);
+                confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                confirm.setLocationRelativeTo(null);
+            }
+            else{
+                callLogMessage("Không được để trống địa chỉ tòa nhà");
+            }
         }else{
             callLogMessage("Không được để trống tên toà nhà");
         }
@@ -391,25 +407,28 @@ public class gui_building extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if(!jTextField3.getText().isEmpty()){
-            this.confirm = new LogConfirm("Xác nhận thêm"){
-                @Override
-                public void action() {
-                    insertBuilding();
-                    this.setVisible(false);
-                }
-                @Override
-                public void reject() {
-                    viewMain.setEnabled(true);
-                    viewMain.requestFocus();
-                    this.setVisible(false);
-                }
+            if(!jTextArea1.getText().isEmpty()){
+                this.confirm = new LogConfirm("Xác nhận thêm"){
+                    @Override
+                    public void action() {
+                        insertBuilding();
+                        this.setVisible(false);
+                    }
+                    @Override
+                    public void reject() {
+                        viewMain.setEnabled(true);
+                        viewMain.requestFocus();
+                        this.setVisible(false);
+                    }
 
-            };
-            viewMain.setEnabled(false);
-            confirm.setEnabled(true);
-            confirm.setVisible(true);
-            confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-            confirm.setLocationRelativeTo(null);
+                };
+                viewMain.setEnabled(false);
+                confirm.setEnabled(true);
+                confirm.setVisible(true);
+                confirm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                confirm.setLocationRelativeTo(null);
+            }
+            else callLogMessage("Không được để trống địa chỉ tòa nhà");
         }else{
             callLogMessage("Không được để trống tên tòa nhà");
         }

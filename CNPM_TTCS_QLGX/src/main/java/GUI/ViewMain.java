@@ -195,6 +195,16 @@ public class ViewMain extends javax.swing.JFrame {
         addComponent(panel_mat_the, gui_LostVisitorParkingCard);
         addComponent(panel_the_xe, gui_visitorParkingCard);
         addComponent(jPanel14, gui_entry_exit);
+        jTabbedPane2.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int selectedIndex = jTabbedPane2.getSelectedIndex();
+                if (selectedIndex == 6){
+                    dataglocal.updateArrayVisitorParkingCardses();
+                    gui_visitorParkingCard.fillTable(dataglocal.getArrayVisitorParkingCards());
+                }
+            }
+        });
     }
     
     public void GUI_CATRUC(){

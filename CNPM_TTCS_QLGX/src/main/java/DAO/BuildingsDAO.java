@@ -39,14 +39,13 @@ public class BuildingsDAO {
     }
     
     public String insert(Buildings bd){
-        String sql = "{CALL InsertBulding(?, ?)}";
+        String sql = "{CALL InsertBuilding(?, ?)}";
         try(
             Connection conn = OpenConnection.getConnection();
             CallableStatement ptmt = conn.prepareCall(sql);
         ){
             ptmt.setString(1, bd.getBuilding_name());
             ptmt.setString(2, bd.getAddress());
-            
             ptmt.executeUpdate();
         }catch (SQLException e) {
             if(e.getErrorCode() == 50000){
@@ -56,7 +55,7 @@ public class BuildingsDAO {
                 return "Không có quyền thực hiện thao tác";   
             }
             else{
-                return "thêm thất bại";
+                return "Thêm thất bại "+e.getErrorCode();
                     }
         }
         return "Thêm thành công";
@@ -103,7 +102,7 @@ public class BuildingsDAO {
                 return "Không có quyền thực hiện thao tác";   
             }
             else{
-                return "xóa thất bại";
+                return "xóa thất bại" + e.getErrorCode();
                     }
         }
         return "Xóa thành công";

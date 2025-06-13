@@ -82,6 +82,14 @@ public class gui_task extends javax.swing.JPanel {
                     this.setVisible(false);
                 }
             };
+            if(messageText.equals("Xóa thành công")){
+                jButton1.setEnabled(true);
+                jButton2.setEnabled(false);
+                jButton3.setEnabled(false);
+                jTextField1.setText(null);
+                jTextField2.setText(null);
+                jTextArea1.setText(null);
+            }
             message.setLocationRelativeTo(null);
             message.setVisible(true);
             message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -91,6 +99,7 @@ public class gui_task extends javax.swing.JPanel {
         Tasks t = new Tasks(jTextField2.getText(), jTextArea1.getText());
         String r = TasksDAO.getInstance().insert(t);
         callLogMessage(r);
+        dataGlobal.updateArrtasks();
         fillTable(dataGlobal.getArrayTasks());
     }
     
@@ -98,6 +107,7 @@ public class gui_task extends javax.swing.JPanel {
         Tasks a = new Tasks(Integer.parseInt(jTextField1.getText()),jTextField2.getText(), jTextArea1.getText());
         String r = TasksDAO.getInstance().update(a);
         callLogMessage(r);
+        dataGlobal.updateArrtasks();
         fillTable(dataGlobal.getArrayTasks());
     }
     
@@ -105,6 +115,7 @@ public class gui_task extends javax.swing.JPanel {
         int t = Integer.parseInt(jTextField1.getText());
         String r = TasksDAO.getInstance().delete(t);
         callLogMessage(r);
+        dataGlobal.updateArrtasks();
         fillTable(dataGlobal.getArrayTasks());
     }
     /**

@@ -21,21 +21,19 @@ import Model.ShiftWorks;
 import Model.Staff;
 import Model.Tasks;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.Types;
-import static java.sql.Types.INTEGER;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.DefaultComboBoxModel;
 
 /**
  *
@@ -89,6 +87,34 @@ public class gui_shift_work extends javax.swing.JPanel {
         jComboBox4.setSelectedIndex(now.getDayOfMonth());
         jComboBox5.setSelectedIndex(now.getMonthValue());
         jComboBox6.setSelectedIndex(now.getYear() - 2000);
+        
+        dataGlobal.updateArrBuildings();
+        dataGlobal.updateArrtasks();
+        dataGlobal.updateArrShiftTypes();
+        
+        List<Tasks> arrTask = dataGlobal.getArrayTasks();
+        String strT[] = new String[arrTask.size() + 1];
+        strT[0] = "";
+        for(int i = 1; i<=arrTask.size(); i++){
+            strT[i] = arrTask.get(i-1).getTask_name();
+        }
+        jComboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(strT));
+        
+        List<ShiftTypes> arrShiftTypes = dataGlobal.getArrayShiftTypes();;
+        String st[] = new String[arrShiftTypes.size() +1];
+        st[0] = "";
+        for(int i = 1; i<= arrShiftTypes.size(); i++){
+            st[i] = arrShiftTypes.get(i-1).getShift_type_name();
+        }
+        jComboBox8.setModel(new javax.swing.DefaultComboBoxModel<>(st));
+        
+        List<Buildings> listBuildings = dataGlobal.getArrayBuildings();
+        String strB[] = new String[listBuildings.size()+1];
+        strB[0] = "";
+        for(int i =1; i<=listBuildings.size(); i++ ){
+            strB[i] = listBuildings.get(i-1).getBuilding_name();
+        }
+        jComboBox9.setModel(new javax.swing.DefaultComboBoxModel<>(strB));
         if(Global.Global_variable.currentLogin.getPositionId() == 1){
             jButton1.setEnabled(true);
             jButton2.setEnabled(false);
@@ -407,11 +433,6 @@ public class gui_shift_work extends javax.swing.JPanel {
             strT[i] = arrTask.get(i-1).getTask_name();
         }
         jComboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(strT));
-        jComboBox7.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jComboBox7MouseClicked(evt);
-            }
-        });
         jComboBox7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox7ActionPerformed(evt);
@@ -432,11 +453,6 @@ public class gui_shift_work extends javax.swing.JPanel {
             st[i] = arrShiftTypes.get(i-1).getShift_type_name();
         }
         jComboBox8.setModel(new javax.swing.DefaultComboBoxModel<>(st));
-        jComboBox8.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jComboBox8MouseClicked(evt);
-            }
-        });
         jComboBox8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox8ActionPerformed(evt);
@@ -451,11 +467,6 @@ public class gui_shift_work extends javax.swing.JPanel {
             strB[i] = listBuildings.get(i-1).getBuilding_name();
         }
         jComboBox9.setModel(new javax.swing.DefaultComboBoxModel<>(strB));
-        jComboBox9.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jComboBox9MouseClicked(evt);
-            }
-        });
         jComboBox9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox9ActionPerformed(evt);
@@ -902,39 +913,6 @@ public class gui_shift_work extends javax.swing.JPanel {
     private void jComboBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox4ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox4ActionPerformed
-
-    private void jComboBox8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jComboBox8MouseClicked
-        dataGlobal.updateArrShiftTypes();
-        List<ShiftTypes> arrShiftTypes = dataGlobal.getArrayShiftTypes();
-        String st[] = new String[arrShiftTypes.size() +1];
-        st[0] = "";
-        for(int i = 1; i< arrShiftTypes.size(); i++){
-            st[i] = arrShiftTypes.get(i -1).getShift_type_name();
-        }
-        jComboBox8.setModel(new javax.swing.DefaultComboBoxModel<>(st));
-    }//GEN-LAST:event_jComboBox8MouseClicked
-
-    private void jComboBox9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jComboBox9MouseClicked
-        dataGlobal.updateArrBuildings();
-        List<Buildings> listBuildings = dataGlobal.getArrayBuildings();
-        String st[] = new String[listBuildings.size()+1];
-        st[0] = "";
-        for(int i =1; i<listBuildings.size(); i++ ){
-            st[i] = listBuildings.get(i-1).getBuilding_name();
-        }
-        jComboBox9.setModel(new javax.swing.DefaultComboBoxModel<>(st));
-    }//GEN-LAST:event_jComboBox9MouseClicked
-
-    private void jComboBox7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jComboBox7MouseClicked
-        dataGlobal.updateArrtasks();
-        List<Tasks> arrTask = dataGlobal.getArrayTasks();
-        String st[] = new String[arrTask.size() + 1];
-        st[0] = "";
-        for(int i = 1; i< arrTask.size(); i++){
-            st[i] = arrTask.get(i).getTask_name();
-        }
-        jComboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(st));
-    }//GEN-LAST:event_jComboBox7MouseClicked
 
     private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
         // TODO add your handling code here:
