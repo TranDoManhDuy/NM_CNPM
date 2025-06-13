@@ -336,7 +336,7 @@ public class gui_registaff extends javax.swing.JPanel {
 
     private void btnDangKiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangKiActionPerformed
         // TODO add your handling code here:
-        String fullName = txt_HoTen.getText().trim();
+        String fullNameInput = txt_HoTen.getText().trim();
         String ssn = txt_CCCD.getText().trim();
         String dobText = txt_NgaySinh.getText().trim();
         String genderText = combobox_GioiTinh.getSelectedItem().toString();
@@ -348,43 +348,60 @@ public class gui_registaff extends javax.swing.JPanel {
         String positionName = (String) combobox_Vitri.getSelectedItem();
         String accountNumberText = txt_Taikhoan.getText().trim();
 
-        // Kiểm tra dữ liệu có trống hay không?
-        if (fullName.isEmpty() || ssn.isEmpty() || phone.isEmpty() || email.isEmpty() ||
+        // Kiểm tra dữ liệu có trống không?
+        if (fullNameInput.isEmpty() || ssn.isEmpty() || phone.isEmpty() || email.isEmpty() ||
             password.isEmpty() || roleName == null || positionName == null || dobText.isEmpty() || accountNumberText.isEmpty()) {
             log_message("Vui lòng nhập đầy đủ thông tin");
             return;
         }
-
-        // Kiểm tra CCCD
-        if (!ssn.matches("^0\\d{11}$")) {
-            log_message("CCCD phải đủ 12 số và bắt đầu là 0");
+        
+        // Kiểm tra họ tên không có ký tự đặc biệt hoặc số
+        if (!fullNameInput.matches("^[\\p{L}\\s]+$")) {
+            log_message("Lỗi: Họ tên không được chứa ký tự đặc biệt hoặc số.");
             return;
         }
 
+        // Chuẩn hóa họ tên
+        String fullName = chuanHoaTen(fullNameInput);
+        
+        // Kiểm tra CCCD
+        if (!ssn.matches("^0\\d{11}$")) {
+            log_message("Lỗi: CCCD phải đủ 12 số và bắt đầu là 0");
+            return;
+        }
+        
+        // Kiểm tra ngày sinh
+        LocalDate dob;
+        try {
+            dob = LocalDate.parse(dobText);
+            LocalDate now = LocalDate.now();
+
+            if (dob.isAfter(now)) {
+                log_message("Lỗi: Ngày sinh không được lớn hơn ngày hiện tại.");
+                return;
+            }
+
+            Period age = Period.between(dob, now);
+            if (age.getYears() < 18 || 
+               (age.getYears() == 18 && now.getDayOfYear() < dob.plusYears(18).getDayOfYear())) {
+                log_message("Lỗi: Phải đủ 18 tuổi trở lên.");
+                return;
+            }
+
+        } catch (Exception e) {
+            log_message("Lỗi: Ngày sinh không đúng định dạng yyyy-MM-dd.");
+            return;
+        }
+        
         // Kiểm tra số điện thoại
         if (!phone.matches("^0\\d{9}$")) {
-            log_message("SĐT phải đủ 10 số và bắt đầu là 0");
+            log_message("Lỗi: SĐT phải đủ 10 số và bắt đầu là 0");
             return;
         }
 
         // Kiểm tra email
         if (!email.matches("^[\\w.+\\-]+@gmail\\.com$")) {
-            log_message("Email phải đúng dạng @gmail.com");
-            return;
-        }
-
-        // Kiểm tra ngày sinh
-        LocalDate dob;
-        try {
-            dob = LocalDate.parse(dobText);
-        } catch (Exception e) {
-            log_message("Ngày sinh đúng dạng yyyy-MM-dd");
-            return;
-        }
-
-        // Kiểm tra tuổi
-        if (Period.between(dob, LocalDate.now()).getYears() < 18) {
-            log_message("Phải đủ 18 tuổi trở lên");
+            log_message("Lỗi: Email phải đúng dạng @gmail.com");
             return;
         }
 
@@ -394,17 +411,18 @@ public class gui_registaff extends javax.swing.JPanel {
 
         // Kiểm tra tính duy nhất của thông tin nhân viên
         if (StaffDAO.getInstance().isSsnExists(ssn, 0)) {
-            log_message("CCCD đã tồn tại.");
+            log_message("Lỗi: CCCD đã tồn tại.");
             return;
         }
         if (StaffDAO.getInstance().isPhoneExists(phone, 0)) {
-            log_message("Số điện thoại đã tồn tại.");
+            log_message("Lỗi: Số điện thoại đã tồn tại.");
             return;
         }
         if (StaffDAO.getInstance().isEmailExists(email, 0)) {
-            log_message("Email đã tồn tại.");
+            log_message("Lỗi: Email đã tồn tại.");
             return;
         }
+        
         // Tạo tài khoản
         int roleId = RoleDAO.getInstance().getRoleIdByName(roleName);
         String hashedPassword = HashUtil.toSHA256(password);
@@ -433,6 +451,25 @@ public class gui_registaff extends javax.swing.JPanel {
 
     }//GEN-LAST:event_btnDangKiActionPerformed
    
+    private String chuanHoaTen(String name) {
+        // Loại bỏ các ký tự không phải chữ cái hoặc khoảng trắng (giữ tiếng Việt có dấu)
+        name = name.replaceAll("[^\\p{L}\\s]", ""); // \p{L} = chữ cái unicode
+        // Xoá khoảng trắng thừa
+        name = name.trim().replaceAll("\\s+", " ");
+
+        // Viết hoa chữ cái đầu mỗi từ
+        String[] words = name.toLowerCase().split(" ");
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                sb.append(Character.toUpperCase(word.charAt(0)))
+                  .append(word.substring(1))
+                  .append(" ");
+            }
+        }
+        return sb.toString().trim();
+    }
+    
     private void setAccountNumberDefault() {
         int newAccountNumber = AccountDAO.getInstance().getMaxAccountNumber() + 1;
         txt_Taikhoan.setText(String.valueOf(newAccountNumber));
