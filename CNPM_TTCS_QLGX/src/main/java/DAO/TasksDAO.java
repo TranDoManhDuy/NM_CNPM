@@ -60,8 +60,11 @@ public class TasksDAO {
             if(e.getErrorCode() == 229){
                 return "Không có quyền thực hiện thao tác";   
             }
+            if(e.getErrorCode() == 2627){
+                return "Nhiệm vụ này đã tồn tại";   
+            }
             else{
-                return "thêm thất bại";
+                return "thêm thất bại " + e.getErrorCode();
                     }
         }
         return "Thêm thành công";

@@ -82,6 +82,14 @@ public class gui_task extends javax.swing.JPanel {
                     this.setVisible(false);
                 }
             };
+            if(messageText.equals("Xóa thành công")){
+                jButton1.setEnabled(true);
+                jButton2.setEnabled(false);
+                jButton3.setEnabled(false);
+                jTextField1.setText(null);
+                jTextField2.setText(null);
+                jTextArea1.setText(null);
+            }
             message.setLocationRelativeTo(null);
             message.setVisible(true);
             message.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
