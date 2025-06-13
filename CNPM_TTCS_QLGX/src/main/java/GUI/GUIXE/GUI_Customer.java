@@ -911,31 +911,7 @@ public class GUI_Customer extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_tblCustomerMouseClicked
 
-    private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_insertActionPerformed
-
-    private void btn_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_resetActionPerformed
-        // TODO add your handling code here:
-        resetFields();
-        resetEnable();
-    }//GEN-LAST:event_btn_resetActionPerformed
-
-    private void btn_resetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_resetMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_resetMouseClicked
-
-    private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked
-        // TODO add your handling code here:
-        if (!Library.Library.isValidSSN(txt_ssn.getText().toString().trim())) { 
-            this.SetLog("Căn cước công dân phải có đúng 12 chữ số!");
-            return;
-        }
-        
-        if (!Library.Library.isValidPhoneNumber(txt_phone_number.getText().toString().trim())) { 
-            this.SetLog("Số điện thoại: Sai định dạng (0** *** ****)!");
-            return;
-        }
+    private void processInsert() { 
         String day = cob_ngay.getSelectedItem().toString();
         String month = cob_thang.getSelectedItem().toString();
         String year = cob_nam.getSelectedItem().toString();
@@ -974,6 +950,79 @@ public class GUI_Customer extends javax.swing.JPanel {
         }
         this.SetLog(check);
         return;
+    }
+    
+    private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
+        // TODO add your handling code here:
+        if (!Library.Library.isValidName(txt_full_name.getText().toString().trim())) {
+            this.SetLog("Họ và tên không đúng định dạng, phải viết hoa chữ cái đầu của mỗi từ, không được bao gồm số và ký tự đặc biệt!");
+            return;
+        }
+        
+        if (!Library.Library.isValidSSN(txt_ssn.getText().toString().trim())) { 
+            this.SetLog("Căn cước công dân không đúng định dạng, phải có đúng 12 chữ số và bắt đầu bằng số 0!");
+            return;
+        }
+        
+        if (!Library.Library.isValidPhoneNumber(txt_phone_number.getText().toString().trim())) { 
+            this.SetLog("Số điện thoại không đúng định dạng, phải có đúng 10 chữ số và bắt đầu bằng số 0!");
+            return;
+        }
+        
+        this.cursorBreak = false;
+        viewmain.setEnabled(false);
+        this.logConfirm = new LogConfirm("Bạn có chắc là muốn thêm lượt gửi xe này ?") {
+            @Override
+            public void action() {
+                cursorBreak = true;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+
+            @Override
+            public void reject() {
+                cursorBreak = false;
+                this.setVisible(false);
+                viewmain.setEnabled(true);
+                viewmain.requestFocus();
+            }
+        };
+        this.logConfirm.setVisible(true);
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                while (logConfirm.isVisible()) {
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (!cursorBreak) {
+                    return;
+                }
+                processInsert();
+            }
+        };
+        worker.execute();
+        worker = null;
+    }//GEN-LAST:event_btn_insertActionPerformed
+
+    private void btn_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_resetActionPerformed
+        // TODO add your handling code here:
+        resetFields();
+        resetEnable();
+    }//GEN-LAST:event_btn_resetActionPerformed
+
+    private void btn_resetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_resetMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_resetMouseClicked
+
+    private void btn_insertMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_insertMouseClicked
+        // TODO add your handling code here:
     }//GEN-LAST:event_btn_insertMouseClicked
 
     private void txt_tin_nhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_tin_nhanActionPerformed

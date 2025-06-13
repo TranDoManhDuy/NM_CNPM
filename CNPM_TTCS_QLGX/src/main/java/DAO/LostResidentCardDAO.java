@@ -63,13 +63,14 @@ public class LostResidentCardDAO {
         return result;
     }
 
-    public String insert(LostResidentCard card) {
-        String sql = "EXEC INSERT_LOST_RESIDENT_CARD @pk_resident_card = ?, @parking_session_id = ?";
+    public String insert(LostResidentCard card, boolean is_extend) {
+        String sql = "EXEC INSERT_LOST_RESIDENT_CARD @pk_resident_card = ?, @sp_parking_session_id = ?, @sp_is_extend = ?";
         try (
                 Connection con = OpenConnection.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, card.getPk_resident_card());
             ps.setInt(2, card.getParking_session_id());
+            ps.setBoolean(3, is_extend);
             if (ps.executeUpdate() > 0) { 
                 return "Thêm Thành Công";
             }
