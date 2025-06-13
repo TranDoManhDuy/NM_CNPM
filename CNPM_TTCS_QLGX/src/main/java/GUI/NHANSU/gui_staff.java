@@ -14,6 +14,7 @@ import DAO.StaffDAO;
 import DatabaseHelper.OpenConnection;
 import GUI.ViewMain;
 import Model.Staff;
+import GUI.NHANSU.gui_manager;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
@@ -607,15 +608,25 @@ public class gui_staff extends javax.swing.JPanel {
 
         int staff_id = Integer.parseInt(Table_Staff.getValueAt(selectedRow, 0).toString());
         
+        
+        boolean canDelete = true;
+        try {
+            StaffDAO.getInstance().delete(staff_id);
+        } catch (Exception e) {
+            canDelete = false;
+            log_message(e.getMessage());
+        }
 
+        if (!canDelete) {
+            return; // Không cần hỏi xác nhận
+        }
+        
         this.logConfirm = new LogConfirm("Xác nhận xóa?") {
             @Override
             public void action() {
-
                 this.setVisible(false);
                 viewmain.setEnabled(true);
-                viewmain.requestFocus();
-                
+                viewmain.requestFocus();           
                 boolean success;
                 try {
                     success = StaffDAO.getInstance().delete(staff_id);
@@ -623,7 +634,6 @@ public class gui_staff extends javax.swing.JPanel {
                     log_message(e.getMessage());
                     return;
                 }
-
                 if (success) {
                     log_message("Xóa thành công!");
                     resetThongTin(); 
@@ -671,7 +681,7 @@ public class gui_staff extends javax.swing.JPanel {
         
         int staffId = (int) Table_Staff.getValueAt(selectedRow, 0);
 
-        String fullName = txt_HoTen.getText().trim();
+        String fullNameInput = txt_HoTen.getText().trim();
         String ssn = txt_CCCD.getText().trim();
         String dobText = txt_NgaySinh.getText().trim();
         String genderText = combobox_GioiTinh.getSelectedItem().toString().trim();
@@ -683,47 +693,57 @@ public class gui_staff extends javax.swing.JPanel {
         String statusText = combobox_TrangThai.getSelectedItem().toString();
         String accNumText = txt_TaiKhoan.getText().trim();
 
-        if (fullName.isEmpty() || ssn.isEmpty() || dobText.isEmpty() || genderText.isEmpty() || phone.isEmpty() ||
+        if (fullNameInput.isEmpty() || ssn.isEmpty() || dobText.isEmpty() || genderText.isEmpty() || phone.isEmpty() ||
             address.isEmpty() || email.isEmpty() || roleText.isEmpty() || positionText.isEmpty() || statusText.isEmpty() || accNumText.isEmpty()) {
             log_message("Vui lòng điền đầy đủ thông tin.");
             return;
         }
 
+                // Kiểm tra họ tên không có ký tự đặc biệt hoặc số
+        if (!fullNameInput.matches("^[\\p{L}\\s]+$")) {
+            log_message("Họ tên không được chứa ký tự đặc biệt hoặc số.");
+            return;
+        }
+
+        // Chuẩn hóa họ tên
+        String fullName = chuanHoaTen(fullNameInput);
+        
+        
         // Kiểm tra định dạng
         if (!ssn.matches("^0\\d{11}$")) {
-            log_message("CCCD không hợp lệ! Phải đủ 12 số và bắt đầu bằng 0.");
+            log_message("Lỗi: CCCD phải đủ 12 số và bắt đầu bằng 0.");
             return;
         }
-
-        if (!phone.matches("^0\\d{9}$")) {
-            log_message("Số điện thoại không hợp lệ! Phải đủ 10 số và bắt đầu bằng 0.");
-            return;
-        }
-
-        if (!email.matches("^[\\w.+\\-]+@gmail\\.com$")) {
-            log_message("Email phải là địa chỉ Gmail hợp lệ (@gmail.com).");
-            return;
-        }
-
+        
         LocalDate dob;
         try {
             dob = LocalDate.parse(dobText);
             LocalDate now = LocalDate.now();
 
             if (dob.isAfter(now)) {
-                log_message("Ngày sinh không được lớn hơn ngày hiện tại.");
+                log_message("Lỗi: Ngày sinh không được lớn hơn ngày hiện tại.");
                 return;
             }
 
             Period age = Period.between(dob, now);
             if (age.getYears() < 18 || 
                (age.getYears() == 18 && now.getDayOfYear() < dob.plusYears(18).getDayOfYear())) {
-                log_message("Phải đủ 18 tuổi trở lên.");
+                log_message("Lỗi: Phải đủ 18 tuổi trở lên.");
                 return;
             }
 
         } catch (Exception e) {
-            log_message("Ngày sinh không đúng định dạng yyyy-MM-dd.");
+            log_message("Lỗi: Ngày sinh không đúng định dạng yyyy-MM-dd.");
+            return;
+        }
+
+        if (!phone.matches("^0\\d{9}$")) {
+            log_message("Lỗi: Số điện thoại phải đủ 10 số và bắt đầu bằng 0.");
+            return;
+        }
+
+        if (!email.matches("^[\\w.+\\-]+@gmail\\.com$")) {
+            log_message("Lỗi: Email phải đúng dạng @gmail.com.");
             return;
         }
 
@@ -735,30 +755,17 @@ public class gui_staff extends javax.swing.JPanel {
             return;
         }
 
-        if (StaffDAO.getInstance().isSsnExists(ssn, staffId)) {
-            log_message("CCCD đã tồn tại!");
-            return;
-        }
-
         if (StaffDAO.getInstance().isPhoneExists(phone, staffId)) {
-            log_message("Số điện thoại đã tồn tại!");
+            log_message("Lỗi: Số điện thoại đã tồn tại!");
             return;
         }
 
         if (StaffDAO.getInstance().isEmailExists(email, staffId)) {
-            log_message("Email đã tồn tại!");
+            log_message("Lỗi: Email đã tồn tại!");
             return;
         }
 
-        String gender;
-        if (genderText.equals("Nam")) {
-            gender = "M";
-        } else if (genderText.equals("Nữ")) {
-            gender = "F";
-        } else {
-            log_message("Giới tính không hợp lệ!");
-            return;
-        }
+        String gender = genderText.equals("Nam") ? "M" : "F";
 
         boolean isActive = statusText.equalsIgnoreCase("Còn làm việc");
         int roleId = RoleDAO.getInstance().getRoleIdByName(roleText);
@@ -769,8 +776,6 @@ public class gui_staff extends javax.swing.JPanel {
 //            log_message("Vai trò không hợp lệ với vị trí đã chọn.");
 //            return;
 //        }
-        
-        
         
         Staff updatedStaff = new Staff(staffId, roleId, fullName, ssn, dob, gender, phone, address, email, isActive, positionId, accountNumber);
 
@@ -788,6 +793,7 @@ public class gui_staff extends javax.swing.JPanel {
                 btn_Timkiem.setEnabled(true);
                 btn_Lammoitimkiem.setEnabled(true);
                 loadAndFilterTable(StaffDAO.getInstance().getList());
+                
             } else {
                 log_message("Cập nhật thất bại!");
                 btnXoa.setEnabled(true);
@@ -860,31 +866,49 @@ public class gui_staff extends javax.swing.JPanel {
 //        updateRoleComboBox();
     }//GEN-LAST:event_combobox_VitriActionPerformed
        
+    private String chuanHoaTen(String name) {
+        // Loại bỏ các ký tự không phải chữ cái hoặc khoảng trắng (giữ tiếng Việt có dấu)
+        name = name.replaceAll("[^\\p{L}\\s]", ""); // \p{L} = chữ cái unicode
+        // Xoá khoảng trắng thừa
+        name = name.trim().replaceAll("\\s+", " ");
+
+        // Viết hoa chữ cái đầu mỗi từ
+        String[] words = name.toLowerCase().split(" ");
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                sb.append(Character.toUpperCase(word.charAt(0)))
+                  .append(word.substring(1))
+                  .append(" ");
+            }
+        }
+        return sb.toString().trim();
+    }
+    
     private void loadAndFilterTable(List<Staff> list) {
        DefaultTableModel model = (DefaultTableModel) Table_Staff.getModel();
-        model.setRowCount(0); // Xóa dữ liệu cũ
+       model.setRowCount(0); 
 
-        // Lấy dữ liệu từ UI
-        String keyword = txt_Timkiem.getText().trim();
+        String keyword = txt_Timkiem.getText().trim().toLowerCase();
         String selectedViTri = Combobox_ViTri.getSelectedItem().toString();
 
         List<Staff> filteredList = new ArrayList<>();
 
-        // Nếu người dùng nhập số (có thể là ID), tìm theo ID trước
         if (!keyword.isEmpty() && keyword.matches("\\d+")) {
             int id = Integer.parseInt(keyword);
             Staff staff = StaffDAO.getInstance().findbyID(id);
             if (staff != null) {
-                filteredList.add(staff); // Thêm nhân viên tìm được vào danh sách lọc
+                filteredList.add(staff); 
             }
         } else {
-            // Nếu không phải số, tìm theo tên hoặc account
-            filteredList.addAll(list);
+            for (Staff s : list) {
+            if (s.getFullName().toLowerCase().contains(keyword)) {
+                filteredList.add(s);
+            }
+        }
         }
 
-        // Đổ dữ liệu vào bảng sau khi lọc
         for (Staff s : filteredList) {
-            // Nếu chọn vị trí cụ thể và không khớp thì bỏ qua
             if (!selectedViTri.equalsIgnoreCase("Tất cả")) {
                 String viTri = PositionDAO.getInstance().getPositionNameById(s.getPositionId());
                 if (!viTri.equalsIgnoreCase(selectedViTri)) continue;
