@@ -1037,12 +1037,19 @@ public class GUI_Customer extends javax.swing.JPanel {
         // TODO add your handling code here:
         int index = -1;
         tblModel.setRowCount(0);
+        String currentIsActive = "";
         for (Customer arr : this.customers) { 
             index += 1;
             if (arr.isIs_active()) {
+                if (arr.isIs_active()) { 
+                    currentIsActive = "Có";
+                }
+                else { 
+                    currentIsActive = "Không";
+                }
                 tblModel.addRow(new String[] {  String.valueOf(arr.getCustomer_id()), this.buildingNames.get(index), arr.getFull_name(), arr.getSsn(),
                                                 String.valueOf(arr.getDate_of_birth()), arr.getGender(),
-                                                arr.getPhone_number(), arr.getAddress(), arr.getNationality(), String.valueOf(arr.isIs_active())
+                                                arr.getPhone_number(), arr.getAddress(), arr.getNationality(), currentIsActive
                                 });
             }
         }
@@ -1052,13 +1059,20 @@ public class GUI_Customer extends javax.swing.JPanel {
     private void btn_not_cu_danActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_not_cu_danActionPerformed
         // TODO add your handling code here:
         int index = -1;
+        String currentIsActive = "";
         tblModel.setRowCount(0);
         for (Customer arr : this.customers) { 
             index += 1;
             if (!arr.isIs_active()) {
+                if (arr.isIs_active()) { 
+                    currentIsActive = "Có";
+                }
+                else { 
+                    currentIsActive = "Không";
+                }
                 tblModel.addRow(new String[] {  String.valueOf(arr.getCustomer_id()), this.buildingNames.get(index), arr.getFull_name(), arr.getSsn(),
                                                 String.valueOf(arr.getDate_of_birth()), arr.getGender(),
-                                                arr.getPhone_number(), arr.getAddress(), arr.getNationality(), String.valueOf(arr.isIs_active())
+                                                arr.getPhone_number(), arr.getAddress(), arr.getNationality(), currentIsActive
                                 });
             }
         }
@@ -1087,13 +1101,20 @@ public class GUI_Customer extends javax.swing.JPanel {
         
         int count = -1;
         String crBuildingName = "";
+        String currentIsActive = "";
         initTable();
         for (Customer cus : this.customers) { 
-                count += 1;
-                crBuildingName = this.buildingNames.get(count);
+            count += 1;
+            if (cus.isIs_active()) { 
+                currentIsActive = "Có";
+            }
+            else { 
+                currentIsActive = "Không";
+            }
+            crBuildingName = this.buildingNames.get(count);
             tblModel.addRow(new String[] {  String.valueOf(cus.getCustomer_id()), crBuildingName, cus.getFull_name(), cus.getSsn(), 
                                             String.valueOf(cus.getDate_of_birth()), cus.getGender(),
-                                            cus.getPhone_number(), cus.getAddress(), cus.getNationality(), String.valueOf(cus.isIs_active())
+                                            cus.getPhone_number(), cus.getAddress(), cus.getNationality(), currentIsActive
             });
         }
         tblModel.fireTableDataChanged();
@@ -1122,13 +1143,20 @@ public class GUI_Customer extends javax.swing.JPanel {
         
         int count = -1;
         String crBuildingName = "";
+        String currentIsActive = "";
         initTable();
         for (Customer cus : this.customers) { 
-                count += 1;
-                crBuildingName = this.buildingNames.get(count);
+            count += 1;
+            if (cus.isIs_active()) { 
+                currentIsActive = "Có";
+            }
+            else { 
+                currentIsActive = "Không";
+            }
+            crBuildingName = this.buildingNames.get(count);
             tblModel.addRow(new String[] {  String.valueOf(cus.getCustomer_id()), crBuildingName, cus.getFull_name(), cus.getSsn(), 
                                             String.valueOf(cus.getDate_of_birth()), cus.getGender(),
-                                            cus.getPhone_number(), cus.getAddress(), cus.getNationality(), String.valueOf(cus.isIs_active())
+                                            cus.getPhone_number(), cus.getAddress(), cus.getNationality(), currentIsActive
             });
         }
         tblModel.fireTableDataChanged();
@@ -1168,13 +1196,20 @@ public class GUI_Customer extends javax.swing.JPanel {
     private void btn_tim_kiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tim_kiemActionPerformed
         // TODO add your handling code here:
         int index = -1;
+        String currentIsActive = "";
         tblModel.setRowCount(0);
         for (Customer arr : this.customers) { 
             index += 1;
             if (Library.Library.StringOnString(this.txt_tim_kiem.getText(), arr.getFull_name())) {
+                if (arr.isIs_active()) { 
+                    currentIsActive = "Có";
+                }
+                else { 
+                    currentIsActive = "Không";
+                }
                 tblModel.addRow(new String[] {  String.valueOf(arr.getCustomer_id()), this.buildingNames.get(index), arr.getFull_name(), arr.getSsn(),
                                                 String.valueOf(arr.getDate_of_birth()), arr.getGender(),
-                                                arr.getPhone_number(), arr.getAddress(), arr.getNationality(), String.valueOf(arr.isIs_active())
+                                                arr.getPhone_number(), arr.getAddress(), arr.getNationality(), currentIsActive
                                 });
             }
         }
@@ -1184,12 +1219,19 @@ public class GUI_Customer extends javax.swing.JPanel {
     private void btn_tat_caActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tat_caActionPerformed
         // TODO add your handling code here:
         int index = -1;
+        String currentIsActive = "";
         tblModel.setRowCount(0);
         for (Customer arr : this.customers) { 
             index += 1;
+            if (arr.isIs_active()) { 
+                currentIsActive = "Có";
+            }
+            else { 
+                currentIsActive = "Không";
+            }
             tblModel.addRow(new String[] {  String.valueOf(arr.getCustomer_id()), this.buildingNames.get(index), arr.getFull_name(), arr.getSsn(),
                                             String.valueOf(arr.getDate_of_birth()), arr.getGender(),
-                                            arr.getPhone_number(), arr.getAddress(), arr.getNationality(), String.valueOf(arr.isIs_active())
+                                            arr.getPhone_number(), arr.getAddress(), arr.getNationality(), currentIsActive
                             });
         }
         tblModel.fireTableDataChanged();
