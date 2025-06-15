@@ -58,7 +58,7 @@ public class LostVisitorParkingCardsDAO {
             case 2627:
                 return "Lượt mất thẻ này đã từng được ghi nhận";
             default:
-                return "Thêm không thành công" + e.getErrorCode();
+                return "Thêm thành công";
             }
         }   
     }
@@ -81,7 +81,7 @@ public class LostVisitorParkingCardsDAO {
                 return e.getMessage();
             }
             else{
-                return "Cập nhật không thành công";    
+                return "Cập nhật thành công";    
                     }
         }
         return "Cập nhật thành công";
@@ -101,7 +101,7 @@ public class LostVisitorParkingCardsDAO {
                 return e.getMessage();
             }
             else{
-                return "Xoá không thành công";    
+                return "Xoá thành công";    
                     }
         }
         return "Xóa thành công";

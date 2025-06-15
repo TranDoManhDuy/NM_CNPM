@@ -553,6 +553,7 @@ public class GUI_LostVisitorParkingCard extends javax.swing.JPanel {
                     String r = LostVisitorParkingCardsDAO.getInstance().insert(a);
                         if(r.equals("Thêm thành công")){
                             this.setVisible(false);
+                            dataGlobal.updateArrayLostVisitorParkingCardses();
                             fillTable();
                             callLogMessage(r);
                         }
